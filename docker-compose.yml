@@ -1,0 +1,12 @@
+version: '2.4'
+
+services:
+  kaka-api-db:
+    container_name: kaka-api-db
+    image: library/postgres:11
+    environment:
+      POSTGRES_USER: kaka
+      POSTGRES_PASSWORD: kaka
+      POSTGRES_DB: kaka-api
+    ports:
+      - "5432:5432"

@@ -1,0 +1,69 @@
+apiVersion: "nais.io/v1alpha1"
+kind: "Application"
+metadata:
+  name: kaka-api
+  namespace: klage
+  labels:
+    team: klage
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "100M"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+spec:
+  image: {{ image }}
+  port: 7070
+  gcp:
+    sqlInstances:
+      - name: kaka-api
+        type: POSTGRES_12
+        maintenanceWindow:
+          day: 1
+          hour: 4
+        tier: {{db_tier}}
+        diskType: SSD
+        highAvailability: {{db_ha}}
+        diskSize: {{db_size}}
+        diskAutoresize: true
+        autoBackupTime: "02:00"
+        cascadingDelete: false
+        databases:
+          - name: kaka-api
+  startup:
+    failureThreshold: 20
+    initialDelay: 30
+    path: /internal/health
+    periodSeconds: 10
+    timeout: 2
+  liveness:
+    path: /internal/health
+    initialDelay: 20
+    timeout: 1
+    periodSeconds: 5
+    failureThreshold: 10
+  readiness:
+    path: /internal/health
+    initialDelay: 20
+    timeout: 1
+  azure:
+    application:
+      enabled: true
+      tenant: {{tenant}}
+  resources:
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
+    requests:
+      cpu: 400m
+      memory: 256Mi
+  ingresses:
+    - {{ingress}}
+  replicas:
+    min: 2
+    max: 4
+    cpuThresholdPercentage: 80
+  secureLogs:
+    enabled: true
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: {{springProfile}}
+    - name: JAVA_OPTS
+      value: "-Xms512m -Xmx2048m"

@@ -1,0 +1,55 @@
+spring:
+  application:
+    name: kaka-api
+  main:
+    banner-mode: OFF
+  web:
+    resources:
+      add-mappings: false
+  sleuth:
+    baggage:
+      remote-fields:
+        - Nav-Callid
+        - Nav-Consumer-Id
+      correlation-fields:
+        - Nav-Callid
+        - Nav-Consumer-Id
+  datasource:
+    url: jdbc:postgresql://${NAIS_DATABASE_KAKA_API_KAKA_API_HOST}:${NAIS_DATABASE_KAKA_API_KAKA_API_PORT}/${NAIS_DATABASE_KAKA_API_KAKA_API_DATABASE}
+    username: ${NAIS_DATABASE_KAKA_API_KAKA_API_USERNAME}
+    password: ${NAIS_DATABASE_KAKA_API_KAKA_API_PASSWORD}
+  flyway:
+    enabled: true
+    clean-on-validation-error: true
+    schemas: flyway_history_schema,kaka
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
+server:
+  port: 7070
+  error:
+    whitelabel:
+      enabled: false
+  shutdown: graceful
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints.web:
+    exposure:
+      include: info, health, metrics, prometheus
+    base-path: "/internal"
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+#
+#logging:
+#  level:
+#    root: debug
+
+navCallId: Nav-Callid
+navConsumerId: Nav-Consumer-Id
