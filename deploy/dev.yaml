@@ -1,4 +1,4 @@
-ingresses:
+ingress:
   - https://kaka-api.dev.nav.no
 springProfile: dev-gcp
 tenant: trygdeetaten.no

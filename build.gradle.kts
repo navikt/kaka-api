@@ -1,5 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val logstashVersion = "6.6"
+val springVersion = "2.5.5"
+
 val githubUser: String by project
 val githubPassword: String by project
 
@@ -25,21 +28,39 @@ repositories {
 	}
 }
 
+apply(plugin = "io.spring.dependency-management")
+
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
+	implementation("org.springframework.boot:spring-boot-starter:$springVersion")
+	implementation("org.springframework.boot:spring-boot-starter-web:$springVersion")
+	implementation("org.springframework.boot:spring-boot-starter-actuator:$springVersion")
+	implementation("org.springframework.boot:spring-boot-starter-webflux:$springVersion")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("ch.qos.logback:logback-classic")
+	implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
+	implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
+	implementation("com.papertrailapp:logback-syslog4j:1.0.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "11"
 	}
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	testLogging {
+		events("passed", "skipped", "failed")
+	}
 }
+
+tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+	this.archiveFileName.set("app.jar")
+}
+
+kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
+kotlin.sourceSets["test"].kotlin.srcDirs("src/test/kotlin")
