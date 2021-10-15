@@ -1,0 +1,4 @@
+ingresses:
+  - https://kaka-api.nav.no
+springProfile: prod-gcp
+tenant: nav.no
