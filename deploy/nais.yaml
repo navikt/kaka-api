@@ -43,6 +43,9 @@ spec:
     path: /internal/health
     initialDelay: 20
     timeout: 1
+  prometheus:
+    enabled: true
+    path: /internal/prometheus
   azure:
     application:
       enabled: true
