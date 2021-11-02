@@ -35,6 +35,7 @@ class Vurdering(
     @ElementCollection(targetClass = Hjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "hjemmel",
+        schema = "kaka",
         joinColumns = [JoinColumn(name = "vurdering_id", referencedColumnName = "id", nullable = false)]
     )
     @Convert(converter = HjemmelConverter::class)
