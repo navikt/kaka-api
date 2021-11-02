@@ -5,3 +5,8 @@ tenant: trygdeetaten.no
 db_tier: db-custom-1-3840
 db_size: 10
 db_ha: true
+envs:
+  - name: JAVA_TOOL_OPTIONS
+    value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+  - name: JAVA_OPTS
+    value: "-Xms512m -Xmx2048m"
