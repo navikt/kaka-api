@@ -40,7 +40,7 @@ class VurderingController(
         logVurderingMethodDetails(
             ::getAllVurdering.name,
             innloggetSaksbehandler,
-            UUID.randomUUID(),
+            null,
             logger
         )
 

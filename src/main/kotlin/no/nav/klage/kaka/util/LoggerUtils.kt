@@ -8,7 +8,7 @@ fun getLogger(forClass: Class<*>): Logger = LoggerFactory.getLogger(forClass)
 
 fun getSecureLogger(): Logger = LoggerFactory.getLogger("secure")
 
-fun logVurderingMethodDetails(methodName: String, innloggetIdent: String, vurderingId: UUID, logger: Logger) {
+fun logVurderingMethodDetails(methodName: String, innloggetIdent: String, vurderingId: UUID?, logger: Logger) {
     logger.debug(
         "{} is requested by ident {} for vurderingId {}",
         methodName,

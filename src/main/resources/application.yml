@@ -3,9 +3,6 @@ spring:
     name: kaka-api
   main:
     banner-mode: OFF
-  web:
-    resources:
-      add-mappings: false
   sleuth:
     baggage:
       remote-fields:
@@ -14,6 +11,9 @@ spring:
       correlation-fields:
         - Nav-Callid
         - Nav-Consumer-Id
+  web:
+    resources:
+      add-mappings: false
   datasource:
     url: jdbc:postgresql://${NAIS_DATABASE_KAKA_API_KAKA_API_HOST}:${NAIS_DATABASE_KAKA_API_KAKA_API_PORT}/${NAIS_DATABASE_KAKA_API_KAKA_API_DATABASE}
     username: ${NAIS_DATABASE_KAKA_API_KAKA_API_USERNAME}
@@ -22,6 +22,14 @@ spring:
     enabled: true
     clean-on-validation-error: true
     schemas: flyway_history_schema,kaka
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 100
   lifecycle:
     timeout-per-shutdown-phase: 20s
 
