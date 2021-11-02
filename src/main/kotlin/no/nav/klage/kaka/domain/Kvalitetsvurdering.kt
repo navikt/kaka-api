@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.domain
 
+import no.nav.klage.kaka.exceptions.MissingTilgangException
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
@@ -97,7 +98,9 @@ class Kvalitetsvurdering(
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
-    var modified: LocalDateTime = LocalDateTime.now()
+    var modified: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "utfoerende_saksbehandlerident")
+    var utfoerendeSaksbehandler: String
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -123,6 +126,10 @@ class Kvalitetsvurdering(
     enum class RadioValg {
         BRA,
         MANGELFULLT
+    }
+
+    fun verifyAccess(innloggetIdent: String) {
+        if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til kvalitetsvurderingen")
     }
 }
 

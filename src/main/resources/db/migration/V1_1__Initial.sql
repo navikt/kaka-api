@@ -69,6 +69,7 @@ create table kaka.kvalitetsvurdering
 
     created                                                  TIMESTAMP NOT NULL,
     modified                                                 TIMESTAMP NOT NULL,
+    utfoerende_saksbehandlerident                            TEXT,
 
     CONSTRAINT fk_kvalitetsvurdering_vurdering
         FOREIGN KEY (vurdering_id)

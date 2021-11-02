@@ -42,7 +42,7 @@ class Vurdering(
     @Column(name = "id")
     var hjemler: MutableSet<Hjemmel> = mutableSetOf(),
     @Column(name = "utfoerende_saksbehandlerident")
-    var utfoerendeSaksbehandler: String? = null,
+    var utfoerendeSaksbehandler: String,
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id")
     var kvalitetsvurdering: Kvalitetsvurdering,
@@ -76,6 +76,6 @@ class Vurdering(
     }
 
     fun verifyAccess(innloggetIdent: String) {
-        if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til kvalitetsvurderingen")
+        if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til vurderingen")
     }
 }

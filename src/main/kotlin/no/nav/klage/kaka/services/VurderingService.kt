@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.services
 
-import no.nav.klage.kaka.domain.IdentOgEnhet
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Vurdering
 import no.nav.klage.kaka.domain.kodeverk.Hjemmel
@@ -28,10 +27,14 @@ class VurderingService(
     }
 
     fun createVurdering(innloggetSaksbehandler: String): Vurdering {
-        return vurderingRepository.save(Vurdering(
-            utfoerendeSaksbehandler = innloggetSaksbehandler,
-            kvalitetsvurdering = Kvalitetsvurdering()
-        ))
+        return vurderingRepository.save(
+            Vurdering(
+                utfoerendeSaksbehandler = innloggetSaksbehandler,
+                kvalitetsvurdering = Kvalitetsvurdering(
+                    utfoerendeSaksbehandler = innloggetSaksbehandler
+                )
+            )
+        )
     }
 
     fun setKlager(vurderingId: UUID, klager: String, innloggetSaksbehandler: String): Vurdering {

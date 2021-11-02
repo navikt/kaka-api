@@ -1,8 +1,7 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
-import no.nav.klage.kaka.domain.Vurdering
-import no.nav.klage.kaka.repositories.VurderingRepository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -11,365 +10,458 @@ import java.util.*
 @Service
 @Transactional
 class KvalitetsvurderingService(
-    private val vurderingRepository: VurderingRepository
+    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository
 ) {
 
-    fun setKlageforberedelsenRadioValg(vurderingId: UUID, input: Kvalitetsvurdering.RadioValg, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.klageforberedelsenRadioValg = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setKlageforberedelsenRadioValg(
+        kvalitetsvurderingId: UUID,
+        input: Kvalitetsvurdering.RadioValg,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.klageforberedelsenRadioValg = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setSakensDokumenter(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.sakensDokumenter = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setSakensDokumenter(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.sakensDokumenter = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setOversittetKlagefristIkkeKommentert(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.oversittetKlagefristIkkeKommentert = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.oversittetKlagefristIkkeKommentert = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
 
     fun setKlagerensRelevanteAnfoerslerIkkeKommentert(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.klagerensRelevanteAnfoerslerIkkeKommentert = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.klagerensRelevanteAnfoerslerIkkeKommentert = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
 
     fun setBegrunnelseForHvorforAvslagOpprettholdes(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setKonklusjonen(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.konklusjonen = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setKonklusjonen(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.konklusjonen = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
 
     fun setOversendelsesbrevetsInnholdIkkeISamsvarMedTema(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.oversendelsesbrevetsInnholdIkkeISamsvarMedTema = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.oversendelsesbrevetsInnholdIkkeISamsvarMedTema = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setUtredningenRadioValg(vurderingId: UUID, input: Kvalitetsvurdering.RadioValg, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenRadioValg = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setUtredningenRadioValg(
+        kvalitetsvurderingId: UUID,
+        input: Kvalitetsvurdering.RadioValg,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenRadioValg = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setUtredningenAvMedisinskeForhold(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvMedisinskeForhold = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvMedisinskeForhold = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setUtredningenAvMedisinskeForholdText(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: String,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvMedisinskeForholdText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvMedisinskeForholdText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setUtredningenAvInntektsforhold(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvInntektsforhold = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setUtredningenAvInntektsforhold(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvInntektsforhold = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setUtredningenAvInntektsforholdText(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: String,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvInntektsforholdText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvInntektsforholdText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setUtredningenAvArbeid(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvArbeid = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setUtredningenAvArbeid(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvArbeid = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setUtredningenAvArbeidText(vurderingId: UUID, input: String, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvArbeidText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setUtredningenAvArbeidText(
+        kvalitetsvurderingId: UUID,
+        input: String,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvArbeidText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setArbeidsrettetBrukeroppfoelging(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.arbeidsrettetBrukeroppfoelging = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.arbeidsrettetBrukeroppfoelging = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setArbeidsrettetBrukeroppfoelgingText(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: String,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.arbeidsrettetBrukeroppfoelgingText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.arbeidsrettetBrukeroppfoelgingText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setUtredningenAvAndreAktuelleForholdISaken(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setUtredningenAvAndreAktuelleForholdISakenText(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: String,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvAndreAktuelleForholdISakenText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvAndreAktuelleForholdISakenText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setUtredningenAvEoesProblematikk(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvEoesProblematikk = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setUtredningenAvEoesProblematikk(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvEoesProblematikk = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setUtredningenAvEoesProblematikkText(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: String,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.utredningenAvEoesProblematikkText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.utredningenAvEoesProblematikkText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setVeiledningFraNav(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.veiledningFraNav = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setVeiledningFraNav(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.veiledningFraNav = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setBrukAvRaadgivendeLegeRadioValg(vurderingId: UUID, input: Kvalitetsvurdering.RadioValgRaadgivendeLege, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setBrukAvRaadgivendeLegeRadioValg(
+        kvalitetsvurderingId: UUID,
+        input: Kvalitetsvurdering.RadioValgRaadgivendeLege,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setVeiledningFraNavText(vurderingId: UUID, input: String, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.veiledningFraNavText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setVeiledningFraNavText(
+        kvalitetsvurderingId: UUID,
+        input: String,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.veiledningFraNavText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setRaadgivendeLegeErIkkeBrukt(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.raadgivendeLegeErIkkeBrukt = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setRaadgivendeLegeErIkkeBrukt(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.raadgivendeLegeErIkkeBrukt = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setRaadgivendeLegeErBruktFeilSpoersmaal(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setRaadgivendeLegeHarUttaltSegUtoverTrygdemedisin(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setRaadgivendeLegeErBruktMangelfullDokumentasjon(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setVedtaketRadioValg(vurderingId: UUID, input: Kvalitetsvurdering.RadioValg, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.vedtaketRadioValg = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setVedtaketRadioValg(
+        kvalitetsvurderingId: UUID,
+        input: Kvalitetsvurdering.RadioValg,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.vedtaketRadioValg = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setDetErIkkeBruktRiktigHjemmel(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.detErIkkeBruktRiktigHjemmel = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setDetErIkkeBruktRiktigHjemmel(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.detErIkkeBruktRiktigHjemmel = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setRettsregelenErBenyttetFeil(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.rettsregelenErBenyttetFeil = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setRettsregelenErBenyttetFeil(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.rettsregelenErBenyttetFeil = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setVurderingAvFaktumErMangelfull(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.vurderingAvFaktumErMangelfull = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setVurderingAvFaktumErMangelfull(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.vurderingAvFaktumErMangelfull = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setDetErFeilIKonkretRettsanvendelse(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.detErFeilIKonkretRettsanvendelse = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.detErFeilIKonkretRettsanvendelse = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
     fun setBegrunnelsenErIkkeKonkretOgIndividuell(
-        vurderingId: UUID,
+        kvalitetsvurderingId: UUID,
         input: Boolean,
         innloggetSaksbehandler: String
-    ): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setSpraaketErIkkeTydelig(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.spraaketErIkkeTydelig = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setSpraaketErIkkeTydelig(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.spraaketErIkkeTydelig = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setNyeOpplysningerMottatt(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.nyeOpplysningerMottatt = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setNyeOpplysningerMottatt(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.nyeOpplysningerMottatt = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setBrukIOpplaering(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.brukIOpplaering = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setBrukIOpplaering(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.brukIOpplaering = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setBrukIOpplaeringText(vurderingId: UUID, input: String, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.brukIOpplaeringText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setBrukIOpplaeringText(
+        kvalitetsvurderingId: UUID,
+        input: String,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.brukIOpplaeringText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setBetydeligAvvik(vurderingId: UUID, input: Boolean, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.betydeligAvvik = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setBetydeligAvvik(
+        kvalitetsvurderingId: UUID,
+        input: Boolean,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.betydeligAvvik = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    fun setBetydeligAvvikText(vurderingId: UUID, input: String, innloggetSaksbehandler: String): Vurdering {
-        val vurdering = getVurderingAndVerifyAccess(vurderingId, innloggetSaksbehandler)
-        vurdering.kvalitetsvurdering.betydeligAvvikText = input
-        vurdering.modified = LocalDateTime.now()
-        return vurdering
+    fun setBetydeligAvvikText(
+        kvalitetsvurderingId: UUID,
+        input: String,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.betydeligAvvikText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
     }
 
-    private fun getVurderingAndVerifyAccess(vurderingId: UUID, innloggetSaksbehandler: String): Vurdering {
-        return vurderingRepository.getById(vurderingId).also { it.verifyAccess(innloggetSaksbehandler) }
+    private fun getKvalitetsvurderingAndVerifyAccess(
+        kvalitetsvurderingId: UUID,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        return kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
+            .also { it.verifyAccess(innloggetSaksbehandler) }
+
     }
 }

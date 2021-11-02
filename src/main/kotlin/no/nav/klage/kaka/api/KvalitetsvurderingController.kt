@@ -4,15 +4,16 @@ import no.nav.klage.kaka.api.view.BooleanInput
 import no.nav.klage.kaka.api.view.RadioValgInput
 import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
 import no.nav.klage.kaka.api.view.TextInput
+import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Vurdering
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.logVurderingMethodDetails
+import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/vurdering/{id}/kvalitetsvurdering")
+@RequestMapping("/kvalitetsvurdering/{id}")
 class KvalitetsvurderingController(
     private val kvalitetsvurderingService: KvalitetsvurderingService
 ) {
@@ -26,55 +27,55 @@ class KvalitetsvurderingController(
 
     @GetMapping("/test")
     fun test(
-        @PathVariable("id") vurderingId: String
+        @PathVariable("id") kvalitetsvurderingId: String
     ): String {
-        return vurderingId
+        return kvalitetsvurderingId
     }
 
     @PutMapping("/klageforberedelsenradiovalg")
     fun setKlageforberedelsenRadioValg(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setKlageforberedelsenRadioValg.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setKlageforberedelsenRadioValg(vurderingId, input.selection, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setKlageforberedelsenRadioValg(kvalitetsvurderingId, input.selection, innloggetSaksbehandler)
     }
 
     @PutMapping("/sakensdokumenter")
     fun setSakensDokumenter(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setSakensDokumenter.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setSakensDokumenter(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setSakensDokumenter(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/oversittetklagefristikkekommentert")
     fun setOversittetKlagefristIkkeKommentert(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setOversittetKlagefristIkkeKommentert.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setOversittetKlagefristIkkeKommentert(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -82,18 +83,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/klagerensrelevanteanfoerslerikkekommentert")
     fun setKlagerensRelevanteAnfoerslerIkkeKommentert(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setKlagerensRelevanteAnfoerslerIkkeKommentert.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setKlagerensRelevanteAnfoerslerIkkeKommentert(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -101,18 +102,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/begrunnelseforhvorforavslagopprettholdes")
     fun setBegrunnelseForHvorforAvslagOpprettholdes(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setBegrunnelseForHvorforAvslagOpprettholdes.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setBegrunnelseForHvorforAvslagOpprettholdes(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -120,33 +121,33 @@ class KvalitetsvurderingController(
 
     @PutMapping("/konklusjonen")
     fun setKonklusjonen(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setKonklusjonen.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setKonklusjonen(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setKonklusjonen(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/oversendelsesbrevetsinnholdikkeisamsvarmedtema")
     fun setOversendelsesbrevetsInnholdIkkeISamsvarMedTema(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setOversendelsesbrevetsInnholdIkkeISamsvarMedTema.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setOversendelsesbrevetsInnholdIkkeISamsvarMedTema(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -154,33 +155,33 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenradiovalg")
     fun setUtredningenRadioValg(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenRadioValg.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setUtredningenRadioValg(vurderingId, input.selection, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setUtredningenRadioValg(kvalitetsvurderingId, input.selection, innloggetSaksbehandler)
     }
 
     @PutMapping("/utredningenavmedisinskeforhold")
     fun setUtredningenAvMedisinskeForhold(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvMedisinskeForhold.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvMedisinskeForhold(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -188,18 +189,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenavmedisinskeforholdtext")
     fun setUtredningenAvMedisinskeForholdText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvMedisinskeForholdText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvMedisinskeForholdText(
-            vurderingId,
+            kvalitetsvurderingId,
             input.text,
             innloggetSaksbehandler
         )
@@ -207,18 +208,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenavinntektsforhold")
     fun setUtredningenAvInntektsforhold(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvInntektsforhold.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvInntektsforhold(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -226,18 +227,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenavinntektsforholdtext")
     fun setUtredningenAvInntektsforholdText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvInntektsforholdText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvInntektsforholdText(
-            vurderingId,
+            kvalitetsvurderingId,
             input.text,
             innloggetSaksbehandler
         )
@@ -245,48 +246,48 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenavarbeid")
     fun setUtredningenAvArbeid(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvArbeid.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setUtredningenAvArbeid(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setUtredningenAvArbeid(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/utredningenavarbeidtext")
     fun setUtredningenAvArbeidText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvArbeidText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setUtredningenAvArbeidText(vurderingId, input.text, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setUtredningenAvArbeidText(kvalitetsvurderingId, input.text, innloggetSaksbehandler)
     }
 
     @PutMapping("/arbeidsrettetbrukeroppfoelging")
     fun setArbeidsrettetBrukeroppfoelging(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setArbeidsrettetBrukeroppfoelging.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setArbeidsrettetBrukeroppfoelging(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -294,18 +295,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/arbeidsrettetbrukeroppfoelgingtext")
     fun setArbeidsrettetBrukeroppfoelgingText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setArbeidsrettetBrukeroppfoelgingText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setArbeidsrettetBrukeroppfoelgingText(
-            vurderingId,
+            kvalitetsvurderingId,
             input.text,
             innloggetSaksbehandler
         )
@@ -313,18 +314,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenavandreaktuelleforholdisaken")
     fun setUtredningenAvAndreAktuelleForholdISaken(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvAndreAktuelleForholdISaken.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvAndreAktuelleForholdISaken(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -332,18 +333,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenavandreaktuelleforholdisakentext")
     fun setUtredningenAvAndreAktuelleForholdISakenText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvAndreAktuelleForholdISakenText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvAndreAktuelleForholdISakenText(
-            vurderingId,
+            kvalitetsvurderingId,
             input.text,
             innloggetSaksbehandler
         )
@@ -351,18 +352,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenaveoesproblematikk")
     fun setUtredningenAvEoesProblematikk(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvEoesProblematikk.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvEoesProblematikk(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -370,18 +371,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/utredningenaveoesproblematikktext")
     fun setUtredningenAvEoesProblematikkText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvEoesProblematikkText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setUtredningenAvEoesProblematikkText(
-            vurderingId,
+            kvalitetsvurderingId,
             input.text,
             innloggetSaksbehandler
         )
@@ -389,63 +390,63 @@ class KvalitetsvurderingController(
 
     @PutMapping("/veiledningfranav")
     fun setVeiledningFraNav(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setVeiledningFraNav.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setVeiledningFraNav(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setVeiledningFraNav(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/veiledningfranavtext")
     fun setVeiledningFraNavText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setVeiledningFraNavText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setVeiledningFraNavText(vurderingId, input.text, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setVeiledningFraNavText(kvalitetsvurderingId, input.text, innloggetSaksbehandler)
     }
 
     @PutMapping("/brukavraadgivendelegeradiovalg")
     fun setBrukAvRaadgivendeLegeRadioValg(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgRaadgivendeLegeInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setBrukAvRaadgivendeLegeRadioValg.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setBrukAvRaadgivendeLegeRadioValg(vurderingId, input.selection, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBrukAvRaadgivendeLegeRadioValg(kvalitetsvurderingId, input.selection, innloggetSaksbehandler)
     }
 
     @PutMapping("/raadgivendelegeerikkebrukt")
     fun setRaadgivendeLegeErIkkeBrukt(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeErIkkeBrukt.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setRaadgivendeLegeErIkkeBrukt(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -453,18 +454,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/raadgivendelegeerbruktfeilspoersmaal")
     fun setRaadgivendeLegeErBruktFeilSpoersmaal(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeErBruktFeilSpoersmaal.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setRaadgivendeLegeErBruktFeilSpoersmaal(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -472,18 +473,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/raadgivendelegeharuttaltsegutovertrygdemedisin")
     fun setRaadgivendeLegeHarUttaltSegUtoverTrygdemedisin(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeHarUttaltSegUtoverTrygdemedisin.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setRaadgivendeLegeHarUttaltSegUtoverTrygdemedisin(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -491,18 +492,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/raadgivendelegeerbruktmangelfulldokumentasjon")
     fun setRaadgivendeLegeErBruktMangelfullDokumentasjon(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeErBruktMangelfullDokumentasjon.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setRaadgivendeLegeErBruktMangelfullDokumentasjon(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -510,33 +511,33 @@ class KvalitetsvurderingController(
 
     @PutMapping("/vedtaketradiovalg")
     fun setVedtaketRadioValg(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setVedtaketRadioValg.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setVedtaketRadioValg(vurderingId, input.selection, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setVedtaketRadioValg(kvalitetsvurderingId, input.selection, innloggetSaksbehandler)
     }
 
     @PutMapping("/deterikkebruktriktighjemmel")
     fun setDetErIkkeBruktRiktigHjemmel(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setDetErIkkeBruktRiktigHjemmel.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setDetErIkkeBruktRiktigHjemmel(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -544,18 +545,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/innholdetirettsregleneerikketilstrekkeligbeskrevet")
     fun setInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -563,18 +564,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/rettsregelenerbenyttetfeil")
     fun setRettsregelenErBenyttetFeil(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setRettsregelenErBenyttetFeil.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setRettsregelenErBenyttetFeil(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -582,18 +583,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/vurderingavfaktumermangelfull")
     fun setVurderingAvFaktumErMangelfull(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setVurderingAvFaktumErMangelfull.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setVurderingAvFaktumErMangelfull(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -601,18 +602,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/deterfeilikonkretrettsanvendelse")
     fun setDetErFeilIKonkretRettsanvendelse(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setDetErFeilIKonkretRettsanvendelse.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setDetErFeilIKonkretRettsanvendelse(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -620,18 +621,18 @@ class KvalitetsvurderingController(
 
     @PutMapping("/begrunnelsenerikkekonkretogindividuell")
     fun setBegrunnelsenErIkkeKonkretOgIndividuell(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setBegrunnelsenErIkkeKonkretOgIndividuell.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
         return kvalitetsvurderingService.setBegrunnelsenErIkkeKonkretOgIndividuell(
-            vurderingId,
+            kvalitetsvurderingId,
             input.selected,
             innloggetSaksbehandler
         )
@@ -639,91 +640,91 @@ class KvalitetsvurderingController(
 
     @PutMapping("/spraaketerikketydelig")
     fun setSpraaketErIkkeTydelig(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setSpraaketErIkkeTydelig.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setSpraaketErIkkeTydelig(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setSpraaketErIkkeTydelig(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/nyeopplysningermottatt")
     fun setNyeOpplysningerMottatt(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setNyeOpplysningerMottatt.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setNyeOpplysningerMottatt(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setNyeOpplysningerMottatt(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/brukiopplaering")
     fun setBrukIOpplaering(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setBrukIOpplaering.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setBrukIOpplaering(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBrukIOpplaering(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/brukiopplaeringtext")
     fun setBrukIOpplaeringText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setBrukIOpplaeringText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setBrukIOpplaeringText(vurderingId, input.text, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBrukIOpplaeringText(kvalitetsvurderingId, input.text, innloggetSaksbehandler)
     }
 
     @PutMapping("/betydeligavvik")
     fun setBetydeligAvvik(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setBetydeligAvvik.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setBetydeligAvvik(vurderingId, input.selected, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBetydeligAvvik(kvalitetsvurderingId, input.selected, innloggetSaksbehandler)
     }
 
     @PutMapping("/betydeligavviktext")
     fun setBetydeligAvvikText(
-        @PathVariable("id") vurderingId: UUID,
+        @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: TextInput
-    ): Vurdering {
-        logVurderingMethodDetails(
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
             ::setBetydeligAvvikText.name,
             innloggetSaksbehandler,
-            vurderingId,
+            kvalitetsvurderingId,
             logger
         )
 
-        return kvalitetsvurderingService.setBetydeligAvvikText(vurderingId, input.text, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBetydeligAvvikText(kvalitetsvurderingId, input.text, innloggetSaksbehandler)
     }
 }

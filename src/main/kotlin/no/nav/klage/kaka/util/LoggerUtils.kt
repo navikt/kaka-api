@@ -16,3 +16,12 @@ fun logVurderingMethodDetails(methodName: String, innloggetIdent: String, vurder
         vurderingId
     )
 }
+
+fun logKvalitetsvurderingMethodDetails(methodName: String, innloggetIdent: String, kvalitetsvurderingId: UUID, logger: Logger) {
+    logger.debug(
+        "{} is requested by ident {} for kvalitetsvurderingId {}",
+        methodName,
+        innloggetIdent,
+        kvalitetsvurderingId
+    )
+}
