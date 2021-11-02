@@ -82,7 +82,7 @@ CREATE TABLE kaka.hjemmel
     PRIMARY KEY (id, vurdering_id),
     CONSTRAINT fk_hjemmel_vurdering
         FOREIGN KEY (vurdering_id)
-            REFERENCES vurdering (id)
+            REFERENCES kaka.vurdering (id)
 );
 
 ALTER TABLE kaka.vurdering
