@@ -18,7 +18,7 @@ spec:
         maintenanceWindow:
           day: 1
           hour: 4
-        tier: {{db_tier}}
+        tier: {{e}}
         diskType: SSD
         highAvailability: {{db_ha}}
         diskSize: {{db_size}}
@@ -45,7 +45,7 @@ spec:
     timeout: 1
   prometheus:
     enabled: true
-    path: /internal/prometheus
+    path: /internal/metrics
   azure:
     application:
       enabled: true
