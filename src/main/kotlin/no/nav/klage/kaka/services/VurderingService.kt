@@ -18,8 +18,8 @@ import java.util.*
 class VurderingService(
     private val vurderingRepository: VurderingRepository
 ) {
-    fun getVurdering(vurderingId: UUID, innloggetSaksbehandler: String): Optional<Vurdering> {
-        return vurderingRepository.findById(vurderingId)
+    fun getVurdering(vurderingId: UUID, innloggetSaksbehandler: String): Vurdering {
+        return vurderingRepository.getById(vurderingId)
     }
 
     fun getAllVurdering(): MutableList<Vurdering> {

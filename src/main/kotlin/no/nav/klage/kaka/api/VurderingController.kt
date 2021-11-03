@@ -24,7 +24,7 @@ class VurderingController(
     @GetMapping("/{id}")
     fun getVurdering(
         @PathVariable("id") vurderingId: UUID
-    ): Optional<Vurdering> {
+    ): Vurdering {
         logVurderingMethodDetails(
             ::getVurdering.name,
             innloggetSaksbehandler,
