@@ -18,7 +18,7 @@ spec:
         maintenanceWindow:
           day: 1
           hour: 4
-        tier: {{e}}
+        tier: {{db_tier}}
         diskType: SSD
         highAvailability: {{db_ha}}
         diskSize: {{db_size}}
