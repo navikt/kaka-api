@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.api
 
+import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.BooleanInput
 import no.nav.klage.kaka.api.view.RadioValgInput
 import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
+@Api(tags = ["kaka-api:kvalitet"])
 @RequestMapping("/kvalitetsvurdering/{id}")
 class KvalitetsvurderingController(
     private val kvalitetsvurderingService: KvalitetsvurderingService

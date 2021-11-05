@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.api
 
+import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.domain.Vurdering
 import no.nav.klage.kaka.domain.kodeverk.Hjemmel
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
+@Api(tags = ["kaka-api:saksdata"])
 @RequestMapping("/vurdering")
 class VurderingController(
     private val vurderingService: VurderingService

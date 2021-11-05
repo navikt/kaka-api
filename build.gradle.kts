@@ -4,6 +4,7 @@ val logstashVersion = "6.6"
 val springVersion = "2.5.5"
 val kotlinVersion = "1.5.31"
 val problemSpringWebStartVersion = "0.26.2"
+val springFoxVersion = "3.0.0"
 
 val githubUser: String by project
 val githubPassword: String by project
@@ -42,6 +43,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc:$springVersion")
 	implementation("org.zalando:problem-spring-web-starter:$problemSpringWebStartVersion")
+	implementation("io.springfox:springfox-boot-starter:$springFoxVersion")
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.postgresql:postgresql")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
