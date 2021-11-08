@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.domain.kodeverk.*
-import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
@@ -10,9 +9,9 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "vurdering", schema = "kaka")
+@Table(name = "saksdata", schema = "kaka")
 @DynamicUpdate
-class Vurdering(
+class Saksdata(
     @Id
     val id: UUID = UUID.randomUUID(),
     @Column(name = "klager")
@@ -36,7 +35,7 @@ class Vurdering(
     @CollectionTable(
         name = "hjemmel",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "vurdering_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "saksdata_id", referencedColumnName = "id", nullable = false)]
     )
     @Convert(converter = HjemmelConverter::class)
     @Column(name = "id")
@@ -46,7 +45,7 @@ class Vurdering(
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id")
     var kvalitetsvurdering: Kvalitetsvurdering,
-    @Column(name = "dato_vurdering_avsluttet_av_saksbehandler")
+    @Column(name = "dato_saksdata_avsluttet_av_saksbehandler")
     var avsluttetAvSaksbehandler: LocalDateTime? = null,
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
@@ -64,7 +63,7 @@ class Vurdering(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Vurdering
+        other as Saksdata
 
         if (id != other.id) return false
 
@@ -76,6 +75,6 @@ class Vurdering(
     }
 
     fun verifyAccess(innloggetIdent: String) {
-        if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til vurderingen")
+        if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til saksdataen")
     }
 }

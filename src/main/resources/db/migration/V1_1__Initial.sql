@@ -1,4 +1,4 @@
-create table kaka.vurdering
+create table kaka.saksdata
 (
     id                                        UUID PRIMARY KEY,
     klager                                    TEXT,
@@ -9,7 +9,7 @@ create table kaka.vurdering
     dato_mottatt_klageinstans                 DATE,
     utfall_id                                 TEXT,
     utfoerende_saksbehandlerident             TEXT,
-    dato_vurdering_avsluttet_av_saksbehandler TIMESTAMP,
+    dato_saksdata_avsluttet_av_saksbehandler TIMESTAMP,
     created                                   TIMESTAMP NOT NULL,
     modified                                  TIMESTAMP NOT NULL
 );
@@ -17,7 +17,6 @@ create table kaka.vurdering
 create table kaka.kvalitetsvurdering
 (
     id                                                       UUID PRIMARY KEY,
-    vurdering_id                                             UUID,
 
     klageforberedelsen_radio_valg                            TEXT,
 
@@ -69,22 +68,18 @@ create table kaka.kvalitetsvurdering
 
     created                                                  TIMESTAMP NOT NULL,
     modified                                                 TIMESTAMP NOT NULL,
-    utfoerende_saksbehandlerident                            TEXT,
-
-    CONSTRAINT fk_kvalitetsvurdering_vurdering
-        FOREIGN KEY (vurdering_id)
-            REFERENCES kaka.vurdering (id)
+    utfoerende_saksbehandlerident                            TEXT
 );
 
 CREATE TABLE kaka.hjemmel
 (
     id           TEXT NOT NULL,
-    vurdering_id UUID NOT NULL,
-    PRIMARY KEY (id, vurdering_id),
-    CONSTRAINT fk_hjemmel_vurdering
-        FOREIGN KEY (vurdering_id)
-            REFERENCES kaka.vurdering (id)
+    saksdata_id UUID NOT NULL,
+    PRIMARY KEY (id, saksdata_id),
+    CONSTRAINT fk_hjemmel_saksdata
+        FOREIGN KEY (saksdata_id)
+            REFERENCES kaka.saksdata (id)
 );
 
-ALTER TABLE kaka.vurdering
+ALTER TABLE kaka.saksdata
     ADD kvalitetsvurdering_id UUID REFERENCES kaka.kvalitetsvurdering (id);
