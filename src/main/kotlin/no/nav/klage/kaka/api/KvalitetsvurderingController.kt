@@ -6,7 +6,6 @@ import no.nav.klage.kaka.api.view.RadioValgInput
 import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
 import no.nav.klage.kaka.api.view.TextInput
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
-import no.nav.klage.kaka.domain.Vurdering
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
@@ -27,11 +26,17 @@ class KvalitetsvurderingController(
 
     val innloggetSaksbehandler = "TODO"
 
-    @GetMapping("/test")
+    @GetMapping
     fun test(
-        @PathVariable("id") kvalitetsvurderingId: String
-    ): String {
-        return kvalitetsvurderingId
+        @PathVariable("id") kvalitetsvurderingId: UUID
+    ): Kvalitetsvurdering {
+        logKvalitetsvurderingMethodDetails(
+            ::setKlageforberedelsenRadioValg.name,
+            innloggetSaksbehandler,
+            kvalitetsvurderingId,
+            logger
+        )
+        return kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
     }
 
     @PutMapping("/klageforberedelsenradiovalg")

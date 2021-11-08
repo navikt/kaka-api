@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.config
 
-import no.nav.klage.kaka.api.VurderingController
+import no.nav.klage.kaka.api.SaksdataController
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.ResponseEntity
@@ -16,7 +16,7 @@ class OpenApiConfig {
     fun apiInternal(): Docket {
         return Docket(DocumentationType.OAS_30)
             .select()
-            .apis(RequestHandlerSelectors.basePackage(VurderingController::class.java.packageName))
+            .apis(RequestHandlerSelectors.basePackage(SaksdataController::class.java.packageName))
             .build()
             .pathMapping("/")
             .genericModelSubstitutes(ResponseEntity::class.java)

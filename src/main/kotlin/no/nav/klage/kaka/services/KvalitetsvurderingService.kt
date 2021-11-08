@@ -13,6 +13,13 @@ class KvalitetsvurderingService(
     private val kvalitetsvurderingRepository: KvalitetsvurderingRepository
 ) {
 
+    fun getKvalitetsvurdering(
+        kvalitetsvurderingId: UUID,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        return getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+    }
+
     fun setKlageforberedelsenRadioValg(
         kvalitetsvurderingId: UUID,
         input: Kvalitetsvurdering.RadioValg,
