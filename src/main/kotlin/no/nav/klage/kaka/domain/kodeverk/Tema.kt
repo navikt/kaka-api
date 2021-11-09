@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.domain.kodeverk
 
+import no.nav.klage.kaka.domain.Enhet
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
@@ -78,6 +79,11 @@ enum class Tema(override val id: String, override val navn: String, override val
                 ?: throw IllegalArgumentException("No Tema with $navn exists")
         }
     }
+}
+
+//TODO: Until we get a defined list
+val enheterPerTema: Map<Tema, List<Kode>> = Tema.values().associateWith {
+    listOf(Enhet.NAV_MOSS, Enhet.NAV_XXXX, Enhet.NAV_YYYY)
 }
 
 @Converter

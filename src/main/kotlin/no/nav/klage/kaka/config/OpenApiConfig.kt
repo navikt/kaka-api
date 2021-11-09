@@ -22,7 +22,8 @@ class OpenApiConfig {
             .genericModelSubstitutes(ResponseEntity::class.java)
             .tags(
                 Tag("kaka-api:saksdata", "API for KAKA Saksdata"),
-                Tag("kaka-api:kvalitet", "API for KAKA kvalitetsvurdering")
+                Tag("kaka-api:kvalitet", "API for KAKA Kvalitetsvurdering"),
+                Tag("kaka-api:metadata", "API for KAKA Metadata")
             )
     }
 
