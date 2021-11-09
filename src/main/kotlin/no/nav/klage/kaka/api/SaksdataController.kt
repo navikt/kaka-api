@@ -3,6 +3,9 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.domain.kodeverk.Hjemmel
+import no.nav.klage.kaka.domain.kodeverk.Sakstype
+import no.nav.klage.kaka.domain.kodeverk.Tema
+import no.nav.klage.kaka.domain.kodeverk.Utfall
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logSaksdataMethodDetails
@@ -75,7 +78,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setSakstype(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setSakstype(saksdataId, Sakstype.of(input.value), innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/tema")
@@ -90,7 +93,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setTema(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setTema(saksdataId, Tema.of(input.value), innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/mottattvedtaksinstans")
@@ -151,7 +154,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setUtfall(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setUtfall(saksdataId, Utfall.of(input.value), innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/hjemler")

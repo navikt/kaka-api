@@ -11,11 +11,11 @@ data class KlagerInput(
 )
 
 data class SakstypeInput(
-    val value: Sakstype
+    val value: String
 )
 
 data class TemaInput(
-    val value: Tema
+    val value: String
 )
 
 data class DatoInput(
@@ -27,7 +27,7 @@ data class VedtaksinstansEnhetInput(
 )
 
 data class UtfallInput(
-    val value: Utfall
+    val value: String
 )
 
 data class HjemlerInput(
