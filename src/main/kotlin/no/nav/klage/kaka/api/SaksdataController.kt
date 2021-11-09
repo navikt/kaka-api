@@ -7,8 +7,8 @@ import no.nav.klage.kaka.domain.kodeverk.Hjemmel
 import no.nav.klage.kaka.domain.kodeverk.Sakstype
 import no.nav.klage.kaka.domain.kodeverk.Tema
 import no.nav.klage.kaka.domain.kodeverk.Utfall
-import no.nav.klage.kaka.services.InnloggetSaksbehandlerService
 import no.nav.klage.kaka.services.SaksdataService
+import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logSaksdataMethodDetails
 import no.nav.security.token.support.core.api.ProtectedWithClaims
@@ -21,7 +21,7 @@ import java.util.*
 @RequestMapping("/saksdata")
 class SaksdataController(
     private val saksdataService: SaksdataService,
-    private val innloggetSaksbehandlerService: InnloggetSaksbehandlerService
+    private val tokenUtil: TokenUtil
 ) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -32,7 +32,7 @@ class SaksdataController(
     fun getSaksdata(
         @PathVariable("id") saksdataId: UUID
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::getSaksdata.name,
             innloggetSaksbehandler,
@@ -45,7 +45,7 @@ class SaksdataController(
 
     @PostMapping
     fun createSaksdata(): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::createSaksdata.name,
             innloggetSaksbehandler,
@@ -61,7 +61,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: KlagerInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setKlager.name,
             innloggetSaksbehandler,
@@ -77,7 +77,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: SakstypeInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setSakstype.name,
             innloggetSaksbehandler,
@@ -94,7 +94,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: TemaInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setTema.name,
             innloggetSaksbehandler,
@@ -110,7 +110,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: DatoInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setMottattVedtaksinstans.name,
             innloggetSaksbehandler,
@@ -127,7 +127,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: VedtaksinstansEnhetInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setVedtaksinstansEnhet.name,
             innloggetSaksbehandler,
@@ -143,7 +143,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: DatoInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setMottattKlageinstans.name,
             innloggetSaksbehandler,
@@ -160,7 +160,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: UtfallInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setUtfall.name,
             innloggetSaksbehandler,
@@ -176,7 +176,7 @@ class SaksdataController(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: HjemlerInput
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setHjemler.name,
             innloggetSaksbehandler,
@@ -195,7 +195,7 @@ class SaksdataController(
     fun fullfoerSaksdata(
         @PathVariable("id") saksdataId: UUID
     ): SaksdataView {
-        val innloggetSaksbehandler = innloggetSaksbehandlerService.getInnloggetIdent()
+        val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::fullfoerSaksdata.name,
             innloggetSaksbehandler,
