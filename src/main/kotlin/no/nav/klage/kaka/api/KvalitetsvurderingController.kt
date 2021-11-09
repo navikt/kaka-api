@@ -5,15 +5,18 @@ import no.nav.klage.kaka.api.view.BooleanInput
 import no.nav.klage.kaka.api.view.RadioValgInput
 import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
 import no.nav.klage.kaka.api.view.TextInput
+import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
+import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
 @Api(tags = ["kaka-api:kvalitet"])
+@ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kvalitetsvurdering/{id}")
 class KvalitetsvurderingController(
     private val kvalitetsvurderingService: KvalitetsvurderingService
@@ -51,7 +54,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setKlageforberedelsenRadioValg(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setKlageforberedelsenRadioValg(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/sakensdokumenter")
@@ -172,7 +179,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setUtredningenRadioValg(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setUtredningenRadioValg(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/utredningenavmedisinskeforhold")
@@ -263,7 +274,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setUtredningenAvArbeid(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setUtredningenAvArbeid(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/utredningenavarbeidtext")
@@ -278,7 +293,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setUtredningenAvArbeidText(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setUtredningenAvArbeidText(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/arbeidsrettetbrukeroppfoelging")
@@ -422,7 +441,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setVeiledningFraNavText(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setVeiledningFraNavText(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/brukavraadgivendelegeradiovalg")
@@ -437,7 +460,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setBrukAvRaadgivendeLegeRadioValg(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBrukAvRaadgivendeLegeRadioValg(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/raadgivendelegeerikkebrukt")
@@ -657,7 +684,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setSpraaketErIkkeTydelig(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setSpraaketErIkkeTydelig(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/nyeopplysningermottatt")
@@ -672,7 +703,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setNyeOpplysningerMottatt(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setNyeOpplysningerMottatt(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/brukiopplaering")
@@ -702,7 +737,11 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setBrukIOpplaeringText(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBrukIOpplaeringText(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 
     @PutMapping("/betydeligavvik")
@@ -732,6 +771,10 @@ class KvalitetsvurderingController(
             logger
         )
 
-        return kvalitetsvurderingService.setBetydeligAvvikText(kvalitetsvurderingId, input.value, innloggetSaksbehandler)
+        return kvalitetsvurderingService.setBetydeligAvvikText(
+            kvalitetsvurderingId,
+            input.value,
+            innloggetSaksbehandler
+        )
     }
 }

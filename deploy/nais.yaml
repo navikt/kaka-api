@@ -50,6 +50,21 @@ spec:
     application:
       enabled: true
       tenant: {{tenant}}
+      claims:
+        groups:
+          - id: {{ROLE_KLAGE_SAKSBEHANDLER}}
+          - id: {{ROLE_KLAGE_FAGANSVARLIG}}
+          - id: {{ROLE_KLAGE_LEDER}}
+          - id: {{ROLE_KLAGE_MERKANTIL}}
+          - id: {{ROLE_KLAGE_FORTROLIG}}
+          - id: {{ROLE_KLAGE_STRENGT_FORTROLIG}}
+          - id: {{ROLE_KLAGE_EGEN_ANSATT}}
+          - id: {{ROLE_GOSYS_OPPGAVE_BEHANDLER}}
+          {{#if ROLE_ADMIN}}
+          - id: {{ROLE_ADMIN}}
+          {{/if}}
+        extra:
+          - NAVident
   accessPolicy:
     inbound:
       rules:

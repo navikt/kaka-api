@@ -59,5 +59,11 @@ management:
 #  level:
 #    root: debug
 
+no.nav.security.jwt:
+  issuer:
+    aad:
+      discoveryurl: ${AZURE_APP_WELL_KNOWN_URL}
+      accepted_audience: ${AZURE_APP_CLIENT_ID}
+      
 navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id

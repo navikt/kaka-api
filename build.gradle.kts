@@ -5,16 +5,17 @@ val springVersion = "2.5.5"
 val kotlinVersion = "1.5.31"
 val problemSpringWebStartVersion = "0.26.2"
 val springFoxVersion = "3.0.0"
+val tokenValidationVersion = "1.3.9"
 
 val githubUser: String by project
 val githubPassword: String by project
 
 plugins {
-	id("org.springframework.boot") version "2.5.5"
-	id("io.spring.dependency-management") version "1.0.11.RELEASE"
-	id("org.jetbrains.kotlin.plugin.jpa") version "1.5.31"
-	kotlin("jvm") version "1.5.31"
-	kotlin("plugin.spring") version "1.5.31"
+    id("org.springframework.boot") version "2.5.5"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.5.31"
+    kotlin("jvm") version "1.5.31"
+    kotlin("plugin.spring") version "1.5.31"
 }
 
 group = "no.nav.klage"
@@ -22,55 +23,57 @@ version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
-	mavenCentral()
-	maven {
-		url = uri("https://maven.pkg.github.com/navikt/simple-slack-poster")
-		credentials {
-			username = githubUser
-			password = githubPassword
-		}
-	}
+    mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.github.com/navikt/simple-slack-poster")
+        credentials {
+            username = githubUser
+            password = githubPassword
+        }
+    }
 }
 
 apply(plugin = "io.spring.dependency-management")
 
 dependencies {
-	implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
-	implementation("org.springframework.boot:spring-boot-starter:$springVersion")
-	implementation("org.springframework.boot:spring-boot-starter-web:$springVersion")
-	implementation("org.springframework.boot:spring-boot-starter-actuator:$springVersion")
-	implementation("org.springframework.boot:spring-boot-starter-webflux:$springVersion")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")
-	implementation("org.springframework.boot:spring-boot-starter-data-jdbc:$springVersion")
-	implementation("org.zalando:problem-spring-web-starter:$problemSpringWebStartVersion")
-	implementation("io.springfox:springfox-boot-starter:$springFoxVersion")
-	implementation("org.flywaydb:flyway-core")
-	implementation("org.postgresql:postgresql")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("ch.qos.logback:logback-classic")
-	implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
-	implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
-	implementation("com.papertrailapp:logback-syslog4j:1.0.0")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
+    implementation("org.springframework.boot:spring-boot-starter:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-web:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-actuator:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-webflux:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
+    implementation("org.zalando:problem-spring-web-starter:$problemSpringWebStartVersion")
+    implementation("io.springfox:springfox-boot-starter:$springFoxVersion")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.postgresql:postgresql")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("ch.qos.logback:logback-classic")
+    implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
+    implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
+    implementation("com.papertrailapp:logback-syslog4j:1.0.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<KotlinCompile> {
-	kotlinOptions {
-		jvmTarget = "11"
-	}
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
-	testLogging {
-		events("passed", "skipped", "failed")
-	}
+    useJUnitPlatform()
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
 }
 
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
-	this.archiveFileName.set("app.jar")
+    this.archiveFileName.set("app.jar")
 }
 
 kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
