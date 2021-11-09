@@ -1,13 +1,15 @@
 package no.nav.klage.kaka.api.view
 
+import no.nav.klage.kaka.domain.Enhet
 import no.nav.klage.kaka.domain.kodeverk.*
 
 data class KodeverkResponse(
-    val partIdType: List<KodeDto> = PartIdType.values().asList().toDto(),
-    val sakstype: List<KodeDto> = Sakstype.values().asList().toDto(),
-    val tema: List<TemaKode> = getTemaer(),
+    val partIdTyper: List<KodeDto> = PartIdType.values().asList().toDto(),
+    val sakstyper: List<KodeDto> = Sakstype.values().asList().toDto(),
+    val temaer: List<TemaKode> = getTemaer(),
     val utfall: List<KodeDto> = Utfall.values().asList().toDto(),
-    val hjemmel: List<KodeDto> = Hjemmel.values().asList().toDto(),
+    val hjemler: List<KodeDto> = Hjemmel.values().asList().toDto(),
+    val enheter: List<KodeDto> = Enhet.values().asList().toDto(),
 )
 
 fun getTemaer(): List<TemaKode> =
