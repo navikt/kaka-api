@@ -9,7 +9,7 @@ data class KodeverkResponse(
     val utfall: List<Kode> = Utfall.values().asList().toDto(),
     val hjemmel: List<Kode> = Hjemmel.values().asList().toDto(),
     val hjemlerPerTema: List<HjemlerPerTema> = hjemlerPerTema()
-    )
+)
 
 data class KodeDto(override val id: String, override val navn: String, override val beskrivelse: String) : Kode
 
