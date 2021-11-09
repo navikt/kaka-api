@@ -7,45 +7,45 @@ import no.nav.klage.kaka.domain.kodeverk.Utfall
 import java.time.LocalDate
 
 data class KlagerInput(
-    val klager: String
+    val value: String
 )
 
 data class SakstypeInput(
-    val sakstype: Sakstype
+    val value: Sakstype
 )
 
 data class TemaInput(
-    val tema: Tema
+    val value: Tema
 )
 
 data class DatoInput(
-    val dato: LocalDate
+    val value: LocalDate
 )
 
 data class VedtaksinstansEnhetInput(
-    val enhet: String
+    val value: String
 )
 
 data class UtfallInput(
-    val utfall: Utfall
+    val value: Utfall
 )
 
 data class HjemlerInput(
-    val hjemler: Set<String>?
+    val value: Set<String>?
 )
 
 data class BooleanInput(
-    val selected: Boolean
+    val value: Boolean
 )
 
 data class TextInput(
-    val text: String
+    val value: String
 )
 
 data class RadioValgInput(
-    val selection: Kvalitetsvurdering.RadioValg
+    val value: Kvalitetsvurdering.RadioValg
 )
 
 data class RadioValgRaadgivendeLegeInput(
-    val selection: Kvalitetsvurdering.RadioValgRaadgivendeLege
+    val value: Kvalitetsvurdering.RadioValgRaadgivendeLege
 )

@@ -2,7 +2,6 @@ package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.*
-import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kodeverk.Hjemmel
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.getLogger
@@ -61,7 +60,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setKlager(saksdataId, input.klager, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setKlager(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/sakstype")
@@ -76,7 +75,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setSakstype(saksdataId, input.sakstype, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setSakstype(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/tema")
@@ -91,7 +90,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setTema(saksdataId, input.tema, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setTema(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/mottattvedtaksinstans")
@@ -106,7 +105,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setMottattVedtaksinstans(saksdataId, input.dato, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setMottattVedtaksinstans(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/vedtaksinstansenhet")
@@ -121,7 +120,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setVedtaksinstansEnhet(saksdataId, input.enhet, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setVedtaksinstansEnhet(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/mottattklageinstans")
@@ -136,7 +135,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setMottattKlageinstans(saksdataId, input.dato, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setMottattKlageinstans(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
 
@@ -152,7 +151,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setUtfall(saksdataId, input.utfall, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setUtfall(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/hjemler")
@@ -169,7 +168,7 @@ class SaksdataController(
 
         return saksdataService.setHjemler(
             saksdataId,
-            input.hjemler?.map { Hjemmel.of(it) }?.toSet() ?: emptySet(),
+            input.value?.map { Hjemmel.of(it) }?.toSet() ?: emptySet(),
             innloggetSaksbehandler
         ).toSaksdataView()
     }
