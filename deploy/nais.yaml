@@ -50,6 +50,10 @@ spec:
     application:
       enabled: true
       tenant: {{tenant}}
+  accessPolicy:
+    inbound:
+      rules:
+        - application: kaka-frontend
   resources:
     limits:
       cpu: 2000m
