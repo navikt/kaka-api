@@ -4,9 +4,11 @@ package no.nav.klage.kaka.api
 import no.nav.klage.kaka.api.view.KodeverkResponse
 import no.nav.klage.kaka.util.getLogger
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@RestController("/metadata")
+@RestController
+@RequestMapping("/metadata")
 class KodeverkController {
 
     companion object {
