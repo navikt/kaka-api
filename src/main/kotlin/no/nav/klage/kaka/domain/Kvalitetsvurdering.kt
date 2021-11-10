@@ -100,7 +100,9 @@ class Kvalitetsvurdering(
     @Column(name = "modified")
     var modified: LocalDateTime = LocalDateTime.now(),
     @Column(name = "utfoerende_saksbehandlerident")
-    var utfoerendeSaksbehandler: String? = null
+    var utfoerendeSaksbehandler: String,
+    @Column(name = "dato_kvalitetsvurdering_avsluttet_av_saksbehandler")
+    var avsluttetAvSaksbehandler: LocalDateTime? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -130,6 +132,81 @@ class Kvalitetsvurdering(
 
     fun verifyAccess(innloggetIdent: String) {
         if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til kvalitetsvurderingen")
+    }
+
+    fun cleanup() {
+        if (!brukIOpplaering) {
+            brukIOpplaeringText = null
+        }
+        if (!betydeligAvvik) {
+            betydeligAvvikText = null
+        }
+
+        if (klageforberedelsenRadioValg == RadioValg.BRA) {
+            sakensDokumenter = false
+            oversittetKlagefristIkkeKommentert = false
+            klagerensRelevanteAnfoerslerIkkeKommentert = false
+            begrunnelseForHvorforAvslagOpprettholdes = false
+            konklusjonen = false
+            oversendelsesbrevetsInnholdIkkeISamsvarMedTema = false
+        }
+
+        if (utredningenRadioValg == RadioValg.BRA) {
+            utredningenAvMedisinskeForhold = false
+            utredningenAvMedisinskeForholdText = null
+            utredningenAvInntektsforhold = false
+            utredningenAvInntektsforholdText = null
+            utredningenAvArbeid = false
+            utredningenAvArbeidText = null
+            arbeidsrettetBrukeroppfoelging = false
+            arbeidsrettetBrukeroppfoelgingText = null
+            utredningenAvAndreAktuelleForholdISaken = false
+            utredningenAvAndreAktuelleForholdISakenText = null
+            utredningenAvEoesProblematikk = false
+            utredningenAvEoesProblematikkText = null
+            veiledningFraNav = false
+            veiledningFraNavText = null
+        } else {
+            if (!utredningenAvMedisinskeForhold) {
+                utredningenAvMedisinskeForholdText = null
+            }
+            if (!utredningenAvInntektsforhold) {
+                utredningenAvInntektsforholdText = null
+            }
+            if (!utredningenAvArbeid) {
+                utredningenAvArbeidText = null
+            }
+            if (!arbeidsrettetBrukeroppfoelging) {
+                arbeidsrettetBrukeroppfoelgingText = null
+            }
+            if (!utredningenAvAndreAktuelleForholdISaken) {
+                utredningenAvAndreAktuelleForholdISakenText = null
+            }
+            if (!utredningenAvEoesProblematikk) {
+                utredningenAvEoesProblematikkText = null
+            }
+            if (!veiledningFraNav) {
+                veiledningFraNavText = null
+            }
+        }
+
+        if (brukAvRaadgivendeLegeRadioValg != null && brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.BRA) {
+            raadgivendeLegeErIkkeBrukt = false
+            raadgivendeLegeErBruktFeilSpoersmaal = false
+            raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = false
+            raadgivendeLegeErBruktMangelfullDokumentasjon = false
+        }
+
+        if (vedtaketRadioValg == RadioValg.BRA) {
+            detErIkkeBruktRiktigHjemmel = false
+            innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = false
+            rettsregelenErBenyttetFeil = false
+            vurderingAvFaktumErMangelfull = false
+            detErFeilIKonkretRettsanvendelse = false
+            begrunnelsenErIkkeKonkretOgIndividuell = false
+            spraaketErIkkeTydelig = false
+            nyeOpplysningerMottatt = false
+        }
     }
 }
 

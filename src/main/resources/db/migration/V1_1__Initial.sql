@@ -68,7 +68,8 @@ create table kaka.kvalitetsvurdering
 
     created                                                  TIMESTAMP NOT NULL,
     modified                                                 TIMESTAMP NOT NULL,
-    utfoerende_saksbehandlerident                            TEXT
+    utfoerende_saksbehandlerident                            TEXT,
+    dato_kvalitetsvurdering_avsluttet_av_saksbehandler       TIMESTAMP
 );
 
 CREATE TABLE kaka.hjemmel

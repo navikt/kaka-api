@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.exceptions.KvalitetsvurderingFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -467,5 +468,33 @@ class KvalitetsvurderingService(
         kvalitetsvurdering.betydeligAvvikText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
+    }
+
+    fun finalizeKvalitetsvurdering(
+        kvalitetsvurderingId: UUID,
+        innloggetSaksbehandler: String
+    ) {
+        val kvalitetsvurdering =
+            getKvalitetsvurderingAndVerifyAccessForEdit(kvalitetsvurderingId, innloggetSaksbehandler)
+        kvalitetsvurdering.cleanup()
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        kvalitetsvurdering.avsluttetAvSaksbehandler = LocalDateTime.now()
+    }
+
+    private fun getKvalitetsvurderingAndVerifyAccess(
+        kvalitetsvurderingId: UUID,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        return kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
+            .also { it.verifyAccess(innloggetSaksbehandler) }
+    }
+
+    private fun getKvalitetsvurderingAndVerifyAccessForEdit(
+        kvalitetsvurderingId: UUID,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        return kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
+            .also { it.verifyAccess(innloggetSaksbehandler) }
+            .also { if (it.avsluttetAvSaksbehandler != null) throw KvalitetsvurderingFinalizedException("Kvalitetsvurderingen er allerede fullført") }
     }
 }
