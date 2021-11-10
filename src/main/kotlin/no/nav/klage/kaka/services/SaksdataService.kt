@@ -99,4 +99,18 @@ class SaksdataService(
     private fun getSaksdataAndVerifyAccess(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         return saksdataRepository.getById(saksdataId).also { it.verifyAccess(innloggetSaksbehandler) }
     }
+
+    fun search(saksbehandlerIdent: String, fullfoert: Boolean, daysSince: Int?): List<Saksdata> {
+        return if (fullfoert) {
+            val dateFrom = LocalDate.now().atStartOfDay().minusDays(daysSince?.toLong() ?: 7)
+            saksdataRepository.findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerGreaterThanEqualOrderByCreated(
+                saksbehandlerIdent,
+                dateFrom
+            )
+        } else {
+            saksdataRepository.findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerIsNullOrderByCreated(
+                saksbehandlerIdent
+            )
+        }
+    }
 }
