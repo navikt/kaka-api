@@ -54,7 +54,7 @@ class Saksdata(
     ) {
 
     override fun toString(): String {
-        return "Behandling(id=$id, " +
+        return "Saksdata(id=$id, " +
                 "modified=$modified, " +
                 "created=$created)"
     }
