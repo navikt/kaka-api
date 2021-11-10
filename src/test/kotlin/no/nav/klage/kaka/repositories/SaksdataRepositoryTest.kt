@@ -32,6 +32,9 @@ class SaksdataRepositoryTest {
     @Autowired
     lateinit var saksdataRepository: SaksdataRepository
 
+    @Autowired
+    lateinit var kvalitetsvurderingRepository: KvalitetsvurderingRepository
+
     @Test
     fun `add saksdata works`() {
         val saksdata = Saksdata(
@@ -110,6 +113,35 @@ class SaksdataRepositoryTest {
                 utfoerendeSaksbehandler
             )
         assertThat(paagaaende).hasSize(2)
+    }
+
+    @Test
+    fun `delete saksdata (and belonging vurdering) works`() {
+        val saksdata = Saksdata(
+            utfoerendeSaksbehandler = "abc123",
+            kvalitetsvurdering = Kvalitetsvurdering(
+                utfoerendeSaksbehandler = "abc123"
+            )
+        )
+
+        saksdataRepository.save(saksdata)
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        var foundSaksdata = saksdataRepository.findById(saksdata.id)
+        assertThat(foundSaksdata.get()).isEqualTo(saksdata)
+
+        assertThat(kvalitetsvurderingRepository.findAll()).hasSize(1)
+
+        saksdataRepository.deleteById(saksdata.id)
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        foundSaksdata = saksdataRepository.findById(saksdata.id)
+        assertThat(foundSaksdata).isEmpty
+        assertThat(kvalitetsvurderingRepository.findAll()).isEmpty()
     }
 
 }

@@ -114,4 +114,9 @@ class SaksdataService(
             )
         }
     }
+
+    fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
+        getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
+        saksdataRepository.deleteById(saksdataId)
+    }
 }
