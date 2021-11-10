@@ -56,7 +56,7 @@ class SaksdataController(
         return saksdataService.createSaksdata(innloggetSaksbehandler).toSaksdataView()
     }
 
-    @PutMapping("/{id}/sakenGjelder")
+    @PutMapping("/{id}/sakengjelder")
     fun setSakenGjelder(
         @PathVariable("id") saksdataId: UUID,
         @RequestBody input: SakenGjelderInput
