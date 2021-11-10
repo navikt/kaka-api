@@ -56,20 +56,20 @@ class SaksdataController(
         return saksdataService.createSaksdata(innloggetSaksbehandler).toSaksdataView()
     }
 
-    @PutMapping("/{id}/klager")
-    fun setKlager(
+    @PutMapping("/{id}/sakenGjelder")
+    fun setSakenGjelder(
         @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: KlagerInput
+        @RequestBody input: SakenGjelderInput
     ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
-            ::setKlager.name,
+            ::setSakenGjelder.name,
             innloggetSaksbehandler,
             saksdataId,
             logger
         )
 
-        return saksdataService.setKlager(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.setSakenGjelder(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/sakstype")

@@ -1,12 +1,9 @@
 package no.nav.klage.kaka.api.view
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
-import no.nav.klage.kaka.domain.kodeverk.Sakstype
-import no.nav.klage.kaka.domain.kodeverk.Tema
-import no.nav.klage.kaka.domain.kodeverk.Utfall
 import java.time.LocalDate
 
-data class KlagerInput(
+data class SakenGjelderInput(
     val value: String
 )
 

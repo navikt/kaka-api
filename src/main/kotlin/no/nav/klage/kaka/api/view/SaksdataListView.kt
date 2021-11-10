@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.api.view
 
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.Sakstype
 import java.time.LocalDateTime
 import java.util.*
 
@@ -12,7 +11,7 @@ data class SaksdataListView(
 data class SaksdataSearchHitView (
     val id: UUID,
     var sakenGjelder: String? = null,
-    var sakstype: Sakstype? = null,
+    var sakstype: String? = null,
     var tema: String? = null,
     var utfall: String? = null,
     var hjemler: List<String> = emptyList(),
@@ -25,7 +24,7 @@ fun Saksdata.toSaksdataSearchHitView(): SaksdataSearchHitView {
     return SaksdataSearchHitView(
         id = id,
         sakenGjelder = klager,
-        sakstype = sakstype,
+        sakstype = sakstype?.id,
         tema = tema?.id,
         utfall = utfall?.id,
         hjemler = hjemler.map { it.id },
