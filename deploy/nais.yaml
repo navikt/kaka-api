@@ -65,6 +65,7 @@ spec:
           {{/if}}
         extra:
           - NAVident
+          - azp_name
   accessPolicy:
     inbound:
       rules:

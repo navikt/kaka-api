@@ -18,4 +18,18 @@ class TokenUtil(private val tokenValidationContextHolder: TokenValidationContext
         tokenValidationContextHolder.tokenValidationContext.getJwtToken(SecurityConfig.ISSUER_AAD)
             .jwtTokenClaims?.get("NAVident")?.toString()
             ?: throw RuntimeException("Ident not found in token")
+
+    //Brukes ikke per nå:
+    fun isMaskinTilMaskinToken(): Boolean {
+        return getClaim("sub") == getClaim("oid")
+    }
+
+    fun getCallingApplication(): String {
+        //azp_name er på formen <dev-gcp:some-team:some-consumer>, så vi returnerer her noe ala klage:kabal-api
+        return getClaim("azp_name").orEmpty().replace("dev-gcp:", "").replace("prod-gcp:", "")
+    }
+
+    private fun getClaim(name: String): String? =
+        tokenValidationContextHolder.tokenValidationContext.getJwtToken(SecurityConfig.ISSUER_AAD)
+            .jwtTokenClaims?.getStringClaim(name)
 }
