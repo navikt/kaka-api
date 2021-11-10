@@ -8,6 +8,7 @@ val springFoxVersion = "3.0.0"
 val tokenValidationVersion = "1.3.9"
 val archunitVersion = "0.19.0"
 val testContainersVersion = "1.15.1"
+val mockkVersion = "1.10.5"
 
 val githubUser: String by project
 val githubPassword: String by project
@@ -64,6 +65,7 @@ dependencies {
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
     testImplementation("org.testcontainers:postgresql:$testContainersVersion")
     testImplementation("com.tngtech.archunit:archunit-junit5:$archunitVersion")
+    testImplementation("io.mockk:mockk:$mockkVersion")
 }
 
 tasks.withType<KotlinCompile> {

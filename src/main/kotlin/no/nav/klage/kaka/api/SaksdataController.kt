@@ -43,6 +43,21 @@ class SaksdataController(
         return saksdataService.getSaksdata(saksdataId, innloggetSaksbehandler).toSaksdataView()
     }
 
+    @DeleteMapping("/{id}")
+    fun deleteSaksdata(
+        @PathVariable("id") saksdataId: UUID
+    ) {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::deleteSaksdata.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        saksdataService.deleteSaksdata(saksdataId, innloggetSaksbehandler)
+    }
+
     @PostMapping
     fun createSaksdata(): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
