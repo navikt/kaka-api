@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.time.LocalDateTime
+import java.util.*
 
 @ActiveProfiles("local")
 @DataJpaTest
@@ -39,9 +40,7 @@ class SaksdataRepositoryTest {
     fun `add saksdata works`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = "abc123"
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
 
         saksdataRepository.save(saksdata)
@@ -58,35 +57,25 @@ class SaksdataRepositoryTest {
         val utfoerendeSaksbehandler = "abc123"
         val saksdataFullfoertx = Saksdata(
             utfoerendeSaksbehandler = "someoneelse",
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = utfoerendeSaksbehandler
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataFullfoert1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             avsluttetAvSaksbehandler = LocalDateTime.now().minusDays(3),
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = utfoerendeSaksbehandler
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataFullfoert2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             avsluttetAvSaksbehandler = LocalDateTime.now().minusDays(2),
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = utfoerendeSaksbehandler
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataPaagaaende1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = utfoerendeSaksbehandler
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataPaagaaende2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = utfoerendeSaksbehandler
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
 
         saksdataRepository.saveAll(
@@ -119,9 +108,7 @@ class SaksdataRepositoryTest {
     fun `delete saksdata (and belonging vurdering) works`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = "abc123"
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
 
         saksdataRepository.save(saksdata)
@@ -142,6 +129,30 @@ class SaksdataRepositoryTest {
         foundSaksdata = saksdataRepository.findById(saksdata.id)
         assertThat(foundSaksdata).isEmpty
         assertThat(kvalitetsvurderingRepository.findAll()).isEmpty()
+    }
+
+    @Test
+    fun `find one gives null result when no matching saksdata exists`() {
+        val results = saksdataRepository.findOneByKvalitetsvurderingId(UUID.randomUUID())
+        assertThat(results).isNull()
+    }
+
+    @Test
+    fun `find one gives correct result`() {
+        val saksdata = Saksdata(
+            utfoerendeSaksbehandler = "abc123",
+            kvalitetsvurdering = Kvalitetsvurdering()
+        )
+
+        saksdataRepository.save(saksdata)
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val kvalitetsvurderingId = saksdata.kvalitetsvurdering.id
+
+        val results = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
+        assertThat(results).isEqualTo(saksdata)
     }
 
 }

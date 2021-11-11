@@ -65,10 +65,8 @@ create table kaka.kvalitetsvurdering
     bruk_i_opplaering_text                                   TEXT,
     betydelig_avvik                                          BOOLEAN,
     betydelig_avvik_text                                     TEXT,
-
     created                                                  TIMESTAMP NOT NULL,
-    modified                                                 TIMESTAMP NOT NULL,
-    utfoerende_saksbehandlerident                            TEXT
+    modified                                                 TIMESTAMP NOT NULL
 );
 
 CREATE TABLE kaka.hjemmel
