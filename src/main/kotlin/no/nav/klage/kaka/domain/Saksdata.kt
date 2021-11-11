@@ -18,7 +18,7 @@ class Saksdata(
     var sakenGjelder: String? = null,
     @Column(name = "sakstype_id")
     @Convert(converter = SakstypeConverter::class)
-    var sakstype: Sakstype? = Sakstype.KLAGE,
+    var sakstype: Sakstype? = null,
     @Column(name = "tema_id")
     @Convert(converter = TemaConverter::class)
     var tema: Tema? = null,
@@ -47,6 +47,7 @@ class Saksdata(
     var kvalitetsvurdering: Kvalitetsvurdering,
     @Column(name = "dato_saksdata_avsluttet_av_saksbehandler")
     var avsluttetAvSaksbehandler: LocalDateTime? = null,
+    @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
     var modified: LocalDateTime = LocalDateTime.now()
