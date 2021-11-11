@@ -23,7 +23,7 @@ data class SaksdataSearchHitView (
 fun Saksdata.toSaksdataSearchHitView(): SaksdataSearchHitView {
     return SaksdataSearchHitView(
         id = id,
-        sakenGjelder = klager,
+        sakenGjelder = sakenGjelder,
         sakstype = sakstype?.id,
         tema = tema?.id,
         utfall = utfall?.id,

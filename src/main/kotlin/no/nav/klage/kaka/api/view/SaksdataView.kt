@@ -25,7 +25,7 @@ data class SaksdataView (
 fun Saksdata.toSaksdataView(): SaksdataView {
     return SaksdataView(
         id = id,
-        sakenGjelder = klager,
+        sakenGjelder = sakenGjelder,
         sakstype = sakstype?.id,
         tema = tema?.id,
         mottattVedtaksinstans = mottattVedtaksinstans,
