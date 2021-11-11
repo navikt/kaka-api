@@ -13,11 +13,17 @@ class KvalitetsvurderingService(
     private val kvalitetsvurderingRepository: KvalitetsvurderingRepository
 ) {
 
+    fun createKvalitetsvurdering(): Kvalitetsvurdering {
+        return kvalitetsvurderingRepository.save(
+            Kvalitetsvurdering()
+        )
+    }
+
     fun getKvalitetsvurdering(
         kvalitetsvurderingId: UUID,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        return getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        return kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
     }
 
     fun setKlageforberedelsenRadioValg(
@@ -25,7 +31,7 @@ class KvalitetsvurderingService(
         input: Kvalitetsvurdering.RadioValg,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.klageforberedelsenRadioValg = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -36,7 +42,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.sakensDokumenter = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -47,7 +53,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.oversittetKlagefristIkkeKommentert = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -59,7 +65,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.klagerensRelevanteAnfoerslerIkkeKommentert = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -71,7 +77,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -82,7 +88,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.konklusjonen = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -94,7 +100,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.oversendelsesbrevetsInnholdIkkeISamsvarMedTema = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -105,7 +111,7 @@ class KvalitetsvurderingService(
         input: Kvalitetsvurdering.RadioValg,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenRadioValg = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -116,7 +122,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvMedisinskeForhold = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -127,7 +133,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvMedisinskeForholdText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -138,7 +144,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvInntektsforhold = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -149,7 +155,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvInntektsforholdText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -160,7 +166,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvArbeid = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -171,7 +177,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvArbeidText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -182,7 +188,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.arbeidsrettetBrukeroppfoelging = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -193,7 +199,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.arbeidsrettetBrukeroppfoelgingText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -204,7 +210,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -215,7 +221,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvAndreAktuelleForholdISakenText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -226,7 +232,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvEoesProblematikk = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -237,7 +243,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.utredningenAvEoesProblematikkText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -248,7 +254,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.veiledningFraNav = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -259,7 +265,7 @@ class KvalitetsvurderingService(
         input: Kvalitetsvurdering.RadioValgRaadgivendeLege,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -270,7 +276,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.veiledningFraNavText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -281,7 +287,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.raadgivendeLegeErIkkeBrukt = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -292,7 +298,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -303,7 +309,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -314,7 +320,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -325,7 +331,7 @@ class KvalitetsvurderingService(
         input: Kvalitetsvurdering.RadioValg,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.vedtaketRadioValg = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -336,7 +342,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.detErIkkeBruktRiktigHjemmel = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -347,7 +353,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -358,7 +364,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.rettsregelenErBenyttetFeil = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -369,7 +375,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.vurderingAvFaktumErMangelfull = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -380,7 +386,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.detErFeilIKonkretRettsanvendelse = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -391,7 +397,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -402,7 +408,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.spraaketErIkkeTydelig = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -413,7 +419,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.nyeOpplysningerMottatt = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -424,7 +430,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.brukIOpplaering = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -435,7 +441,7 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.brukIOpplaeringText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -446,7 +452,7 @@ class KvalitetsvurderingService(
         input: Boolean,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.betydeligAvvik = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
@@ -457,18 +463,9 @@ class KvalitetsvurderingService(
         input: String,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyAccess(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.betydeligAvvikText = input
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
-    }
-
-    private fun getKvalitetsvurderingAndVerifyAccess(
-        kvalitetsvurderingId: UUID,
-        innloggetSaksbehandler: String
-    ): Kvalitetsvurdering {
-        return kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
-            .also { it.verifyAccess(innloggetSaksbehandler) }
-
     }
 }

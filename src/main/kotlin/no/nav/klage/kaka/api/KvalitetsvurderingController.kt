@@ -30,7 +30,7 @@ class KvalitetsvurderingController(
     }
 
     @GetMapping
-    fun test(
+    fun getKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()

@@ -100,7 +100,7 @@ class Kvalitetsvurdering(
     @Column(name = "modified")
     var modified: LocalDateTime = LocalDateTime.now(),
     @Column(name = "utfoerende_saksbehandlerident")
-    var utfoerendeSaksbehandler: String
+    var utfoerendeSaksbehandler: String? = null
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

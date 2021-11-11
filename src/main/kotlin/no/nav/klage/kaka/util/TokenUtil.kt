@@ -25,8 +25,8 @@ class TokenUtil(private val tokenValidationContextHolder: TokenValidationContext
     }
 
     fun getCallingApplication(): String {
-        //azp_name er på formen <dev-gcp:some-team:some-consumer>, så vi returnerer her noe ala klage:kabal-api
-        return getClaim("azp_name").orEmpty().replace("dev-gcp:", "").replace("prod-gcp:", "")
+        //azp_name er på formen <dev-gcp:some-team:some-consumer>
+        return getClaim("azp_name").orEmpty()
     }
 
     private fun getClaim(name: String): String? =

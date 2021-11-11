@@ -23,7 +23,8 @@ class OpenApiConfig {
             .tags(
                 Tag("kaka-api:saksdata", "API for KAKA Saksdata"),
                 Tag("kaka-api:kvalitet", "API for KAKA Kvalitetsvurdering"),
-                Tag("kaka-api:metadata", "API for KAKA Metadata")
+                Tag("kaka-api:metadata", "API for KAKA Metadata"),
+                Tag("kaka-api:kabal-kvalitet", "API for KAKA Kvalitetsvurdering, brukt fra kabal-api")
             )
     }
 
