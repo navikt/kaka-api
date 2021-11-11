@@ -70,6 +70,8 @@ spec:
     inbound:
       rules:
         - application: kaka-frontend
+        - application: kabal-frontend
+        - application: kabal-api
   resources:
     limits:
       cpu: 2000m
