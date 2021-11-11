@@ -20,7 +20,7 @@ spring:
     password: ${NAIS_DATABASE_KAKA_API_KAKA_API_PASSWORD}
   flyway:
     enabled: true
-    clean-on-validation-error: true
+    clean-on-validation-error: false
     schemas: flyway_history_schema,kaka
   jpa:
     open-in-view: false
