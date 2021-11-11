@@ -1,7 +1,9 @@
 package no.nav.klage.kaka.config.problem
 
+import no.nav.klage.kaka.exceptions.KvalitetsvurderingFinalizedException
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.MissingTilgangException
+import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -30,5 +32,18 @@ interface KakaExceptionAdviceTrait : AdviceTrait {
     ): ResponseEntity<Problem> =
         create(Status.FORBIDDEN, ex, request)
 
+    @ExceptionHandler
+    fun handleKvalitetsvurderingFinalizedException(
+        ex: KvalitetsvurderingFinalizedException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem> =
+        create(Status.FORBIDDEN, ex, request)
+
+    @ExceptionHandler
+    fun handleSaksdataFinalizedException(
+        ex: SaksdataFinalizedException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem> =
+        create(Status.FORBIDDEN, ex, request)
 }
 

@@ -15,4 +15,6 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
         saksbehandlerIdent: String,
         fromDate: LocalDateTime
     ): List<Saksdata>
+
+    fun findOneByKvalitetsvurderingId(kvalitetsvurderingId: UUID): Saksdata?
 }
