@@ -15,15 +15,14 @@ internal class SaksdataServiceTest {
     @Test
     fun `throws exception if not allowed to delete`() {
         val saksdataRepository = mockk<SaksdataRepository>()
+        val kvalitetsvurderingService = mockk<KvalitetsvurderingService>()
 
         every { saksdataRepository.getById(any()) } returns Saksdata(
             utfoerendeSaksbehandler = "abc123",
-            kvalitetsvurdering = Kvalitetsvurdering(
-                utfoerendeSaksbehandler = "abc123"
-            )
+            kvalitetsvurdering = Kvalitetsvurdering()
         )
 
-        val saksdataService = SaksdataService(saksdataRepository)
+        val saksdataService = SaksdataService(saksdataRepository, kvalitetsvurderingService)
 
         assertThrows<MissingTilgangException> {
             saksdataService.deleteSaksdata(saksdataId = UUID.randomUUID(), innloggetSaksbehandler = "otherIdent")
