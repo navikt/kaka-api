@@ -1,17 +1,17 @@
 create table kaka.saksdata
 (
-    id                                        UUID PRIMARY KEY,
-    klager                                    TEXT,
-    sakstype_id                               TEXT,
-    tema_id                                   TEXT,
-    dato_mottatt_vedtaksinstans               DATE,
-    vedtaksinstans_enhet                      TEXT,
-    dato_mottatt_klageinstans                 DATE,
-    utfall_id                                 TEXT,
-    utfoerende_saksbehandlerident             TEXT,
+    id                                       UUID PRIMARY KEY,
+    saken_gjelder                            TEXT,
+    sakstype_id                              TEXT,
+    tema_id                                  TEXT,
+    dato_mottatt_vedtaksinstans              DATE,
+    vedtaksinstans_enhet                     TEXT,
+    dato_mottatt_klageinstans                DATE,
+    utfall_id                                TEXT,
+    utfoerende_saksbehandlerident            TEXT,
     dato_saksdata_avsluttet_av_saksbehandler TIMESTAMP,
-    created                                   TIMESTAMP NOT NULL,
-    modified                                  TIMESTAMP NOT NULL
+    created                                  TIMESTAMP NOT NULL,
+    modified                                 TIMESTAMP NOT NULL
 );
 
 create table kaka.kvalitetsvurdering
@@ -73,7 +73,7 @@ create table kaka.kvalitetsvurdering
 
 CREATE TABLE kaka.hjemmel
 (
-    id           TEXT NOT NULL,
+    id          TEXT NOT NULL,
     saksdata_id UUID NOT NULL,
     PRIMARY KEY (id, saksdata_id),
     CONSTRAINT fk_hjemmel_saksdata

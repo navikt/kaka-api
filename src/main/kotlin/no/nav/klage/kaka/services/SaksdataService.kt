@@ -33,10 +33,9 @@ class SaksdataService(
         )
     }
 
-    //TODO bytte fra klager til sakenGjelder innover i koden
-    fun setSakenGjelder(saksdataId: UUID, klager: String, innloggetSaksbehandler: String): Saksdata {
+    fun setSakenGjelder(saksdataId: UUID, sakenGjelder: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
-        saksdata.klager = klager
+        saksdata.sakenGjelder = sakenGjelder
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }

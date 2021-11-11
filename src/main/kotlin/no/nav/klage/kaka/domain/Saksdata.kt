@@ -14,8 +14,8 @@ import javax.persistence.*
 class Saksdata(
     @Id
     val id: UUID = UUID.randomUUID(),
-    @Column(name = "klager")
-    var klager: String? = null,
+    @Column(name = "saken_gjelder")
+    var sakenGjelder: String? = null,
     @Column(name = "sakstype_id")
     @Convert(converter = SakstypeConverter::class)
     var sakstype: Sakstype? = Sakstype.KLAGE,
