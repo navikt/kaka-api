@@ -32,7 +32,7 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         vedtaksinstansEnhet = vedtaksinstansEnhet,
         mottattKlageinstans = mottattKlageinstans,
         utfall = utfall?.id,
-        hjemler = hjemler.map { it.id },
+        hjemler = hjemler?.map { it.id } ?: emptyList(),
         utfoerendeSaksbehandler = utfoerendeSaksbehandler,
         kvalitetsvurderingId = kvalitetsvurdering.id,
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,

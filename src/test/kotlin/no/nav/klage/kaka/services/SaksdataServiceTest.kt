@@ -22,11 +22,10 @@ internal class SaksdataServiceTest {
             kvalitetsvurdering = Kvalitetsvurdering()
         ))
 
-        val saksdataService = SaksdataService(saksdataRepository, kvalitetsvurderingService)
+        val saksdataService = SaksdataService(saksdataRepository, mockk(), kvalitetsvurderingService)
 
         assertThrows<MissingTilgangException> {
             saksdataService.deleteSaksdata(saksdataId = UUID.randomUUID(), innloggetSaksbehandler = "otherIdent")
         }
     }
-
 }

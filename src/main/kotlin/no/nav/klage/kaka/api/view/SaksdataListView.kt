@@ -27,7 +27,7 @@ fun Saksdata.toSaksdataSearchHitView(): SaksdataSearchHitView {
         sakstype = sakstype?.id,
         tema = tema?.id,
         utfall = utfall?.id,
-        hjemler = hjemler.map { it.id },
+        hjemler = hjemler?.map { it.id } ?: emptyList(),
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
         created = created,
         modified = modified

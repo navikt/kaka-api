@@ -478,8 +478,7 @@ class KvalitetsvurderingService(
     }
 
     fun cleanUpKvalitetsvurdering(
-        kvalitetsvurderingId: UUID,
-        innloggetSaksbehandler: String
+        kvalitetsvurderingId: UUID
     ) {
         val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
         kvalitetsvurdering.cleanup()
