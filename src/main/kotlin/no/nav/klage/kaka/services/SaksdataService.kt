@@ -8,6 +8,7 @@ import no.nav.klage.kaka.domain.kodeverk.Tema
 import no.nav.klage.kaka.domain.kodeverk.Utfall
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
+import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +20,7 @@ import java.util.*
 @Transactional
 class SaksdataService(
     private val saksdataRepository: SaksdataRepository,
+    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
     private val kvalitetsvurderingService: KvalitetsvurderingService
 ) {
     fun getSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
@@ -30,6 +32,38 @@ class SaksdataService(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
                 kvalitetsvurdering = Kvalitetsvurdering()
+            )
+        )
+    }
+
+    fun createAndFinalizeSaksdata(
+        sakenGjelder: String,
+        sakstype: Sakstype,
+        tema: Tema,
+        mottattVedtaksinstans: LocalDate,
+        vedtaksinstansEnhet: String,
+        mottattKlageinstans: LocalDate,
+        utfall: Utfall,
+        hjemler: List<Hjemmel>,
+        utfoerendeSaksbehandler: String,
+        kvalitetsvurderingId: UUID,
+        avsluttetAvSaksbehandler: LocalDateTime,
+    ): Saksdata {
+        //TODO: Her skal det skje en validering før noen oppdatering skjer.
+        kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+        return saksdataRepository.save(
+            Saksdata(
+                sakenGjelder = sakenGjelder,
+                sakstype = sakstype,
+                tema = tema,
+                mottattKlageinstans = mottattKlageinstans,
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                mottattVedtaksinstans = mottattVedtaksinstans,
+                utfall = utfall,
+                hjemler = hjemler.toSet(),
+                avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
+                utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
             )
         )
     }

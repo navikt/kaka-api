@@ -39,7 +39,7 @@ class Saksdata(
     )
     @Convert(converter = HjemmelConverter::class)
     @Column(name = "id")
-    var hjemler: MutableSet<Hjemmel> = mutableSetOf(),
+    var hjemler: Set<Hjemmel>? = null,
     @Column(name = "utfoerende_saksbehandlerident")
     var utfoerendeSaksbehandler: String,
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
@@ -51,8 +51,7 @@ class Saksdata(
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
     var modified: LocalDateTime = LocalDateTime.now()
-
-    ) {
+) {
 
     override fun toString(): String {
         return "Saksdata(id=$id, " +

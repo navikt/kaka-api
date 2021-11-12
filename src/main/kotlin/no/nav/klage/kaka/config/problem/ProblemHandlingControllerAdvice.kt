@@ -50,4 +50,3 @@ interface KakaExceptionAdviceTrait : AdviceTrait {
     ): ResponseEntity<Problem> =
         create(Status.FORBIDDEN, ex, request)
 }
-
