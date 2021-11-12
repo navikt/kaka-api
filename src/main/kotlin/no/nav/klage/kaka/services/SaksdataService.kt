@@ -7,6 +7,7 @@ import no.nav.klage.kaka.domain.kodeverk.Sakstype
 import no.nav.klage.kaka.domain.kodeverk.Tema
 import no.nav.klage.kaka.domain.kodeverk.Utfall
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
+import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -98,14 +99,24 @@ class SaksdataService(
     }
 
     private fun getSaksdataAndVerifyAccess(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
-        return saksdataRepository.getById(saksdataId)
-            .also { it.verifyAccess(innloggetSaksbehandler) }
+        val saksdata = saksdataRepository.findById(saksdataId)
+        if (saksdata.isEmpty) {
+            throw SaksdataNotFoundException("Could not find saksdata with id $saksdataId")
+        }
+        return saksdata.get().also {
+            it.verifyAccess(innloggetSaksbehandler)
+        }
     }
 
     private fun getSaksdataAndVerifyAccessForEdit(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
-        return saksdataRepository.getById(saksdataId)
-            .also { it.verifyAccess(innloggetSaksbehandler) }
-            .also { if (it.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException("Saksdataen er allerede fullført") }
+        val saksdata = saksdataRepository.findById(saksdataId)
+        if (saksdata.isEmpty) {
+            throw SaksdataNotFoundException("Could not find saksdata with id $saksdataId")
+        }
+        return saksdata.get().also {
+            it.verifyAccess(innloggetSaksbehandler)
+            if (it.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException("Saksdataen er allerede fullført")
+        }
     }
 
     fun search(saksbehandlerIdent: String, fullfoert: Boolean, daysSince: Int?): List<Saksdata> {

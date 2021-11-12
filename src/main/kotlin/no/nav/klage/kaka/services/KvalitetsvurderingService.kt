@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
@@ -26,7 +27,11 @@ class KvalitetsvurderingService(
         kvalitetsvurderingId: UUID,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
-        return kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
+        if (kvalitetsvurdering.isEmpty) {
+            throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
+        }
+        return kvalitetsvurdering.get()
     }
 
     fun setKlageforberedelsenRadioValg(
@@ -484,7 +489,11 @@ class KvalitetsvurderingService(
     private fun getKvalitetsvurderingAndVerifyNotFinalized(
         kvalitetsvurderingId: UUID
     ): Kvalitetsvurdering {
-        return kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
+        val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
+        if (kvalitetsvurdering.isEmpty) {
+            throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
+        }
+        return kvalitetsvurdering.get()
             .also {
                 val saksdata = saksdataRepository.findOneByKvalitetsvurderingId(it.id)
                 if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
