@@ -125,8 +125,8 @@ class SaksdataService(
     }
 
     fun setAvsluttetAvSaksbehandler(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
-        //TODO: Valider alt innholdet her.
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        saksdata.validate()
         kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurdering.id)
         saksdata.avsluttetAvSaksbehandler = LocalDateTime.now()
         saksdata.modified = LocalDateTime.now()

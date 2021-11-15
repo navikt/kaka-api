@@ -35,7 +35,7 @@ class KvalitetsvurderingController(
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
-            ::setKlageforberedelsenRadioValg.name,
+            ::getKvalitetsvurdering.name,
             innloggetSaksbehandler,
             kvalitetsvurderingId,
             logger
