@@ -2,6 +2,7 @@ package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.domain.kodeverk.*
 import no.nav.klage.kaka.exceptions.MissingTilgangException
+import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -76,5 +77,73 @@ class Saksdata(
 
     fun verifyAccess(innloggetIdent: String) {
         if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til saksdataen")
+    }
+
+    fun validate() {
+        val result = mutableListOf<ValidationErrorWithDetailsException.InvalidProperty>()
+
+        if (sakenGjelder == null) {
+            result.add(
+                createMustBeFilledValidationError(::sakenGjelder.name)
+            )
+        }
+
+        if (sakstype == null) {
+            result.add(
+                createMustBeFilledValidationError(::sakstype.name)
+            )
+        }
+
+        if (tema == null) {
+            result.add(
+                createMustBeFilledValidationError(::tema.name)
+            )
+        }
+
+        if (mottattVedtaksinstans == null) {
+            result.add(
+                createMustBeFilledValidationError(::mottattVedtaksinstans.name)
+            )
+        }
+
+        if (vedtaksinstansEnhet == null) {
+            result.add(
+                createMustBeFilledValidationError(::vedtaksinstansEnhet.name)
+            )
+        }
+
+        if (mottattKlageinstans == null) {
+            result.add(
+                createMustBeFilledValidationError(::mottattKlageinstans.name)
+            )
+        }
+
+        if (utfall == null) {
+            result.add(
+                createMustBeFilledValidationError(::utfall.name)
+            )
+        } else if (utfall != Utfall.TRUKKET) {
+            if (hjemler.isNullOrEmpty()) {
+                result.add(
+                    createMustBeFilledValidationError(::hjemler.name)
+                )
+            }
+        }
+
+        result.addAll(kvalitetsvurdering.getInvalidProperties(tema))
+
+        if (result.size > 0) {
+            throw ValidationErrorWithDetailsException(
+                title = "Validation error",
+                invalidProperties = result
+            )
+        }
+    }
+
+    private fun createMustBeFilledValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
+        return ValidationErrorWithDetailsException.InvalidProperty(
+            field = variableName,
+            reason = "$variableName må være fylt ut."
+        )
     }
 }

@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.exceptions.MissingTilgangException
+import no.nav.klage.kaka.domain.kodeverk.Tema
+import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
@@ -199,6 +200,54 @@ class Kvalitetsvurdering(
             spraaketErIkkeTydelig = false
             nyeOpplysningerMottatt = false
         }
+    }
+
+    fun getInvalidProperties(tema: Tema?): List<ValidationErrorWithDetailsException.InvalidProperty> {
+        val raadgivendeLegeTema = listOf(
+            Tema.GRU,
+            Tema.SYK,
+            Tema.OMS,
+            Tema.HJE,
+            Tema.AAP,
+            Tema.UFO,
+            Tema.YRK,
+            Tema.FOR
+        )
+
+        val result = mutableListOf<ValidationErrorWithDetailsException.InvalidProperty>()
+
+        if (klageforberedelsenRadioValg == null) {
+            result.add(
+                createRadioValgValidationError(::klageforberedelsenRadioValg.name)
+            )
+        }
+
+        if (utredningenRadioValg == null) {
+            result.add(
+                createRadioValgValidationError(::utredningenRadioValg.name)
+            )
+        }
+
+        if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
+            result.add(
+                createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+            )
+        }
+
+        if (vedtaketRadioValg == null) {
+            result.add(
+                createRadioValgValidationError(::vedtaketRadioValg.name)
+            )
+        }
+
+        return result
+    }
+
+    private fun createRadioValgValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
+        return ValidationErrorWithDetailsException.InvalidProperty(
+            field = variableName,
+            reason = "$variableName må være valgt."
+        )
     }
 }
 
