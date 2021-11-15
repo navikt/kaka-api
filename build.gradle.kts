@@ -5,6 +5,7 @@ val springVersion = "2.5.5"
 val kotlinVersion = "1.5.31"
 val problemSpringWebStartVersion = "0.26.2"
 val springFoxVersion = "3.0.0"
+val springSleuthVersion = "3.0.0"
 val tokenValidationVersion = "1.3.9"
 val archunitVersion = "0.19.0"
 val testContainersVersion = "1.15.1"
@@ -59,6 +60,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
+    implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
