@@ -49,11 +49,11 @@ class KabalKvalitetsvurderingController(
     @GetMapping("/kvalitetsvurdering/{id}/validationerrors")
     fun getValidationErrors(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestParam tema: String
+        @RequestParam temaId: String
     ): ValidationErrors {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         val kvalitetsvurdering = kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
-        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(Tema.of(tema)).map {
+        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(Tema.of(temaId)).map {
             ValidationErrors.InvalidProperty(
                 field = it.field,
                 reason = it.reason
