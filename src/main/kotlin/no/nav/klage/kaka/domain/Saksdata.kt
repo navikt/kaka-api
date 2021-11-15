@@ -123,7 +123,7 @@ class Saksdata(
                 createMustBeFilledValidationError(::utfall.name)
             )
         } else if (utfall != Utfall.TRUKKET) {
-            if (hjemler == null || hjemler!!.isEmpty()) {
+            if (hjemler.isNullOrEmpty()) {
                 result.add(
                     createMustBeFilledValidationError(::hjemler.name)
                 )
