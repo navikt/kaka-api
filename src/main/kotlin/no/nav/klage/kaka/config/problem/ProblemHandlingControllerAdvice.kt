@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.context.request.NativeWebRequest
 import org.zalando.problem.Problem
 import org.zalando.problem.Status
+import org.zalando.problem.ThrowableProblem
 import org.zalando.problem.spring.web.advice.AdviceTrait
 import org.zalando.problem.spring.web.advice.ProblemHandling
 
@@ -49,4 +50,19 @@ interface KakaExceptionAdviceTrait : AdviceTrait {
         request: NativeWebRequest
     ): ResponseEntity<Problem> =
         create(Status.FORBIDDEN, ex, request)
+
+    @ExceptionHandler
+    fun handleValidationErrorWithDetailsException(
+        ex: ValidationErrorWithDetailsException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem> =
+        create(ex, createValidationProblem(ex), request)
+
+    private fun createValidationProblem(ex: ValidationErrorWithDetailsException): ThrowableProblem {
+        return Problem.builder()
+            .withStatus(Status.BAD_REQUEST)
+            .withTitle(ex.title)
+            .with("invalid-properties", ex.invalidProperties)
+            .build()
+    }
 }

@@ -11,3 +11,9 @@ class MissingTilgangException(msg: String) : RuntimeException(msg)
 class KvalitetsvurderingFinalizedException(msg: String) : RuntimeException(msg)
 
 class SaksdataFinalizedException(msg: String) : RuntimeException(msg)
+
+class ValidationErrorWithDetailsException(val title: String, val invalidProperties: List<InvalidProperty>) :
+    RuntimeException() {
+
+    data class InvalidProperty(val field: String, val reason: String)
+}
