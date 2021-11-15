@@ -220,24 +220,77 @@ class Kvalitetsvurdering(
             result.add(
                 createRadioValgValidationError(::klageforberedelsenRadioValg.name)
             )
+        } else if (klageforberedelsenRadioValg == RadioValg.MANGELFULLT) {
+            if (
+                !sakensDokumenter &&
+                !oversittetKlagefristIkkeKommentert &&
+                !klagerensRelevanteAnfoerslerIkkeKommentert &&
+                !begrunnelseForHvorforAvslagOpprettholdes &&
+                !konklusjonen &&
+                !oversendelsesbrevetsInnholdIkkeISamsvarMedTema
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::klageforberedelsenRadioValg.name)
+                )
+            }
         }
 
         if (utredningenRadioValg == null) {
             result.add(
                 createRadioValgValidationError(::utredningenRadioValg.name)
             )
+        } else if (utredningenRadioValg == RadioValg.MANGELFULLT) {
+            if (
+                !utredningenAvMedisinskeForhold &&
+                !utredningenAvInntektsforhold &&
+                !utredningenAvArbeid &&
+                !arbeidsrettetBrukeroppfoelging &&
+                !utredningenAvAndreAktuelleForholdISaken &&
+                !utredningenAvEoesProblematikk &&
+                !veiledningFraNav
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::utredningenRadioValg.name)
+                )
+            }
         }
 
         if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
             result.add(
                 createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
             )
+        } else if ((raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT)) {
+            if (
+                !raadgivendeLegeErIkkeBrukt &&
+                !raadgivendeLegeErBruktFeilSpoersmaal &&
+                !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
+                !raadgivendeLegeErBruktMangelfullDokumentasjon
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                )
+            }
         }
 
         if (vedtaketRadioValg == null) {
             result.add(
                 createRadioValgValidationError(::vedtaketRadioValg.name)
             )
+        } else if (vedtaketRadioValg == RadioValg.MANGELFULLT) {
+            if (
+                !detErIkkeBruktRiktigHjemmel &&
+                !innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet &&
+                !rettsregelenErBenyttetFeil &&
+                !vurderingAvFaktumErMangelfull &&
+                !detErFeilIKonkretRettsanvendelse &&
+                !begrunnelsenErIkkeKonkretOgIndividuell &&
+                !spraaketErIkkeTydelig &&
+                !nyeOpplysningerMottatt
+            ){
+                result.add(
+                    createMissingChecksValidationError(::vedtaketRadioValg.name)
+                )
+            }
         }
 
         return result
@@ -247,6 +300,13 @@ class Kvalitetsvurdering(
         return ValidationErrorWithDetailsException.InvalidProperty(
             field = variableName,
             reason = "$variableName må være valgt."
+        )
+    }
+
+    private fun createMissingChecksValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
+        return ValidationErrorWithDetailsException.InvalidProperty(
+            field = variableName,
+            reason = "Når $variableName er satt til Mangelfullt må noen av undervalgene være valgt."
         )
     }
 }
