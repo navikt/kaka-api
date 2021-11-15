@@ -50,7 +50,7 @@ internal class KvalitetsvurderingTest {
             vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
         )
         val results = kvalitetsvurdering.getInvalidProperties(Tema.DAG)
-        assertThat(results).hasSize(1)
+        assertThat(results).hasSize(2)
     }
 
     @Test
@@ -60,6 +60,6 @@ internal class KvalitetsvurderingTest {
             vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
         )
         val results = kvalitetsvurdering.getInvalidProperties(Tema.SYK)
-        assertThat(results).hasSize(2)
+        assertThat(results).hasSize(3)
     }
 }
