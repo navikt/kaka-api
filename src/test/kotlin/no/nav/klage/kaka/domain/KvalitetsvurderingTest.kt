@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.domain.kodeverk.Tema
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 import org.junit.jupiter.api.Assertions.*
@@ -38,8 +39,8 @@ internal class KvalitetsvurderingTest {
     @Test
     fun `validation on empty kvalitetsvurdering gives correct number of errors`() {
         val kvalitetsvurdering = Kvalitetsvurdering()
-        val results = kvalitetsvurdering.validate(Tema.DAG)
-        assertTrue(results.size == 3)
+        val results = kvalitetsvurdering.getInvalidProperties(Tema.DAG)
+        assertThat(results).hasSize(3)
     }
 
     @Test
@@ -48,8 +49,8 @@ internal class KvalitetsvurderingTest {
             klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.BRA,
             vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
         )
-        val results = kvalitetsvurdering.validate(Tema.DAG)
-        assertTrue(results.size == 1)
+        val results = kvalitetsvurdering.getInvalidProperties(Tema.DAG)
+        assertThat(results).hasSize(1)
     }
 
     @Test
@@ -58,7 +59,7 @@ internal class KvalitetsvurderingTest {
             klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.BRA,
             vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
         )
-        val results = kvalitetsvurdering.validate(Tema.SYK)
-        assertTrue(results.size == 2)
+        val results = kvalitetsvurdering.getInvalidProperties(Tema.SYK)
+        assertThat(results).hasSize(2)
     }
 }

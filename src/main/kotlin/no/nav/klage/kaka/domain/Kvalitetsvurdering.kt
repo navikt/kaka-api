@@ -202,7 +202,7 @@ class Kvalitetsvurdering(
         }
     }
 
-    fun validate(tema: Tema?): List<ValidationErrorWithDetailsException.InvalidProperty> {
+    fun getInvalidProperties(tema: Tema?): List<ValidationErrorWithDetailsException.InvalidProperty> {
         val raadgivendeLegeTema = listOf(
             Tema.GRU,
             Tema.SYK,

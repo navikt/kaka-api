@@ -130,7 +130,7 @@ class Saksdata(
             }
         }
 
-        result.addAll(kvalitetsvurdering.validate(tema))
+        result.addAll(kvalitetsvurdering.getInvalidProperties(tema))
 
         if (result.size > 0) {
             throw ValidationErrorWithDetailsException(
