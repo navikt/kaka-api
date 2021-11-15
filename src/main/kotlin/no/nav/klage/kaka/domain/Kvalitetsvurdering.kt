@@ -228,7 +228,7 @@ class Kvalitetsvurdering(
             )
         }
 
-        if (tema != null && raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
+        if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
             result.add(
                 createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
             )
