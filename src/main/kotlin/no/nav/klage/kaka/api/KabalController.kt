@@ -3,6 +3,7 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.KabalView
 import no.nav.klage.kaka.api.view.SaksdataInput
+import no.nav.klage.kaka.api.view.ValidationErrors
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.domain.kodeverk.Hjemmel
 import no.nav.klage.kaka.domain.kodeverk.Sakstype
@@ -15,10 +16,8 @@ import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.util.*
 
 @RestController
 @Api(tags = ["kaka-api:kabal-kvalitet"])
@@ -45,6 +44,21 @@ class KabalKvalitetsvurderingController(
         }
         logger.debug("New kvalitetsvurdering is requested by kabal-api")
         return KabalView(kvalitetsvurderingService.createKvalitetsvurdering().id)
+    }
+
+    @GetMapping("/kvalitetsvurdering/{id}/validationerrors")
+    fun getValidationErrors(
+        @PathVariable("id") kvalitetsvurderingId: UUID,
+        @RequestParam tema: String
+    ): ValidationErrors {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        val kvalitetsvurdering = kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(Tema.of(tema)).map {
+            ValidationErrors.InvalidProperty(
+                field = it.field,
+                reason = it.reason
+            )
+        })
     }
 
     @PostMapping("/saksdata")

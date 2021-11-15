@@ -21,3 +21,10 @@ data class SaksdataInput (
     val kvalitetsvurderingId: UUID,
     val avsluttetAvSaksbehandler: LocalDateTime,
 )
+
+data class ValidationErrors(
+    val validationErrors: List<InvalidProperty>
+) {
+    data class InvalidProperty(val field: String, val reason: String)
+}
+
