@@ -73,11 +73,6 @@ enum class Tema(override val id: String, override val navn: String, override val
             return values().firstOrNull { it.id == id }
                 ?: throw IllegalArgumentException("No Tema with $id exists")
         }
-
-        fun fromNavn(navn: String?): Tema {
-            return values().firstOrNull { it.navn == navn }
-                ?: throw IllegalArgumentException("No Tema with $navn exists")
-        }
     }
 }
 
@@ -86,11 +81,16 @@ val enheterPerTema: Map<Tema, List<Kode>> = Tema.values().associateWith {
     listOf(Enhet.NAV_MOSS, Enhet.NAV_XXXX, Enhet.NAV_YYYY)
 }
 
+//TODO: Until we get a defined list
+val enheterPerYtelse: Map<Ytelse, List<Kode>> = Ytelse.values().associateWith {
+    listOf(Enhet.NAV_MOSS, Enhet.NAV_XXXX, Enhet.NAV_YYYY)
+}
+
 @Converter
 class TemaConverter : AttributeConverter<Tema, String?> {
 
     override fun convertToDatabaseColumn(entity: Tema?): String? =
-        entity?.let { it.id }
+        entity?.id
 
     override fun convertToEntityAttribute(id: String?): Tema? =
         id?.let { Tema.of(it) }

@@ -3,6 +3,7 @@ package no.nav.klage.kaka.repositories
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kodeverk.Ytelse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -141,6 +142,7 @@ class SaksdataRepositoryTest {
     fun `find one gives correct result`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
+            ytelse = Ytelse.OMS_OMS,
             kvalitetsvurdering = Kvalitetsvurdering()
         )
 

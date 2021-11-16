@@ -4,7 +4,7 @@ import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.BooleanInput
 import no.nav.klage.kaka.api.view.RadioValgInput
 import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
-import no.nav.klage.kaka.api.view.TextInput
+import no.nav.klage.kaka.api.view.StringInput
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.services.KvalitetsvurderingService
@@ -218,7 +218,7 @@ class KvalitetsvurderingController(
     @PutMapping("/utredningenavmedisinskeforholdtext")
     fun setUtredningenAvMedisinskeForholdText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -258,7 +258,7 @@ class KvalitetsvurderingController(
     @PutMapping("/utredningenavinntektsforholdtext")
     fun setUtredningenAvInntektsforholdText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -298,7 +298,7 @@ class KvalitetsvurderingController(
     @PutMapping("/utredningenavarbeidtext")
     fun setUtredningenAvArbeidText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -338,7 +338,7 @@ class KvalitetsvurderingController(
     @PutMapping("/arbeidsrettetbrukeroppfoelgingtext")
     fun setArbeidsrettetBrukeroppfoelgingText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -378,7 +378,7 @@ class KvalitetsvurderingController(
     @PutMapping("/utredningenavandreaktuelleforholdisakentext")
     fun setUtredningenAvAndreAktuelleForholdISakenText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -418,7 +418,7 @@ class KvalitetsvurderingController(
     @PutMapping("/utredningenaveoesproblematikktext")
     fun setUtredningenAvEoesProblematikkText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -454,7 +454,7 @@ class KvalitetsvurderingController(
     @PutMapping("/veiledningfranavtext")
     fun setVeiledningFraNavText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -766,7 +766,7 @@ class KvalitetsvurderingController(
     @PutMapping("/brukiopplaeringtext")
     fun setBrukIOpplaeringText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
@@ -802,7 +802,7 @@ class KvalitetsvurderingController(
     @PutMapping("/betydeligavviktext")
     fun setBetydeligAvvikText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestBody input: TextInput
+        @RequestBody input: StringInput
     ): Kvalitetsvurdering {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(

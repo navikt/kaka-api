@@ -2,10 +2,7 @@ package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.Hjemmel
-import no.nav.klage.kaka.domain.kodeverk.Sakstype
-import no.nav.klage.kaka.domain.kodeverk.Tema
-import no.nav.klage.kaka.domain.kodeverk.Utfall
+import no.nav.klage.kaka.domain.kodeverk.*
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
@@ -85,6 +82,13 @@ class SaksdataService(
     fun setTema(saksdataId: UUID, tema: Tema, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.tema = tema
+        saksdata.modified = LocalDateTime.now()
+        return saksdata
+    }
+
+    fun setYtelse(saksdataId: UUID, ytelse: Ytelse, innloggetSaksbehandler: String): Saksdata {
+        val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        saksdata.ytelse = ytelse
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }

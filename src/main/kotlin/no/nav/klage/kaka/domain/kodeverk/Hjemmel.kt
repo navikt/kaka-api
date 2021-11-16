@@ -96,6 +96,7 @@ enum class Hjemmel(
     MANGLER("1002", LovKilde.UKJENT, null, "MANGLER", "Hjemmel mangler")
     ;
 
+    //Maybe use against DVH
     fun toSearchableString(): String {
         if (kapittelOgParagraf == null) {
             return lov.name
@@ -135,11 +136,23 @@ val hjemlerPerTema: Map<Tema, List<Hjemmel>> = mapOf(
             + Hjemmel.FTL + Hjemmel.MANGLER
 )
 
+val hjemlerPerYtelse: Map<Ytelse, List<Hjemmel>> = mapOf(
+    Ytelse.OMS_OMS to
+            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
+            + Hjemmel.FTL + Hjemmel.MANGLER,
+    Ytelse.OMS_PLE to
+            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
+            + Hjemmel.FTL + Hjemmel.MANGLER,
+    Ytelse.OMS_OPP to
+            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
+            + Hjemmel.FTL + Hjemmel.MANGLER
+)
+
 @Converter
 class HjemmelConverter : AttributeConverter<Hjemmel, String?> {
 
     override fun convertToDatabaseColumn(entity: Hjemmel?): String? =
-        entity?.let { it.id }
+        entity?.id
 
     override fun convertToEntityAttribute(id: String?): Hjemmel? =
         id?.let { Hjemmel.of(it) }

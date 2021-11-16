@@ -23,6 +23,9 @@ class Saksdata(
     @Column(name = "tema_id")
     @Convert(converter = TemaConverter::class)
     var tema: Tema? = null,
+    @Column(name = "ytelse_id")
+    @Convert(converter = YtelseConverter::class)
+    var ytelse: Ytelse? = null,
     @Column(name = "dato_mottatt_vedtaksinstans")
     var mottattVedtaksinstans: LocalDate? = null,
     @Column(name = "vedtaksinstans_enhet")
@@ -97,6 +100,12 @@ class Saksdata(
         if (tema == null) {
             result.add(
                 createMustBeFilledValidationError(::tema.name)
+            )
+        }
+
+        if (ytelse == null) {
+            result.add(
+                createMustBeFilledValidationError(::ytelse.name)
             )
         }
 

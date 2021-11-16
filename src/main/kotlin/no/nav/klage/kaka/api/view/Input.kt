@@ -3,28 +3,12 @@ package no.nav.klage.kaka.api.view
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import java.time.LocalDate
 
-data class SakenGjelderInput(
+data class StringInput(
     val value: String
 )
 
-data class SakstypeInput(
-    val value: String
-)
-
-data class TemaInput(
-    val value: String
-)
-
-data class DatoInput(
+data class DateInput(
     val value: LocalDate
-)
-
-data class VedtaksinstansEnhetInput(
-    val value: String
-)
-
-data class UtfallInput(
-    val value: String
 )
 
 data class HjemlerInput(
@@ -33,10 +17,6 @@ data class HjemlerInput(
 
 data class BooleanInput(
     val value: Boolean
-)
-
-data class TextInput(
-    val value: String
 )
 
 data class RadioValgInput(
