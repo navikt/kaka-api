@@ -299,14 +299,14 @@ class Kvalitetsvurdering(
     private fun createRadioValgValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
         return ValidationErrorWithDetailsException.InvalidProperty(
             field = variableName,
-            reason = "$variableName må være valgt."
+            reason = "Velg et alternativ."
         )
     }
 
     private fun createMissingChecksValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
         return ValidationErrorWithDetailsException.InvalidProperty(
             field = variableName,
-            reason = "Når $variableName er satt til Mangelfullt må noen av undervalgene være valgt."
+            reason = "Velg minst én."
         )
     }
 }

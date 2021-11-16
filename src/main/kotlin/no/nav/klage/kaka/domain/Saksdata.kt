@@ -93,19 +93,19 @@ class Saksdata(
 
         if (sakstype == null) {
             result.add(
-                createMustBeFilledValidationError(::sakstype.name)
+                createMustBeSelectedValidationError(::sakstype.name)
             )
         }
 
         if (tema == null) {
             result.add(
-                createMustBeFilledValidationError(::tema.name)
+                createMustBeSelectedValidationError(::tema.name)
             )
         }
 
         if (ytelse == null) {
             result.add(
-                createMustBeFilledValidationError(::ytelse.name)
+                createMustBeSelectedValidationError(::ytelse.name)
             )
         }
 
@@ -117,7 +117,7 @@ class Saksdata(
 
         if (vedtaksinstansEnhet == null) {
             result.add(
-                createMustBeFilledValidationError(::vedtaksinstansEnhet.name)
+                createMustBeSelectedValidationError(::vedtaksinstansEnhet.name)
             )
         }
 
@@ -129,12 +129,12 @@ class Saksdata(
 
         if (utfall == null) {
             result.add(
-                createMustBeFilledValidationError(::utfall.name)
+                createMustBeSelectedValidationError(::utfall.name)
             )
         } else if (utfall != Utfall.TRUKKET) {
             if (hjemler.isNullOrEmpty()) {
                 result.add(
-                    createMustBeFilledValidationError(::hjemler.name)
+                    createMustBeSelectedValidationError(::hjemler.name)
                 )
             }
         }
@@ -152,7 +152,14 @@ class Saksdata(
     private fun createMustBeFilledValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
         return ValidationErrorWithDetailsException.InvalidProperty(
             field = variableName,
-            reason = "$variableName må være fylt ut."
+            reason = "Må fylles ut."
+        )
+    }
+
+    private fun createMustBeSelectedValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
+        return ValidationErrorWithDetailsException.InvalidProperty(
+            field = variableName,
+            reason = "Må være valgt."
         )
     }
 }
