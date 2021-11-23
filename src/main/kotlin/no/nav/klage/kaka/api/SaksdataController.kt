@@ -101,6 +101,23 @@ class SaksdataController(
             .toSaksdataView()
     }
 
+    @PutMapping("/{id}/sakstypeid")
+    fun setSakstypeId(
+        @PathVariable("id") saksdataId: UUID,
+        @RequestBody input: StringInput
+    ): SaksdataView {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::setSakstypeId.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        return saksdataService.setSakstype(saksdataId, Sakstype.of(input.value), innloggetSaksbehandler)
+            .toSaksdataView()
+    }
+
     @PutMapping("/{id}/tema")
     fun setTema(
         @PathVariable("id") saksdataId: UUID,
@@ -117,6 +134,22 @@ class SaksdataController(
         return saksdataService.setTema(saksdataId, Tema.of(input.value), innloggetSaksbehandler).toSaksdataView()
     }
 
+    @PutMapping("/{id}/temaid")
+    fun setTemaId(
+        @PathVariable("id") saksdataId: UUID,
+        @RequestBody input: StringInput
+    ): SaksdataView {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::setTemaId.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        return saksdataService.setTema(saksdataId, Tema.of(input.value), innloggetSaksbehandler).toSaksdataView()
+    }
+
     @PutMapping("/{id}/ytelse")
     fun setYtelse(
         @PathVariable("id") saksdataId: UUID,
@@ -125,6 +158,22 @@ class SaksdataController(
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setYtelse.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        return saksdataService.setYtelse(saksdataId, Ytelse.of(input.value), innloggetSaksbehandler).toSaksdataView()
+    }
+
+    @PutMapping("/{id}/ytelseid")
+    fun setYtelseId(
+        @PathVariable("id") saksdataId: UUID,
+        @RequestBody input: StringInput
+    ): SaksdataView {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::setYtelseId.name,
             innloggetSaksbehandler,
             saksdataId,
             logger
@@ -199,6 +248,22 @@ class SaksdataController(
         return saksdataService.setUtfall(saksdataId, Utfall.of(input.value), innloggetSaksbehandler).toSaksdataView()
     }
 
+    @PutMapping("/{id}/utfallid")
+    fun setUtfallId(
+        @PathVariable("id") saksdataId: UUID,
+        @RequestBody input: StringInput
+    ): SaksdataView {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::setUtfallId.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        return saksdataService.setUtfall(saksdataId, Utfall.of(input.value), innloggetSaksbehandler).toSaksdataView()
+    }
+
     @PutMapping("/{id}/hjemler")
     fun setHjemler(
         @PathVariable("id") saksdataId: UUID,
@@ -207,6 +272,26 @@ class SaksdataController(
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::setHjemler.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        return saksdataService.setHjemler(
+            saksdataId,
+            input.value?.map { Hjemmel.of(it) }?.toSet() ?: emptySet(),
+            innloggetSaksbehandler
+        ).toSaksdataView()
+    }
+
+    @PutMapping("/{id}/hjemmelidlist")
+    fun setHjemmelIdList(
+        @PathVariable("id") saksdataId: UUID,
+        @RequestBody input: HjemlerInput
+    ): SaksdataView {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::setHjemmelIdList.name,
             innloggetSaksbehandler,
             saksdataId,
             logger
