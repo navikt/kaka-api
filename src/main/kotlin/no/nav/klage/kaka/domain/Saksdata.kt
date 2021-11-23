@@ -95,17 +95,11 @@ class Saksdata(
             )
         }
 
-//        if (tema == null) {
-//            result.add(
-//                createMustBeSelectedValidationError(SaksdataView::temaId.name)
-//            )
-//        }
-//TODO: Reintroduce after testing
-//        if (ytelse == null) {
-//            result.add(
-//                createMustBeSelectedValidationError(SaksdataView::ytelse.name)
-//            )
-//        }
+        if (ytelse == null) {
+            result.add(
+                createMustBeSelectedValidationError(SaksdataView::ytelseId.name)
+            )
+        }
 
         if (mottattVedtaksinstans == null) {
             result.add(
