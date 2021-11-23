@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.domain.kodeverk
 
+import no.nav.klage.kaka.domain.Enhet
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
@@ -18,6 +19,11 @@ enum class Ytelse(override val id: String, override val navn: String, override v
                 ?: throw IllegalArgumentException("No Ytelse with $id exists")
         }
     }
+}
+
+//TODO: Until we get a defined list
+val enheterPerYtelse: Map<Ytelse, List<Kode>> = Ytelse.values().associateWith {
+    listOf(Enhet.NAV_MOSS, Enhet.NAV_XXXX, Enhet.NAV_YYYY)
 }
 
 @Converter
