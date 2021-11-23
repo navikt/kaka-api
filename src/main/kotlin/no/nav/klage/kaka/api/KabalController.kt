@@ -50,7 +50,7 @@ class KabalKvalitetsvurderingController(
     ): ValidationErrors {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         val kvalitetsvurdering = kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
-        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(Tema.of(temaId)).map {
+        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(null).map {
             ValidationErrors.InvalidProperty(
                 field = it.field,
                 reason = it.reason
@@ -71,8 +71,7 @@ class KabalKvalitetsvurderingController(
             saksdataService.createAndFinalizeSaksdata(
                 sakenGjelder = input.sakenGjelder,
                 sakstype = Sakstype.of(input.sakstype),
-                tema = input.tema?.let { Tema.of(it) },
-                ytelse = input.ytelseId?.let { Ytelse.of(it) },
+                ytelse = Ytelse.of(input.ytelseId),
                 mottattKlageinstans = input.mottattKlageinstans,
                 vedtaksinstansEnhet = input.vedtaksinstansEnhet,
                 mottattVedtaksinstans = input.mottattVedtaksinstans,

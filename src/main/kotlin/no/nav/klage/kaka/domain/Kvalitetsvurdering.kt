@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.domain.kodeverk.Tema
+import no.nav.klage.kaka.domain.kodeverk.Ytelse
 import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
@@ -202,17 +202,7 @@ class Kvalitetsvurdering(
         }
     }
 
-    fun getInvalidProperties(tema: Tema?): List<ValidationErrorWithDetailsException.InvalidProperty> {
-        val raadgivendeLegeTema = listOf(
-            Tema.GRU,
-            Tema.SYK,
-            Tema.OMS,
-            Tema.HJE,
-            Tema.AAP,
-            Tema.UFO,
-            Tema.YRK,
-            Tema.FOR
-        )
+    fun getInvalidProperties(ytelse: Ytelse?): List<ValidationErrorWithDetailsException.InvalidProperty> {
 
         val result = mutableListOf<ValidationErrorWithDetailsException.InvalidProperty>()
 

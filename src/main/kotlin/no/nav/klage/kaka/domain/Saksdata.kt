@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.domain
 
+import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.domain.kodeverk.*
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
@@ -20,9 +21,6 @@ class Saksdata(
     @Column(name = "sakstype_id")
     @Convert(converter = SakstypeConverter::class)
     var sakstype: Sakstype? = null,
-    @Column(name = "tema_id")
-    @Convert(converter = TemaConverter::class)
-    var tema: Tema? = null,
     @Column(name = "ytelse_id")
     @Convert(converter = YtelseConverter::class)
     var ytelse: Ytelse? = null,
@@ -87,59 +85,59 @@ class Saksdata(
 
         if (sakenGjelder == null) {
             result.add(
-                createMustBeFilledValidationError(::sakenGjelder.name)
+                createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
             )
         }
 
         if (sakstype == null) {
             result.add(
-                createMustBeSelectedValidationError(::sakstype.name)
+                createMustBeSelectedValidationError(SaksdataView::sakstypeId.name)
             )
         }
 
 //        if (tema == null) {
 //            result.add(
-//                createMustBeSelectedValidationError(::tema.name)
+//                createMustBeSelectedValidationError(SaksdataView::temaId.name)
 //            )
 //        }
 //TODO: Reintroduce after testing
 //        if (ytelse == null) {
 //            result.add(
-//                createMustBeSelectedValidationError(::ytelse.name)
+//                createMustBeSelectedValidationError(SaksdataView::ytelse.name)
 //            )
 //        }
 
         if (mottattVedtaksinstans == null) {
             result.add(
-                createMustBeFilledValidationError(::mottattVedtaksinstans.name)
+                createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name)
             )
         }
 
         if (vedtaksinstansEnhet == null) {
             result.add(
-                createMustBeSelectedValidationError(::vedtaksinstansEnhet.name)
+                createMustBeSelectedValidationError(SaksdataView::vedtaksinstansEnhet.name)
             )
         }
 
         if (mottattKlageinstans == null) {
             result.add(
-                createMustBeFilledValidationError(::mottattKlageinstans.name)
+                createMustBeFilledValidationError(SaksdataView::mottattKlageinstans.name)
             )
         }
 
         if (utfall == null) {
             result.add(
-                createMustBeSelectedValidationError(::utfall.name)
+                createMustBeSelectedValidationError(SaksdataView::utfallId.name)
             )
         } else if (utfall != Utfall.TRUKKET) {
             if (hjemler.isNullOrEmpty()) {
                 result.add(
-                    createMustBeSelectedValidationError(::hjemler.name)
+                    createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
                 )
             }
         }
 
-        result.addAll(kvalitetsvurdering.getInvalidProperties(tema))
+        result.addAll(kvalitetsvurdering.getInvalidProperties(null))
 
         if (result.isNotEmpty()) {
             throw ValidationErrorWithDetailsException(

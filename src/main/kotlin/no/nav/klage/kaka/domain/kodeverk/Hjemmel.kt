@@ -127,15 +127,6 @@ enum class LovKilde {
     FOLKETRYGDLOVEN, FORVALTNINGSLOVEN, UKJENT
 }
 
-val hjemlerPerTema: Map<Tema, List<Hjemmel>> = mapOf(
-    Tema.OMS to
-            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
-            + Hjemmel.FTL + Hjemmel.MANGLER,
-    Tema.SYK to
-            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 8 }
-            + Hjemmel.FTL + Hjemmel.MANGLER
-)
-
 val hjemlerPerYtelse: Map<Ytelse, List<Hjemmel>> = mapOf(
     Ytelse.OMS_OMP to
             Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }

@@ -18,13 +18,6 @@ enum class Ytelse(override val id: String, override val navn: String, override v
                 ?: throw IllegalArgumentException("No Ytelse with $id exists")
         }
     }
-
-    fun toTema(): Tema {
-        return when(this) {
-            OMS_OMP, OMS_OLP, OMS_PSB, OMS_PLS -> Tema.OMS
-            SYK_SYK -> Tema.SYK
-        }
-    }
 }
 
 @Converter

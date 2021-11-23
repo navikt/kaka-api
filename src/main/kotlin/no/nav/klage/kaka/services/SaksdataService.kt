@@ -36,8 +36,7 @@ class SaksdataService(
     fun createAndFinalizeSaksdata(
         sakenGjelder: String,
         sakstype: Sakstype,
-        tema: Tema?,
-        ytelse: Ytelse?,
+        ytelse: Ytelse,
         mottattVedtaksinstans: LocalDate,
         vedtaksinstansEnhet: String,
         mottattKlageinstans: LocalDate,
@@ -53,7 +52,6 @@ class SaksdataService(
             Saksdata(
                 sakenGjelder = sakenGjelder,
                 sakstype = sakstype,
-                tema = tema,
                 ytelse = ytelse,
                 mottattKlageinstans = mottattKlageinstans,
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
@@ -77,13 +75,6 @@ class SaksdataService(
     fun setSakstype(saksdataId: UUID, sakstype: Sakstype, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakstype = sakstype
-        saksdata.modified = LocalDateTime.now()
-        return saksdata
-    }
-
-    fun setTema(saksdataId: UUID, tema: Tema, innloggetSaksbehandler: String): Saksdata {
-        val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        saksdata.tema = tema
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }
