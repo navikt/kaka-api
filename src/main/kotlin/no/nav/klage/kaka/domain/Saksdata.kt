@@ -102,7 +102,7 @@ class Saksdata(
                 createMustBeSelectedValidationError(::tema.name)
             )
         }
-
+//TODO: Reintroduce after testing
 //        if (ytelse == null) {
 //            result.add(
 //                createMustBeSelectedValidationError(::ytelse.name)
