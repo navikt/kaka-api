@@ -255,22 +255,22 @@ class Kvalitetsvurdering(
             }
         }
 
-        if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
-            result.add(
-                createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
-            )
-        } else if ((raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT)) {
-            if (
-                !raadgivendeLegeErIkkeBrukt &&
-                !raadgivendeLegeErBruktFeilSpoersmaal &&
-                !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
-                !raadgivendeLegeErBruktMangelfullDokumentasjon
-            ) {
-                result.add(
-                    createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
-                )
-            }
-        }
+//        if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
+//            result.add(
+//                createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+//            )
+//        } else if ((raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT)) {
+//            if (
+//                !raadgivendeLegeErIkkeBrukt &&
+//                !raadgivendeLegeErBruktFeilSpoersmaal &&
+//                !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
+//                !raadgivendeLegeErBruktMangelfullDokumentasjon
+//            ) {
+//                result.add(
+//                    createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+//                )
+//            }
+//        }
 
         if (vedtaketRadioValg == null) {
             result.add(

@@ -97,11 +97,11 @@ class Saksdata(
             )
         }
 
-        if (tema == null) {
-            result.add(
-                createMustBeSelectedValidationError(::tema.name)
-            )
-        }
+//        if (tema == null) {
+//            result.add(
+//                createMustBeSelectedValidationError(::tema.name)
+//            )
+//        }
 //TODO: Reintroduce after testing
 //        if (ytelse == null) {
 //            result.add(
