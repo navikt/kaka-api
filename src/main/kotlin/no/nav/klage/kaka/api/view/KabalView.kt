@@ -11,7 +11,8 @@ data class KabalView(
 data class SaksdataInput (
     val sakenGjelder: String,
     val sakstype: String,
-    val tema: String,
+    val tema: String?,
+    val ytelseId: String?,
     val mottattVedtaksinstans: LocalDate,
     val vedtaksinstansEnhet: String,
     val mottattKlageinstans: LocalDate,

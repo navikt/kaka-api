@@ -102,12 +102,12 @@ class Saksdata(
                 createMustBeSelectedValidationError(::tema.name)
             )
         }
-
-        if (ytelse == null) {
-            result.add(
-                createMustBeSelectedValidationError(::ytelse.name)
-            )
-        }
+//TODO: Reintroduce after testing
+//        if (ytelse == null) {
+//            result.add(
+//                createMustBeSelectedValidationError(::ytelse.name)
+//            )
+//        }
 
         if (mottattVedtaksinstans == null) {
             result.add(

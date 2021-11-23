@@ -10,12 +10,17 @@ data class SaksdataListView(
 
 data class SaksdataSearchHitView (
     val id: UUID,
-    var sakenGjelder: String? = null,
-    var sakstype: String? = null,
-    var tema: String? = null,
-    var utfall: String? = null,
-    var hjemler: List<String> = emptyList(),
-    var avsluttetAvSaksbehandler: LocalDateTime? = null,
+    var sakenGjelder: String?,
+    var sakstype: String?,
+    var sakstypeId: String?,
+    var tema: String?,
+    var temaId: String?,
+    var ytelseId: String?,
+    var utfall: String?,
+    var utfallId: String?,
+    var hjemler: List<String>?,
+    var hjemmelIdList: List<String>?,
+    var avsluttetAvSaksbehandler: LocalDateTime?,
     val created: LocalDateTime,
     var modified: LocalDateTime
 )
@@ -25,9 +30,14 @@ fun Saksdata.toSaksdataSearchHitView(): SaksdataSearchHitView {
         id = id,
         sakenGjelder = sakenGjelder,
         sakstype = sakstype?.id,
+        sakstypeId = sakstype?.id,
         tema = tema?.id,
+        temaId = tema?.id,
+        ytelseId = ytelse?.id,
         utfall = utfall?.id,
+        utfallId = utfall?.id,
         hjemler = hjemler?.map { it.id } ?: emptyList(),
+        hjemmelIdList = hjemler?.map { it.id } ?: emptyList(),
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
         created = created,
         modified = modified

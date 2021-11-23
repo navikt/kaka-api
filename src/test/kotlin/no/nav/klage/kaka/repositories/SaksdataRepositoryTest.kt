@@ -142,7 +142,7 @@ class SaksdataRepositoryTest {
     fun `find one gives correct result`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
-            ytelse = Ytelse.OMS_OMS,
+            ytelse = Ytelse.OMS_OMP,
             kvalitetsvurdering = Kvalitetsvurdering()
         )
 

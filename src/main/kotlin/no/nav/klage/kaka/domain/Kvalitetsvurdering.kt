@@ -94,7 +94,7 @@ class Kvalitetsvurdering(
     var brukIOpplaeringText: String? = null,
     @Column(name = "betydelig_avvik")
     var betydeligAvvik: Boolean = false,
-    @Column(name = "betydelig_Avvik_text")
+    @Column(name = "betydelig_avvik_text")
     var betydeligAvvikText: String? = null,
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),

@@ -137,13 +137,16 @@ val hjemlerPerTema: Map<Tema, List<Hjemmel>> = mapOf(
 )
 
 val hjemlerPerYtelse: Map<Ytelse, List<Hjemmel>> = mapOf(
-    Ytelse.OMS_OMS to
+    Ytelse.OMS_OMP to
             Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
             + Hjemmel.FTL + Hjemmel.MANGLER,
-    Ytelse.OMS_PLE to
+    Ytelse.OMS_OLP to
             Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
             + Hjemmel.FTL + Hjemmel.MANGLER,
-    Ytelse.OMS_OPP to
+    Ytelse.OMS_PLS to
+            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
+            + Hjemmel.FTL + Hjemmel.MANGLER,
+    Ytelse.OMS_PSB to
             Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf.kapittel == 9 }
             + Hjemmel.FTL + Hjemmel.MANGLER
 )

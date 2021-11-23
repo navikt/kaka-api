@@ -36,7 +36,8 @@ class SaksdataService(
     fun createAndFinalizeSaksdata(
         sakenGjelder: String,
         sakstype: Sakstype,
-        tema: Tema,
+        tema: Tema?,
+        ytelse: Ytelse?,
         mottattVedtaksinstans: LocalDate,
         vedtaksinstansEnhet: String,
         mottattKlageinstans: LocalDate,
@@ -53,6 +54,7 @@ class SaksdataService(
                 sakenGjelder = sakenGjelder,
                 sakstype = sakstype,
                 tema = tema,
+                ytelse = ytelse,
                 mottattKlageinstans = mottattKlageinstans,
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 mottattVedtaksinstans = mottattVedtaksinstans,
