@@ -5,10 +5,7 @@ import no.nav.klage.kaka.api.view.KabalView
 import no.nav.klage.kaka.api.view.SaksdataInput
 import no.nav.klage.kaka.api.view.ValidationErrors
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
-import no.nav.klage.kaka.domain.kodeverk.Hjemmel
-import no.nav.klage.kaka.domain.kodeverk.Sakstype
-import no.nav.klage.kaka.domain.kodeverk.Tema
-import no.nav.klage.kaka.domain.kodeverk.Utfall
+import no.nav.klage.kaka.domain.kodeverk.*
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.services.SaksdataService
@@ -74,7 +71,8 @@ class KabalKvalitetsvurderingController(
             saksdataService.createAndFinalizeSaksdata(
                 sakenGjelder = input.sakenGjelder,
                 sakstype = Sakstype.of(input.sakstype),
-                tema = Tema.of(input.tema),
+                tema = input.tema?.let { Tema.of(it) },
+                ytelse = input.ytelseId?.let { Ytelse.of(it) },
                 mottattKlageinstans = input.mottattKlageinstans,
                 vedtaksinstansEnhet = input.vedtaksinstansEnhet,
                 mottattVedtaksinstans = input.mottattVedtaksinstans,

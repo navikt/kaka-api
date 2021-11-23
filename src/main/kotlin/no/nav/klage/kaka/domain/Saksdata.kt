@@ -103,11 +103,11 @@ class Saksdata(
             )
         }
 
-        if (ytelse == null) {
-            result.add(
-                createMustBeSelectedValidationError(::ytelse.name)
-            )
-        }
+//        if (ytelse == null) {
+//            result.add(
+//                createMustBeSelectedValidationError(::ytelse.name)
+//            )
+//        }
 
         if (mottattVedtaksinstans == null) {
             result.add(
