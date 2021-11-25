@@ -1,7 +1,7 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.domain.kodeverk.Ytelse
-import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
+import no.nav.klage.kaka.exceptions.InvalidProperty
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
@@ -202,9 +202,9 @@ class Kvalitetsvurdering(
         }
     }
 
-    fun getInvalidProperties(ytelse: Ytelse?): List<ValidationErrorWithDetailsException.InvalidProperty> {
+    fun getInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
 
-        val result = mutableListOf<ValidationErrorWithDetailsException.InvalidProperty>()
+        val result = mutableListOf<InvalidProperty>()
 
         if (klageforberedelsenRadioValg == null) {
             result.add(
@@ -276,7 +276,7 @@ class Kvalitetsvurdering(
                 !begrunnelsenErIkkeKonkretOgIndividuell &&
                 !spraaketErIkkeTydelig &&
                 !nyeOpplysningerMottatt
-            ){
+            ) {
                 result.add(
                     createMissingChecksValidationError(::vedtaketRadioValg.name)
                 )
@@ -286,15 +286,15 @@ class Kvalitetsvurdering(
         return result
     }
 
-    private fun createRadioValgValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
-        return ValidationErrorWithDetailsException.InvalidProperty(
+    private fun createRadioValgValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
             field = variableName,
             reason = "Velg et alternativ."
         )
     }
 
-    private fun createMissingChecksValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
-        return ValidationErrorWithDetailsException.InvalidProperty(
+    private fun createMissingChecksValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
             field = variableName,
             reason = "Velg minst én."
         )

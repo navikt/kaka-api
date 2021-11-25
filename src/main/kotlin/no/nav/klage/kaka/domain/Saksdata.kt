@@ -2,8 +2,10 @@ package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.domain.kodeverk.*
+import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
-import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
+import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
+import no.nav.klage.kaka.exceptions.ValidationSection
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -81,75 +83,96 @@ class Saksdata(
     }
 
     fun validate() {
-        val result = mutableListOf<ValidationErrorWithDetailsException.InvalidProperty>()
+        val result = mutableListOf<InvalidProperty>()
+        val validationErrors = mutableListOf<InvalidProperty>()
+        val sectionList = mutableListOf<ValidationSection>()
+
 
         if (sakenGjelder == null) {
-            result.add(
+            validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
             )
         }
 
         if (sakstype == null) {
-            result.add(
+            validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::sakstypeId.name)
             )
         }
 
         if (ytelse == null) {
-            result.add(
+            validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::ytelseId.name)
             )
         }
 
         if (mottattVedtaksinstans == null) {
-            result.add(
+            validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name)
             )
         }
 
         if (vedtaksinstansEnhet == null) {
-            result.add(
+            validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::vedtaksinstansEnhet.name)
             )
         }
 
         if (mottattKlageinstans == null) {
-            result.add(
+            validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::mottattKlageinstans.name)
             )
         }
 
         if (utfall == null) {
-            result.add(
+            validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::utfallId.name)
             )
         } else if (utfall != Utfall.TRUKKET) {
             if (hjemler.isNullOrEmpty()) {
-                result.add(
+                validationErrors.add(
                     createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
                 )
             }
         }
 
-        result.addAll(kvalitetsvurdering.getInvalidProperties(null))
+        if (validationErrors.isNotEmpty()) {
+            sectionList.add(
+                ValidationSection(
+                    section = "saksdata",
+                    properties = validationErrors
+                )
+            )
+        }
 
-        if (result.isNotEmpty()) {
-            throw ValidationErrorWithDetailsException(
+        val kvalitetsvurderingValidationErrors = kvalitetsvurdering.getInvalidProperties(null)
+
+        if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
+            sectionList.add(
+                ValidationSection(
+                    section = "kvalitetsvurdering",
+                    properties = kvalitetsvurderingValidationErrors
+                )
+            )
+        }
+
+        if (sectionList.isNotEmpty()) {
+            throw SectionedValidationErrorWithDetailsException(
                 title = "Validation error",
-                invalidProperties = result
+                sections = sectionList
             )
         }
     }
 
-    private fun createMustBeFilledValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
-        return ValidationErrorWithDetailsException.InvalidProperty(
+    private fun createMustBeFilledValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
             field = variableName,
             reason = "Må fylles ut."
         )
     }
 
-    private fun createMustBeSelectedValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
-        return ValidationErrorWithDetailsException.InvalidProperty(
+    private fun createMustBeSelectedValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
             field = variableName,
             reason = "Må være valgt."
         )
