@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
+import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -13,7 +13,7 @@ internal class SaksdataTest {
             utfoerendeSaksbehandler = "SAKSBEHANDLER"
         )
 
-        assertThrows<ValidationErrorWithDetailsException> {
+        assertThrows<SectionedValidationErrorWithDetailsException> {
             saksdata.validate()
         }
     }

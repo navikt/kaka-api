@@ -118,38 +118,6 @@ class SaksdataController(
             .toSaksdataView()
     }
 
-    @PutMapping("/{id}/tema")
-    fun setTema(
-        @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: StringInput
-    ): SaksdataView {
-        val innloggetSaksbehandler = tokenUtil.getIdent()
-        logSaksdataMethodDetails(
-            ::setTema.name,
-            innloggetSaksbehandler,
-            saksdataId,
-            logger
-        )
-
-        return saksdataService.setTema(saksdataId, Tema.of(input.value), innloggetSaksbehandler).toSaksdataView()
-    }
-
-    @PutMapping("/{id}/temaid")
-    fun setTemaId(
-        @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: StringInput
-    ): SaksdataView {
-        val innloggetSaksbehandler = tokenUtil.getIdent()
-        logSaksdataMethodDetails(
-            ::setTemaId.name,
-            innloggetSaksbehandler,
-            saksdataId,
-            logger
-        )
-
-        return saksdataService.setTema(saksdataId, Tema.of(input.value), innloggetSaksbehandler).toSaksdataView()
-    }
-
     @PutMapping("/{id}/ytelse")
     fun setYtelse(
         @PathVariable("id") saksdataId: UUID,

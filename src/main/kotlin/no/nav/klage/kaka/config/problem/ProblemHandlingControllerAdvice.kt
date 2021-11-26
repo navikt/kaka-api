@@ -52,17 +52,17 @@ interface KakaExceptionAdviceTrait : AdviceTrait {
         create(Status.FORBIDDEN, ex, request)
 
     @ExceptionHandler
-    fun handleValidationErrorWithDetailsException(
-        ex: ValidationErrorWithDetailsException,
+    fun handleSectionedValidationErrorWithDetailsException(
+        ex: SectionedValidationErrorWithDetailsException,
         request: NativeWebRequest
     ): ResponseEntity<Problem> =
-        create(ex, createValidationProblem(ex), request)
+        create(ex, createSectionedValidationProblem(ex), request)
 
-    private fun createValidationProblem(ex: ValidationErrorWithDetailsException): ThrowableProblem {
+    private fun createSectionedValidationProblem(ex: SectionedValidationErrorWithDetailsException): ThrowableProblem {
         return Problem.builder()
             .withStatus(Status.BAD_REQUEST)
             .withTitle(ex.title)
-            .with("invalid-properties", ex.invalidProperties)
+            .with("sections", ex.sections)
             .build()
     }
 }

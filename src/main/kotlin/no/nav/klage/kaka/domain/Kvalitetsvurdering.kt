@@ -1,7 +1,7 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.domain.kodeverk.Tema
-import no.nav.klage.kaka.exceptions.ValidationErrorWithDetailsException
+import no.nav.klage.kaka.domain.kodeverk.Ytelse
+import no.nav.klage.kaka.exceptions.InvalidProperty
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
@@ -202,19 +202,9 @@ class Kvalitetsvurdering(
         }
     }
 
-    fun getInvalidProperties(tema: Tema?): List<ValidationErrorWithDetailsException.InvalidProperty> {
-        val raadgivendeLegeTema = listOf(
-            Tema.GRU,
-            Tema.SYK,
-            Tema.OMS,
-            Tema.HJE,
-            Tema.AAP,
-            Tema.UFO,
-            Tema.YRK,
-            Tema.FOR
-        )
+    fun getInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
 
-        val result = mutableListOf<ValidationErrorWithDetailsException.InvalidProperty>()
+        val result = mutableListOf<InvalidProperty>()
 
         if (klageforberedelsenRadioValg == null) {
             result.add(
@@ -255,22 +245,22 @@ class Kvalitetsvurdering(
             }
         }
 
-        if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
-            result.add(
-                createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
-            )
-        } else if ((raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT)) {
-            if (
-                !raadgivendeLegeErIkkeBrukt &&
-                !raadgivendeLegeErBruktFeilSpoersmaal &&
-                !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
-                !raadgivendeLegeErBruktMangelfullDokumentasjon
-            ) {
-                result.add(
-                    createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
-                )
-            }
-        }
+//        if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
+//            result.add(
+//                createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+//            )
+//        } else if ((raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT)) {
+//            if (
+//                !raadgivendeLegeErIkkeBrukt &&
+//                !raadgivendeLegeErBruktFeilSpoersmaal &&
+//                !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
+//                !raadgivendeLegeErBruktMangelfullDokumentasjon
+//            ) {
+//                result.add(
+//                    createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+//                )
+//            }
+//        }
 
         if (vedtaketRadioValg == null) {
             result.add(
@@ -286,7 +276,7 @@ class Kvalitetsvurdering(
                 !begrunnelsenErIkkeKonkretOgIndividuell &&
                 !spraaketErIkkeTydelig &&
                 !nyeOpplysningerMottatt
-            ){
+            ) {
                 result.add(
                     createMissingChecksValidationError(::vedtaketRadioValg.name)
                 )
@@ -296,15 +286,15 @@ class Kvalitetsvurdering(
         return result
     }
 
-    private fun createRadioValgValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
-        return ValidationErrorWithDetailsException.InvalidProperty(
+    private fun createRadioValgValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
             field = variableName,
             reason = "Velg et alternativ."
         )
     }
 
-    private fun createMissingChecksValidationError(variableName: String): ValidationErrorWithDetailsException.InvalidProperty {
-        return ValidationErrorWithDetailsException.InvalidProperty(
+    private fun createMissingChecksValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
             field = variableName,
             reason = "Velg minst én."
         )
