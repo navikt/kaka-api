@@ -1,7 +1,7 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.api.view.SaksdataView
-import no.nav.klage.kaka.domain.kodeverk.*
+import no.nav.klage.kodeverk.*
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
@@ -21,8 +21,8 @@ class Saksdata(
     @Column(name = "saken_gjelder")
     var sakenGjelder: String? = null,
     @Column(name = "sakstype_id")
-    @Convert(converter = SakstypeConverter::class)
-    var sakstype: Sakstype? = null,
+    @Convert(converter = TypeConverter::class)
+    var sakstype: Type? = null,
     @Column(name = "ytelse_id")
     @Convert(converter = YtelseConverter::class)
     var ytelse: Ytelse? = null,

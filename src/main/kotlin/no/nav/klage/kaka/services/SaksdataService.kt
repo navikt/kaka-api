@@ -2,11 +2,14 @@ package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.*
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kodeverk.Hjemmel
+import no.nav.klage.kodeverk.Type
+import no.nav.klage.kodeverk.Utfall
+import no.nav.klage.kodeverk.Ytelse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -35,7 +38,7 @@ class SaksdataService(
 
     fun createAndFinalizeSaksdata(
         sakenGjelder: String,
-        sakstype: Sakstype,
+        sakstype: Type,
         ytelse: Ytelse,
         mottattVedtaksinstans: LocalDate,
         vedtaksinstansEnhet: String,
@@ -72,7 +75,7 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setSakstype(saksdataId: UUID, sakstype: Sakstype, innloggetSaksbehandler: String): Saksdata {
+    fun setSakstype(saksdataId: UUID, sakstype: Type, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakstype = sakstype
         saksdata.modified = LocalDateTime.now()

@@ -3,7 +3,7 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.config.SecurityConfig
-import no.nav.klage.kaka.domain.kodeverk.*
+import no.nav.klage.kodeverk.*
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
@@ -97,7 +97,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setSakstype(saksdataId, Sakstype.of(input.value), innloggetSaksbehandler)
+        return saksdataService.setSakstype(saksdataId, Type.of(input.value), innloggetSaksbehandler)
             .toSaksdataView()
     }
 
@@ -114,7 +114,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.setSakstype(saksdataId, Sakstype.of(input.value), innloggetSaksbehandler)
+        return saksdataService.setSakstype(saksdataId, Type.of(input.value), innloggetSaksbehandler)
             .toSaksdataView()
     }
 

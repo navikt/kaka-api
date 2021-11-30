@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.domain.kodeverk.Kode
+import no.nav.klage.kodeverk.Kode
 
 /**
  * Hardcoded for now. Maybe get from Axsys or similar later.
