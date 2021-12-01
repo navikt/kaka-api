@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.domain.kodeverk.Ytelse
+import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime

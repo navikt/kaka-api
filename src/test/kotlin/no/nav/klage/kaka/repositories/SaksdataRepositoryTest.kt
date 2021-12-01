@@ -3,7 +3,7 @@ package no.nav.klage.kaka.repositories
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.Ytelse
+import no.nav.klage.kodeverk.Ytelse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
