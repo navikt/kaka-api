@@ -6,10 +6,10 @@ import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kodeverk.Hjemmel
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.hjemmel.Hjemmel
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate

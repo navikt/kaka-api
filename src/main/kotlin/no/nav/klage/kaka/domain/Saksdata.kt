@@ -1,11 +1,13 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.api.view.SaksdataView
-import no.nav.klage.kodeverk.*
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kaka.exceptions.ValidationSection
+import no.nav.klage.kodeverk.*
+import no.nav.klage.kodeverk.hjemmel.Hjemmel
+import no.nav.klage.kodeverk.hjemmel.HjemmelConverter
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
 import java.time.LocalDateTime

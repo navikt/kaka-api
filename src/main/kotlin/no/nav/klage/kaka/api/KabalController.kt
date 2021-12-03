@@ -11,6 +11,7 @@ import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kodeverk.hjemmel.Hjemmel
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
