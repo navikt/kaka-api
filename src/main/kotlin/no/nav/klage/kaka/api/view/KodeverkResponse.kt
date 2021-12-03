@@ -22,9 +22,16 @@ fun getYtelser(): List<YtelseKode> =
             navn = ytelse.navn,
             beskrivelse = ytelse.beskrivelse,
             hjemler = ytelseToHjemler[ytelse] ?: emptyList(),
+            registreringshjemler = ytelseToRegistreringshjemler[ytelse] ?: emptyList(),
             enheter = enheterPerYtelse[ytelse]?.map { it.toDto() } ?: emptyList(),
         )
     }
+
+val ytelseToRegistreringshjemler: Map<Ytelse, List<HjemmelDto>> = mapOf(
+    Ytelse.HJE_HJE to ytelseTilRegistreringshjemler.get(Ytelse.HJE_HJE)!!.map{
+        it.toHjemmelDto()
+    }
+)
 
 val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
     Ytelse.HJE_HJE to
@@ -69,8 +76,11 @@ data class YtelseKode(
     val navn: String,
     val beskrivelse: String,
     val hjemler: List<KodeDto>,
+    val registreringshjemler: List<HjemmelDto>,
     val enheter: List<KodeDto>,
 )
+
+data class HjemmelDto(val id: String, val navn: String, val lovKildeNavn: String)
 
 data class KodeDto(val id: String, val navn: String, val beskrivelse: String)
 
@@ -78,6 +88,12 @@ fun Registreringshjemmel.toDto() = KodeDto(
     id = id,
     navn = lovKilde.navn + " - " + spesifikasjon,
     beskrivelse = lovKilde.kortform + " - " + spesifikasjon
+)
+
+fun Registreringshjemmel.toHjemmelDto() = HjemmelDto(
+    id = id,
+    navn = spesifikasjon,
+    lovKildeNavn = lovKilde.navn
 )
 
 fun Kode.toDto() = KodeDto(id, navn, beskrivelse)
