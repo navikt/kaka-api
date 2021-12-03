@@ -23,19 +23,27 @@ fun getYtelser(): List<YtelseKode> =
             beskrivelse = ytelse.beskrivelse,
             hjemler = ytelseToHjemler[ytelse] ?: emptyList(),
             registreringshjemler = ytelseToRegistreringshjemler[ytelse] ?: emptyList(),
+            lovKildeToRegistreringshjemmel = ytelseToLovKildeToRegistreringshjemmel[ytelse] ?: emptyMap(),
             enheter = enheterPerYtelse[ytelse]?.map { it.toDto() } ?: emptyList(),
         )
     }
 
+val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, Map<String, List<HjemmelDto>>> = mapOf(
+    Ytelse.HJE_HJE to ytelseTilRegistreringshjemler[Ytelse.HJE_HJE]!!.groupBy(
+        {it.lovKilde.navn},
+        {HjemmelDto(it.id, it.spesifikasjon, it.lovKilde.navn)}
+    )
+)
+
 val ytelseToRegistreringshjemler: Map<Ytelse, List<HjemmelDto>> = mapOf(
-    Ytelse.HJE_HJE to ytelseTilRegistreringshjemler.get(Ytelse.HJE_HJE)!!.map{
+    Ytelse.HJE_HJE to ytelseTilRegistreringshjemler[Ytelse.HJE_HJE]!!.map{
         it.toHjemmelDto()
     }
 )
 
 val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
     Ytelse.HJE_HJE to
-            ytelseTilRegistreringshjemler.get(Ytelse.HJE_HJE)!!.map {
+            ytelseTilRegistreringshjemler[Ytelse.HJE_HJE]!!.map {
                 it.toDto()
             },
     Ytelse.OMS_OMP to
@@ -77,12 +85,17 @@ data class YtelseKode(
     val beskrivelse: String,
     val hjemler: List<KodeDto>,
     val registreringshjemler: List<HjemmelDto>,
+    val lovKildeToRegistreringshjemmel: Map<String, List<HjemmelDto>>,
     val enheter: List<KodeDto>,
 )
 
 data class HjemmelDto(val id: String, val navn: String, val lovKildeNavn: String)
 
+data class RegistreringshjemmelDto(val id: String, val navn: String)
+
 data class KodeDto(val id: String, val navn: String, val beskrivelse: String)
+
+data class LovKildeToRegistreringshjemmel(val navn: String, val registreringshjemler: List<HjemmelDto>)
 
 fun Registreringshjemmel.toDto() = KodeDto(
     id = id,
