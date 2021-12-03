@@ -3,6 +3,7 @@ package no.nav.klage.kaka.api.view
 import no.nav.klage.kaka.domain.Enhet
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Hjemmel
+import no.nav.klage.kodeverk.hjemmel.LovKilde
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
 
@@ -13,6 +14,7 @@ data class KodeverkResponse(
     val utfall: List<KodeDto> = Utfall.values().asList().toDto(),
     val hjemler: List<KodeDto> = Hjemmel.values().asList().toDto(),
     val enheter: List<KodeDto> = Enhet.values().asList().toDto(),
+    val lovKilder: List<KodeDto> = LovKilde.values().asList().toDto(),
 )
 
 fun getYtelser(): List<YtelseKode> =
@@ -22,30 +24,25 @@ fun getYtelser(): List<YtelseKode> =
             navn = ytelse.navn,
             beskrivelse = ytelse.beskrivelse,
             hjemler = ytelseToHjemler[ytelse] ?: emptyList(),
-            registreringshjemler = ytelseToRegistreringshjemler[ytelse] ?: emptyList(),
-            lovKildeToRegistreringshjemmel = ytelseToLovKildeToRegistreringshjemmel[ytelse] ?: emptyMap(),
+            lovKildeToRegistreringshjemler = ytelseToLovKildeToRegistreringshjemmel[ytelse] ?: emptyList(),
             enheter = enheterPerYtelse[ytelse]?.map { it.toDto() } ?: emptyList(),
         )
     }
 
-val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, Map<String, List<HjemmelDto>>> = mapOf(
+val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistreringshjemler>> = mapOf(
     Ytelse.HJE_HJE to ytelseTilRegistreringshjemler[Ytelse.HJE_HJE]!!.groupBy(
-        {it.lovKilde.navn},
-        {HjemmelDto(it.id, it.spesifikasjon, it.lovKilde.navn)}
-    )
-)
-
-val ytelseToRegistreringshjemler: Map<Ytelse, List<HjemmelDto>> = mapOf(
-    Ytelse.HJE_HJE to ytelseTilRegistreringshjemler[Ytelse.HJE_HJE]!!.map{
-        it.toHjemmelDto()
+        {it.lovKilde},
+        {HjemmelDto(it.id, it.spesifikasjon)}
+    ).map{
+        LovKildeToRegistreringshjemler(
+            it.key,
+            it.value
+        )
     }
 )
 
+
 val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
-    Ytelse.HJE_HJE to
-            ytelseTilRegistreringshjemler[Ytelse.HJE_HJE]!!.map {
-                it.toDto()
-            },
     Ytelse.OMS_OMP to
             (Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
             + Hjemmel.FTL + Hjemmel.MANGLER).toDto(),
@@ -84,30 +81,15 @@ data class YtelseKode(
     val navn: String,
     val beskrivelse: String,
     val hjemler: List<KodeDto>,
-    val registreringshjemler: List<HjemmelDto>,
-    val lovKildeToRegistreringshjemmel: Map<String, List<HjemmelDto>>,
+    val lovKildeToRegistreringshjemler: List<LovKildeToRegistreringshjemler>,
     val enheter: List<KodeDto>,
 )
 
-data class HjemmelDto(val id: String, val navn: String, val lovKildeNavn: String)
-
-data class RegistreringshjemmelDto(val id: String, val navn: String)
+data class HjemmelDto(val id: String, val navn: String)
 
 data class KodeDto(val id: String, val navn: String, val beskrivelse: String)
 
-data class LovKildeToRegistreringshjemmel(val navn: String, val registreringshjemler: List<HjemmelDto>)
-
-fun Registreringshjemmel.toDto() = KodeDto(
-    id = id,
-    navn = lovKilde.navn + " - " + spesifikasjon,
-    beskrivelse = lovKilde.kortform + " - " + spesifikasjon
-)
-
-fun Registreringshjemmel.toHjemmelDto() = HjemmelDto(
-    id = id,
-    navn = spesifikasjon,
-    lovKildeNavn = lovKilde.navn
-)
+data class LovKildeToRegistreringshjemler(val lovkilde: LovKilde, val registreringshjemler: List<HjemmelDto>)
 
 fun Kode.toDto() = KodeDto(id, navn, beskrivelse)
 

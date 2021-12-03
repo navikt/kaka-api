@@ -63,7 +63,6 @@ dependencies {
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
     implementation("com.github.navikt:kabal-kodeverk:hjemmel-SNAPSHOT")
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
@@ -71,6 +70,10 @@ dependencies {
     testImplementation("com.tngtech.archunit:archunit-junit5:$archunitVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
+
+//configurations.all {
+//    resolutionStrategy.cacheChangingModulesFor(0, "seconds)
+//}
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
