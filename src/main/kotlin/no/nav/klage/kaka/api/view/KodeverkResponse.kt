@@ -4,7 +4,6 @@ import no.nav.klage.kaka.domain.Enhet
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Hjemmel
 import no.nav.klage.kodeverk.hjemmel.LovKilde
-import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
 
 data class KodeverkResponse(
@@ -35,7 +34,7 @@ val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistrer
         {HjemmelDto(it.id, it.spesifikasjon)}
     ).map{
         LovKildeToRegistreringshjemler(
-            it.key,
+            it.key.toDto(),
             it.value
         )
     }
@@ -89,7 +88,7 @@ data class HjemmelDto(val id: String, val navn: String)
 
 data class KodeDto(val id: String, val navn: String, val beskrivelse: String)
 
-data class LovKildeToRegistreringshjemler(val lovkilde: LovKilde, val registreringshjemler: List<HjemmelDto>)
+data class LovKildeToRegistreringshjemler(val lovkilde: KodeDto, val registreringshjemler: List<HjemmelDto>)
 
 fun Kode.toDto() = KodeDto(id, navn, beskrivelse)
 
