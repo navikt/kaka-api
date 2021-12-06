@@ -9,7 +9,7 @@ import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.Ytelse
-import no.nav.klage.kodeverk.hjemmel.Hjemmel
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -44,7 +44,7 @@ class SaksdataService(
         vedtaksinstansEnhet: String,
         mottattKlageinstans: LocalDate,
         utfall: Utfall,
-        hjemler: List<Hjemmel>,
+        hjemler: List<Registreringshjemmel>,
         utfoerendeSaksbehandler: String,
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
@@ -60,7 +60,7 @@ class SaksdataService(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 mottattVedtaksinstans = mottattVedtaksinstans,
                 utfall = utfall,
-                hjemler = hjemler.toSet(),
+                registreringshjemler = hjemler.toSet(),
                 avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                 kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
@@ -117,9 +117,9 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setHjemler(saksdataId: UUID, hjemler: Set<Hjemmel>, innloggetSaksbehandler: String): Saksdata {
+    fun setRegistreringshjemler(saksdataId: UUID, registreringshjemler: Set<Registreringshjemmel>, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        saksdata.hjemler = hjemler.toMutableSet()
+        saksdata.registreringshjemler = registreringshjemler.toMutableSet()
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }

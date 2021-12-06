@@ -5,13 +5,15 @@ import no.nav.klage.kaka.api.view.KabalView
 import no.nav.klage.kaka.api.view.SaksdataInput
 import no.nav.klage.kaka.api.view.ValidationErrors
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
-import no.nav.klage.kodeverk.*
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kodeverk.hjemmel.Hjemmel
+import no.nav.klage.kodeverk.Type
+import no.nav.klage.kodeverk.Utfall
+import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
@@ -77,7 +79,7 @@ class KabalKvalitetsvurderingController(
                 vedtaksinstansEnhet = input.vedtaksinstansEnhet,
                 mottattVedtaksinstans = input.mottattVedtaksinstans,
                 utfall = Utfall.of(input.utfall),
-                hjemler = input.hjemler.map { Hjemmel.of(it) },
+                hjemler = input.registreringshjemler?.map { Registreringshjemmel.of(it) } ?: emptyList(),
                 kvalitetsvurderingId = input.kvalitetsvurderingId,
                 avsluttetAvSaksbehandler = input.avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,

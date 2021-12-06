@@ -11,7 +11,7 @@ data class DateInput(
     val value: LocalDate
 )
 
-data class HjemlerInput(
+data class RegistreringshjemlerInput(
     val value: Set<String>?
 )
 

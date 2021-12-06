@@ -4,6 +4,7 @@ import no.nav.klage.kaka.domain.Enhet
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Hjemmel
 import no.nav.klage.kodeverk.hjemmel.LovKilde
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
 
 data class KodeverkResponse(
@@ -11,7 +12,7 @@ data class KodeverkResponse(
     val sakstyper: List<KodeDto> = Type.values().asList().toDto(),
     val ytelser: List<YtelseKode> = getYtelser(),
     val utfall: List<KodeDto> = Utfall.values().asList().toDto(),
-    val hjemler: List<KodeDto> = Hjemmel.values().asList().toDto(),
+    val registreringshjemler: List<KodeDto> = getRegistreringshjemler(),
     val enheter: List<KodeDto> = Enhet.values().asList().toDto(),
     val lovKilder: List<KodeDto> = LovKilde.values().asList().toDto(),
 )
@@ -28,8 +29,25 @@ fun getYtelser(): List<YtelseKode> =
         )
     }
 
+fun getRegistreringshjemler(): List<KodeDto> =
+        Registreringshjemmel.values().map {
+            KodeDto(
+                id = it.id,
+                navn = it.lovKilde.beskrivelse + " - " + it.spesifikasjon,
+                beskrivelse = it.lovKilde.navn + " - " + it.spesifikasjon,
+            )
+        }
+
 val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistreringshjemler>> = mapOf(
-    Ytelse.HJE_HJE to ytelseTilRegistreringshjemler[Ytelse.HJE_HJE]!!.groupBy(
+    getYtelseMap(Ytelse.HJE_HJE),
+    getYtelseMap(Ytelse.OMS_OMP),
+    getYtelseMap(Ytelse.OMS_OLP),
+    getYtelseMap(Ytelse.OMS_PSB),
+    getYtelseMap(Ytelse.OMS_PLS)
+)
+
+fun getYtelseMap(ytelse: Ytelse): Pair<Ytelse, List<LovKildeToRegistreringshjemler>> {
+    return ytelse to ytelseTilRegistreringshjemler[ytelse]!!.groupBy(
         {it.lovKilde},
         {HjemmelDto(it.id, it.spesifikasjon)}
     ).map{
@@ -38,7 +56,7 @@ val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistrer
             it.value
         )
     }
-)
+}
 
 
 val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
@@ -59,21 +77,6 @@ val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
 val enheterPerYtelse: Map<Ytelse, List<Kode>> = Ytelse.values().associateWith {
     listOf(Enhet.NAV_MOSS, Enhet.NAV_XXXX, Enhet.NAV_YYYY)
 }
-
-//val hjemlerPerYtelse: Map<Ytelse, List<Hjemmel>> = mapOf(
-//    Ytelse.OMS_OMP to
-//            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-//            + Hjemmel.FTL + Hjemmel.MANGLER,
-//    Ytelse.OMS_OLP to
-//            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-//            + Hjemmel.FTL + Hjemmel.MANGLER,
-//    Ytelse.OMS_PLS to
-//            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-//            + Hjemmel.FTL + Hjemmel.MANGLER,
-//    Ytelse.OMS_PSB to
-//            Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-//            + Hjemmel.FTL + Hjemmel.MANGLER
-//)
 
 data class YtelseKode(
     val id: String,
