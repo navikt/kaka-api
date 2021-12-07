@@ -84,6 +84,9 @@ class SaksdataService(
 
     fun setYtelse(saksdataId: UUID, ytelse: Ytelse, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        if (saksdata.ytelse != ytelse) {
+            setRegistreringshjemler(saksdataId, emptySet(), innloggetSaksbehandler)
+        }
         saksdata.ytelse = ytelse
         saksdata.modified = LocalDateTime.now()
         return saksdata
