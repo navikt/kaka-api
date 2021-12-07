@@ -254,27 +254,7 @@ class SaksdataController(
             innloggetSaksbehandler
         ).toSaksdataView()
     }
-
-    @PutMapping("/{id}/registreringshjemler")
-    fun setRegistreringshjemler(
-        @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: RegistreringshjemlerInput
-    ): SaksdataView {
-        val innloggetSaksbehandler = tokenUtil.getIdent()
-        logSaksdataMethodDetails(
-            ::setHjemler.name,
-            innloggetSaksbehandler,
-            saksdataId,
-            logger
-        )
-
-        return saksdataService.setRegistreringshjemler(
-            saksdataId,
-            input.value?.map { Registreringshjemmel.of(it) }?.toSet() ?: emptySet(),
-            innloggetSaksbehandler
-        ).toSaksdataView()
-    }
-
+    
     @PutMapping("/{id}/hjemmelidlist")
     fun setHjemmelIdList(
         @PathVariable("id") saksdataId: UUID,

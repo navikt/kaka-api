@@ -16,15 +16,12 @@ data class SaksdataView(
     var mottattKlageinstans: LocalDate?,
     var utfallId: String?,
     var hjemmelIdList: List<String>?,
-    var registreringshjemmelIdList: List<LovKildeToRegistreringshjemler>?,
     var utfoerendeSaksbehandler: String,
     var kvalitetsvurderingId: UUID,
     var avsluttetAvSaksbehandler: LocalDateTime?,
     val created: LocalDateTime,
     var modified: LocalDateTime
 )
-
-
 
 fun Saksdata.toSaksdataView(): SaksdataView {
     return SaksdataView(
@@ -37,7 +34,6 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         mottattKlageinstans = mottattKlageinstans,
         utfallId = utfall?.id,
         hjemmelIdList = registreringshjemler?.map { it.id } ?: emptyList(),
-        registreringshjemmelIdList = registreringshjemler?.let { getViewHjemmelList(it) } ?: emptyList(),
         utfoerendeSaksbehandler = utfoerendeSaksbehandler,
         kvalitetsvurderingId = kvalitetsvurdering.id,
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
@@ -45,14 +41,3 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         modified = modified
     )
 }
-
-fun getViewHjemmelList(input: Set<Registreringshjemmel>): List<LovKildeToRegistreringshjemler> =
-    input.groupBy(
-        { it.lovKilde },
-        { HjemmelDto(it.id, it.spesifikasjon) }
-    ).map {
-        LovKildeToRegistreringshjemler(
-            it.key.toDto(),
-            it.value
-        )
-    }
