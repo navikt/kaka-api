@@ -1,11 +1,13 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.api.view.SaksdataView
-import no.nav.klage.kodeverk.*
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kaka.exceptions.ValidationSection
+import no.nav.klage.kodeverk.*
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import no.nav.klage.kodeverk.hjemmel.RegistreringshjemmelConverter
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,15 +37,15 @@ class Saksdata(
     @Column(name = "utfall_id")
     @Convert(converter = UtfallConverter::class)
     var utfall: Utfall? = null,
-    @ElementCollection(targetClass = Hjemmel::class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
-        name = "hjemmel",
+        name = "registreringshjemmel",
         schema = "kaka",
         joinColumns = [JoinColumn(name = "saksdata_id", referencedColumnName = "id", nullable = false)]
     )
-    @Convert(converter = HjemmelConverter::class)
+    @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
-    var hjemler: Set<Hjemmel>? = null,
+    var registreringshjemler: Set<Registreringshjemmel>? = null,
     @Column(name = "utfoerende_saksbehandlerident")
     var utfoerendeSaksbehandler: String,
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
@@ -129,7 +131,7 @@ class Saksdata(
                 createMustBeSelectedValidationError(SaksdataView::utfallId.name)
             )
         } else if (utfall != Utfall.TRUKKET) {
-            if (hjemler.isNullOrEmpty()) {
+            if (registreringshjemler.isNullOrEmpty()) {
                 validationErrors.add(
                     createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
                 )

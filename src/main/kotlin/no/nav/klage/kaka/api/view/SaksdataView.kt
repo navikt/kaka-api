@@ -1,11 +1,12 @@
 package no.nav.klage.kaka.api.view
 
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
-data class SaksdataView (
+data class SaksdataView(
     val id: UUID,
     var sakenGjelder: String?,
     var sakstypeId: String?,
@@ -32,7 +33,7 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         vedtaksinstansEnhet = vedtaksinstansEnhet,
         mottattKlageinstans = mottattKlageinstans,
         utfallId = utfall?.id,
-        hjemmelIdList = hjemler?.map { it.id } ?: emptyList(),
+        hjemmelIdList = registreringshjemler?.map { it.id } ?: emptyList(),
         utfoerendeSaksbehandler = utfoerendeSaksbehandler,
         kvalitetsvurderingId = kvalitetsvurdering.id,
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
