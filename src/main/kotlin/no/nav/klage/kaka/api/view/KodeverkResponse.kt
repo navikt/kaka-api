@@ -25,18 +25,18 @@ fun getYtelser(): List<YtelseKode> =
             beskrivelse = ytelse.beskrivelse,
             hjemler = ytelseToHjemler[ytelse] ?: emptyList(),
             lovKildeToRegistreringshjemler = ytelseToLovKildeToRegistreringshjemmel[ytelse] ?: emptyList(),
-            enheter = enheterPerYtelse[ytelse]?.map { it.toDto() } ?: emptyList(),
+            enheter = ytelseTilVedtaksenheter[ytelse]?.map { it.toDto() } ?: emptyList(),
         )
     }
 
 fun getRegistreringshjemler(): List<KodeDto> =
-        Registreringshjemmel.values().map {
-            KodeDto(
-                id = it.id,
-                navn = it.lovKilde.beskrivelse + " - " + it.spesifikasjon,
-                beskrivelse = it.lovKilde.navn + " - " + it.spesifikasjon,
-            )
-        }
+    Registreringshjemmel.values().map {
+        KodeDto(
+            id = it.id,
+            navn = it.lovKilde.beskrivelse + " - " + it.spesifikasjon,
+            beskrivelse = it.lovKilde.navn + " - " + it.spesifikasjon,
+        )
+    }
 
 val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistreringshjemler>> = mapOf(
     getYtelseMap(Ytelse.HJE_HJE),
@@ -48,9 +48,9 @@ val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistrer
 
 fun getYtelseMap(ytelse: Ytelse): Pair<Ytelse, List<LovKildeToRegistreringshjemler>> {
     return ytelse to ytelseTilRegistreringshjemler[ytelse]!!.groupBy(
-        {it.lovKilde},
-        {HjemmelDto(it.id, it.spesifikasjon)}
-    ).map{
+        { it.lovKilde },
+        { HjemmelDto(it.id, it.spesifikasjon) }
+    ).map {
         LovKildeToRegistreringshjemler(
             it.key.toDto(),
             it.value
@@ -62,16 +62,16 @@ fun getYtelseMap(ytelse: Ytelse): Pair<Ytelse, List<LovKildeToRegistreringshjeml
 val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
     Ytelse.OMS_OMP to
             (Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-            + Hjemmel.FTL + Hjemmel.MANGLER).toDto(),
+                    + Hjemmel.FTL + Hjemmel.MANGLER).toDto(),
     Ytelse.OMS_OLP to
             (Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-            + Hjemmel.FTL + Hjemmel.MANGLER).toDto(),
+                    + Hjemmel.FTL + Hjemmel.MANGLER).toDto(),
     Ytelse.OMS_PLS to
             (Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-            + Hjemmel.FTL + Hjemmel.MANGLER).toDto(),
+                    + Hjemmel.FTL + Hjemmel.MANGLER).toDto(),
     Ytelse.OMS_PSB to
             (Hjemmel.values().filter { it.kapittelOgParagraf != null && it.kapittelOgParagraf!!.kapittel == 9 }
-            + Hjemmel.FTL + Hjemmel.MANGLER).toDto()
+                    + Hjemmel.FTL + Hjemmel.MANGLER).toDto()
 )
 
 val enheterPerYtelse: Map<Ytelse, List<Kode>> = Ytelse.values().associateWith {

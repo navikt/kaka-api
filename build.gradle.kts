@@ -62,7 +62,7 @@ dependencies {
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
-    implementation("com.github.navikt:kabal-kodeverk:2021.12.06-15.02.bc04621c3d87")
+    implementation("com.github.navikt:kabal-kodeverk:2021.12.09-10.33.a54882749b95")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
