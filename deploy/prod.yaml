@@ -2,6 +2,7 @@ ingress:
   - https://kaka-api.nav.no
 springProfile: prod-gcp
 tenant: nav.no
+ROLE_KLAGEINSTANS_OEST: 0f55f05c-c37f-416b-b336-d49635f2e13d
 ROLE_KLAGE_SAKSBEHANDLER: 2b671b60-9650-4839-9139-40999bbb0f71
 ROLE_KLAGE_FAGANSVARLIG: 1edfbdf1-c1bc-4dc6-9cab-4fff1cb7e2a8
 ROLE_KLAGE_LEDER: e9de217a-7244-45ac-8a06-1994905d7964
