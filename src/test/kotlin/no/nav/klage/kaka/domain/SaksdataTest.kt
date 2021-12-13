@@ -10,7 +10,8 @@ internal class SaksdataTest {
     fun `validation on empty saksdata gives correct number of errors`() {
         val saksdata = Saksdata(
             kvalitetsvurdering = Kvalitetsvurdering(),
-            utfoerendeSaksbehandler = "SAKSBEHANDLER"
+            utfoerendeSaksbehandler = "SAKSBEHANDLER",
+            tilknyttetEnhet = "4295",
         )
 
         assertThrows<SectionedValidationErrorWithDetailsException> {
