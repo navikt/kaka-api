@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.api.view
 
-import no.nav.klage.kaka.domain.Enhet
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Hjemmel
 import no.nav.klage.kodeverk.hjemmel.LovKilde
@@ -39,26 +38,18 @@ fun getRegistreringshjemler(): List<KodeDto> =
         )
     }
 
-val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistreringshjemler>> = mapOf(
-    getYtelseMap(Ytelse.HJE_HJE),
-    getYtelseMap(Ytelse.OMS_OMP),
-    getYtelseMap(Ytelse.OMS_OLP),
-    getYtelseMap(Ytelse.OMS_PSB),
-    getYtelseMap(Ytelse.OMS_PLS)
-)
-
-fun getYtelseMap(ytelse: Ytelse): Pair<Ytelse, List<LovKildeToRegistreringshjemler>> {
-    return ytelse to ytelseTilRegistreringshjemler[ytelse]!!.groupBy(
-        { it.lovKilde },
-        { HjemmelDto(it.id, it.spesifikasjon) }
-    ).map {
-        LovKildeToRegistreringshjemler(
-            it.key.toDto(),
-            it.value
-        )
+val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistreringshjemler>> =
+    ytelseTilRegistreringshjemler.mapValues { (_, hjemler) ->
+        hjemler.groupBy (
+            { hjemmel -> hjemmel.lovKilde},
+            { hjemmel -> HjemmelDto(hjemmel.id, hjemmel.spesifikasjon)}
+        ).map { hjemmel ->
+            LovKildeToRegistreringshjemler(
+                hjemmel.key.toDto(),
+                hjemmel.value
+            )
+        }
     }
-}
-
 
 val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
     Ytelse.OMS_OMP to
