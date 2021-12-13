@@ -71,6 +71,22 @@ class SaksdataController(
         return saksdataService.createSaksdata(innloggetSaksbehandler).toSaksdataView()
     }
 
+    @PutMapping("/{id}/tilknyttetenhet")
+    fun setTilknyttetEnhet(
+        @PathVariable("id") saksdataId: UUID,
+        @RequestBody input: StringInput
+    ): SaksdataView {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::setTilknyttetEnhet.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        return saksdataService.setTilknyttetEnhet(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
+    }
+
     @PutMapping("/{id}/sakengjelder")
     fun setSakenGjelder(
         @PathVariable("id") saksdataId: UUID,
@@ -254,7 +270,7 @@ class SaksdataController(
             innloggetSaksbehandler
         ).toSaksdataView()
     }
-    
+
     @PutMapping("/{id}/hjemmelidlist")
     fun setHjemmelIdList(
         @PathVariable("id") saksdataId: UUID,

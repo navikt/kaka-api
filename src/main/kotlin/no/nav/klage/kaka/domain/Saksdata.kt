@@ -48,6 +48,8 @@ class Saksdata(
     var registreringshjemler: Set<Registreringshjemmel>? = null,
     @Column(name = "utfoerende_saksbehandlerident")
     var utfoerendeSaksbehandler: String,
+    @Column(name = "tilknyttet_enhet")
+    var tilknyttetEnhet: String? = null,
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id")
     var kvalitetsvurdering: Kvalitetsvurdering,

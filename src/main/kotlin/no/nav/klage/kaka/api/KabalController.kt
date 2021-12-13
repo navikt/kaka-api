@@ -52,7 +52,8 @@ class KabalKvalitetsvurderingController(
         @RequestParam temaId: String
     ): ValidationErrors {
         val innloggetSaksbehandler = tokenUtil.getIdent()
-        val kvalitetsvurdering = kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering =
+            kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
         return ValidationErrors(kvalitetsvurdering.getInvalidProperties(null).map {
             ValidationErrors.InvalidProperty(
                 field = it.field,
@@ -83,6 +84,7 @@ class KabalKvalitetsvurderingController(
                 kvalitetsvurderingId = input.kvalitetsvurderingId,
                 avsluttetAvSaksbehandler = input.avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
+                tilknyttetEnhet = input.tilknyttetEnhet,
             ).id
         )
     }
