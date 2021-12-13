@@ -85,8 +85,7 @@ class KabalKvalitetsvurderingController(
                 kvalitetsvurderingId = input.kvalitetsvurderingId,
                 avsluttetAvSaksbehandler = input.avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
-                tilknyttetEnhet = input.tilknyttetEnhet
-                    ?: KA_NORD, //This is a temporary hack that requires fast patching of Kabal!
+                tilknyttetEnhet = input.tilknyttetEnhet,
             ).id
         )
     }

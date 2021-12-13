@@ -21,7 +21,7 @@ data class KabalSaksdataInput(
     val utfoerendeSaksbehandler: String,
     val kvalitetsvurderingId: UUID,
     val avsluttetAvSaksbehandler: LocalDateTime,
-    val tilknyttetEnhet: String? = null,
+    val tilknyttetEnhet: String,
 )
 
 data class ValidationErrors(
