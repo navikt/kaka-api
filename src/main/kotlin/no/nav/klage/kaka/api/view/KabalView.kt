@@ -8,7 +8,7 @@ data class KabalView(
     val id: UUID
 )
 
-data class SaksdataInput(
+data class KabalSaksdataInput(
     val sakenGjelder: String,
     val sakstype: String,
     val ytelseId: String,

@@ -41,6 +41,7 @@ class SaksdataRepositoryTest {
     fun `add saksdata works`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
+            tilknyttetEnhet = "4295",
             kvalitetsvurdering = Kvalitetsvurdering()
         )
 
@@ -58,24 +59,29 @@ class SaksdataRepositoryTest {
         val utfoerendeSaksbehandler = "abc123"
         val saksdataFullfoertx = Saksdata(
             utfoerendeSaksbehandler = "someoneelse",
+            tilknyttetEnhet = "4295",
             kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataFullfoert1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
             avsluttetAvSaksbehandler = LocalDateTime.now().minusDays(3),
             kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataFullfoert2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
             avsluttetAvSaksbehandler = LocalDateTime.now().minusDays(2),
             kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataPaagaaende1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
             kvalitetsvurdering = Kvalitetsvurdering()
         )
         val saksdataPaagaaende2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
             kvalitetsvurdering = Kvalitetsvurdering()
         )
 
@@ -109,6 +115,7 @@ class SaksdataRepositoryTest {
     fun `delete saksdata (and belonging vurdering) works`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
+            tilknyttetEnhet = "4295",
             kvalitetsvurdering = Kvalitetsvurdering()
         )
 
@@ -142,6 +149,7 @@ class SaksdataRepositoryTest {
     fun `find one gives correct result`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
+            tilknyttetEnhet = "4295",
             ytelse = Ytelse.OMS_OMP,
             kvalitetsvurdering = Kvalitetsvurdering()
         )

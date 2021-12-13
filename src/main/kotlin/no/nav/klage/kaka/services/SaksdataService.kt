@@ -27,10 +27,11 @@ class SaksdataService(
         return getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
     }
 
-    fun createSaksdata(innloggetSaksbehandler: String): Saksdata {
+    fun createSaksdata(innloggetSaksbehandler: String, tilknyttetEnhet: String): Saksdata {
         return saksdataRepository.save(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
+                tilknyttetEnhet = tilknyttetEnhet,
                 kvalitetsvurdering = Kvalitetsvurdering()
             )
         )
@@ -46,7 +47,7 @@ class SaksdataService(
         utfall: Utfall,
         hjemler: List<Registreringshjemmel>,
         utfoerendeSaksbehandler: String,
-        tilknyttetEnhet: String?,
+        tilknyttetEnhet: String,
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
     ): Saksdata {

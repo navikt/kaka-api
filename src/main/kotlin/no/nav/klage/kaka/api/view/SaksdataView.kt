@@ -7,20 +7,20 @@ import java.util.*
 
 data class SaksdataView(
     val id: UUID,
-    var sakenGjelder: String?,
-    var sakstypeId: String?,
-    var ytelseId: String?,
-    var mottattVedtaksinstans: LocalDate?,
-    var vedtaksinstansEnhet: String?,
-    var mottattKlageinstans: LocalDate?,
-    var utfallId: String?,
-    var hjemmelIdList: List<String>?,
-    var utfoerendeSaksbehandler: String,
-    var tilknyttetEnhet: String?,
-    var kvalitetsvurderingId: UUID,
-    var avsluttetAvSaksbehandler: LocalDateTime?,
+    val sakenGjelder: String?,
+    val sakstypeId: String?,
+    val ytelseId: String?,
+    val mottattVedtaksinstans: LocalDate?,
+    val vedtaksinstansEnhet: String?,
+    val mottattKlageinstans: LocalDate?,
+    val utfallId: String?,
+    val hjemmelIdList: List<String>?,
+    val utfoerendeSaksbehandler: String,
+    val tilknyttetEnhet: String,
+    val kvalitetsvurderingId: UUID,
+    val avsluttetAvSaksbehandler: LocalDateTime?,
     val created: LocalDateTime,
-    var modified: LocalDateTime
+    val modified: LocalDateTime
 )
 
 fun Saksdata.toSaksdataView(): SaksdataView {
@@ -42,3 +42,5 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         modified = modified
     )
 }
+
+data class SaksdataInput(val tilknyttetEnhet: String)
