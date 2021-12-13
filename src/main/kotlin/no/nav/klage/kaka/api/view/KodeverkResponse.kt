@@ -26,6 +26,7 @@ fun getYtelser(): List<YtelseKode> =
             hjemler = ytelseToHjemler[ytelse] ?: emptyList(),
             lovKildeToRegistreringshjemler = ytelseToLovKildeToRegistreringshjemmel[ytelse] ?: emptyList(),
             enheter = ytelseTilVedtaksenheter[ytelse]?.map { it.toDto() } ?: emptyList(),
+            klageenheter = ytelseTilKlageenheter[ytelse]?.map { it.toDto() } ?: emptyList(),
         )
     }
 
@@ -74,10 +75,6 @@ val ytelseToHjemler: Map<Ytelse, List<KodeDto>> = mapOf(
                     + Hjemmel.FTL + Hjemmel.MANGLER).toDto()
 )
 
-val enheterPerYtelse: Map<Ytelse, List<Kode>> = Ytelse.values().associateWith {
-    listOf(Enhet.NAV_MOSS, Enhet.NAV_XXXX, Enhet.NAV_YYYY)
-}
-
 data class YtelseKode(
     val id: String,
     val navn: String,
@@ -85,6 +82,7 @@ data class YtelseKode(
     val hjemler: List<KodeDto>,
     val lovKildeToRegistreringshjemler: List<LovKildeToRegistreringshjemler>,
     val enheter: List<KodeDto>,
+    val klageenheter: List<KodeDto>,
 )
 
 data class HjemmelDto(val id: String, val navn: String)
