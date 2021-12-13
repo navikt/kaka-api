@@ -39,8 +39,8 @@ fun getRegistreringshjemler(): List<KodeDto> =
     }
 
 val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistreringshjemler>> =
-    ytelseTilRegistreringshjemler.mapValues {
-        it.component2().groupBy (
+    ytelseTilRegistreringshjemler.mapValues { (_, hjemler) ->
+        hjemler.groupBy (
             { hjemmel -> hjemmel.lovKilde},
             { hjemmel -> HjemmelDto(hjemmel.id, hjemmel.spesifikasjon)}
         ).map { hjemmel ->
