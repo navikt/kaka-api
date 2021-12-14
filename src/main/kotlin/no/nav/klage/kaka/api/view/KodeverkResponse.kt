@@ -17,19 +17,15 @@ data class KodeverkResponse(
     val lovKilder: List<KodeDto> = LovKilde.values().asList().toDto(),
 )
 
-fun getKlageenheter(): List<KlageenhetKode> {
-    val klageenheter = Enhet.values().filter { it.navn.startsWith("42") }
-    return klageenheter.map { klageenhet ->
+fun getKlageenheter(): List<KlageenhetKode> =
+    klageenhetTilYtelser.map { klageenhetTilYtelse ->
         KlageenhetKode(
-            id = klageenhet.id,
-            navn = klageenhet.navn,
-            beskrivelse = klageenhet.beskrivelse,
-            ytelser = ytelseTilKlageenheter.filter { klageenhet.navn in it.value.map { e -> e.navn } }.map {
-                it.key.toDto()
-            }.toSet()
+            id = klageenhetTilYtelse.key.id,
+            navn = klageenhetTilYtelse.key.navn,
+            beskrivelse = klageenhetTilYtelse.key.beskrivelse,
+            ytelser = klageenhetTilYtelse.value.toDto()
         )
     }
-}
 
 fun getYtelser(): List<YtelseKode> =
     Ytelse.values().map { ytelse ->
@@ -55,9 +51,9 @@ fun getRegistreringshjemler(): List<KodeDto> =
 
 val ytelseToLovKildeToRegistreringshjemmel: Map<Ytelse, List<LovKildeToRegistreringshjemler>> =
     ytelseTilRegistreringshjemler.mapValues { (_, hjemler) ->
-        hjemler.groupBy (
-            { hjemmel -> hjemmel.lovKilde},
-            { hjemmel -> HjemmelDto(hjemmel.id, hjemmel.spesifikasjon)}
+        hjemler.groupBy(
+            { hjemmel -> hjemmel.lovKilde },
+            { hjemmel -> HjemmelDto(hjemmel.id, hjemmel.spesifikasjon) }
         ).map { hjemmel ->
             LovKildeToRegistreringshjemler(
                 hjemmel.key.toDto(),
@@ -107,3 +103,5 @@ data class LovKildeToRegistreringshjemler(val lovkilde: KodeDto, val registrerin
 fun Kode.toDto() = KodeDto(id, navn, beskrivelse)
 
 fun List<Kode>.toDto() = map { it.toDto() }
+
+fun Set<Kode>.toDto() = map { it.toDto() }.toSet()
