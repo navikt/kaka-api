@@ -485,6 +485,15 @@ class KvalitetsvurderingService(
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
 
+    fun removeFieldsUnusedInAnke(
+        kvalitetsvurderingId: UUID
+    ) {
+        val kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
+        kvalitetsvurdering.removeFieldsUnusedInAnke()
+        kvalitetsvurdering.modified = LocalDateTime.now()
+    }
+
+
     private fun getKvalitetsvurderingAndVerifyNotFinalized(
         kvalitetsvurderingId: UUID
     ): Kvalitetsvurdering {
