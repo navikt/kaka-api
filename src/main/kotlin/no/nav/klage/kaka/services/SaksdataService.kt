@@ -80,10 +80,6 @@ class SaksdataService(
 
     fun setSakstype(saksdataId: UUID, sakstype: Type, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        if (sakstype == Type.ANKE) {
-            saksdata.mottattVedtaksinstans = null
-            kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurdering.id)
-        }
         saksdata.sakstype = sakstype
         saksdata.modified = LocalDateTime.now()
         return saksdata
@@ -148,6 +144,10 @@ class SaksdataService(
     fun setAvsluttetAvSaksbehandler(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.validate()
+        if (saksdata.sakstype == Type.ANKE) {
+            saksdata.mottattVedtaksinstans = null
+            kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurdering.id)
+        }
         kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurdering.id)
         saksdata.avsluttetAvSaksbehandler = LocalDateTime.now()
         saksdata.modified = LocalDateTime.now()
