@@ -13,8 +13,23 @@ data class KodeverkResponse(
     val utfall: List<KodeDto> = Utfall.values().asList().toDto(),
     val registreringshjemler: List<KodeDto> = getRegistreringshjemler(),
     val enheter: List<KodeDto> = Enhet.values().asList().toDto(),
+    val klageenheter: List<KlageenhetKode> = getKlageenheter(),
     val lovKilder: List<KodeDto> = LovKilde.values().asList().toDto(),
 )
+
+fun getKlageenheter(): List<KlageenhetKode> {
+    val klageenheter = Enhet.values().filter { it.navn.startsWith("42") }
+    return klageenheter.map { klageenhet ->
+        KlageenhetKode(
+            id = klageenhet.id,
+            navn = klageenhet.navn,
+            beskrivelse = klageenhet.beskrivelse,
+            ytelser = ytelseTilKlageenheter.filter { klageenhet.navn in it.value.map { e -> e.navn } }.map {
+                it.key.toDto()
+            }.toSet()
+        )
+    }
+}
 
 fun getYtelser(): List<YtelseKode> =
     Ytelse.values().map { ytelse ->
@@ -74,6 +89,13 @@ data class YtelseKode(
     val lovKildeToRegistreringshjemler: List<LovKildeToRegistreringshjemler>,
     val enheter: List<KodeDto>,
     val klageenheter: List<KodeDto>,
+)
+
+data class KlageenhetKode(
+    val id: String,
+    val navn: String,
+    val beskrivelse: String,
+    val ytelser: Set<KodeDto>,
 )
 
 data class HjemmelDto(val id: String, val navn: String)
