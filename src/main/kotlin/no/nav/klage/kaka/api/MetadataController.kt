@@ -29,6 +29,26 @@ class MetadataController(private val tokenUtil: TokenUtil) {
 
     @GetMapping("/userdata", produces = ["application/json"])
     fun getUserData(): UserData {
-        return UserData(tokenUtil.getIdent())
+        return UserData(
+            ident = tokenUtil.getIdent(),
+            navn = tokenUtil.getName().toNavn()
+        )
+    }
+
+    //Until we start using AD etc.
+    private fun String.toNavn(): UserData.Navn {
+        //based on: Navnesen, Navn
+        val nameParts = this.split(", ")
+        return if (nameParts.size > 1) {
+            UserData.Navn(
+                fornavn = nameParts.last(),
+                etternavn = nameParts.first(),
+                sammensattNavn = nameParts.last() + " " + nameParts.first()
+            )
+        } else {
+            UserData.Navn(
+                sammensattNavn = this
+            )
+        }
     }
 }
