@@ -85,11 +85,47 @@ class Saksdata(
     }
 
     fun validate() {
-        val result = mutableListOf<InvalidProperty>()
         val validationErrors = mutableListOf<InvalidProperty>()
+
+        validationErrors += validateCommonProperties()
+
+        if (sakstype == Type.KLAGE) {
+            validationErrors += validateSpecificPropertiesForKlage()
+        }
+
         val sectionList = mutableListOf<ValidationSection>()
 
+        if (validationErrors.isNotEmpty()) {
+            sectionList.add(
+                ValidationSection(
+                    section = "saksdata",
+                    properties = validationErrors
+                )
+            )
+        }
 
+        val kvalitetsvurderingValidationErrors =
+            kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
+
+        if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
+            sectionList.add(
+                ValidationSection(
+                    section = "kvalitetsvurdering",
+                    properties = kvalitetsvurderingValidationErrors
+                )
+            )
+        }
+
+        if (sectionList.isNotEmpty()) {
+            throw SectionedValidationErrorWithDetailsException(
+                title = "Validation error",
+                sections = sectionList
+            )
+        }
+    }
+
+    private fun validateCommonProperties(): List<InvalidProperty> {
+        val validationErrors = mutableListOf<InvalidProperty>()
         if (sakenGjelder == null) {
             validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
@@ -105,18 +141,6 @@ class Saksdata(
         if (ytelse == null) {
             validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::ytelseId.name)
-            )
-        }
-
-        if (mottattVedtaksinstans == null) {
-            validationErrors.add(
-                createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name)
-            )
-        }
-
-        if (vedtaksinstansEnhet == null) {
-            validationErrors.add(
-                createMustBeSelectedValidationError(SaksdataView::vedtaksinstansEnhet.name)
             )
         }
 
@@ -137,33 +161,19 @@ class Saksdata(
                 )
             }
         }
+        return validationErrors
+    }
 
-        if (validationErrors.isNotEmpty()) {
-            sectionList.add(
-                ValidationSection(
-                    section = "saksdata",
-                    properties = validationErrors
-                )
+    private fun validateSpecificPropertiesForKlage(): List<InvalidProperty> {
+        val validationErrors = mutableListOf<InvalidProperty>()
+
+        if (mottattVedtaksinstans == null) {
+            validationErrors.add(
+                createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name)
             )
         }
 
-        val kvalitetsvurderingValidationErrors = kvalitetsvurdering.getInvalidProperties(null)
-
-        if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
-            sectionList.add(
-                ValidationSection(
-                    section = "kvalitetsvurdering",
-                    properties = kvalitetsvurderingValidationErrors
-                )
-            )
-        }
-
-        if (sectionList.isNotEmpty()) {
-            throw SectionedValidationErrorWithDetailsException(
-                title = "Validation error",
-                sections = sectionList
-            )
-        }
+        return validationErrors
     }
 
     private fun createMustBeFilledValidationError(variableName: String): InvalidProperty {
