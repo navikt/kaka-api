@@ -55,7 +55,8 @@ class KabalKvalitetsvurderingController(
         val innloggetSaksbehandler = tokenUtil.getIdent()
         val kvalitetsvurdering =
             kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
-        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(null).map {
+        //FIXME use ytelse and type from input
+        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(Ytelse.OMS_OMP, Type.KLAGE).map {
             ValidationErrors.InvalidProperty(
                 field = it.field,
                 reason = it.reason

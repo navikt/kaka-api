@@ -1,7 +1,9 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kaka.exceptions.InvalidProperty
+import no.nav.klage.kodeverk.Type
+import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.Ytelse.*
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
@@ -202,28 +204,20 @@ class Kvalitetsvurdering(
         }
     }
 
-    fun getInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
-
+    fun getInvalidProperties(ytelse: Ytelse?, type: Type?): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
-        if (klageforberedelsenRadioValg == null) {
-            result.add(
-                createRadioValgValidationError(::klageforberedelsenRadioValg.name)
-            )
-        } else if (klageforberedelsenRadioValg == RadioValg.MANGELFULLT) {
-            if (
-                !sakensDokumenter &&
-                !oversittetKlagefristIkkeKommentert &&
-                !klagerensRelevanteAnfoerslerIkkeKommentert &&
-                !begrunnelseForHvorforAvslagOpprettholdes &&
-                !konklusjonen &&
-                !oversendelsesbrevetsInnholdIkkeISamsvarMedTema
-            ) {
-                result.add(
-                    createMissingChecksValidationError(::klageforberedelsenRadioValg.name)
-                )
-            }
+        result += getCommonInvalidProperties(ytelse)
+
+        if (type == Type.KLAGE) {
+            result += getSpecificInvalidPropertiesForKlage()
         }
+
+        return result
+    }
+
+    private fun getCommonInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
+        val result = mutableListOf<InvalidProperty>()
 
         if (utredningenRadioValg == null) {
             result.add(
@@ -245,22 +239,24 @@ class Kvalitetsvurdering(
             }
         }
 
-//        if (raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == null) {
-//            result.add(
-//                createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
-//            )
-//        } else if ((raadgivendeLegeTema.contains(tema) && brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT)) {
-//            if (
-//                !raadgivendeLegeErIkkeBrukt &&
-//                !raadgivendeLegeErBruktFeilSpoersmaal &&
-//                !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
-//                !raadgivendeLegeErBruktMangelfullDokumentasjon
-//            ) {
-//                result.add(
-//                    createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
-//                )
-//            }
-//        }
+        if (ytelse in raadgivendeLegeYtelser) {
+            if (brukAvRaadgivendeLegeRadioValg == null) {
+                result.add(
+                    createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                )
+            } else if (brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT) {
+                if (
+                    !raadgivendeLegeErIkkeBrukt &&
+                    !raadgivendeLegeErBruktFeilSpoersmaal &&
+                    !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
+                    !raadgivendeLegeErBruktMangelfullDokumentasjon
+                ) {
+                    result.add(
+                        createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                    )
+                }
+            }
+        }
 
         if (vedtaketRadioValg == null) {
             result.add(
@@ -282,7 +278,29 @@ class Kvalitetsvurdering(
                 )
             }
         }
+        return result
+    }
 
+    private fun getSpecificInvalidPropertiesForKlage(): List<InvalidProperty> {
+        val result = mutableListOf<InvalidProperty>()
+        if (klageforberedelsenRadioValg == null) {
+            result.add(
+                createRadioValgValidationError(::klageforberedelsenRadioValg.name)
+            )
+        } else if (klageforberedelsenRadioValg == RadioValg.MANGELFULLT) {
+            if (
+                !sakensDokumenter &&
+                !oversittetKlagefristIkkeKommentert &&
+                !klagerensRelevanteAnfoerslerIkkeKommentert &&
+                !begrunnelseForHvorforAvslagOpprettholdes &&
+                !konklusjonen &&
+                !oversendelsesbrevetsInnholdIkkeISamsvarMedTema
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::klageforberedelsenRadioValg.name)
+                )
+            }
+        }
         return result
     }
 
@@ -300,4 +318,23 @@ class Kvalitetsvurdering(
         )
     }
 }
+
+private val raadgivendeLegeYtelser = setOf(
+    GRU_GRU,
+    HJE_HJE,
+    SYK_SYK,
+    OMS_OMP,
+    OMS_OLP,
+    OMS_PSB,
+    OMS_PLS,
+    HJE_HJE,
+    AAP_AAP,
+    UFO_UFO,
+    YRK_YRK,
+    YRK_YSY,
+    YRK_MEN,
+    FOR_FOR,
+    FOR_SVA,
+    UFO_TVF,
+)
 
