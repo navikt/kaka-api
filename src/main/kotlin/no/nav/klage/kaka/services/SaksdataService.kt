@@ -80,6 +80,10 @@ class SaksdataService(
 
     fun setSakstype(saksdataId: UUID, sakstype: Type, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        if (sakstype == Type.ANKE) {
+            saksdata.mottattVedtaksinstans = null
+            kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurdering.id)
+        }
         saksdata.sakstype = sakstype
         saksdata.modified = LocalDateTime.now()
         return saksdata

@@ -204,6 +204,19 @@ class Kvalitetsvurdering(
         }
     }
 
+    fun removeFieldsUnusedInAnke() {
+        klageforberedelsenRadioValg = null
+        sakensDokumenter = false
+        oversittetKlagefristIkkeKommentert = false
+        klagerensRelevanteAnfoerslerIkkeKommentert = false
+        begrunnelseForHvorforAvslagOpprettholdes = false
+        konklusjonen = false
+        oversendelsesbrevetsInnholdIkkeISamsvarMedTema = false
+
+        brukIOpplaering = false
+        brukIOpplaeringText = null
+    }
+
     fun getInvalidProperties(ytelse: Ytelse?, type: Type?): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
