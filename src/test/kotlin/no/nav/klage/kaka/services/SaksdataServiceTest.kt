@@ -17,10 +17,13 @@ internal class SaksdataServiceTest {
         val saksdataRepository = mockk<SaksdataRepository>()
         val kvalitetsvurderingService = mockk<KvalitetsvurderingService>()
 
-        every { saksdataRepository.findById(any()) } returns Optional.of(Saksdata(
-            utfoerendeSaksbehandler = "abc123",
-            kvalitetsvurdering = Kvalitetsvurdering()
-        ))
+        every { saksdataRepository.findById(any()) } returns Optional.of(
+            Saksdata(
+                utfoerendeSaksbehandler = "abc123",
+                tilknyttetEnhet = "4295",
+                kvalitetsvurdering = Kvalitetsvurdering()
+            )
+        )
 
         val saksdataService = SaksdataService(saksdataRepository, mockk(), kvalitetsvurderingService)
 

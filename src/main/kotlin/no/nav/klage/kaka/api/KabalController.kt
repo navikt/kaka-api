@@ -1,8 +1,8 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
+import no.nav.klage.kaka.api.view.KabalSaksdataInput
 import no.nav.klage.kaka.api.view.KabalView
-import no.nav.klage.kaka.api.view.SaksdataInput
 import no.nav.klage.kaka.api.view.ValidationErrors
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -34,6 +34,7 @@ class KabalKvalitetsvurderingController(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
+        private const val KA_NORD = "4295"
     }
 
     @PostMapping("/kvalitetsvurdering")
@@ -52,7 +53,8 @@ class KabalKvalitetsvurderingController(
         @RequestParam temaId: String
     ): ValidationErrors {
         val innloggetSaksbehandler = tokenUtil.getIdent()
-        val kvalitetsvurdering = kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        val kvalitetsvurdering =
+            kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
         //FIXME use ytelse and type from input
         return ValidationErrors(kvalitetsvurdering.getInvalidProperties(Ytelse.OMS_OMP, Type.KLAGE).map {
             ValidationErrors.InvalidProperty(
@@ -64,7 +66,7 @@ class KabalKvalitetsvurderingController(
 
     @PostMapping("/saksdata")
     fun createAndFinalizeSaksdata(
-        @RequestBody input: SaksdataInput
+        @RequestBody input: KabalSaksdataInput
     ): KabalView {
         val callingApplication = tokenUtil.getCallingApplication()
         if (callingApplication != kabalApiName) {
@@ -84,6 +86,7 @@ class KabalKvalitetsvurderingController(
                 kvalitetsvurderingId = input.kvalitetsvurderingId,
                 avsluttetAvSaksbehandler = input.avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
+                tilknyttetEnhet = input.tilknyttetEnhet,
             ).id
         )
     }

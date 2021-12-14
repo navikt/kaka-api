@@ -27,10 +27,11 @@ class SaksdataService(
         return getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
     }
 
-    fun createSaksdata(innloggetSaksbehandler: String): Saksdata {
+    fun createSaksdata(innloggetSaksbehandler: String, tilknyttetEnhet: String): Saksdata {
         return saksdataRepository.save(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
+                tilknyttetEnhet = tilknyttetEnhet,
                 kvalitetsvurdering = Kvalitetsvurdering()
             )
         )
@@ -46,6 +47,7 @@ class SaksdataService(
         utfall: Utfall,
         hjemler: List<Registreringshjemmel>,
         utfoerendeSaksbehandler: String,
+        tilknyttetEnhet: String,
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
     ): Saksdata {
@@ -63,6 +65,7 @@ class SaksdataService(
                 registreringshjemler = hjemler.toSet(),
                 avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                tilknyttetEnhet = tilknyttetEnhet,
                 kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
             )
         )
@@ -106,6 +109,13 @@ class SaksdataService(
         return saksdata
     }
 
+    fun setTilknyttetEnhet(saksdataId: UUID, enhetsId: String, innloggetSaksbehandler: String): Saksdata {
+        val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        saksdata.tilknyttetEnhet = enhetsId
+        saksdata.modified = LocalDateTime.now()
+        return saksdata
+    }
+
     fun setMottattKlageinstans(saksdataId: UUID, dato: LocalDate, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.mottattKlageinstans = dato
@@ -120,7 +130,11 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setRegistreringshjemler(saksdataId: UUID, registreringshjemler: Set<Registreringshjemmel>, innloggetSaksbehandler: String): Saksdata {
+    fun setRegistreringshjemler(
+        saksdataId: UUID,
+        registreringshjemler: Set<Registreringshjemmel>,
+        innloggetSaksbehandler: String
+    ): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.registreringshjemler = registreringshjemler.toMutableSet()
         saksdata.modified = LocalDateTime.now()
