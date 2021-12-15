@@ -85,7 +85,7 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setYtelse(saksdataId: UUID, ytelse: Ytelse, innloggetSaksbehandler: String): Saksdata {
+    fun setYtelse(saksdataId: UUID, ytelse: Ytelse?, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         if (saksdata.ytelse != ytelse) {
             setRegistreringshjemler(saksdataId, emptySet(), innloggetSaksbehandler)
@@ -111,6 +111,9 @@ class SaksdataService(
 
     fun setTilknyttetEnhet(saksdataId: UUID, enhetsId: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        if (saksdata.tilknyttetEnhet != enhetsId) {
+            setYtelse(saksdataId, null, innloggetSaksbehandler)
+        }
         saksdata.tilknyttetEnhet = enhetsId
         saksdata.modified = LocalDateTime.now()
         return saksdata
