@@ -1,5 +1,7 @@
 ingress:
   - https://kaka-api.nav.no
+externalHosts:
+  - host: login.microsoftonline.com
 springProfile: prod-gcp
 tenant: nav.no
 ROLE_KLAGEINSTANS_OEST: 0f55f05c-c37f-416b-b336-d49635f2e13d

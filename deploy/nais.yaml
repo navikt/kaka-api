@@ -72,6 +72,24 @@ spec:
         - application: kaka-frontend
         - application: kabal-frontend
         - application: kabal-api
+    outbound:
+      rules:
+        - application: kabal-document
+        - application: kaka-api
+      external:
+      {{#each externalHosts}}
+        - host: {{host}}
+          {{#if ports}}
+          ports:
+            {{#each ports}}
+            - name: {{name}}
+              port: {{port}}
+              protocol: {{protocol}}
+            {{/each}}
+          {{/if}}
+      {{/each}}
+  envFrom:
+    - secret: axsys
   resources:
     limits:
       cpu: 2000m
