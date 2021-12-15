@@ -15,16 +15,16 @@ val githubUser: String by project
 val githubPassword: String by project
 
 plugins {
-    id("org.springframework.boot") version "2.5.5"
+    id("org.springframework.boot") version "2.5.7"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.5.31"
-    kotlin("jvm") version "1.5.31"
-    kotlin("plugin.spring") version "1.5.31"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.6.0"
+    kotlin("jvm") version "1.6.0"
+    kotlin("plugin.spring") version "1.6.0"
 }
 
 group = "no.nav.klage"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
@@ -41,7 +41,9 @@ repositories {
 apply(plugin = "io.spring.dependency-management")
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.31")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
     implementation("org.springframework.boot:spring-boot-starter:$springVersion")
     implementation("org.springframework.boot:spring-boot-starter-web:$springVersion")
     implementation("org.springframework.boot:spring-boot-starter-actuator:$springVersion")
@@ -78,7 +80,8 @@ configurations.all {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        jvmTarget = "11"
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "17"
     }
 }
 
@@ -92,6 +95,3 @@ tasks.withType<Test> {
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     this.archiveFileName.set("app.jar")
 }
-
-kotlin.sourceSets["main"].kotlin.srcDirs("src/main/kotlin")
-kotlin.sourceSets["test"].kotlin.srcDirs("src/test/kotlin")
