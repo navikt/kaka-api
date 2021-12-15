@@ -1,1 +1,6 @@
 TENANT_ID: 62366534-1ec3-4962-8869-9b5535279d0b
+
+AXSYS_URL: https://api-gw.oera.no/axsys/api/v2
+AXSYS_CLUSTER: prod-fss
+AXSYS_NAMESPACE: org
+AXSYS_APP: axsys
