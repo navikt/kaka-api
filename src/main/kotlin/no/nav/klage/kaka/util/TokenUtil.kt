@@ -2,11 +2,17 @@ package no.nav.klage.kaka.util
 
 
 import no.nav.klage.kaka.config.SecurityConfig
+import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
+import no.nav.security.token.support.client.spring.ClientConfigurationProperties
 import no.nav.security.token.support.core.context.TokenValidationContextHolder
 import org.springframework.stereotype.Service
 
 @Service
-class TokenUtil(private val tokenValidationContextHolder: TokenValidationContextHolder) {
+class TokenUtil(
+    private val clientConfigurationProperties: ClientConfigurationProperties,
+    private val oAuth2AccessTokenService: OAuth2AccessTokenService,
+    private val tokenValidationContextHolder: TokenValidationContextHolder
+) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -37,4 +43,17 @@ class TokenUtil(private val tokenValidationContextHolder: TokenValidationContext
     private fun getClaim(name: String): String? =
         tokenValidationContextHolder.tokenValidationContext.getJwtToken(SecurityConfig.ISSUER_AAD)
             .jwtTokenClaims?.getStringClaim(name)
+
+    fun getSaksbehandlerAccessTokenWithGraphScope(): String {
+        val clientProperties = clientConfigurationProperties.registration["azure-onbehalfof"]
+        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
+        return response.accessToken
+    }
+
+    fun getSaksbehandlerAccessTokenWithAxsysScope(): String {
+        val clientProperties = clientConfigurationProperties.registration["axsys-onbehalfof"]
+        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
+        return response.accessToken
+    }
+
 }
