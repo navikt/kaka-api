@@ -53,6 +53,11 @@ spec:
       claims:
         groups:
           - id: {{ROLE_KLAGEINSTANS_OEST}}
+          - id: {{ROLE_KLAGEINSTANS_NORD}}
+          - id: {{ROLE_KLAGEINSTANS_SOER}}
+          - id: {{ROLE_KLAGEINSTANS_VEST}}
+          - id: {{ROLE_KLAGEINSTANS_OSLO}}
+          - id: {{ROLE_KLAGEINSTANS_MIDT}}
           - id: {{ROLE_KLAGE_SAKSBEHANDLER}}
           - id: {{ROLE_KLAGE_FAGANSVARLIG}}
           - id: {{ROLE_KLAGE_LEDER}}
