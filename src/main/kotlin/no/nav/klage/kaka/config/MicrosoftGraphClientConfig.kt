@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 
 @Configuration
-class MicrosoftGraphClientConfiguration(
+class MicrosoftGraphClientConfig(
     private val webClientBuilder: WebClient.Builder
 ) {
 
