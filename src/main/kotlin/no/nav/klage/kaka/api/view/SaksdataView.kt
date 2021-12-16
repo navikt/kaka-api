@@ -43,4 +43,4 @@ fun Saksdata.toSaksdataView(): SaksdataView {
     )
 }
 
-data class SaksdataInput(val tilknyttetEnhet: String)
+data class SaksdataInput(val tilknyttetEnhet: String? = null)

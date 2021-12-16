@@ -60,7 +60,7 @@ class SaksdataController(
 
     @PostMapping
     fun createSaksdata(
-        @RequestBody input: SaksdataInput
+        @RequestBody input: SaksdataInput? = null
     ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
@@ -70,7 +70,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.createSaksdata(innloggetSaksbehandler, input.tilknyttetEnhet).toSaksdataView()
+        return saksdataService.createSaksdata(innloggetSaksbehandler, input?.tilknyttetEnhet).toSaksdataView()
     }
 
     @PutMapping("/{id}/tilknyttetenhet")

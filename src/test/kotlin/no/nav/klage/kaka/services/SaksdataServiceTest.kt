@@ -2,6 +2,7 @@ package no.nav.klage.kaka.services
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -16,6 +17,7 @@ internal class SaksdataServiceTest {
     fun `throws exception if not allowed to delete`() {
         val saksdataRepository = mockk<SaksdataRepository>()
         val kvalitetsvurderingService = mockk<KvalitetsvurderingService>()
+        val axsysGateway = mockk<AxsysGateway>()
 
         every { saksdataRepository.findById(any()) } returns Optional.of(
             Saksdata(
@@ -25,7 +27,7 @@ internal class SaksdataServiceTest {
             )
         )
 
-        val saksdataService = SaksdataService(saksdataRepository, mockk(), kvalitetsvurderingService)
+        val saksdataService = SaksdataService(saksdataRepository, mockk(), kvalitetsvurderingService, axsysGateway)
 
         assertThrows<MissingTilgangException> {
             saksdataService.deleteSaksdata(saksdataId = UUID.randomUUID(), innloggetSaksbehandler = "otherIdent")
