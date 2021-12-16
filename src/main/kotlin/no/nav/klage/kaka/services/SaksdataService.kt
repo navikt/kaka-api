@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.services
 
+import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
@@ -21,17 +22,19 @@ import java.util.*
 class SaksdataService(
     private val saksdataRepository: SaksdataRepository,
     private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
-    private val kvalitetsvurderingService: KvalitetsvurderingService
+    private val kvalitetsvurderingService: KvalitetsvurderingService,
+    private val axsysGateway: AxsysGateway,
 ) {
     fun getSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         return getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
     }
 
-    fun createSaksdata(innloggetSaksbehandler: String, tilknyttetEnhet: String): Saksdata {
+    fun createSaksdata(innloggetSaksbehandler: String, tilknyttetEnhet: String?): Saksdata {
         return saksdataRepository.save(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
-                tilknyttetEnhet = tilknyttetEnhet,
+                tilknyttetEnhet = tilknyttetEnhet
+                    ?: axsysGateway.getKlageenheterForSaksbehandler(innloggetSaksbehandler).first().navn,
                 kvalitetsvurdering = Kvalitetsvurdering()
             )
         )
