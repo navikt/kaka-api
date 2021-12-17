@@ -4,6 +4,7 @@ externalHosts:
   - host: login.microsoftonline.com
 springProfile: dev-gcp
 tenant: trygdeetaten.no
+ROLE_KLAGEINSTANS_ALLE: 07add1e7-7195-4c37-828d-fdf23ec6bef1
 ROLE_KLAGEINSTANS_OEST: 07add1e7-7195-4c37-828d-fdf23ec6bef1
 ROLE_KLAGEINSTANS_SOER: 07add1e7-7195-4c37-828d-fdf23ec6bef1
 ROLE_KLAGEINSTANS_MIDT: 07add1e7-7195-4c37-828d-fdf23ec6bef1

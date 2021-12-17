@@ -4,6 +4,7 @@ externalHosts:
   - host: login.microsoftonline.com
 springProfile: prod-gcp
 tenant: nav.no
+ROLE_KLAGEINSTANS_ALLE: 3cc106d4-1b0d-4bbc-b918-8ec5213f138b
 ROLE_KLAGEINSTANS_OEST: 0f55f05c-c37f-416b-b336-d49635f2e13d
 ROLE_KLAGEINSTANS_SOER: 04c3a62e-13df-4a88-a3d5-79a5783ddaad
 ROLE_KLAGEINSTANS_MIDT: 6064326c-cc69-4fd0-97ff-1250a1e4a849
