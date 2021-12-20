@@ -50,7 +50,7 @@ class KabalKvalitetsvurderingController(
     @GetMapping("/kvalitetsvurdering/{id}/validationerrors")
     fun getValidationErrors(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @RequestParam temaId: String,
+        @RequestParam temaId: String?,
         @RequestParam ytelseId: String?,
     ): ValidationErrors {
         val innloggetSaksbehandler = tokenUtil.getIdent()
