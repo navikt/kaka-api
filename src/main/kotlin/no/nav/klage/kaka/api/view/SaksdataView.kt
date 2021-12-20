@@ -27,7 +27,7 @@ fun Saksdata.toSaksdataView(): SaksdataView {
     return SaksdataView(
         id = id,
         sakenGjelder = sakenGjelder,
-        sakstypeId = sakstype?.id,
+        sakstypeId = sakstype.id,
         ytelseId = ytelse?.id,
         mottattVedtaksinstans = mottattVedtaksinstans,
         vedtaksinstansEnhet = vedtaksinstansEnhet,

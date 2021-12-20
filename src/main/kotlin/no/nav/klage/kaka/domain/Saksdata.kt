@@ -24,7 +24,8 @@ class Saksdata(
     var sakenGjelder: String? = null,
     @Column(name = "sakstype_id")
     @Convert(converter = TypeConverter::class)
-    var sakstype: Type? = null,
+    //Default to KLAGE
+    var sakstype: Type = Type.KLAGE,
     @Column(name = "ytelse_id")
     @Convert(converter = YtelseConverter::class)
     var ytelse: Ytelse? = null,
@@ -90,40 +91,31 @@ class Saksdata(
         val validationErrors = mutableListOf<InvalidProperty>()
         val sectionList = mutableListOf<ValidationSection>()
 
-        if (sakstype == null) {
+        validationErrors += validateCommonProperties()
+
+        if (sakstype == Type.KLAGE) {
+            validationErrors += validateSpecificPropertiesForKlage()
+        }
+
+        if (validationErrors.isNotEmpty()) {
             sectionList.add(
                 ValidationSection(
                     section = "saksdata",
-                    properties = listOf(createMustBeSelectedValidationError(SaksdataView::sakstypeId.name))
+                    properties = validationErrors
                 )
             )
-        } else {
-            validationErrors += validateCommonProperties()
+        }
 
-            if (sakstype == Type.KLAGE) {
-                validationErrors += validateSpecificPropertiesForKlage()
-            }
+        val kvalitetsvurderingValidationErrors =
+            kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
 
-            if (validationErrors.isNotEmpty()) {
-                sectionList.add(
-                    ValidationSection(
-                        section = "saksdata",
-                        properties = validationErrors
-                    )
+        if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
+            sectionList.add(
+                ValidationSection(
+                    section = "kvalitetsvurdering",
+                    properties = kvalitetsvurderingValidationErrors
                 )
-            }
-
-            val kvalitetsvurderingValidationErrors =
-                kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
-
-            if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
-                sectionList.add(
-                    ValidationSection(
-                        section = "kvalitetsvurdering",
-                        properties = kvalitetsvurderingValidationErrors
-                    )
-                )
-            }
+            )
         }
 
         if (sectionList.isNotEmpty()) {

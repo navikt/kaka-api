@@ -217,7 +217,7 @@ class Kvalitetsvurdering(
         brukIOpplaeringText = null
     }
 
-    fun getInvalidProperties(ytelse: Ytelse?, type: Type?): List<InvalidProperty> {
+    fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
         result += getCommonInvalidProperties(ytelse)

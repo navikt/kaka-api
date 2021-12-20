@@ -57,7 +57,7 @@ internal class KvalitetsvurderingTest {
             klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.BRA,
             vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
         )
-        val results = kvalitetsvurdering.getInvalidProperties(null, null)
+        val results = kvalitetsvurdering.getInvalidProperties(null, Type.KLAGE)
         assertThat(results).hasSize(2)
     }
 
