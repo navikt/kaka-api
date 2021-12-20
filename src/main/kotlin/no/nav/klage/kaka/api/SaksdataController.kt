@@ -73,6 +73,20 @@ class SaksdataController(
         return saksdataService.createSaksdata(innloggetSaksbehandler, input?.tilknyttetEnhet).toSaksdataView()
     }
 
+    @PostMapping("/{id}/reopen")
+    fun reopenSaksdata(
+        @PathVariable("id") saksdataId: UUID
+    ) {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::reopenSaksdata.name,
+            innloggetSaksbehandler,
+            UUID.randomUUID(),
+            logger
+        )
+        return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler)
+    }
+
     @PutMapping("/{id}/tilknyttetenhet")
     fun setTilknyttetEnhet(
         @PathVariable("id") saksdataId: UUID,
