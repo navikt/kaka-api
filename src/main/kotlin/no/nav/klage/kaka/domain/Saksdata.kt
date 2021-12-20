@@ -89,13 +89,14 @@ class Saksdata(
 
     fun validate() {
         val validationErrors = mutableListOf<InvalidProperty>()
-        val sectionList = mutableListOf<ValidationSection>()
 
         validationErrors += validateCommonProperties()
 
         if (sakstype == Type.KLAGE) {
             validationErrors += validateSpecificPropertiesForKlage()
         }
+
+        val sectionList = mutableListOf<ValidationSection>()
 
         if (validationErrors.isNotEmpty()) {
             sectionList.add(
