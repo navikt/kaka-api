@@ -160,6 +160,16 @@ class SaksdataService(
         return saksdata
     }
 
+    fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
+        val saksdata = getSaksdataAndVerifyAccessForEdit(
+            saksdataId = saksdataId,
+            innloggetSaksbehandler = innloggetSaksbehandler,
+            isReopen = true
+        )
+        saksdata.avsluttetAvSaksbehandler = null
+        saksdata.modified = LocalDateTime.now()
+    }
+
     private fun getSaksdataAndVerifyAccess(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         val saksdata = saksdataRepository.findById(saksdataId)
         if (saksdata.isEmpty) {
@@ -170,14 +180,18 @@ class SaksdataService(
         }
     }
 
-    private fun getSaksdataAndVerifyAccessForEdit(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
+    private fun getSaksdataAndVerifyAccessForEdit(
+        saksdataId: UUID,
+        innloggetSaksbehandler: String,
+        isReopen: Boolean = false
+    ): Saksdata {
         val saksdata = saksdataRepository.findById(saksdataId)
         if (saksdata.isEmpty) {
             throw SaksdataNotFoundException("Could not find saksdata with id $saksdataId")
         }
         return saksdata.get().also {
             it.verifyAccess(innloggetSaksbehandler)
-            if (it.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException("Saksdataen er allerede fullført")
+            if (!isReopen && it.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException("Saksdataen er allerede fullført")
         }
     }
 
