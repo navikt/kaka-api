@@ -88,34 +88,42 @@ class Saksdata(
 
     fun validate() {
         val validationErrors = mutableListOf<InvalidProperty>()
-
-        validationErrors += validateCommonProperties()
-
-        if (sakstype == Type.KLAGE) {
-            validationErrors += validateSpecificPropertiesForKlage()
-        }
-
         val sectionList = mutableListOf<ValidationSection>()
 
-        if (validationErrors.isNotEmpty()) {
+        if (sakstype == null) {
             sectionList.add(
                 ValidationSection(
                     section = "saksdata",
-                    properties = validationErrors
+                    properties = listOf(createMustBeSelectedValidationError(SaksdataView::sakstypeId.name))
                 )
             )
-        }
+        } else {
+            validationErrors += validateCommonProperties()
 
-        val kvalitetsvurderingValidationErrors =
-            kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
+            if (sakstype == Type.KLAGE) {
+                validationErrors += validateSpecificPropertiesForKlage()
+            }
 
-        if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
-            sectionList.add(
-                ValidationSection(
-                    section = "kvalitetsvurdering",
-                    properties = kvalitetsvurderingValidationErrors
+            if (validationErrors.isNotEmpty()) {
+                sectionList.add(
+                    ValidationSection(
+                        section = "saksdata",
+                        properties = validationErrors
+                    )
                 )
-            )
+            }
+
+            val kvalitetsvurderingValidationErrors =
+                kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
+
+            if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
+                sectionList.add(
+                    ValidationSection(
+                        section = "kvalitetsvurdering",
+                        properties = kvalitetsvurderingValidationErrors
+                    )
+                )
+            }
         }
 
         if (sectionList.isNotEmpty()) {
@@ -134,9 +142,9 @@ class Saksdata(
             )
         }
 
-        if (sakstype == null) {
+        if (vedtaksinstansEnhet == null) {
             validationErrors.add(
-                createMustBeSelectedValidationError(SaksdataView::sakstypeId.name)
+                createMustBeSelectedValidationError(SaksdataView::vedtaksinstansEnhet.name)
             )
         }
 
