@@ -29,4 +29,3 @@ data class ValidationErrors(
 ) {
     data class InvalidProperty(val field: String, val reason: String)
 }
-
