@@ -5,6 +5,7 @@ import no.nav.klage.kaka.api.view.KabalSaksdataInput
 import no.nav.klage.kaka.api.view.KabalView
 import no.nav.klage.kaka.api.view.ValidationErrors
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
+import no.nav.klage.kaka.domain.Source
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.services.SaksdataService
@@ -89,6 +90,7 @@ class KabalKvalitetsvurderingController(
                 avsluttetAvSaksbehandler = input.avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
                 tilknyttetEnhet = input.tilknyttetEnhet,
+                source = Source.KABAL,
             ).id
         )
     }

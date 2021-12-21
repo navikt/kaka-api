@@ -3,6 +3,7 @@ package no.nav.klage.kaka.services
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.Source
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
@@ -53,6 +54,7 @@ class SaksdataService(
         tilknyttetEnhet: String,
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
+        source: Source
     ): Saksdata {
         //TODO: Her skal det skje en validering før noen oppdatering skjer.
         kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
@@ -69,7 +71,8 @@ class SaksdataService(
                 avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                 utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                 tilknyttetEnhet = tilknyttetEnhet,
-                kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId)
+                kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId),
+                source = source
             )
         )
     }
