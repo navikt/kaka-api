@@ -78,7 +78,7 @@ class SaksdataService(
     }
 
     fun setSakenGjelder(saksdataId: UUID, sakenGjelder: String, innloggetSaksbehandler: String): Saksdata {
-        val saksdata = getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
+        val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakenGjelder = sakenGjelder
         saksdata.modified = LocalDateTime.now()
         return saksdata
@@ -213,7 +213,7 @@ class SaksdataService(
     }
 
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
-        getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
+        getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdataRepository.deleteById(saksdataId)
     }
 }
