@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.api.view
 
+import no.nav.klage.kaka.domain.Source
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
 
@@ -9,6 +10,7 @@ data class KodeverkResponse(
     val utfall: List<KodeDto> = Utfall.values().asList().toDto(),
     val enheter: List<KodeDto> = Enhet.values().asList().toDto(),
     val klageenheter: List<KlageenhetKode> = getKlageenheter(),
+    val sources: List<KodeDto> = Source.values().asList().toDto()
 )
 
 fun getKlageenheter(): List<KlageenhetKode> =
