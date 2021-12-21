@@ -9,8 +9,10 @@ import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
+import no.nav.klage.kaka.services.KodeverkResponseService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kodeverk.Enhet
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,6 +27,7 @@ class MetadataController(
     private val axsysGateway: AxsysGateway,
     private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
+    private val kodeverkResponseService: KodeverkResponseService
 ) {
 
     companion object {
@@ -34,7 +37,9 @@ class MetadataController(
 
     @GetMapping("/kodeverk", produces = ["application/json"])
     fun getKodeverk(): KodeverkResponse {
-        return KodeverkResponse()
+        val userHasAccessTo2103 =
+            axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent()).contains(Enhet.E2103)
+        return kodeverkResponseService.getKodeVerkResponse(userHasAccessTo2103)
     }
 
     @GetMapping("/userdata", produces = ["application/json"])
