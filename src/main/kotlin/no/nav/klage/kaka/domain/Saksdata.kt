@@ -24,7 +24,8 @@ class Saksdata(
     var sakenGjelder: String? = null,
     @Column(name = "sakstype_id")
     @Convert(converter = TypeConverter::class)
-    var sakstype: Type? = null,
+    //Default to KLAGE
+    var sakstype: Type = Type.KLAGE,
     @Column(name = "ytelse_id")
     @Convert(converter = YtelseConverter::class)
     var ytelse: Ytelse? = null,
@@ -134,9 +135,9 @@ class Saksdata(
             )
         }
 
-        if (sakstype == null) {
+        if (vedtaksinstansEnhet == null) {
             validationErrors.add(
-                createMustBeSelectedValidationError(SaksdataView::sakstypeId.name)
+                createMustBeSelectedValidationError(SaksdataView::vedtaksinstansEnhet.name)
             )
         }
 
