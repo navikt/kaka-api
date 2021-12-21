@@ -16,6 +16,7 @@ data class SaksdataSearchHitView (
     var utfallId: String?,
     var hjemmelIdList: List<String>?,
     var avsluttetAvSaksbehandler: LocalDateTime?,
+    val sourceId: String,
     val created: LocalDateTime,
     var modified: LocalDateTime
 )
@@ -29,6 +30,7 @@ fun Saksdata.toSaksdataSearchHitView(): SaksdataSearchHitView {
         utfallId = utfall?.id,
         hjemmelIdList = registreringshjemler?.map { it.id } ?: emptyList(),
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
+        sourceId = source.id,
         created = created,
         modified = modified
     )

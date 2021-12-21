@@ -19,6 +19,7 @@ data class SaksdataView(
     val tilknyttetEnhet: String,
     val kvalitetsvurderingId: UUID,
     val avsluttetAvSaksbehandler: LocalDateTime?,
+    val sourceId: String,
     val created: LocalDateTime,
     val modified: LocalDateTime
 )
@@ -38,6 +39,7 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         tilknyttetEnhet = tilknyttetEnhet,
         kvalitetsvurderingId = kvalitetsvurdering.id,
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
+        sourceId = source.id,
         created = created,
         modified = modified
     )

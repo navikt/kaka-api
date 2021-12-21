@@ -16,7 +16,6 @@ data class KabalSaksdataInput(
     val vedtaksinstansEnhet: String,
     val mottattKlageinstans: LocalDate,
     val utfall: String,
-    val hjemler: List<String>?,
     val registreringshjemler: List<String>?,
     val utfoerendeSaksbehandler: String,
     val kvalitetsvurderingId: UUID,

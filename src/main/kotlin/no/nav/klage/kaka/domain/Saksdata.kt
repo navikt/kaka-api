@@ -56,6 +56,9 @@ class Saksdata(
     var kvalitetsvurdering: Kvalitetsvurdering,
     @Column(name = "dato_saksdata_avsluttet_av_saksbehandler")
     var avsluttetAvSaksbehandler: LocalDateTime? = null,
+    @Column(name = "source_id")
+    @Convert(converter = SourceConverter::class)
+    var source: Source = Source.KAKA,
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
