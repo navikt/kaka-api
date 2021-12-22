@@ -4,11 +4,11 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.KodeDto
 import no.nav.klage.kaka.api.view.KodeverkResponse
+import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
-import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerRolle
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.security.token.support.core.api.Unprotected
@@ -24,6 +24,7 @@ class MetadataController(
     private val tokenUtil: TokenUtil,
     private val axsysGateway: AxsysGateway,
     private val azureGateway: AzureGateway,
+    private val rolleMapper: RolleMapper,
 ) {
 
     companion object {
@@ -43,7 +44,7 @@ class MetadataController(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
             klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) },
-            roller = azureGateway.getRollerForInnloggetSaksbehandler().toRoller()
+            roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
         )
     }
 
@@ -53,12 +54,4 @@ class MetadataController(
             etternavn = this.etternavn,
             sammensattNavn = this.sammensattNavn,
         )
-
-    private fun List<SaksbehandlerRolle>.toRoller(): List<UserData.Rolle> =
-        this.map {
-            UserData.Rolle(
-                id = it.id,
-                navn = it.navn
-            )
-        }
 }
