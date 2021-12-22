@@ -4,6 +4,7 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.KodeDto
 import no.nav.klage.kaka.api.view.KodeverkResponse
+import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
@@ -23,6 +24,7 @@ class MetadataController(
     private val tokenUtil: TokenUtil,
     private val axsysGateway: AxsysGateway,
     private val azureGateway: AzureGateway,
+    private val rolleMapper: RolleMapper,
 ) {
 
     companion object {
@@ -41,17 +43,15 @@ class MetadataController(
         return UserData(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
-            klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) }
+            klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) },
+            roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
         )
     }
 
-    private fun SaksbehandlerPersonligInfo.toNavn(): UserData.Navn {
-        return UserData.Navn(
+    private fun SaksbehandlerPersonligInfo.toNavn(): UserData.Navn =
+        UserData.Navn(
             fornavn = this.fornavn,
             etternavn = this.etternavn,
             sammensattNavn = this.sammensattNavn,
         )
-    }
 }
-
-

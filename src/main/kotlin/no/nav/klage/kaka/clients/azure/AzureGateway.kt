@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.clients.azure
 
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
+import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerRolle
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import org.springframework.stereotype.Service
@@ -49,5 +50,14 @@ class AzureGateway(
             data.mail
         )
     }
+
+    fun getRollerForInnloggetSaksbehandler(): List<SaksbehandlerRolle> =
+        try {
+            microsoftGraphClient.getInnloggetSaksbehandlersGroups()
+                .map { SaksbehandlerRolle(it.id, it.displayName ?: it.mailNickname ?: it.id) }
+        } catch (e: Exception) {
+            logger.error("Failed to call getInnloggetSaksbehandlersGroups", e)
+            throw e
+        }
 
 }
