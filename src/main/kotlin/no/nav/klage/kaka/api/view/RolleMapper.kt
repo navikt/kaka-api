@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class RolleMapper(
-    @Value("\${ROLE_GOSYS_OPPGAVE_BEHANDLER}") private val gosysSaksbehandlerRole: String,
+    @Value("\${ROLE_KLAGEINSTANS_ALLE}") private val klageinstansAlleRole: String,
     @Value("\${ROLE_KLAGE_SAKSBEHANDLER}") private val saksbehandlerRole: String,
     @Value("\${ROLE_KLAGE_FAGANSVARLIG}") private val fagansvarligRole: String,
     @Value("\${ROLE_KLAGE_LEDER}") private val lederRole: String,
@@ -16,7 +16,7 @@ class RolleMapper(
     @Value("\${ROLE_ADMIN}") private val adminRole: String
 ) {
     val rolleMap = mapOf(
-        gosysSaksbehandlerRole to "ROLE_GOSYS_OPPGAVE_BEHANDLER",
+        klageinstansAlleRole to "ROLE_KLAGEINSTANS_ALLE",
         saksbehandlerRole to "ROLE_KLAGE_SAKSBEHANDLER",
         fagansvarligRole to "ROLE_KLAGE_FAGANSVARLIG",
         lederRole to "ROLE_KLAGE_LEDER",
