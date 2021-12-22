@@ -46,6 +46,22 @@ class MicrosoftGraphClient(
         return findUserByNavIdent(navIdent)
     }
 
+    //@Retryable
+    fun getInnloggetSaksbehandlersGroups(): List<AzureGroup> {
+        logger.debug("Fetching data about authenticated users groups from Microsoft Graph")
+
+        return microsoftGraphWebClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/me/memberOf")
+                    .build()
+            }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
+            .retrieve()
+            .bodyToMono<AzureGroupList>()
+            .block()?.value?.map { secureLogger.debug("AD Gruppe: $it"); it }
+            ?: throw RuntimeException("AzureAD data about authenticated users groups could not be fetched")
+    }
+
     //TODO: Denne har vi ikke brukt med OBO-token før, så det må testes
     private fun findUserByNavIdent(navIdent: String): AzureUser = microsoftGraphWebClient.get()
         .uri { uriBuilder ->

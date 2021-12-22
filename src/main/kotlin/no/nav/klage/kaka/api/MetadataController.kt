@@ -8,6 +8,7 @@ import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
+import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerRolle
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.security.token.support.core.api.Unprotected
@@ -41,17 +42,23 @@ class MetadataController(
         return UserData(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
-            klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) }
+            klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) },
+            roller = azureGateway.getRollerForInnloggetSaksbehandler().toRoller()
         )
     }
 
-    private fun SaksbehandlerPersonligInfo.toNavn(): UserData.Navn {
-        return UserData.Navn(
+    private fun SaksbehandlerPersonligInfo.toNavn(): UserData.Navn =
+        UserData.Navn(
             fornavn = this.fornavn,
             etternavn = this.etternavn,
             sammensattNavn = this.sammensattNavn,
         )
-    }
+
+    private fun List<SaksbehandlerRolle>.toRoller(): List<UserData.Rolle> =
+        this.map {
+            UserData.Rolle(
+                id = it.id,
+                navn = it.navn
+            )
+        }
 }
-
-
