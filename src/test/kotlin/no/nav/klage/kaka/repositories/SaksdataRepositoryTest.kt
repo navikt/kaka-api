@@ -99,7 +99,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val fullfoerte =
-            saksdataRepository.findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerGreaterThanEqualOrderByCreated(
+            saksdataRepository.findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerGreaterThanEqualOrderByModified(
                 utfoerendeSaksbehandler, LocalDateTime.now().minusDays(7)
             )
         assertThat(fullfoerte).hasSize(2)

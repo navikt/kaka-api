@@ -11,7 +11,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
 
     fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerIsNullOrderByCreated(saksbehandlerIdent: String): List<Saksdata>
 
-    fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerGreaterThanEqualOrderByCreated(
+    fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerGreaterThanEqualOrderByModified(
         saksbehandlerIdent: String,
         fromDate: LocalDateTime
     ): List<Saksdata>
