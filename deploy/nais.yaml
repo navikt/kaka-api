@@ -72,6 +72,7 @@ spec:
         - application: kaka-frontend
         - application: kabal-frontend
         - application: kabal-api
+        - application: kabal-anke-api
     outbound:
       rules:
         - application: kabal-document
