@@ -29,22 +29,20 @@ class KabalKvalitetsvurderingController(
     private val saksdataService: SaksdataService,
     private val tokenUtil: TokenUtil,
     @Value("\${kabalApiName}")
-    private val kabalApiName: String
+    private val kabalApiName: String,
+    @Value("\${kabalAnkeApiName}")
+    private val kabalAnkeApiName: String,
 ) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private const val KA_NORD = "4295"
     }
 
     @PostMapping("/kvalitetsvurdering")
     fun createKvalitetsvurdering(): KabalView {
-        val callingApplication = tokenUtil.getCallingApplication()
-        if (callingApplication != kabalApiName) {
-            throw MissingTilgangException("Wrong calling application: $callingApplication")
-        }
-        logger.debug("New kvalitetsvurdering is requested by kabal-api")
+        val callingApplication = verifyAndGetCallingApplication()
+        logger.debug("New kvalitetsvurdering is requested by $callingApplication")
         return KabalView(kvalitetsvurderingService.createKvalitetsvurdering().id)
     }
 
@@ -71,11 +69,8 @@ class KabalKvalitetsvurderingController(
     fun createAndFinalizeSaksdata(
         @RequestBody input: KabalSaksdataInput
     ): KabalView {
-        val callingApplication = tokenUtil.getCallingApplication()
-        if (callingApplication != kabalApiName) {
-            throw MissingTilgangException("Wrong calling application: $callingApplication")
-        }
-        logger.debug("Fullfør kvalitetsvurdering is requested by kabal-api")
+        val callingApplication = verifyAndGetCallingApplication()
+        logger.debug("Fullfør kvalitetsvurdering is requested by $callingApplication")
         return KabalView(
             saksdataService.createAndFinalizeSaksdata(
                 sakenGjelder = input.sakenGjelder,
@@ -93,5 +88,13 @@ class KabalKvalitetsvurderingController(
                 source = Source.KABAL,
             ).id
         )
+    }
+
+    private fun verifyAndGetCallingApplication(): String {
+        val callingApplication = tokenUtil.getCallingApplication()
+        if (callingApplication !in listOf(kabalApiName, kabalAnkeApiName)) {
+            throw MissingTilgangException("Calling application not allowed: $callingApplication")
+        }
+        return callingApplication
     }
 }
