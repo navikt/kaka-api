@@ -30,7 +30,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         val saksdataFields = saksdataList.map { saksdata ->
             val fields = mutableListOf<Field>()
             //Saksdata
-            fields += Field(fieldName = "Enhet", value = saksdata.tilknyttetEnhet.toEnhetnummer(), type = STRING)
+            fields += Field(fieldName = "Tilknyttet enhet", value = saksdata.tilknyttetEnhet.toEnhetnummer(), type = STRING)
             fields += Field(fieldName = "Sakstype", value = saksdata.sakstype.navn, type = STRING)
             fields += Field(fieldName = "Ytelse", value = saksdata.ytelse!!.navn, type = STRING)
             fields += Field(fieldName = "Mottatt vedtaksinstans", value = saksdata.mottattVedtaksinstans, type = DATE)
