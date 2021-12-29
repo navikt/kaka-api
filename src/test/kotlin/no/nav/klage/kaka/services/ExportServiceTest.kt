@@ -47,7 +47,7 @@ internal class ExportServiceTest {
                     Saksdata(
                         sakstype = Type.KLAGE,
                         utfoerendeSaksbehandler = "someoneelse",
-                        tilknyttetEnhet = "4295",
+                        tilknyttetEnhet = Enhet.E4295.id,
                         ytelse = Ytelse.OMS_OMP,
                         vedtaksinstansEnhet = Enhet.E0001.id,
                         utfall = Utfall.STADFESTELSE,
