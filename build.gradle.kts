@@ -10,6 +10,7 @@ val tokenValidationVersion = "1.3.9"
 val archunitVersion = "0.19.0"
 val testContainersVersion = "1.15.1"
 val mockkVersion = "1.10.5"
+val apachePoiVersion = "5.1.0"
 
 val githubUser: String by project
 val githubPassword: String by project
@@ -67,8 +68,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
     implementation("com.github.navikt:kabal-kodeverk:2021.12.21-10.50.a69e97ce4b4c")
 
-    implementation("org.apache.poi:poi:5.1.0")
-    implementation("org.apache.poi:poi-ooxml:5.1.0")
+    implementation("org.apache.poi:poi:$apachePoiVersion")
+    implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
