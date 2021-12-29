@@ -67,8 +67,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
     implementation("com.github.navikt:kabal-kodeverk:2021.12.21-10.50.a69e97ce4b4c")
 
-    implementation("org.apache.poi:poi:3.15")
-    implementation("org.apache.poi:poi-ooxml:3.15")
+    implementation("org.apache.poi:poi:5.1.0")
+    implementation("org.apache.poi:poi-ooxml:5.1.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
