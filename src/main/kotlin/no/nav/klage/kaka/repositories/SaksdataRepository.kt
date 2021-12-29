@@ -17,4 +17,10 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
     ): List<Saksdata>
 
     fun findOneByKvalitetsvurderingId(kvalitetsvurderingId: UUID): Saksdata?
+
+    fun findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+        enhetIdList: List<String>,
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime
+    ): List<Saksdata>
 }
