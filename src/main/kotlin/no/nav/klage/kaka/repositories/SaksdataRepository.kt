@@ -18,6 +18,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
 
     fun findOneByKvalitetsvurderingId(kvalitetsvurderingId: UUID): Saksdata?
 
+    /** Dates are exclusive */
     fun findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
         enhetIdList: List<String>,
         fromDateTime: LocalDateTime,

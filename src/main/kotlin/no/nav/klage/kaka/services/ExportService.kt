@@ -9,28 +9,37 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.Month
+import java.time.Year
 
 
 @Service
 class ExportService(private val saksdataRepository: SaksdataRepository) {
 
-    fun getAsExcel(usersKlageenheter: List<Enhet>): ByteArray {
-        val year = 2021
+    /**
+     * Returns excel-report based on who user is
+     */
+    fun getAsExcel(usersKlageenheter: List<Enhet>, year: Year = Year.now(), roles: List<String>): ByteArray {
+        var saksdataList = emptyList<Saksdata>()
 
-        val saksdataList =
-            saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                enhetIdList = usersKlageenheter.map { it.id },
-                fromDateTime = LocalDate.of(2021, Month.JANUARY, 1).atStartOfDay(),
-                toDateTime = LocalDate.of(2022, Month.JANUARY, 1).atStartOfDay(),
-            )
+        if ("ROLE_KLAGE_LEDER" in roles) {
+            saksdataList =
+                saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                    enhetIdList = usersKlageenheter.map { it.id },
+                    fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
+                    toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
+                )
+        }
 
         val saksdataFields = mapToFields(saksdataList)
 
         val workbook = XSSFWorkbook()
 
         val sheet = workbook.createSheet("Statistikk år $year")
-        repeat(45) {
+
+        //TODO: Can be calculated based on column header.
+        repeat(saksdataFields.first().size) {
             sheet.setColumnWidth(it, 6000)
         }
 

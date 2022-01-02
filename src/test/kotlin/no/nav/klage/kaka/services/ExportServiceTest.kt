@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 internal class ExportServiceTest {
 
     @Test
-    fun generateExcelFile() {
+    fun generateExcelFileAsLeder() {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
@@ -37,7 +37,12 @@ internal class ExportServiceTest {
         val path: String = currDir.absolutePath
         val fileLocation = path.substring(0, path.length - 1) + "testfile.xlsx"
 
-        File(fileLocation).writeBytes(exportService.getAsExcel(listOf(Enhet.E4291, Enhet.E4295)))
+        File(fileLocation).writeBytes(
+            exportService.getAsExcel(
+                listOf(Enhet.E4291, Enhet.E4295),
+                roles = listOf("ROLE_KLAGE_LEDER")
+            )
+        )
     }
 
     private fun getSaksdata(amount: Int = 1): List<Saksdata> {
