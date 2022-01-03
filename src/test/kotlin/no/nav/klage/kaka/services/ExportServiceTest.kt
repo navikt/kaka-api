@@ -72,7 +72,7 @@ internal class ExportServiceTest {
                             oversendelsesbrevetsInnholdIkkeISamsvarMedTema = false,
                             utredningenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
                             utredningenAvMedisinskeForhold = false,
-                            utredningenAvMedisinskeForholdText = null,
+                            utredningenAvMedisinskeForholdText = "en beskrivende tekst",
                             utredningenAvInntektsforhold = false,
                             utredningenAvInntektsforholdText = null,
                             utredningenAvArbeid = false,
