@@ -66,10 +66,11 @@ dependencies {
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
-    implementation("com.github.navikt:kabal-kodeverk:2021.12.21-10.50.a69e97ce4b4c")
 
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
+
+    implementation("com.github.navikt:kabal-kodeverk:2022.01.03-11.12.cafb23023f35")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
