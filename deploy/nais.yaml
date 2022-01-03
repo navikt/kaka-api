@@ -53,7 +53,7 @@ spec:
       claims:
         groups:
           - id: {{ROLE_KLAGEINSTANS_ALLE}}
-          - - id: {{ROLE_KLAGEINSTANS_OEST}}
+          - id: {{ROLE_KLAGEINSTANS_OEST}}
           - id: {{ROLE_KLAGEINSTANS_NORD}}
           - id: {{ROLE_KLAGEINSTANS_SOER}}
           - id: {{ROLE_KLAGEINSTANS_VEST}}
