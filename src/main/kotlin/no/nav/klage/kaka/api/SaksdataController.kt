@@ -267,26 +267,6 @@ class SaksdataController(
         return saksdataService.setUtfall(saksdataId, Utfall.of(input.value), innloggetSaksbehandler).toSaksdataView()
     }
 
-    @PutMapping("/{id}/hjemler")
-    fun setHjemler(
-        @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: RegistreringshjemlerInput
-    ): SaksdataView {
-        val innloggetSaksbehandler = tokenUtil.getIdent()
-        logSaksdataMethodDetails(
-            ::setHjemler.name,
-            innloggetSaksbehandler,
-            saksdataId,
-            logger
-        )
-
-        return saksdataService.setRegistreringshjemler(
-            saksdataId,
-            input.value.map { Registreringshjemmel.of(it) }?.toSet(),
-            innloggetSaksbehandler
-        ).toSaksdataView()
-    }
-
     @PutMapping("/{id}/hjemmelidlist")
     fun setHjemmelIdList(
         @PathVariable("id") saksdataId: UUID,
@@ -303,26 +283,6 @@ class SaksdataController(
         return saksdataService.setRegistreringshjemler(
             saksdataId,
             input.value.map { Registreringshjemmel.of(it) }.toSet(),
-            innloggetSaksbehandler
-        ).toSaksdataView()
-    }
-
-    @PutMapping("/{id}/registreringshjemmelidlist")
-    fun setRegistreringshjemmelIdList(
-        @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: RegistreringshjemlerInput
-    ): SaksdataView {
-        val innloggetSaksbehandler = tokenUtil.getIdent()
-        logSaksdataMethodDetails(
-            ::setHjemmelIdList.name,
-            innloggetSaksbehandler,
-            saksdataId,
-            logger
-        )
-
-        return saksdataService.setRegistreringshjemler(
-            saksdataId,
-            input.value.map { Registreringshjemmel.of(it) }?.toSet(),
             innloggetSaksbehandler
         ).toSaksdataView()
     }
