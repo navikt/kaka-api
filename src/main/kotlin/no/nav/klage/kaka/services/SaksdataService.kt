@@ -101,7 +101,7 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setMottattVedtaksinstans(saksdataId: UUID, dato: LocalDate, innloggetSaksbehandler: String): Saksdata {
+    fun setMottattVedtaksinstans(saksdataId: UUID, dato: LocalDate?, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.mottattVedtaksinstans = dato
         saksdata.modified = LocalDateTime.now()
@@ -125,7 +125,7 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setMottattKlageinstans(saksdataId: UUID, dato: LocalDate, innloggetSaksbehandler: String): Saksdata {
+    fun setMottattKlageinstans(saksdataId: UUID, dato: LocalDate?, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.mottattKlageinstans = dato
         saksdata.modified = LocalDateTime.now()
