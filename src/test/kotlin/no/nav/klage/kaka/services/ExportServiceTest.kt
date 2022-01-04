@@ -45,6 +45,32 @@ internal class ExportServiceTest {
         )
     }
 
+    @Test
+    fun `generate excel file with no data does not throw exception`() {
+        val saksdataRepository = mockk<SaksdataRepository>()
+
+        every {
+            saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                any(),
+                any(),
+                any()
+            )
+        } returns getSaksdata(0)
+
+        val exportService = ExportService(saksdataRepository)
+
+        val currDir = File(".")
+        val path: String = currDir.absolutePath
+        val fileLocation = path.substring(0, path.length - 1) + "testfile.xlsx"
+
+        File(fileLocation).writeBytes(
+            exportService.getAsExcel(
+                listOf(Enhet.E4291, Enhet.E4295),
+                roles = listOf("ROLE_KLAGE_LEDER")
+            )
+        )
+    }
+
     private fun getSaksdata(amount: Int = 1): List<Saksdata> {
         return buildList {
             repeat(amount) {
