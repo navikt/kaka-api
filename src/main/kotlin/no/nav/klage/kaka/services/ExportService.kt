@@ -36,64 +36,67 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
         val workbook = XSSFWorkbook()
 
-        val sheet = workbook.createSheet("Statistikk år $year")
+        val sheet = workbook.createSheet("Uttrekk år $year")
 
-        //TODO: Can be calculated based on column header.
-        repeat(saksdataFields.first().size) {
-            sheet.setColumnWidth(it, 6000)
-        }
+        if (saksdataFields.isNotEmpty()) {
 
-        val header = sheet.createRow(0)
-        val headerStyle = workbook.createCellStyle()
+            //TODO: Can be calculated based on column header.
+            repeat(saksdataFields.first().size) {
+                sheet.setColumnWidth(it, 6000)
+            }
 
-        val headerFont = workbook.createFont()
-        headerFont.fontName = "Arial"
+            val header = sheet.createRow(0)
+            val headerStyle = workbook.createCellStyle()
 
-        headerFont.bold = true
-        headerStyle.setFont(headerFont)
+            val headerFont = workbook.createFont()
+            headerFont.fontName = "Arial"
 
-        var headerCounter = 0
+            headerFont.bold = true
+            headerStyle.setFont(headerFont)
 
-        saksdataFields.first().forEach { headerColumns ->
-            val headerCell = header.createCell(headerCounter++)
-            headerCell.setCellValue(headerColumns.fieldName)
-            headerCell.cellStyle = headerStyle
-        }
+            var headerCounter = 0
 
-        //Cells
-        val createHelper = workbook.creationHelper
-        var rowCounter = 1
+            saksdataFields.first().forEach { headerColumns ->
+                val headerCell = header.createCell(headerCounter++)
+                headerCell.setCellValue(headerColumns.fieldName)
+                headerCell.cellStyle = headerStyle
+            }
 
-        val cellFont = workbook.createFont()
-        cellFont.fontName = "Arial"
+            //Cells
+            val createHelper = workbook.creationHelper
+            var rowCounter = 1
 
-        saksdataFields.forEach { saksdataRow ->
-            val row = sheet.createRow(rowCounter++)
+            val cellFont = workbook.createFont()
+            cellFont.fontName = "Arial"
 
-            var columnCounter = 0
+            saksdataFields.forEach { saksdataRow ->
+                val row = sheet.createRow(rowCounter++)
 
-            saksdataRow.forEach { column ->
-                val style = workbook.createCellStyle()
-                style.setFont(cellFont)
-                val cell = row.createCell(columnCounter++)
+                var columnCounter = 0
 
-                when (column.type) {
-                    DATE -> {
-                        if (column.value != null) {
-                            cell.setCellValue((column.value as LocalDate))
+                saksdataRow.forEach { column ->
+                    val style = workbook.createCellStyle()
+                    style.setFont(cellFont)
+                    val cell = row.createCell(columnCounter++)
+
+                    when (column.type) {
+                        DATE -> {
+                            if (column.value != null) {
+                                cell.setCellValue((column.value as LocalDate))
+                            }
+                            style.dataFormat = createHelper.createDataFormat().getFormat("yyyy-mm-dd")
                         }
-                        style.dataFormat = createHelper.createDataFormat().getFormat("yyyy-mm-dd")
+                        BOOLEAN -> {
+                            cell.setCellValue(column.value as Boolean)
+                        }
+                        else -> {
+                            style.wrapText = true
+                            cell.setCellValue(column.value?.toString() ?: "")
+                        }
                     }
-                    BOOLEAN -> {
-                        cell.setCellValue(column.value as Boolean)
-                    }
-                    else -> {
-                        style.wrapText = true
-                        cell.setCellValue(column.value?.toString() ?: "")
-                    }
-                }
 
-                cell.cellStyle = style
+                    cell.cellStyle = style
+                }
             }
         }
 
