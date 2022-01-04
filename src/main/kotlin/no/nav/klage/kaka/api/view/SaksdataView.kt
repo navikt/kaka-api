@@ -14,7 +14,7 @@ data class SaksdataView(
     val vedtaksinstansEnhet: String?,
     val mottattKlageinstans: LocalDate?,
     val utfallId: String?,
-    val hjemmelIdList: List<String>?,
+    val hjemmelIdList: List<String>,
     val utfoerendeSaksbehandler: String,
     val tilknyttetEnhet: String,
     val kvalitetsvurderingId: UUID,

@@ -282,7 +282,7 @@ class SaksdataController(
 
         return saksdataService.setRegistreringshjemler(
             saksdataId,
-            input.value?.map { Registreringshjemmel.of(it) }?.toSet() ?: emptySet(),
+            input.value.map { Registreringshjemmel.of(it) }?.toSet(),
             innloggetSaksbehandler
         ).toSaksdataView()
     }
@@ -302,7 +302,7 @@ class SaksdataController(
 
         return saksdataService.setRegistreringshjemler(
             saksdataId,
-            input.value?.map { Registreringshjemmel.of(it) }?.toSet() ?: emptySet(),
+            input.value.map { Registreringshjemmel.of(it) }.toSet(),
             innloggetSaksbehandler
         ).toSaksdataView()
     }
@@ -322,7 +322,7 @@ class SaksdataController(
 
         return saksdataService.setRegistreringshjemler(
             saksdataId,
-            input.value?.map { Registreringshjemmel.of(it) }?.toSet() ?: emptySet(),
+            input.value.map { Registreringshjemmel.of(it) }?.toSet(),
             innloggetSaksbehandler
         ).toSaksdataView()
     }

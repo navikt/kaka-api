@@ -8,13 +8,13 @@ data class SaksdataListView(
     val searchHits: List<SaksdataSearchHitView>
 )
 
-data class SaksdataSearchHitView (
+data class SaksdataSearchHitView(
     val id: UUID,
     var sakenGjelder: String?,
     var sakstypeId: String?,
     var ytelseId: String?,
     var utfallId: String?,
-    var hjemmelIdList: List<String>?,
+    var hjemmelIdList: List<String>,
     var avsluttetAvSaksbehandler: LocalDateTime?,
     val sourceId: String,
     val created: LocalDateTime,

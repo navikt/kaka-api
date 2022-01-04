@@ -16,7 +16,7 @@ data class NullableDateInput(
 )
 
 data class RegistreringshjemlerInput(
-    val value: Set<String>?
+    val value: Set<String>
 )
 
 data class BooleanInput(
