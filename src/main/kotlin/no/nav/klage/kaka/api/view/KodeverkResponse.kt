@@ -6,7 +6,7 @@ import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
 
 data class KodeverkResponse(
     val sakstyper: List<KodeDto> = Type.values().asList().toDto(),
-    val ytelser: List<YtelseKode> = getYtelser(),
+    val ytelser: List<YtelseKode>,
     val utfall: List<KodeDto> = Utfall.values().asList().toDto(),
     val enheter: List<KodeDto> = Enhet.values().asList().toDto(),
     val klageenheter: List<KlageenhetKode> = getKlageenheter(),
@@ -23,15 +23,19 @@ fun getKlageenheter(): List<KlageenhetKode> =
         )
     }
 
-fun getYtelser(): List<YtelseKode> =
+fun getYtelser(include2103: Boolean = false): List<YtelseKode> =
     Ytelse.values().map { ytelse ->
         YtelseKode(
             id = ytelse.id,
             navn = ytelse.navn,
             beskrivelse = ytelse.beskrivelse,
             lovKildeToRegistreringshjemler = ytelseToLovKildeToRegistreringshjemmel[ytelse] ?: emptyList(),
-            enheter = ytelseTilVedtaksenheter[ytelse]?.map { it.toDto() } ?: emptyList(),
-            klageenheter = ytelseTilKlageenheter[ytelse]?.map { it.toDto() } ?: emptyList(),
+            enheter = ytelseTilVedtaksenheter[ytelse]?.filter {
+                it != Enhet.E2103 || include2103
+            }?.map { it.toDto() } ?: emptyList(),
+            klageenheter = ytelseTilKlageenheter[ytelse]?.filter {
+                it != Enhet.E2103 || include2103
+            }?.map { it.toDto() } ?: emptyList(),
         )
     }
 
