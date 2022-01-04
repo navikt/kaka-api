@@ -29,7 +29,7 @@ internal class ExportServiceTest {
                 any(),
                 any()
             )
-        } returns getSaksdata(10)
+        } returns getSaksdata(amount = 10)
 
         val exportService = ExportService(saksdataRepository)
 
@@ -55,7 +55,7 @@ internal class ExportServiceTest {
                 any(),
                 any()
             )
-        } returns getSaksdata(0)
+        } returns getSaksdata(amount = 0)
 
         val exportService = ExportService(saksdataRepository)
 
