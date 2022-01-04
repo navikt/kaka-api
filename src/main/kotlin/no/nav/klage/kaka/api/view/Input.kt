@@ -11,6 +11,10 @@ data class DateInput(
     val value: LocalDate
 )
 
+data class NullableDateInput(
+    val value: LocalDate?
+)
+
 data class RegistreringshjemlerInput(
     val value: Set<String>?
 )

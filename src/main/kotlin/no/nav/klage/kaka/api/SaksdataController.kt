@@ -188,7 +188,7 @@ class SaksdataController(
     @PutMapping("/{id}/mottattvedtaksinstans")
     fun setMottattVedtaksinstans(
         @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: DateInput
+        @RequestBody input: NullableDateInput
     ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
@@ -221,7 +221,7 @@ class SaksdataController(
     @PutMapping("/{id}/mottattklageinstans")
     fun setMottattKlageinstans(
         @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: DateInput
+        @RequestBody input: NullableDateInput
     ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
