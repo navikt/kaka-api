@@ -24,4 +24,10 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
     ): List<Saksdata>
+
+    /** Dates are exclusive */
+    fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime
+    ): List<Saksdata>
 }
