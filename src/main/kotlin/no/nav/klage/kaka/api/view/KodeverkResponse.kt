@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.api.view
 
-import no.nav.klage.kaka.domain.Source
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
 

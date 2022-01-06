@@ -4,12 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.Source
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kodeverk.Enhet
-import no.nav.klage.kodeverk.Type
-import no.nav.klage.kodeverk.Utfall
-import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.junit.jupiter.api.Test
 import java.io.File
