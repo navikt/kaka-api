@@ -24,9 +24,12 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         var saksdataList = emptyList<Saksdata>()
 
         if ("ROLE_KLAGE_LEDER" in roles) {
+            //Ignoring enheter criteria for now. Styringsenheten can therefore also use the same report
+            //until we create better reports/UI in KAKA.
             saksdataList =
-                saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                    enhetIdList = usersKlageenheter.map { it.id },
+//                saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+//                    enhetIdList = usersKlageenheter.map { it.id },
                     fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
                     toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
                 )

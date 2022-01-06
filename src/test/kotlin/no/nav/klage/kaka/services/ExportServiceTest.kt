@@ -24,8 +24,7 @@ internal class ExportServiceTest {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                any(),
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 any(),
                 any()
             )
@@ -50,8 +49,7 @@ internal class ExportServiceTest {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                any(),
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 any(),
                 any()
             )
