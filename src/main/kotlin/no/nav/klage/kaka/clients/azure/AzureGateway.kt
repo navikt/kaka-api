@@ -2,8 +2,10 @@ package no.nav.klage.kaka.clients.azure
 
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerRolle
+import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kodeverk.Enhet
 import org.springframework.stereotype.Service
 
 @Service
@@ -30,7 +32,8 @@ class AzureGateway(
             data.givenName,
             data.surname,
             data.displayName,
-            data.mail
+            data.mail,
+            mapToEnhet(data.streetAddress),
         )
     }
 
@@ -47,7 +50,8 @@ class AzureGateway(
             data.givenName,
             data.surname,
             data.displayName,
-            data.mail
+            data.mail,
+            mapToEnhet(data.streetAddress),
         )
     }
 
@@ -59,5 +63,9 @@ class AzureGateway(
             logger.error("Failed to call getInnloggetSaksbehandlersGroups", e)
             throw e
         }
+
+    private fun mapToEnhet(enhetNr: String): Enhet =
+        Enhet.values().find { it.navn == enhetNr }
+            ?: throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetNr")
 
 }

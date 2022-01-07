@@ -58,6 +58,13 @@ interface KakaExceptionAdviceTrait : AdviceTrait {
     ): ResponseEntity<Problem> =
         create(ex, createSectionedValidationProblem(ex), request)
 
+    @ExceptionHandler
+    fun handleEnhetNotFoundForSaksbehandlerException(
+        ex: EnhetNotFoundForSaksbehandlerException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem> =
+        create(Status.INTERNAL_SERVER_ERROR, ex, request)
+
     private fun createSectionedValidationProblem(ex: SectionedValidationErrorWithDetailsException): ThrowableProblem {
         return Problem.builder()
             .withStatus(Status.BAD_REQUEST)
