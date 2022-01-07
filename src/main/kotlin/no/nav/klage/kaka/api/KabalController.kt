@@ -51,13 +51,15 @@ class KabalKvalitetsvurderingController(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestParam temaId: String?,
         @RequestParam ytelseId: String?,
+        @RequestParam typeId: String?
     ): ValidationErrors {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         val kvalitetsvurdering =
             kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
-        val ytelseToUse = if (ytelseId != null) Ytelse.of(ytelseId) else Ytelse.OMS_OMP
-        //FIXME use type from input
-        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(ytelseToUse, Type.KLAGE).map {
+        val ytelseToUse = ytelseId?.let{ Ytelse.of(it) } ?: Ytelse.OMS_OMP
+        val typeToUse = typeId?.let{ Type.of(it) } ?: Type.KLAGE
+
+        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(ytelseToUse, typeToUse).map {
             ValidationErrors.InvalidProperty(
                 field = it.field,
                 reason = it.reason
