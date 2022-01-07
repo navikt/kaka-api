@@ -56,8 +56,8 @@ class KabalKvalitetsvurderingController(
         val innloggetSaksbehandler = tokenUtil.getIdent()
         val kvalitetsvurdering =
             kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
-        val ytelseToUse = if (ytelseId != null) Ytelse.of(ytelseId) else Ytelse.OMS_OMP
-        val typeToUse = if (typeId != null) Type.of(typeId) else Type.KLAGE
+        val ytelseToUse = ytelseId?.let{ Ytelse.of(it) } ?: Ytelse.OMS_OMP
+        val typeToUse = typeId?.let{ Type.of(it) } ?: Type.KLAGE
 
         return ValidationErrors(kvalitetsvurdering.getInvalidProperties(ytelseToUse, typeToUse).map {
             ValidationErrors.InvalidProperty(
