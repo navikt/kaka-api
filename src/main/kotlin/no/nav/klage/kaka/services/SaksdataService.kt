@@ -41,7 +41,7 @@ class SaksdataService(
         )
     }
 
-    fun createAndFinalizeSaksdata(
+    fun handleIncomingCompleteSaksdata(
         sakenGjelder: String,
         sakstype: Type,
         ytelse: Ytelse,
@@ -56,25 +56,44 @@ class SaksdataService(
         avsluttetAvSaksbehandler: LocalDateTime,
         source: Source
     ): Saksdata {
-        //TODO: Her skal det skje en validering før noen oppdatering skjer.
         kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
-        return saksdataRepository.save(
-            Saksdata(
-                sakenGjelder = sakenGjelder,
-                sakstype = sakstype,
-                ytelse = ytelse,
-                mottattKlageinstans = mottattKlageinstans,
-                vedtaksinstansEnhet = vedtaksinstansEnhet,
-                mottattVedtaksinstans = mottattVedtaksinstans,
-                utfall = utfall,
-                registreringshjemler = hjemler.toSet(),
-                avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
-                utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-                tilknyttetEnhet = tilknyttetEnhet,
-                kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId),
-                source = source
+
+        val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
+        return if (existingSaksdata != null) {
+            existingSaksdata.sakenGjelder = sakenGjelder
+            existingSaksdata.sakstype = sakstype
+            existingSaksdata.ytelse = ytelse
+            existingSaksdata.mottattVedtaksinstans = mottattVedtaksinstans
+            existingSaksdata.vedtaksinstansEnhet = vedtaksinstansEnhet
+            existingSaksdata.mottattKlageinstans = mottattKlageinstans
+            existingSaksdata.utfall = utfall
+            existingSaksdata.registreringshjemler = hjemler.toSet()
+            existingSaksdata.utfoerendeSaksbehandler = utfoerendeSaksbehandler
+            existingSaksdata.tilknyttetEnhet = tilknyttetEnhet
+            existingSaksdata.avsluttetAvSaksbehandler = avsluttetAvSaksbehandler
+            existingSaksdata.source = source
+            existingSaksdata.modified = LocalDateTime.now()
+
+            existingSaksdata
+        } else {
+            saksdataRepository.save(
+                Saksdata(
+                    sakenGjelder = sakenGjelder,
+                    sakstype = sakstype,
+                    ytelse = ytelse,
+                    mottattKlageinstans = mottattKlageinstans,
+                    vedtaksinstansEnhet = vedtaksinstansEnhet,
+                    mottattVedtaksinstans = mottattVedtaksinstans,
+                    utfall = utfall,
+                    registreringshjemler = hjemler.toSet(),
+                    avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
+                    utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                    tilknyttetEnhet = tilknyttetEnhet,
+                    kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId),
+                    source = source
+                )
             )
-        )
+        }
     }
 
     fun setSakenGjelder(saksdataId: UUID, sakenGjelder: String, innloggetSaksbehandler: String): Saksdata {

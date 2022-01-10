@@ -74,7 +74,7 @@ class KabalKvalitetsvurderingController(
         val callingApplication = verifyAndGetCallingApplication()
         logger.debug("Fullfør kvalitetsvurdering is requested by $callingApplication")
         return KabalView(
-            saksdataService.createAndFinalizeSaksdata(
+            saksdataService.handleIncomingCompleteSaksdata(
                 sakenGjelder = input.sakenGjelder,
                 sakstype = Type.of(input.sakstype),
                 ytelse = Ytelse.of(input.ytelseId),
