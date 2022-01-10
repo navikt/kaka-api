@@ -74,7 +74,7 @@ class SaksdataService(
             existingSaksdata.source = source
             existingSaksdata.modified = LocalDateTime.now()
 
-            return existingSaksdata
+            existingSaksdata
         } else {
             saksdataRepository.save(
                 Saksdata(
