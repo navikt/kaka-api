@@ -72,33 +72,37 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
             val cellFont = workbook.createFont()
             cellFont.fontName = "Arial"
 
+            val cellStyleDate = workbook.createCellStyle()
+            cellStyleDate.setFont(cellFont)
+            cellStyleDate.dataFormat = createHelper.createDataFormat().getFormat("yyyy-mm-dd")
+
+            val cellStyleRegular = workbook.createCellStyle()
+            cellStyleRegular.setFont(cellFont)
+            cellStyleRegular.wrapText = true
+
             saksdataFields.forEach { saksdataRow ->
                 val row = sheet.createRow(rowCounter++)
 
                 var columnCounter = 0
 
                 saksdataRow.forEach { column ->
-                    val style = workbook.createCellStyle()
-                    style.setFont(cellFont)
                     val cell = row.createCell(columnCounter++)
-
                     when (column.type) {
                         DATE -> {
                             if (column.value != null) {
                                 cell.setCellValue((column.value as LocalDate))
                             }
-                            style.dataFormat = createHelper.createDataFormat().getFormat("yyyy-mm-dd")
+                            cell.cellStyle = cellStyleDate
                         }
                         BOOLEAN -> {
                             cell.setCellValue(column.value as Boolean)
+                            cell.cellStyle = cellStyleRegular
                         }
                         else -> {
-                            style.wrapText = true
                             cell.setCellValue(column.value?.toString() ?: "")
+                            cell.cellStyle = cellStyleRegular
                         }
                     }
-
-                    cell.cellStyle = style
                 }
             }
         }
