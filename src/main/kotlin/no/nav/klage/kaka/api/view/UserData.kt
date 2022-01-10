@@ -7,3 +7,5 @@ data class UserData(val ident: String, val navn: Navn, val klageenheter: List<Ko
         val sammensattNavn: String?,
     )
 }
+
+data class KodeDto(val id: String, val navn: String, val beskrivelse: String)
