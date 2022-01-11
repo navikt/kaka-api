@@ -70,7 +70,7 @@ dependencies {
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
-    implementation("com.github.navikt:kabal-kodeverk:2022.01.10-11.54.dc4dc1274b5f")
+    implementation("com.github.navikt:kabal-kodeverk:2022.01.11-16.20.374016775a49")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
