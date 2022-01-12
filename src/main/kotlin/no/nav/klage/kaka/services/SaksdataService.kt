@@ -96,6 +96,42 @@ class SaksdataService(
         }
     }
 
+    fun createAndFinalizeSaksdataForAnke(
+        sakenGjelder: String,
+        sakstype: Type,
+        ytelse: Ytelse,
+        mottattVedtaksinstans: LocalDate,
+        vedtaksinstansEnhet: String,
+        vedtakKlageinstans: LocalDateTime,
+        utfall: Utfall,
+        hjemler: List<Registreringshjemmel>,
+        utfoerendeSaksbehandler: String,
+        tilknyttetEnhet: String,
+        kvalitetsvurderingId: UUID,
+        avsluttetAvSaksbehandler: LocalDateTime,
+        source: Source
+    ): Saksdata {
+        //TODO: Her skal det skje en validering før noen oppdatering skjer.
+        kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+        return saksdataRepository.save(
+            Saksdata(
+                sakenGjelder = sakenGjelder,
+                sakstype = sakstype,
+                ytelse = ytelse,
+                vedtakKlageinstans = vedtakKlageinstans,
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                mottattVedtaksinstans = mottattVedtaksinstans,
+                utfall = utfall,
+                registreringshjemler = hjemler.toSet(),
+                avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
+                utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                tilknyttetEnhet = tilknyttetEnhet,
+                kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId),
+                source = source
+            )
+        )
+    }
+
     fun setSakenGjelder(saksdataId: UUID, sakenGjelder: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakenGjelder = sakenGjelder

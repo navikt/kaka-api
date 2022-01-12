@@ -35,6 +35,8 @@ class Saksdata(
     var vedtaksinstansEnhet: String? = null,
     @Column(name = "dato_mottatt_klageinstans")
     var mottattKlageinstans: LocalDate? = null,
+    @Column(name = "dato_vedtak_klageinstans")
+    var vedtakKlageinstans: LocalDateTime? = null,
     @Column(name = "utfall_id")
     @Convert(converter = UtfallConverter::class)
     var utfall: Utfall? = null,
