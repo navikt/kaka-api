@@ -271,7 +271,7 @@ private fun LocalDateTime.toDate(): AnonymizedVurdering.Date {
         month = this.monthValue,
         day = this.dayOfMonth,
         iso = this.toLocalDate().toString(),
-        unix = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        epochDay = this.toLocalDate().toEpochDay()
     )
 }
 
@@ -282,6 +282,6 @@ private fun LocalDate.toDate(): AnonymizedVurdering.Date {
         month = this.monthValue,
         day = this.dayOfMonth,
         iso = this.toString(),
-        unix = this.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+        epochDay = this.toEpochDay()
     )
 }

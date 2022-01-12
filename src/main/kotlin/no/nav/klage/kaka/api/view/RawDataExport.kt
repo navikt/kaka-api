@@ -66,6 +66,6 @@ data class AnonymizedVurdering(
         val month: Int,
         val day: Int,
         val iso: String,
-        val unix: Long
+        val epochDay: Long
     )
 }
