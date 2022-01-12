@@ -17,7 +17,7 @@ import java.time.temporal.ChronoField
 class ExportService(private val saksdataRepository: SaksdataRepository) {
 
     /**
-     * Returns excel-report based on who user is
+     * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)), when role is 'ROLE_KLAGE_LEDER'
      */
     fun getAsExcel(usersKlageenheter: List<Enhet>, year: Year = Year.now(), roles: List<String>): ByteArray {
         var saksdataList = emptyList<Saksdata>()
@@ -111,6 +111,9 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return baos.toByteArray()
     }
 
+    /**
+     * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year
+     */
     fun getAsRawData(
         usersKlageenheter: List<Enhet>,
         year: Year = Year.now(),
