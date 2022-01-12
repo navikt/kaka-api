@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.services
 
+import no.nav.klage.kaka.api.view.AnonymizedVurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.services.ExportService.Field.Type.*
@@ -8,10 +9,8 @@ import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
-import java.time.LocalDate
-import java.time.LocalTime
-import java.time.Month
-import java.time.Year
+import java.time.*
+import java.time.temporal.ChronoField
 
 
 @Service
@@ -112,6 +111,86 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return baos.toByteArray()
     }
 
+    fun getAsRawData(
+        usersKlageenheter: List<Enhet>,
+        year: Year = Year.now(),
+        roles: List<String>
+    ): List<AnonymizedVurdering> {
+        var saksdataList = emptyList<Saksdata>()
+
+        if ("ROLE_KLAGE_LEDER" in roles) {
+            //Ignoring enheter criteria for now. Styringsenheten can therefore also use the same report
+            //until we create better reports/UI in KAKA.
+            saksdataList =
+//                saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+//                    enhetIdList = usersKlageenheter.map { it.id },
+                    fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
+                    toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
+                )
+        }
+
+        return saksdataList.map { saksdata ->
+            AnonymizedVurdering(
+                //TODO fix id to static anonymized
+                id = saksdata.id,
+                saksdataCreated = saksdata.created.toDate(),
+                saksdataModified = saksdata.modified.toDate(),
+                tilknyttetEnhet = saksdata.tilknyttetEnhet,
+                hjemmelIdList = saksdata.registreringshjemler!!.map { it.id },
+                avsluttetAvSaksbehandler = saksdata.avsluttetAvSaksbehandler!!.toDate(),
+                ytelseId = saksdata.ytelse!!.id,
+                utfallId = saksdata.utfall!!.id,
+                sakstypeId = saksdata.sakstype.id,
+                mottattVedtaksinstans = saksdata.mottattVedtaksinstans!!.toDate(),
+                vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
+                mottattKlageinstans = saksdata.mottattKlageinstans!!.toDate(),
+                kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
+                kvalitetsvurderingModified = saksdata.kvalitetsvurdering.modified.toDate(),
+                arbeidsrettetBrukeroppfoelging = saksdata.kvalitetsvurdering.arbeidsrettetBrukeroppfoelging,
+                begrunnelseForHvorforAvslagOpprettholdes = saksdata.kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes,
+                begrunnelsenErIkkeKonkretOgIndividuell = saksdata.kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell,
+                betydeligAvvik = saksdata.kvalitetsvurdering.betydeligAvvik,
+                brukIOpplaering = saksdata.kvalitetsvurdering.brukIOpplaering,
+                detErFeilIKonkretRettsanvendelse = saksdata.kvalitetsvurdering.detErFeilIKonkretRettsanvendelse,
+                detErIkkeBruktRiktigHjemmel = saksdata.kvalitetsvurdering.detErIkkeBruktRiktigHjemmel,
+                innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = saksdata.kvalitetsvurdering.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                klagerensRelevanteAnfoerslerIkkeKommentert = saksdata.kvalitetsvurdering.klagerensRelevanteAnfoerslerIkkeKommentert,
+                konklusjonen = saksdata.kvalitetsvurdering.konklusjonen,
+                nyeOpplysningerMottatt = saksdata.kvalitetsvurdering.nyeOpplysningerMottatt,
+                oversendelsesbrevetsInnholdIkkeISamsvarMedTema = saksdata.kvalitetsvurdering.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
+                oversittetKlagefristIkkeKommentert = saksdata.kvalitetsvurdering.oversittetKlagefristIkkeKommentert,
+                raadgivendeLegeErBruktFeilSpoersmaal = saksdata.kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal,
+                raadgivendeLegeErBruktMangelfullDokumentasjon = saksdata.kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon,
+                raadgivendeLegeErIkkeBrukt = saksdata.kvalitetsvurdering.raadgivendeLegeErIkkeBrukt,
+                raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = saksdata.kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
+                rettsregelenErBenyttetFeil = saksdata.kvalitetsvurdering.rettsregelenErBenyttetFeil,
+                sakensDokumenter = saksdata.kvalitetsvurdering.sakensDokumenter,
+                spraaketErIkkeTydelig = saksdata.kvalitetsvurdering.spraaketErIkkeTydelig,
+                utredningenAvAndreAktuelleForholdISaken = saksdata.kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvArbeid = saksdata.kvalitetsvurdering.utredningenAvArbeid,
+                utredningenAvEoesProblematikk = saksdata.kvalitetsvurdering.utredningenAvEoesProblematikk,
+                utredningenAvInntektsforhold = saksdata.kvalitetsvurdering.utredningenAvInntektsforhold,
+                utredningenAvMedisinskeForhold = saksdata.kvalitetsvurdering.utredningenAvMedisinskeForhold,
+                veiledningFraNav = saksdata.kvalitetsvurdering.veiledningFraNav,
+                vurderingAvFaktumErMangelfull = saksdata.kvalitetsvurdering.vurderingAvFaktumErMangelfull,
+                arbeidsrettetBrukeroppfoelgingText = saksdata.kvalitetsvurdering.arbeidsrettetBrukeroppfoelgingText,
+                betydeligAvvikText = saksdata.kvalitetsvurdering.betydeligAvvikText,
+                brukIOpplaeringText = saksdata.kvalitetsvurdering.brukIOpplaeringText,
+                utredningenAvAndreAktuelleForholdISakenText = saksdata.kvalitetsvurdering.utredningenAvAndreAktuelleForholdISakenText,
+                utredningenAvArbeidText = saksdata.kvalitetsvurdering.utredningenAvArbeidText,
+                utredningenAvEoesProblematikkText = saksdata.kvalitetsvurdering.utredningenAvEoesProblematikkText,
+                utredningenAvInntektsforholdText = saksdata.kvalitetsvurdering.utredningenAvInntektsforholdText,
+                utredningenAvMedisinskeForholdText = saksdata.kvalitetsvurdering.utredningenAvMedisinskeForholdText,
+                veiledningFraNavText = saksdata.kvalitetsvurdering.veiledningFraNavText,
+                klageforberedelsenRadioValg = saksdata.kvalitetsvurdering.klageforberedelsenRadioValg!!.name,
+                utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg!!.name,
+                vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg!!.name,
+                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg!!.name
+            )
+        }
+    }
+
     private fun mapToFields(saksdataList: List<Saksdata>): List<List<Field>> {
         //@formatter:off
         return saksdataList.map { saksdata ->
@@ -193,4 +272,26 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         }
     }
 
+}
+
+private fun LocalDateTime.toDate(): AnonymizedVurdering.Date {
+    return AnonymizedVurdering.Date(
+        weekNumber = this.get(ChronoField.ALIGNED_WEEK_OF_YEAR),
+        year = this.year,
+        month = this.monthValue,
+        day = this.dayOfMonth,
+        iso = this.toLocalDate().toString(),
+        unix = this.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    )
+}
+
+private fun LocalDate.toDate(): AnonymizedVurdering.Date {
+    return AnonymizedVurdering.Date(
+        weekNumber = this.get(ChronoField.ALIGNED_WEEK_OF_YEAR),
+        year = this.year,
+        month = this.monthValue,
+        day = this.dayOfMonth,
+        iso = this.toString(),
+        unix = this.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    )
 }
