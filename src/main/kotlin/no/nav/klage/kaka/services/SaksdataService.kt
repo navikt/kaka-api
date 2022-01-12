@@ -102,7 +102,7 @@ class SaksdataService(
         ytelse: Ytelse,
         mottattVedtaksinstans: LocalDate,
         vedtaksinstansEnhet: String,
-        vedtakKlageinstans: LocalDateTime,
+        vedtakKlageinstans: LocalDate,
         utfall: Utfall,
         hjemler: List<Registreringshjemmel>,
         utfoerendeSaksbehandler: String,

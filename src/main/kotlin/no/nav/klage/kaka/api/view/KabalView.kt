@@ -29,7 +29,7 @@ data class KabalAnkeSaksdataInput(
     val ytelseId: String,
     val mottattVedtaksinstans: LocalDate,
     val vedtaksinstansEnhet: String,
-    val vedtakKlageinstans: LocalDateTime,
+    val vedtakKlageinstans: LocalDate,
     val utfall: String,
     val registreringshjemler: List<String>?,
     val utfoerendeSaksbehandler: String,
