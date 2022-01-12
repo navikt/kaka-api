@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import java.io.ByteArrayOutputStream
 import java.time.*
 import java.time.temporal.ChronoField
+import java.util.*
 
 
 @Service
@@ -123,7 +124,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
         return saksdataList.map { saksdata ->
             AnonymizedVurdering(
-                id = saksdata.id,
+                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
                 saksdataCreated = saksdata.created.toDate(),
                 saksdataModified = saksdata.modified.toDate(),
                 tilknyttetEnhet = saksdata.tilknyttetEnhet,

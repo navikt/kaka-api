@@ -3,7 +3,7 @@ package no.nav.klage.kaka.api.view
 import java.util.*
 
 data class AnonymizedVurdering(
-    //should be fine with saksdataId b/c we validate access when accessing saksdata
+    /** unique and static id */
     val id: UUID,
     val saksdataCreated: Date,
     val saksdataModified: Date,
