@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 internal class ExportServiceTest {
 
     @Test
-    fun exportRawDataAsLeder() {
+    fun exportRawData() {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
@@ -28,9 +28,7 @@ internal class ExportServiceTest {
 
         val exportService = ExportService(saksdataRepository)
 
-        val data = exportService.getAsRawData(
-            listOf(Enhet.E4291, Enhet.E4295),
-        )
+        val data = exportService.getAsRawData()
 
 //        println(data)
     }

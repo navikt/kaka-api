@@ -114,10 +114,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year
      */
-    fun getAsRawData(
-        usersKlageenheter: List<Enhet>,
-        year: Year = Year.now(),
-    ): List<AnonymizedVurdering> {
+    fun getAsRawData(year: Year = Year.now()): List<AnonymizedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),

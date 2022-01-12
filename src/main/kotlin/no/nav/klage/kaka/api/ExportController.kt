@@ -60,10 +60,8 @@ class ExportController(
     fun getAsRaw(): RawDataResponse {
         logger.debug("getAsRaw() called")
 
-        val usersKlageenheter = axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent())
-
         return RawDataResponse(
-            anonymizedVurderingList = exportService.getAsRawData(usersKlageenheter = usersKlageenheter)
+            anonymizedVurderingList = exportService.getAsRawData()
         )
     }
 
