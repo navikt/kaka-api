@@ -183,10 +183,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 utredningenAvInntektsforholdText = saksdata.kvalitetsvurdering.utredningenAvInntektsforholdText,
                 utredningenAvMedisinskeForholdText = saksdata.kvalitetsvurdering.utredningenAvMedisinskeForholdText,
                 veiledningFraNavText = saksdata.kvalitetsvurdering.veiledningFraNavText,
-                klageforberedelsenRadioValg = saksdata.kvalitetsvurdering.klageforberedelsenRadioValg!!.name,
-                utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg!!.name,
-                vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg!!.name,
-                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg!!.name
+                klageforberedelsenRadioValg = saksdata.kvalitetsvurdering.klageforberedelsenRadioValg?.name,
+                utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
+                vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
+                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name
             )
         }
     }

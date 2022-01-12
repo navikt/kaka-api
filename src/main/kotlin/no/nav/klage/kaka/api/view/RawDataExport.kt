@@ -56,10 +56,10 @@ data class AnonymizedVurdering(
     val utredningenAvInntektsforholdText: String?,
     val utredningenAvMedisinskeForholdText: String?,
     val veiledningFraNavText: String?,
-    val klageforberedelsenRadioValg: String,
-    val utredningenRadioValg: String,
-    val vedtaketRadioValg: String,
-    val brukAvRaadgivendeLegeRadioValg: String,
+    val klageforberedelsenRadioValg: String?,
+    val utredningenRadioValg: String?,
+    val vedtaketRadioValg: String?,
+    val brukAvRaadgivendeLegeRadioValg: String?,
 ) {
     data class Date(
         val weekNumber: Int,
