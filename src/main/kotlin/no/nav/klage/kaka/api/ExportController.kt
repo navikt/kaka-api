@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
+import no.nav.klage.kaka.api.view.AnonymizedVurdering
 import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
@@ -54,5 +55,18 @@ class ExportController(
             HttpStatus.OK
         )
     }
+
+    @GetMapping("/raw")
+    fun getAsRaw(): RawDataResponse {
+        logger.debug("getAsRaw() called")
+
+        return RawDataResponse(
+            anonymizedVurderingList = exportService.getAsRawData()
+        )
+    }
+
+    data class RawDataResponse(
+        val anonymizedVurderingList: List<AnonymizedVurdering>
+    )
 
 }

@@ -16,6 +16,24 @@ import java.time.LocalDateTime
 internal class ExportServiceTest {
 
     @Test
+    fun exportRawData() {
+        val saksdataRepository = mockk<SaksdataRepository>()
+
+        every {
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                any(),
+                any()
+            )
+        } returns getSaksdata(amount = 10)
+
+        val exportService = ExportService(saksdataRepository)
+
+        val data = exportService.getAsRawData()
+
+//        println(data)
+    }
+
+    @Test
     fun generateExcelFileAsLeder() {
         val saksdataRepository = mockk<SaksdataRepository>()
 
