@@ -1,7 +1,7 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
-import no.nav.klage.kaka.api.view.KabalSaksdataInput
+import no.nav.klage.kaka.api.view.KabalAnkeSaksdataInput
 import no.nav.klage.kaka.api.view.KabalView
 import no.nav.klage.kaka.api.view.ValidationErrors
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
@@ -23,13 +23,13 @@ import java.util.*
 @RestController
 @Api(tags = ["kaka-api:kabal-kvalitet"])
 @ProtectedWithClaims(issuer = ISSUER_AAD)
-@RequestMapping("/kabal")
-class KabalController(
+@RequestMapping("/kabalanke")
+class KabalAnkeController(
     private val kvalitetsvurderingService: KvalitetsvurderingService,
     private val saksdataService: SaksdataService,
     private val tokenUtil: TokenUtil,
-    @Value("\${kabalApiName}")
-    private val kabalApiName: String,
+    @Value("\${kabalAnkeApiName}")
+    private val kabalAnkeApiName: String,
 ) {
 
     companion object {
@@ -55,7 +55,7 @@ class KabalController(
         val kvalitetsvurdering =
             kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
         val ytelseToUse = ytelseId?.let { Ytelse.of(it) } ?: Ytelse.OMS_OMP
-        val typeToUse = typeId?.let { Type.of(it) } ?: Type.KLAGE
+        val typeToUse = typeId?.let { Type.of(it) } ?: Type.ANKE
 
         return ValidationErrors(kvalitetsvurdering.getInvalidProperties(ytelseToUse, typeToUse).map {
             ValidationErrors.InvalidProperty(
@@ -67,7 +67,7 @@ class KabalController(
 
     @PostMapping("/saksdata")
     fun createAndFinalizeSaksdata(
-        @RequestBody input: KabalSaksdataInput
+        @RequestBody input: KabalAnkeSaksdataInput
     ): KabalView {
         val callingApplication = verifyAndGetCallingApplication()
         logger.debug("Fullfør kvalitetsvurdering is requested by $callingApplication")
@@ -78,7 +78,7 @@ class KabalController(
                 ytelse = Ytelse.of(input.ytelseId),
                 mottattKlageinstans = input.mottattKlageinstans,
                 vedtaksinstansEnhet = input.vedtaksinstansEnhet,
-                mottattVedtaksinstans = input.mottattVedtaksinstans,
+                mottattVedtaksinstans = null,
                 utfall = Utfall.of(input.utfall),
                 hjemler = input.registreringshjemler?.map { Registreringshjemmel.of(it) } ?: emptyList(),
                 kvalitetsvurderingId = input.kvalitetsvurderingId,
@@ -92,7 +92,7 @@ class KabalController(
 
     private fun verifyAndGetCallingApplication(): String {
         val callingApplication = tokenUtil.getCallingApplication()
-        if (callingApplication !in listOf(kabalApiName)) {
+        if (callingApplication !in listOf(kabalAnkeApiName)) {
             throw MissingTilgangException("Calling application not allowed: $callingApplication")
         }
         return callingApplication

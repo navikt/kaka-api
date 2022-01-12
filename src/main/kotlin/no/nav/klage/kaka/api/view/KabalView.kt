@@ -23,6 +23,20 @@ data class KabalSaksdataInput(
     val tilknyttetEnhet: String,
 )
 
+data class KabalAnkeSaksdataInput(
+    val sakenGjelder: String,
+    val sakstype: String,
+    val ytelseId: String,
+    val vedtaksinstansEnhet: String,
+    val mottattKlageinstans: LocalDate,
+    val utfall: String,
+    val registreringshjemler: List<String>?,
+    val utfoerendeSaksbehandler: String,
+    val kvalitetsvurderingId: UUID,
+    val avsluttetAvSaksbehandler: LocalDateTime,
+    val tilknyttetEnhet: String,
+)
+
 data class ValidationErrors(
     val validationErrors: List<InvalidProperty>
 ) {
