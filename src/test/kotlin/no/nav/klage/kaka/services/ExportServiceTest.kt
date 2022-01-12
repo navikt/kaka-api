@@ -97,7 +97,7 @@ internal class ExportServiceTest {
                         registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4, Registreringshjemmel.FTRL_9_11),
                         sakenGjelder = "12345678910",
                         mottattVedtaksinstans = LocalDate.now(),
-                        mottattKlageinstans = LocalDate.now(),
+                        mottattKlageinstans = LocalDate.now().minusDays(1),
                         avsluttetAvSaksbehandler = LocalDateTime.now(),
                         source = Source.KAKA,
                         kvalitetsvurdering = Kvalitetsvurdering(

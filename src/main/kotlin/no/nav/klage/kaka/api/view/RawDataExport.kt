@@ -59,6 +59,8 @@ data class AnonymizedVurdering(
     val utredningenRadioValg: String?,
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
+
+    val behandlingstidDays: Int,
 ) {
     data class Date(
         val weekNumber: Int,
@@ -66,6 +68,6 @@ data class AnonymizedVurdering(
         val month: Int,
         val day: Int,
         val iso: String,
-        val epochDay: Long
+        val epochDay: Int
     )
 }

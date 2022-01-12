@@ -123,19 +123,24 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
             )
 
         return saksdataList.map { saksdata ->
+            val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
+            val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
+
+            val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+
             AnonymizedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
                 saksdataCreated = saksdata.created.toDate(),
                 saksdataModified = saksdata.modified.toDate(),
                 tilknyttetEnhet = saksdata.tilknyttetEnhet,
                 hjemmelIdList = saksdata.registreringshjemler!!.map { it.id },
-                avsluttetAvSaksbehandler = saksdata.avsluttetAvSaksbehandler!!.toDate(),
+                avsluttetAvSaksbehandler = avsluttetAvSaksbehandlerDate,
                 ytelseId = saksdata.ytelse!!.id,
                 utfallId = saksdata.utfall!!.id,
                 sakstypeId = saksdata.sakstype.id,
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans!!.toDate(),
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
-                mottattKlageinstans = saksdata.mottattKlageinstans!!.toDate(),
+                mottattKlageinstans = mottattKlageinstansDate,
                 kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
                 kvalitetsvurderingModified = saksdata.kvalitetsvurdering.modified.toDate(),
                 arbeidsrettetBrukeroppfoelging = saksdata.kvalitetsvurdering.arbeidsrettetBrukeroppfoelging,
@@ -177,7 +182,8 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 klageforberedelsenRadioValg = saksdata.kvalitetsvurdering.klageforberedelsenRadioValg?.name,
                 utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
                 vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
-                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name
+                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
+                behandlingstidDays = behandlingstidDays,
             )
         }
     }
@@ -272,7 +278,7 @@ private fun LocalDateTime.toDate(): AnonymizedVurdering.Date {
         month = this.monthValue,
         day = this.dayOfMonth,
         iso = this.toLocalDate().toString(),
-        epochDay = this.toLocalDate().toEpochDay()
+        epochDay = this.toLocalDate().toEpochDay().toInt()
     )
 }
 
@@ -283,6 +289,6 @@ private fun LocalDate.toDate(): AnonymizedVurdering.Date {
         month = this.monthValue,
         day = this.dayOfMonth,
         iso = this.toString(),
-        epochDay = this.toEpochDay()
+        epochDay = this.toEpochDay().toInt()
     )
 }
