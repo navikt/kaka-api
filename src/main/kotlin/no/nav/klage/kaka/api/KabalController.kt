@@ -24,14 +24,12 @@ import java.util.*
 @Api(tags = ["kaka-api:kabal-kvalitet"])
 @ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kabal")
-class KabalKvalitetsvurderingController(
+class KabalController(
     private val kvalitetsvurderingService: KvalitetsvurderingService,
     private val saksdataService: SaksdataService,
     private val tokenUtil: TokenUtil,
     @Value("\${kabalApiName}")
     private val kabalApiName: String,
-    @Value("\${kabalAnkeApiName}")
-    private val kabalAnkeApiName: String,
 ) {
 
     companion object {
@@ -56,8 +54,8 @@ class KabalKvalitetsvurderingController(
         val innloggetSaksbehandler = tokenUtil.getIdent()
         val kvalitetsvurdering =
             kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
-        val ytelseToUse = ytelseId?.let{ Ytelse.of(it) } ?: Ytelse.OMS_OMP
-        val typeToUse = typeId?.let{ Type.of(it) } ?: Type.KLAGE
+        val ytelseToUse = ytelseId?.let { Ytelse.of(it) } ?: Ytelse.OMS_OMP
+        val typeToUse = typeId?.let { Type.of(it) } ?: Type.KLAGE
 
         return ValidationErrors(kvalitetsvurdering.getInvalidProperties(ytelseToUse, typeToUse).map {
             ValidationErrors.InvalidProperty(
@@ -94,7 +92,7 @@ class KabalKvalitetsvurderingController(
 
     private fun verifyAndGetCallingApplication(): String {
         val callingApplication = tokenUtil.getCallingApplication()
-        if (callingApplication !in listOf(kabalApiName, kabalAnkeApiName)) {
+        if (callingApplication !in listOf(kabalApiName)) {
             throw MissingTilgangException("Calling application not allowed: $callingApplication")
         }
         return callingApplication

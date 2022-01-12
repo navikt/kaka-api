@@ -24,12 +24,10 @@ import java.util.*
 @Api(tags = ["kaka-api:kabal-kvalitet"])
 @ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kabalanke")
-class KabalAnkeKvalitetsvurderingController(
+class KabalAnkeController(
     private val kvalitetsvurderingService: KvalitetsvurderingService,
     private val saksdataService: SaksdataService,
     private val tokenUtil: TokenUtil,
-    @Value("\${kabalApiName}")
-    private val kabalApiName: String,
     @Value("\${kabalAnkeApiName}")
     private val kabalAnkeApiName: String,
 ) {
@@ -57,7 +55,7 @@ class KabalAnkeKvalitetsvurderingController(
         val kvalitetsvurdering =
             kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
         val ytelseToUse = ytelseId?.let { Ytelse.of(it) } ?: Ytelse.OMS_OMP
-        val typeToUse = typeId?.let { Type.of(it) } ?: Type.KLAGE
+        val typeToUse = typeId?.let { Type.of(it) } ?: Type.ANKE
 
         return ValidationErrors(kvalitetsvurdering.getInvalidProperties(ytelseToUse, typeToUse).map {
             ValidationErrors.InvalidProperty(
@@ -94,7 +92,7 @@ class KabalAnkeKvalitetsvurderingController(
 
     private fun verifyAndGetCallingApplication(): String {
         val callingApplication = tokenUtil.getCallingApplication()
-        if (callingApplication !in listOf(kabalApiName, kabalAnkeApiName)) {
+        if (callingApplication !in listOf(kabalAnkeApiName)) {
             throw MissingTilgangException("Calling application not allowed: $callingApplication")
         }
         return callingApplication
