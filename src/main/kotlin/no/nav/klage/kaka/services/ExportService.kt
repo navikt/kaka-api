@@ -114,25 +114,15 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     fun getAsRawData(
         usersKlageenheter: List<Enhet>,
         year: Year = Year.now(),
-        roles: List<String>
     ): List<AnonymizedVurdering> {
-        var saksdataList = emptyList<Saksdata>()
-
-        if ("ROLE_KLAGE_LEDER" in roles) {
-            //Ignoring enheter criteria for now. Styringsenheten can therefore also use the same report
-            //until we create better reports/UI in KAKA.
-            saksdataList =
-//                saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-//                    enhetIdList = usersKlageenheter.map { it.id },
-                    fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
-                    toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
-                )
-        }
+        val saksdataList =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
+                toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
+            )
 
         return saksdataList.map { saksdata ->
             AnonymizedVurdering(
-                //TODO fix id to static anonymized
                 id = saksdata.id,
                 saksdataCreated = saksdata.created.toDate(),
                 saksdataModified = saksdata.modified.toDate(),

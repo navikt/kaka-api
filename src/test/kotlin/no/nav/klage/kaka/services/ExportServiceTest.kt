@@ -30,7 +30,6 @@ internal class ExportServiceTest {
 
         val data = exportService.getAsRawData(
             listOf(Enhet.E4291, Enhet.E4295),
-            roles = listOf("ROLE_KLAGE_LEDER")
         )
 
 //        println(data)

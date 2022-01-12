@@ -60,12 +60,10 @@ class ExportController(
     fun getAsRaw(): RawDataResponse {
         logger.debug("getAsRaw() called")
 
-        val roles = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
-
         val usersKlageenheter = axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent())
 
         return RawDataResponse(
-            anonymizedVurderingList = exportService.getAsRawData(usersKlageenheter = usersKlageenheter, roles = roles)
+            anonymizedVurderingList = exportService.getAsRawData(usersKlageenheter = usersKlageenheter)
         )
     }
 
