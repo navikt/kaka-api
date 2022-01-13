@@ -28,7 +28,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
             //until we create better reports/UI in KAKA.
             saksdataList =
 //                saksdataRepository.findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                saksdataRepository.findTop100ByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
 //                    enhetIdList = usersKlageenheter.map { it.id },
                     fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
                     toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
@@ -117,7 +117,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
      */
     fun getAsRawData(year: Year): List<AnonymizedVurdering> {
         val saksdataList =
-            saksdataRepository.findTop100ByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
                 toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
             )

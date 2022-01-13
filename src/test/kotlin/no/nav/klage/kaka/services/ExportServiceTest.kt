@@ -21,7 +21,7 @@ internal class ExportServiceTest {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findTop100ByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 any(),
                 any()
             )
@@ -39,7 +39,7 @@ internal class ExportServiceTest {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findTop100ByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 any(),
                 any()
             )
@@ -65,7 +65,7 @@ internal class ExportServiceTest {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findTop100ByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 any(),
                 any()
             )
