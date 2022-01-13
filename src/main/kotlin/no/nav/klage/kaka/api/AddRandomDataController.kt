@@ -116,8 +116,8 @@ class AddRandomDataController(
         val ident: String,
         val hjemler: Set<Registreringshjemmel>,
         val enhetId: String,
-        val ytelse: Ytelse?,
-        val vedtaksEnhetId: String?
+        val ytelse: Ytelse,
+        val vedtaksEnhetId: String
     )
 
 }
