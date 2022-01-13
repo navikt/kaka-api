@@ -38,7 +38,7 @@ class ExportController(
     }
 
     @GetMapping("/excel")
-    fun getAsExcel(@RequestParam year: Int?): ResponseEntity<ByteArray> {
+    fun getAsExcel(@RequestParam(required = false) year: Int?): ResponseEntity<ByteArray> {
         logger.debug("getAsExcel() called. Year param = $year")
 
         val roles = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
@@ -64,7 +64,7 @@ class ExportController(
     }
 
     @GetMapping("/raw")
-    fun getAsRaw(@RequestParam year: Int?): RawDataResponse {
+    fun getAsRaw(@RequestParam(required = false) year: Int?): RawDataResponse {
         logger.debug("getAsRaw() called. Year param = $year")
 
         return RawDataResponse(
