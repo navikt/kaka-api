@@ -9,6 +9,8 @@ import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.RegistreringshjemmelConverter
 import org.hibernate.annotations.DynamicUpdate
+import org.hibernate.annotations.Fetch
+import org.hibernate.annotations.FetchMode
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -38,7 +40,8 @@ class Saksdata(
     @Column(name = "utfall_id")
     @Convert(converter = UtfallConverter::class)
     var utfall: Utfall? = null,
-    @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
+    @ElementCollection(targetClass = Registreringshjemmel::class)
     @CollectionTable(
         name = "registreringshjemmel",
         schema = "kaka",
@@ -51,6 +54,7 @@ class Saksdata(
     var utfoerendeSaksbehandler: String,
     @Column(name = "tilknyttet_enhet")
     var tilknyttetEnhet: String,
+    @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id")
     var kvalitetsvurdering: Kvalitetsvurdering,
