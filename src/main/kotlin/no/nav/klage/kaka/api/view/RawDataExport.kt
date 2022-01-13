@@ -61,6 +61,7 @@ data class AnonymizedVurdering(
     val brukAvRaadgivendeLegeRadioValg: String?,
 
     val behandlingstidDays: Int,
+    val totalBehandlingstidDays: Int,
 ) {
     data class Date(
         val weekNumber: Int,

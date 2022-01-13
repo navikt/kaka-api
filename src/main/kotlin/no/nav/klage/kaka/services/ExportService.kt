@@ -125,8 +125,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return saksdataList.map { saksdata ->
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
+            val mottattVedtaksinstans = saksdata.mottattVedtaksinstans!!.toDate()
 
             val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+            val totalBehandlingstidDays =  avsluttetAvSaksbehandlerDate.epochDay - mottattVedtaksinstans.epochDay
 
             AnonymizedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -138,7 +140,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 ytelseId = saksdata.ytelse!!.id,
                 utfallId = saksdata.utfall!!.id,
                 sakstypeId = saksdata.sakstype.id,
-                mottattVedtaksinstans = saksdata.mottattVedtaksinstans!!.toDate(),
+                mottattVedtaksinstans = mottattVedtaksinstans,
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
                 mottattKlageinstans = mottattKlageinstansDate,
                 kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
@@ -184,6 +186,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
                 brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
                 behandlingstidDays = behandlingstidDays,
+                totalBehandlingstidDays = totalBehandlingstidDays,
             )
         }
     }
