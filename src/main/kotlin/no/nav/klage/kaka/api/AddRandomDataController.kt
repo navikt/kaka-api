@@ -33,9 +33,10 @@ class AddRandomDataController(
     private fun getRandomSaksdata(): Saksdata {
         val cohesiveTestData = getCohesiveTestData()
 
-        val mottattVedtaksinstans = LocalDate.of(2021, (1..12).random(), (1..28).random())
-        val mottattKA = mottattVedtaksinstans.plusDays(Random.nextLong(1, 30))
-        val avsluttetAvSaksbehandler = mottattKA.plusDays(Random.nextLong(1, 110))
+        val mottattVedtaksinstans = LocalDate.of(2021, (1..10).random(), (1..28).random())
+        val mottattKA = mottattVedtaksinstans.plusDays((1..30).random().toLong())
+        val potentialEndDate = mottattKA.plusDays((1..102).random().toLong())
+        val avsluttetAvSaksbehandler = if (potentialEndDate > LocalDate.now()) LocalDate.now() else potentialEndDate
 
         return Saksdata(
             sakstype = Type.values().random(),
