@@ -20,7 +20,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)), when role is 'ROLE_KLAGE_LEDER'
      */
-    fun getAsExcel(usersKlageenheter: List<Enhet>, year: Year = Year.now(), roles: List<String>): ByteArray {
+    fun getAsExcel(usersKlageenheter: List<Enhet>, year: Year, roles: List<String>): ByteArray {
         var saksdataList = emptyList<Saksdata>()
 
         if ("ROLE_KLAGE_LEDER" in roles) {
@@ -115,7 +115,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year
      */
-    fun getAsRawData(year: Year = Year.now()): List<AnonymizedVurdering> {
+    fun getAsRawData(year: Year): List<AnonymizedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
