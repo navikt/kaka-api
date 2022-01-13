@@ -6,11 +6,12 @@ import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.Enhet
+import no.nav.klage.kodeverk.klageenheter
 import org.springframework.stereotype.Service
 
 @Service
 class AzureGateway(
-    private val microsoftGraphClient: MicrosoftGraphClient
+    private val microsoftGraphClient: MicrosoftGraphClient,
 ) {
 
     companion object {
@@ -18,6 +19,10 @@ class AzureGateway(
         private val logger = getLogger(javaClass.enclosingClass)
         private val securelogger = getSecureLogger()
     }
+
+    fun getKlageenheterForSaksbehandler(ident: String): List<Enhet> =
+        listOf(getPersonligDataOmSaksbehandlerMedIdent(ident).enhet).filter { it in klageenheter }
+            .ifEmpty { throw EnhetNotFoundForSaksbehandlerException("$ident er ikke ansatt i en klageenhet") }
 
     fun getPersonligDataOmSaksbehandlerMedIdent(navIdent: String): SaksbehandlerPersonligInfo {
         val data = try {
