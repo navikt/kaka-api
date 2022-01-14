@@ -38,6 +38,13 @@ class MetadataController(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
             klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) },
+            ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.let {
+                KodeDto(
+                    id = it.id,
+                    navn = it.navn,
+                    beskrivelse = it.beskrivelse
+                )
+            },
             roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
         )
     }
