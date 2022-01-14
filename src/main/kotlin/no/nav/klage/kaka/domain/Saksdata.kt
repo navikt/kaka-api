@@ -38,7 +38,7 @@ class Saksdata(
     @Column(name = "utfall_id")
     @Convert(converter = UtfallConverter::class)
     var utfall: Utfall? = null,
-    @ElementCollection(targetClass = Registreringshjemmel::class)
+    @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "registreringshjemmel",
         schema = "kaka",
