@@ -16,7 +16,9 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.Year
 
 @RestController
 @Api(tags = ["kaka-api:kaka-export"])
@@ -36,14 +38,19 @@ class ExportController(
     }
 
     @GetMapping("/excel")
-    fun getAsExcel(): ResponseEntity<ByteArray> {
-        logger.debug("getAsExcel() called")
+    fun getAsExcel(@RequestParam(required = false) year: Int?): ResponseEntity<ByteArray> {
+        logger.debug("getAsExcel() called. Year param = $year")
 
         val roles = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
 
         val usersKlageenheter = axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent())
 
-        val fileAsBytes = exportService.getAsExcel(usersKlageenheter = usersKlageenheter, roles = roles)
+        val fileAsBytes =
+            exportService.getAsExcel(
+                usersKlageenheter = usersKlageenheter,
+                roles = roles,
+                year = if (year != null) Year.of(year) else Year.now()
+            )
 
         val responseHeaders = HttpHeaders()
         responseHeaders.contentType =
@@ -57,11 +64,13 @@ class ExportController(
     }
 
     @GetMapping("/raw")
-    fun getAsRaw(): RawDataResponse {
-        logger.debug("getAsRaw() called")
+    fun getAsRaw(@RequestParam(required = false) year: Int?): RawDataResponse {
+        logger.debug("getAsRaw() called. Year param = $year")
 
         return RawDataResponse(
-            anonymizedVurderingList = exportService.getAsRawData()
+            anonymizedVurderingList = exportService.getAsRawData(
+                year = if (year != null) Year.of(year) else Year.now()
+            )
         )
     }
 

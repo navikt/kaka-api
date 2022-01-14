@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Year
 
 
 internal class ExportServiceTest {
@@ -28,7 +29,7 @@ internal class ExportServiceTest {
 
         val exportService = ExportService(saksdataRepository)
 
-        val data = exportService.getAsRawData()
+        val data = exportService.getAsRawData(Year.now())
 
 //        println(data)
     }
@@ -53,7 +54,8 @@ internal class ExportServiceTest {
         File(fileLocation).writeBytes(
             exportService.getAsExcel(
                 listOf(Enhet.E4291, Enhet.E4295),
-                roles = listOf("ROLE_KLAGE_LEDER")
+                roles = listOf("ROLE_KLAGE_LEDER"),
+                year = Year.now()
             )
         )
     }
@@ -78,7 +80,8 @@ internal class ExportServiceTest {
         File(fileLocation).writeBytes(
             exportService.getAsExcel(
                 listOf(Enhet.E4291, Enhet.E4295),
-                roles = listOf("ROLE_KLAGE_LEDER")
+                roles = listOf("ROLE_KLAGE_LEDER"),
+                year = Year.now()
             )
         )
     }

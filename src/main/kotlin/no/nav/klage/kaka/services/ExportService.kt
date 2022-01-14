@@ -20,7 +20,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)), when role is 'ROLE_KLAGE_LEDER'
      */
-    fun getAsExcel(usersKlageenheter: List<Enhet>, year: Year = Year.now(), roles: List<String>): ByteArray {
+    fun getAsExcel(usersKlageenheter: List<Enhet>, year: Year, roles: List<String>): ByteArray {
         var saksdataList = emptyList<Saksdata>()
 
         if ("ROLE_KLAGE_LEDER" in roles) {
@@ -115,7 +115,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year
      */
-    fun getAsRawData(year: Year = Year.now()): List<AnonymizedVurdering> {
+    fun getAsRawData(year: Year): List<AnonymizedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
@@ -125,8 +125,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return saksdataList.map { saksdata ->
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
+            val mottattVedtaksinstans = saksdata.mottattVedtaksinstans!!.toDate()
 
             val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+            val totalBehandlingstidDays =  avsluttetAvSaksbehandlerDate.epochDay - mottattVedtaksinstans.epochDay
 
             AnonymizedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -138,7 +140,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 ytelseId = saksdata.ytelse!!.id,
                 utfallId = saksdata.utfall!!.id,
                 sakstypeId = saksdata.sakstype.id,
-                mottattVedtaksinstans = saksdata.mottattVedtaksinstans!!.toDate(),
+                mottattVedtaksinstans = mottattVedtaksinstans,
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
                 mottattKlageinstans = mottattKlageinstansDate,
                 kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
@@ -170,20 +172,12 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 utredningenAvMedisinskeForhold = saksdata.kvalitetsvurdering.utredningenAvMedisinskeForhold,
                 veiledningFraNav = saksdata.kvalitetsvurdering.veiledningFraNav,
                 vurderingAvFaktumErMangelfull = saksdata.kvalitetsvurdering.vurderingAvFaktumErMangelfull,
-                arbeidsrettetBrukeroppfoelgingText = saksdata.kvalitetsvurdering.arbeidsrettetBrukeroppfoelgingText,
-                betydeligAvvikText = saksdata.kvalitetsvurdering.betydeligAvvikText,
-                brukIOpplaeringText = saksdata.kvalitetsvurdering.brukIOpplaeringText,
-                utredningenAvAndreAktuelleForholdISakenText = saksdata.kvalitetsvurdering.utredningenAvAndreAktuelleForholdISakenText,
-                utredningenAvArbeidText = saksdata.kvalitetsvurdering.utredningenAvArbeidText,
-                utredningenAvEoesProblematikkText = saksdata.kvalitetsvurdering.utredningenAvEoesProblematikkText,
-                utredningenAvInntektsforholdText = saksdata.kvalitetsvurdering.utredningenAvInntektsforholdText,
-                utredningenAvMedisinskeForholdText = saksdata.kvalitetsvurdering.utredningenAvMedisinskeForholdText,
-                veiledningFraNavText = saksdata.kvalitetsvurdering.veiledningFraNavText,
                 klageforberedelsenRadioValg = saksdata.kvalitetsvurdering.klageforberedelsenRadioValg?.name,
                 utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
                 vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
                 brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
                 behandlingstidDays = behandlingstidDays,
+                totalBehandlingstidDays = totalBehandlingstidDays,
             )
         }
     }

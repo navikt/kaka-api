@@ -39,6 +39,10 @@ server:
     whitelabel:
       enabled: false
   shutdown: graceful
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 5KB
 
 management:
   endpoint:

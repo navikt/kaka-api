@@ -38,7 +38,7 @@ class Saksdata(
     @Column(name = "utfall_id")
     @Convert(converter = UtfallConverter::class)
     var utfall: Utfall? = null,
-    @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Registreringshjemmel::class)
     @CollectionTable(
         name = "registreringshjemmel",
         schema = "kaka",
@@ -51,7 +51,7 @@ class Saksdata(
     var utfoerendeSaksbehandler: String,
     @Column(name = "tilknyttet_enhet")
     var tilknyttetEnhet: String,
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id")
     var kvalitetsvurdering: Kvalitetsvurdering,
     @Column(name = "dato_saksdata_avsluttet_av_saksbehandler")

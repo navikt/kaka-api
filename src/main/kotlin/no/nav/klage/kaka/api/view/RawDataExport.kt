@@ -46,21 +46,13 @@ data class AnonymizedVurdering(
     val utredningenAvMedisinskeForhold: Boolean,
     val veiledningFraNav: Boolean,
     val vurderingAvFaktumErMangelfull: Boolean,
-    val arbeidsrettetBrukeroppfoelgingText: String?,
-    val betydeligAvvikText: String?,
-    val brukIOpplaeringText: String?,
-    val utredningenAvAndreAktuelleForholdISakenText: String?,
-    val utredningenAvArbeidText: String?,
-    val utredningenAvEoesProblematikkText: String?,
-    val utredningenAvInntektsforholdText: String?,
-    val utredningenAvMedisinskeForholdText: String?,
-    val veiledningFraNavText: String?,
     val klageforberedelsenRadioValg: String?,
     val utredningenRadioValg: String?,
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
 
     val behandlingstidDays: Int,
+    val totalBehandlingstidDays: Int,
 ) {
     data class Date(
         val weekNumber: Int,

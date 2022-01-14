@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.repositories
 
 import no.nav.klage.kaka.domain.Saksdata
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -26,6 +27,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
     ): List<Saksdata>
 
     /** Dates are exclusive */
+    @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
     fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
