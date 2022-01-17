@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{jobname}}
+  namespace: klage
+spec:
+  backoffLimit: 0
+  completions: 1
+  parallelism: 1
+  template:
+    metadata:
+      labels:
+        job-name: {{jobname}}
+        app: {{app}}
+    spec:
+      imagePullSecrets:
+        - name: gpr-credentials
+      serviceAccount: default
+      serviceAccountName: default
+      containers:
+        - image: ghcr.io/navikt/kaka-e2e-tests:latest
+          name: kaka-e2e-tests
+          envFrom:
+            - secretRef:
+                name: kaka-e2e-test-users
+            - secretRef:
+                name: slack-e2e-secrets
+            - configMapRef:
+                name: slack-e2e-configmap
+      dnsPolicy: ClusterFirst
+      restartPolicy: Never
