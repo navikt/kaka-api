@@ -13,7 +13,7 @@ data class AnonymizedVurdering(
     val ytelseId: String,
     val utfallId: String,
     val sakstypeId: String,
-    val mottattVedtaksinstans: Date,
+    val mottattVedtaksinstans: Date?,
     val vedtaksinstansEnhet: String,
     val mottattKlageinstans: Date,
 

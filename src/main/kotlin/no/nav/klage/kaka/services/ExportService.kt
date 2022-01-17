@@ -5,6 +5,7 @@ import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.services.ExportService.Field.Type.*
 import no.nav.klage.kodeverk.Enhet
+import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
@@ -125,10 +126,15 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return saksdataList.map { saksdata ->
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
-            val mottattVedtaksinstans = saksdata.mottattVedtaksinstans!!.toDate()
+
+            val mottattForrigeInstans = if (saksdata.sakstype == Type.ANKE) {
+                saksdata.mottattKlageinstans!!.toDate()
+            } else {
+                saksdata.mottattVedtaksinstans!!.toDate()
+            }
 
             val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
-            val totalBehandlingstidDays =  avsluttetAvSaksbehandlerDate.epochDay - mottattVedtaksinstans.epochDay
+            val totalBehandlingstidDays =  avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
 
             AnonymizedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -140,7 +146,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 ytelseId = saksdata.ytelse!!.id,
                 utfallId = saksdata.utfall!!.id,
                 sakstypeId = saksdata.sakstype.id,
-                mottattVedtaksinstans = mottattVedtaksinstans,
+                mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
                 mottattKlageinstans = mottattKlageinstansDate,
                 kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
