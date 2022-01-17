@@ -21,7 +21,7 @@ class AzureGateway(
     }
 
     fun getKlageenheterForSaksbehandler(ident: String): List<Enhet> =
-        listOf(getPersonligDataOmSaksbehandlerMedIdent(ident).enhet).filter { it in klageenheter }
+        listOf(getPersonligDataOmSaksbehandlerMedIdent(ident).enhet).filter { it in klageenheter || it == Enhet.E4200 }
             .ifEmpty { throw EnhetNotFoundForSaksbehandlerException("$ident er ikke ansatt i en klageenhet") }
 
     fun getPersonligDataOmSaksbehandlerMedIdent(navIdent: String): SaksbehandlerPersonligInfo {
