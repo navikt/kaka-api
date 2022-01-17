@@ -110,16 +110,18 @@ class Saksdata(
             )
         }
 
-        val kvalitetsvurderingValidationErrors =
-            kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
+        //Don't check kvalitetsvurdering if utfall is TRUKKET
+        if (utfall != Utfall.TRUKKET) {
+            val kvalitetsvurderingValidationErrors = kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
 
-        if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
-            sectionList.add(
-                ValidationSection(
-                    section = "kvalitetsvurdering",
-                    properties = kvalitetsvurderingValidationErrors
+            if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
+                sectionList.add(
+                    ValidationSection(
+                        section = "kvalitetsvurdering",
+                        properties = kvalitetsvurderingValidationErrors
+                    )
                 )
-            )
+            }
         }
 
         if (sectionList.isNotEmpty()) {
