@@ -65,11 +65,14 @@ class ExportController(
     }
 
     @GetMapping("/raw")
-    fun getAsRaw(@RequestParam(required = false) year: Int?): RawDataResponse {
-        logger.debug("getAsRaw() called. Year param = $year")
+    fun getAsRaw(@RequestParam(name = "year", required = false) inputYear: Int?): RawDataResponse {
+        logger.debug("getAsRaw() called. Year param = $inputYear")
 
-        val year = if (year != null) Year.of(year) else Year.now()
+        val year = if (inputYear != null) Year.of(inputYear) else Year.now()
         return RawDataResponse(
+            anonymizedVurderingList = exportService.getFinishedAsRawData(
+                year = year
+            ),
             anonymizedFinishedVurderingList = exportService.getFinishedAsRawData(
                 year = year
             ),
@@ -80,6 +83,7 @@ class ExportController(
     }
 
     data class RawDataResponse(
+        val anonymizedVurderingList: List<AnonymizedFinishedVurdering>,
         val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurdering>,
         val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
     )
