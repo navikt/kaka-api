@@ -1,6 +1,8 @@
 package no.nav.klage.kaka.services
 
-import no.nav.klage.kaka.api.view.AnonymizedVurdering
+import no.nav.klage.kaka.api.view.AnonymizedFinishedVurdering
+import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurdering
+import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.services.ExportService.Field.Type.*
@@ -116,7 +118,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year
      */
-    fun getAsRawData(year: Year): List<AnonymizedVurdering> {
+    fun getFinishedAsRawData(year: Year): List<AnonymizedFinishedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
@@ -136,7 +138,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
             val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
             val totalBehandlingstidDays =  avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
 
-            AnonymizedVurdering(
+            AnonymizedFinishedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
                 saksdataCreated = saksdata.created.toDate(),
                 saksdataModified = saksdata.modified.toDate(),
@@ -184,6 +186,48 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
                 behandlingstidDays = behandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
+                createdDate = getCreatedDate(saksdata),
+                modifiedDate = getModifiedDate(saksdata),
+            )
+        }
+    }
+
+    private fun getModifiedDate(saksdata: Saksdata): Date {
+        return if (saksdata.created.isBefore(saksdata.kvalitetsvurdering.created)) {
+            saksdata.created.toDate()
+        } else {
+            saksdata.kvalitetsvurdering.created.toDate()
+        }
+    }
+
+    private fun getCreatedDate(saksdata: Saksdata): Date {
+        return if (saksdata.modified.isAfter(saksdata.kvalitetsvurdering.modified)) {
+            saksdata.modified.toDate()
+        } else {
+            saksdata.kvalitetsvurdering.modified.toDate()
+        }
+    }
+
+    /**
+     * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given year
+     */
+    fun getUnfinishedAsRawData(year: Year): List<AnonymizedUnfinishedVurdering> {
+        val saksdataList =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanEqualOrderByCreated(
+                toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
+            )
+
+        return saksdataList.map { saksdata ->
+            AnonymizedUnfinishedVurdering(
+                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
+                saksdataCreated = saksdata.created.toDate(),
+                saksdataModified = saksdata.modified.toDate(),
+                tilknyttetEnhet = saksdata.tilknyttetEnhet,
+                sakstypeId = saksdata.sakstype.id,
+                kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
+                kvalitetsvurderingModified = saksdata.kvalitetsvurdering.modified.toDate(),
+                createdDate = getCreatedDate(saksdata),
+                modifiedDate = getModifiedDate(saksdata),
             )
         }
     }
@@ -271,8 +315,8 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
 }
 
-private fun LocalDateTime.toDate(): AnonymizedVurdering.Date {
-    return AnonymizedVurdering.Date(
+private fun LocalDateTime.toDate(): Date {
+    return Date(
         weekNumber = this.get(ChronoField.ALIGNED_WEEK_OF_YEAR),
         year = this.year,
         month = this.monthValue,
@@ -282,8 +326,8 @@ private fun LocalDateTime.toDate(): AnonymizedVurdering.Date {
     )
 }
 
-private fun LocalDate.toDate(): AnonymizedVurdering.Date {
-    return AnonymizedVurdering.Date(
+private fun LocalDate.toDate(): Date {
+    return Date(
         weekNumber = this.get(ChronoField.ALIGNED_WEEK_OF_YEAR),
         year = this.year,
         month = this.monthValue,

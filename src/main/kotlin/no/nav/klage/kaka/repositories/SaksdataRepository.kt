@@ -32,4 +32,9 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
     ): List<Saksdata>
+
+    @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
+    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanEqualOrderByCreated(
+        toDateTime: LocalDateTime
+    ): List<Saksdata>
 }

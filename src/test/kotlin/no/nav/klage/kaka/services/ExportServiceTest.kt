@@ -29,9 +29,26 @@ internal class ExportServiceTest {
 
         val exportService = ExportService(saksdataRepository)
 
-        val data = exportService.getAsRawData(Year.now())
+        val data = exportService.getFinishedAsRawData(Year.now())
 
 //        println(data)
+    }
+
+    @Test
+    fun exportUnfinishedRawData() {
+        val saksdataRepository = mockk<SaksdataRepository>()
+
+        every {
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanEqualOrderByCreated(
+                any()
+            )
+        } returns getSaksdata(amount = 10)
+
+        val exportService = ExportService(saksdataRepository)
+
+        val data = exportService.getUnfinishedAsRawData(Year.now())
+
+        println(data)
     }
 
     @Test

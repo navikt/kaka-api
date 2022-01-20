@@ -1,7 +1,8 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
-import no.nav.klage.kaka.api.view.AnonymizedVurdering
+import no.nav.klage.kaka.api.view.AnonymizedFinishedVurdering
+import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurdering
 import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
@@ -67,15 +68,19 @@ class ExportController(
     fun getAsRaw(@RequestParam(required = false) year: Int?): RawDataResponse {
         logger.debug("getAsRaw() called. Year param = $year")
 
+        val year = if (year != null) Year.of(year) else Year.now()
         return RawDataResponse(
-            anonymizedVurderingList = exportService.getAsRawData(
-                year = if (year != null) Year.of(year) else Year.now()
+            anonymizedFinishedVurderingList = exportService.getFinishedAsRawData(
+                year = year
+            ),
+            anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawData(
+                year = year
             )
         )
     }
 
     data class RawDataResponse(
-        val anonymizedVurderingList: List<AnonymizedVurdering>
+        val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurdering>,
+        val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
     )
-
 }
