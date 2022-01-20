@@ -48,7 +48,7 @@ internal class ExportServiceTest {
 
         val data = exportService.getUnfinishedAsRawData(Year.now())
 
-        println(data)
+//        println(data)
     }
 
     @Test
