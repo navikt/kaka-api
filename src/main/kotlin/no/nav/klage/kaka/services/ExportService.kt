@@ -192,7 +192,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         }
     }
 
-    private fun getModifiedDate(saksdata: Saksdata): Date {
+    private fun getCreatedDate(saksdata: Saksdata): Date {
         return if (saksdata.created.isBefore(saksdata.kvalitetsvurdering.created)) {
             saksdata.created.toDate()
         } else {
@@ -200,7 +200,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         }
     }
 
-    private fun getCreatedDate(saksdata: Saksdata): Date {
+    private fun getModifiedDate(saksdata: Saksdata): Date {
         return if (saksdata.modified.isAfter(saksdata.kvalitetsvurdering.modified)) {
             saksdata.modified.toDate()
         } else {
