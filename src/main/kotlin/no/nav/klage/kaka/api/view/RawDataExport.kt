@@ -2,7 +2,7 @@ package no.nav.klage.kaka.api.view
 
 import java.util.*
 
-data class AnonymizedVurdering(
+data class AnonymizedFinishedVurdering(
     /** unique and static id */
     val id: UUID,
     val saksdataCreated: Date,
@@ -53,13 +53,36 @@ data class AnonymizedVurdering(
 
     val behandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
+
+    /** Første av de to created datoene. */
+    val createdDate: Date,
+    /** Siste av de to modified datoene. */
+    val modifiedDate: Date,
+)
+
+data class AnonymizedUnfinishedVurdering(
+    /** unique and static id */
+    val id: UUID,
+    val sakstypeId: String,
+    val tilknyttetEnhet: String,
+    val saksdataCreated: Date,
+    val saksdataModified: Date,
+
+    val kvalitetsvurderingCreated: Date,
+    val kvalitetsvurderingModified: Date,
+
+    /** Første av de to created datoene. */
+    val createdDate: Date,
+    /** Siste av de to modified datoene. */
+    val modifiedDate: Date,
 ) {
-    data class Date(
-        val weekNumber: Int,
-        val year: Int,
-        val month: Int,
-        val day: Int,
-        val iso: String,
-        val epochDay: Int
-    )
 }
+
+data class Date(
+    val weekNumber: Int,
+    val year: Int,
+    val month: Int,
+    val day: Int,
+    val iso: String,
+    val epochDay: Int
+)
