@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 import java.time.Year
 
 @RestController
@@ -65,21 +66,42 @@ class ExportController(
     }
 
     @GetMapping("/raw")
-    fun getAsRaw(@RequestParam(name = "year", required = false) inputYear: Int?): RawDataResponse {
-        logger.debug("getAsRaw() called. Year param = $inputYear")
+    fun getAsRaw(
+        @RequestParam(name = "year", required = false) inputYear: Int?,
+        @RequestParam(required = false) fromDate: LocalDate?,
+        @RequestParam(required = false) toDate: LocalDate?,
+    ): RawDataResponse {
+        logger.debug("getAsRaw() called. Year param = $inputYear, fromDate = $fromDate, toDate = $toDate")
 
-        val year = if (inputYear != null) Year.of(inputYear) else Year.now()
-        return RawDataResponse(
-            anonymizedVurderingList = exportService.getFinishedAsRawData(
-                year = year
-            ),
-            anonymizedFinishedVurderingList = exportService.getFinishedAsRawData(
-                year = year
-            ),
-            anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawData(
-                year = year
+        if (fromDate != null && toDate != null) {
+            return RawDataResponse(
+                anonymizedVurderingList = exportService.getFinishedAsRawDataByDates(
+                    fromDate = fromDate,
+                    toDate = toDate
+                ),
+                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDates(
+                    fromDate = fromDate,
+                    toDate = toDate
+                ),
+                anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByToDate(
+                    toDate = toDate
+                )
             )
-        )
+        } else {
+            val year = if (inputYear != null) Year.of(inputYear) else Year.now()
+
+            return RawDataResponse(
+                anonymizedVurderingList = exportService.getFinishedAsRawDataByYear(
+                    year = year
+                ),
+                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByYear(
+                    year = year
+                ),
+                anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByYear(
+                    year = year
+                )
+            )
+        }
     }
 
     data class RawDataResponse(

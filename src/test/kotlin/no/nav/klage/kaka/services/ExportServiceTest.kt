@@ -29,7 +29,7 @@ internal class ExportServiceTest {
 
         val exportService = ExportService(saksdataRepository)
 
-        val data = exportService.getFinishedAsRawData(Year.now())
+        val data = exportService.getFinishedAsRawDataByYear(Year.now())
 
 //        println(data)
     }
@@ -39,14 +39,14 @@ internal class ExportServiceTest {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanEqualOrderByCreated(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
                 any()
             )
         } returns getSaksdata(amount = 10)
 
         val exportService = ExportService(saksdataRepository)
 
-        val data = exportService.getUnfinishedAsRawData(Year.now())
+        val data = exportService.getUnfinishedAsRawDataByYear(Year.now())
 
 //        println(data)
     }

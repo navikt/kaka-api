@@ -13,7 +13,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month
 import java.util.*
 
 @ActiveProfiles("local")
@@ -163,6 +166,70 @@ class SaksdataRepositoryTest {
 
         val results = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
         assertThat(results).isEqualTo(saksdata)
+    }
+
+    @Test
+    fun `stats for finished and unfinished based on dates works`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val saksdataFullfoertx = Saksdata(
+            utfoerendeSaksbehandler = "someoneelse",
+            tilknyttetEnhet = "4295",
+            kvalitetsvurdering = Kvalitetsvurdering(),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 12), LocalTime.NOON),
+        )
+        val saksdataFullfoert1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurdering = Kvalitetsvurdering(),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+        )
+        val saksdataFullfoert2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurdering = Kvalitetsvurdering(),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+        )
+        val saksdataPaagaaende1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurdering = Kvalitetsvurdering(),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+        )
+        val saksdataPaagaaende2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurdering = Kvalitetsvurdering(),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertx,
+                saksdataFullfoert1,
+                saksdataFullfoert2,
+                saksdataPaagaaende1,
+                saksdataPaagaaende2
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val finished =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+            )
+        assertThat(finished).hasSize(2)
+
+        val unfinished =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+            )
+        assertThat(unfinished).hasSize(1)
     }
 
 }
