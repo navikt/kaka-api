@@ -19,14 +19,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
 
     fun findOneByKvalitetsvurderingId(kvalitetsvurderingId: UUID): Saksdata?
 
-    /** Dates are exclusive */
-    fun findByTilknyttetEnhetInAndAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-        enhetIdList: List<String>,
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime
-    ): List<Saksdata>
-
-    /** Dates are exclusive */
+    /** Dates are inclusive */
     @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
     fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
         fromDateTime: LocalDateTime,
@@ -34,7 +27,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
     ): List<Saksdata>
 
     @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
-    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanEqualOrderByCreated(
+    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
         toDateTime: LocalDateTime
     ): List<Saksdata>
 }
