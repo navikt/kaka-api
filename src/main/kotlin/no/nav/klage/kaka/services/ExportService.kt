@@ -178,8 +178,6 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
             AnonymizedFinishedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
-                saksdataCreated = saksdata.created.toDate(),
-                saksdataModified = saksdata.modified.toDate(),
                 tilknyttetEnhet = saksdata.tilknyttetEnhet,
                 hjemmelIdList = saksdata.registreringshjemler!!.map { it.id },
                 avsluttetAvSaksbehandler = avsluttetAvSaksbehandlerDate,
@@ -189,8 +187,6 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
                 mottattKlageinstans = mottattKlageinstansDate,
-                kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
-                kvalitetsvurderingModified = saksdata.kvalitetsvurdering.modified.toDate(),
                 arbeidsrettetBrukeroppfoelging = saksdata.kvalitetsvurdering.arbeidsrettetBrukeroppfoelging,
                 begrunnelseForHvorforAvslagOpprettholdes = saksdata.kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes,
                 begrunnelsenErIkkeKonkretOgIndividuell = saksdata.kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell,
@@ -258,12 +254,8 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return saksdataList.map { saksdata ->
             AnonymizedUnfinishedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
-                saksdataCreated = saksdata.created.toDate(),
-                saksdataModified = saksdata.modified.toDate(),
                 tilknyttetEnhet = saksdata.tilknyttetEnhet,
                 sakstypeId = saksdata.sakstype.id,
-                kvalitetsvurderingCreated = saksdata.kvalitetsvurdering.created.toDate(),
-                kvalitetsvurderingModified = saksdata.kvalitetsvurdering.modified.toDate(),
                 createdDate = getCreatedDate(saksdata),
                 modifiedDate = getModifiedDate(saksdata),
             )

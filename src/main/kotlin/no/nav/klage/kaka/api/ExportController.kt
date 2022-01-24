@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
@@ -25,7 +24,6 @@ import java.time.Year
 @RestController
 @Api(tags = ["kaka-api:kaka-export"])
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
-@RequestMapping("/export")
 class ExportController(
     private val exportService: ExportService,
     private val axsysGateway: AxsysGateway,
@@ -39,7 +37,7 @@ class ExportController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @GetMapping("/excel")
+    @GetMapping("/export/excel")
     fun getAsExcel(@RequestParam(required = false) year: Int?): ResponseEntity<ByteArray> {
         logger.debug("getAsExcel() called. Year param = $year")
 
@@ -65,20 +63,37 @@ class ExportController(
         )
     }
 
-    @GetMapping("/raw")
+
+    //TODO: Delete when not in use anymore
+    @GetMapping("/export/raw")
     fun getAsRaw(
         @RequestParam(name = "year", required = false) inputYear: Int?,
         @RequestParam(required = false) fromDate: LocalDate?,
         @RequestParam(required = false) toDate: LocalDate?,
-    ): RawDataResponse {
+    ): TotalResponse {
         logger.debug("getAsRaw() called. Year param = $inputYear, fromDate = $fromDate, toDate = $toDate")
 
+        return getTotalResponse(fromDate, toDate, inputYear)
+    }
+
+    @GetMapping("/statistics/total")
+    fun getTotal(
+        @RequestParam(name = "year", required = false) inputYear: Int?,
+        @RequestParam(required = false) fromDate: LocalDate?,
+        @RequestParam(required = false) toDate: LocalDate?,
+    ): TotalResponse {
+        logger.debug("getTotal() called. Year param = $inputYear, fromDate = $fromDate, toDate = $toDate")
+
+        return getTotalResponse(fromDate, toDate, inputYear)
+    }
+
+    private fun getTotalResponse(
+        fromDate: LocalDate?,
+        toDate: LocalDate?,
+        inputYear: Int?
+    ): TotalResponse {
         if (fromDate != null && toDate != null) {
-            return RawDataResponse(
-                anonymizedVurderingList = exportService.getFinishedAsRawDataByDates(
-                    fromDate = fromDate,
-                    toDate = toDate
-                ),
+            return TotalResponse(
                 anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDates(
                     fromDate = fromDate,
                     toDate = toDate
@@ -89,11 +104,7 @@ class ExportController(
             )
         } else {
             val year = if (inputYear != null) Year.of(inputYear) else Year.now()
-
-            return RawDataResponse(
-                anonymizedVurderingList = exportService.getFinishedAsRawDataByYear(
-                    year = year
-                ),
+            return TotalResponse(
                 anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByYear(
                     year = year
                 ),
@@ -104,8 +115,7 @@ class ExportController(
         }
     }
 
-    data class RawDataResponse(
-        val anonymizedVurderingList: List<AnonymizedFinishedVurdering>,
+    data class TotalResponse(
         val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurdering>,
         val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
     )
