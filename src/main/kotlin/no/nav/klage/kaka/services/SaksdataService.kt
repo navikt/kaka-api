@@ -7,15 +7,13 @@ import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kodeverk.Source
-import no.nav.klage.kodeverk.Type
-import no.nav.klage.kodeverk.Utfall
-import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 @Service
@@ -229,6 +227,14 @@ class SaksdataService(
                 saksbehandlerIdent
             )
         }
+    }
+
+    fun searchAsFoersteinstansleder(saksbehandlerIdent: String, enhet: Enhet, fromDate: LocalDate, toDate: LocalDate): List<Saksdata> {
+        return saksdataRepository.findByVedtaksinstansEnhetAndAvsluttetAvSaksbehandlerBetweenAndSakstypeOrderByCreated(
+            vedtaksinstansEnhet = enhet.navn,
+            fromDateTime = fromDate.atStartOfDay(),
+            toDateTime = toDate.atTime(LocalTime.MAX),
+        )
     }
 
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {

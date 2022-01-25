@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.repositories
 
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kodeverk.Type
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -29,5 +30,14 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
     @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
     fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
         toDateTime: LocalDateTime
+    ): List<Saksdata>
+
+    /** Dates are inclusive */
+    @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
+    fun findByVedtaksinstansEnhetAndAvsluttetAvSaksbehandlerBetweenAndSakstypeOrderByCreated(
+        vedtaksinstansEnhet: String,
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        sakstype: Type = Type.KLAGE
     ): List<Saksdata>
 }

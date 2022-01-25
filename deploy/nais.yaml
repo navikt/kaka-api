@@ -66,6 +66,7 @@ spec:
           - id: {{ROLE_KLAGE_FORTROLIG}}
           - id: {{ROLE_KLAGE_STRENGT_FORTROLIG}}
           - id: {{ROLE_KLAGE_EGEN_ANSATT}}
+          - id: {{ROLE_VEDTAKSINSTANS_LEDER}}
           {{#if ROLE_ADMIN}}
           - id: {{ROLE_ADMIN}}
           {{/if}}

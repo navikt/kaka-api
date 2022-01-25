@@ -13,7 +13,8 @@ class RolleMapper(
     @Value("\${ROLE_KLAGE_FORTROLIG}") private val kanBehandleFortroligRole: String,
     @Value("\${ROLE_KLAGE_STRENGT_FORTROLIG}") private val kanBehandleStrengtFortroligRole: String,
     @Value("\${ROLE_KLAGE_EGEN_ANSATT}") private val kanBehandleEgenAnsattRole: String,
-    @Value("\${ROLE_ADMIN}") private val adminRole: String
+    @Value("\${ROLE_ADMIN}") private val adminRole: String,
+    @Value("\${ROLE_VEDTAKSINSTANS_LEDER}") private val vedtaksinstansLederRole: String,
 ) {
     val rolleMap = mapOf(
         klageinstansAlleRole to "ROLE_KLAGEINSTANS_ALLE",
@@ -25,5 +26,6 @@ class RolleMapper(
         kanBehandleStrengtFortroligRole to "ROLE_KLAGE_STRENGT_FORTROLIG",
         kanBehandleEgenAnsattRole to "ROLE_KLAGE_EGEN_ANSATT",
         adminRole to "ROLE_ADMIN",
+        vedtaksinstansLederRole to "ROLE_VEDTAKSINSTANS_LEDER",
     )
 }
