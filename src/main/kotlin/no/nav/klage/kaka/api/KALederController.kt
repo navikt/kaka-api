@@ -11,6 +11,7 @@ import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kodeverk.Enhet
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -101,7 +102,7 @@ class KALederController(
 
         validateIsKALeder()
 
-        val saksbehandlerIdentList = axsysGateway.getSaksbehandlereIEnhet(enhetId)
+        val saksbehandlerIdentList = axsysGateway.getSaksbehandlereIEnhet(Enhet.values().find { it.id == enhetId }!!.navn)
         val saksbehandlere = mutableListOf<Saksbehandler>()
 
         saksbehandlerIdentList.forEach {

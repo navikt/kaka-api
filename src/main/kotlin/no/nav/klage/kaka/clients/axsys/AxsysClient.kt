@@ -26,14 +26,14 @@ class AxsysClient(
 
 //    @Retryable
 //    @Cacheable(SAKSBEHANDLERE_I_ENHET_CACHE)
-    fun getSaksbehandlereIEnhet(enhetId: String): List<Bruker> {
-        logger.debug("Fetching brukere in enhet {}", enhetId)
+    fun getSaksbehandlereIEnhet(enhetNr: String): List<Bruker> {
+        logger.debug("Fetching brukere in enhet {}", enhetNr)
 
         return axsysWebClient.get()
             .uri { uriBuilder ->
                 uriBuilder
-                    .path("/enhet/{enhetId}/brukere")
-                    .build(enhetId)
+                    .path("/enhet/{enhetNr}/brukere")
+                    .build(enhetNr)
             }
             .header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithAxsysScope()}")
             .header("Nav-Call-Id", tracer.currentSpan().context().traceIdString())

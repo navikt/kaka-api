@@ -15,7 +15,7 @@ class AxsysGateway(
         azureGateway.getKlageenheterForSaksbehandler(ident)
 
     @Deprecated("Må erstattes med å hente data fra Azure")
-    fun getSaksbehandlereIEnhet(enhetId: String): List<SaksbehandlerIdent> {
-        return axsysClient.getSaksbehandlereIEnhet(enhetId).map { SaksbehandlerIdent(it.appIdent) }
+    fun getSaksbehandlereIEnhet(enhetNr: String): List<SaksbehandlerIdent> {
+        return axsysClient.getSaksbehandlereIEnhet(enhetNr).map { SaksbehandlerIdent(it.appIdent) }
     }
 }
