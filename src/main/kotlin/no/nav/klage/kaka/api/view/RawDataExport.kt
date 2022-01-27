@@ -77,3 +77,8 @@ data class Date(
     val iso: String,
     val epochDay: Int
 )
+
+data class TotalResponse(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurdering>,
+    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
+)
