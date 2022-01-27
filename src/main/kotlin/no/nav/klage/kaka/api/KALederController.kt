@@ -65,7 +65,7 @@ class KALederController(
         @RequestParam(required = false) toMonth: String?,
         @RequestParam saksbehandlere: List<String>,
     ): TotalResponse {
-        logger.debug("getTotalForLeder() called. Enhet param = $enhetId, " +
+        logger.debug("getTotalForLeder() called. enhetId param = $enhetId, " +
                 "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere")
 
         validateIsKALeder()
