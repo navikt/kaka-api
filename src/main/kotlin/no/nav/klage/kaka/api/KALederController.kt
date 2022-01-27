@@ -101,14 +101,21 @@ class KALederController(
 
         validateIsKALeder()
 
-        val saksbehandlere = axsysGateway.getSaksbehandlereIEnhet(enhetId)
+        val saksbehandlerIdentList = axsysGateway.getSaksbehandlereIEnhet(enhetId)
+        val saksbehandlere = mutableListOf<Saksbehandler>()
 
-        return saksbehandlere.map {
-            Saksbehandler(
-                navIdent = it.navIdent,
-                navn = azureGateway.getPersonligDataOmSaksbehandlerMedIdent(it.navIdent).sammensattNavn
-            )
+        saksbehandlerIdentList.forEach {
+            try {
+                Saksbehandler(
+                    navIdent = it.navIdent,
+                    navn = azureGateway.getPersonligDataOmSaksbehandlerMedIdent(it.navIdent).sammensattNavn
+                )
+            } catch (e: Exception) {
+                logger.warn("Could not fetch name for ${it.navIdent} from Azure", e)
+            }
         }
+
+        return saksbehandlere
     }
 
 
