@@ -22,7 +22,7 @@ import java.time.Year
 import java.time.YearMonth
 
 @RestController
-@Api(tags = ["kaka-api:kaka-export"])
+@Api(tags = ["kaka-api:kaka-leder"])
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 class KALederController(
     private val exportService: ExportService,
