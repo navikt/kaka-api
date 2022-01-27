@@ -2,7 +2,9 @@ package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.RolleMapper
+import no.nav.klage.kaka.api.view.Saksbehandler
 import no.nav.klage.kaka.api.view.TotalResponse
+import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -27,6 +29,7 @@ import java.time.YearMonth
 class KALederController(
     private val exportService: ExportService,
     private val azureGateway: AzureGateway,
+    private val axsysGateway: AxsysGateway,
     private val rolleMapper: RolleMapper,
     private val tokenUtil: TokenUtil
 ) {
@@ -89,6 +92,25 @@ class KALederController(
             )
         )
     }
+
+    @GetMapping("/enheter/{enhetId}/saksbehandlere")
+    fun getSaksbehandlereForEnhet(
+        @PathVariable(name = "enhetId") enhetId: String,
+    ): List<Saksbehandler> {
+        logger.debug("getSaksbehandlereForEnhet() called. enhetId param = $enhetId")
+
+        validateIsKALeder()
+
+        val saksbehandlere = axsysGateway.getSaksbehandlereIEnhet(enhetId)
+
+        return saksbehandlere.map {
+            Saksbehandler(
+                navIdent = it.navIdent,
+                navn = azureGateway.getPersonligDataOmSaksbehandlerMedIdent(it.navIdent).sammensattNavn
+            )
+        }
+    }
+
 
     private fun validateIsKALeder() {
         val roles = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }

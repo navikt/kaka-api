@@ -70,8 +70,6 @@ internal class ExportServiceTest {
 
         File(fileLocation).writeBytes(
             exportService.getAsExcel(
-                listOf(Enhet.E4291, Enhet.E4295),
-                roles = listOf("ROLE_KLAGE_LEDER"),
                 year = Year.now()
             )
         )
@@ -96,8 +94,6 @@ internal class ExportServiceTest {
 
         File(fileLocation).writeBytes(
             exportService.getAsExcel(
-                listOf(Enhet.E4291, Enhet.E4295),
-                roles = listOf("ROLE_KLAGE_LEDER"),
                 year = Year.now()
             )
         )
