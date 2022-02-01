@@ -38,10 +38,25 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
+    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+        enhet: String,
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+    ): List<Saksdata>
+
+    /** Dates are inclusive */
+    @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
         enhet: String,
         toDateTime: LocalDateTime,
         saksbehandlerIdentList: List<String>
+    ): List<Saksdata>
+
+    /** Dates are inclusive */
+    @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
+    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+        enhet: String,
+        toDateTime: LocalDateTime
     ): List<Saksdata>
 
     @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])

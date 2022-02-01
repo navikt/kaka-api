@@ -115,20 +115,27 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         enhet: Enhet,
         fromMonth: YearMonth,
         toMonth: YearMonth,
-        saksbehandlerIdentList: List<String>
+        saksbehandlerIdentList: List<String>?
     ): List<AnonymizedFinishedVurdering> {
         validateNotCurrentMonth(toMonth)
 
         val fromDateTime = fromMonth.atDay(1).atStartOfDay()
         val toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX)
 
-        val saksdataList =
+        val saksdataList = if (saksbehandlerIdentList == null) {
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                enhet = enhet.navn,
+                fromDateTime = fromDateTime,
+                toDateTime = toDateTime,
+            )
+        } else {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
                 enhet = enhet.navn,
                 fromDateTime = fromDateTime,
                 toDateTime = toDateTime,
                 saksbehandlerIdentList = saksbehandlerIdentList,
             )
+        }
 
         return privateGetFinishedAsRawData(saksdataList = saksdataList)
     }
@@ -139,16 +146,22 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     fun getUnfinishedForLederAsRawData(
         enhet: Enhet,
         toMonth: YearMonth,
-        saksbehandlerIdentList: List<String>
+        saksbehandlerIdentList: List<String>?
     ): List<AnonymizedUnfinishedVurdering> {
         validateNotCurrentMonth(toMonth)
 
-        val saksdataList =
+        val saksdataList = if (saksbehandlerIdentList == null) {
+                saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+                    enhet = enhet.navn,
+                    toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
+                )
+        } else {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
                 enhet = enhet.navn,
                 toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
                 saksbehandlerIdentList = saksbehandlerIdentList,
             )
+        }
 
         return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
     }
