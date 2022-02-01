@@ -33,7 +33,7 @@ class SaksdataService(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
                 tilknyttetEnhet = tilknyttetEnhet
-                    ?: axsysGateway.getKlageenheterForSaksbehandler(innloggetSaksbehandler).first().navn,
+                    ?: axsysGateway.getKlageenheterForSaksbehandler(innloggetSaksbehandler).first().id,
                 kvalitetsvurdering = Kvalitetsvurdering()
             )
         )
