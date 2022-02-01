@@ -124,13 +124,13 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
         val saksdataList = if (saksbehandlerIdentList == null) {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                enhet = enhet.id,
+                enhet = enhet.navn,
                 fromDateTime = fromDateTime,
                 toDateTime = toDateTime,
             )
         } else {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
-                enhet = enhet.id,
+                enhet = enhet.navn,
                 fromDateTime = fromDateTime,
                 toDateTime = toDateTime,
                 saksbehandlerIdentList = saksbehandlerIdentList,
@@ -152,12 +152,12 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
         val saksdataList = if (saksbehandlerIdentList == null) {
                 saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                    enhet = enhet.id,
+                    enhet = enhet.navn,
                     toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
                 )
         } else {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
-                enhet = enhet.id,
+                enhet = enhet.navn,
                 toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
                 saksbehandlerIdentList = saksbehandlerIdentList,
             )
@@ -329,13 +329,13 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return saksdataList.map { saksdata ->
             buildList {
                 //Saksdata
-                add(Field(fieldName = "Tilknyttet enhet", value = saksdata.tilknyttetEnhet.toEnhetnummer(), type = STRING))
+                add(Field(fieldName = "Tilknyttet enhet", value = saksdata.tilknyttetEnhet, type = STRING))
                 add(Field(fieldName = "Sakstype", value = saksdata.sakstype.navn, type = STRING))
                 add(Field(fieldName = "Ytelse", value = saksdata.ytelse!!.navn, type = STRING))
                 add(Field(fieldName = "Mottatt vedtaksinstans", value = saksdata.mottattVedtaksinstans, type = DATE))
                 add(Field(fieldName = "Mottatt klageinstans", value = saksdata.mottattKlageinstans, type = DATE))
                 add(Field(fieldName = "Ferdigstilt", value = saksdata.avsluttetAvSaksbehandler?.toLocalDate(), type = DATE))
-                add(Field(fieldName = "Fra vedtaksenhet", value = saksdata.vedtaksinstansEnhet.toEnhetnummer(), type = STRING))
+                add(Field(fieldName = "Fra vedtaksenhet", value = saksdata.vedtaksinstansEnhet, type = STRING))
                 add(Field(fieldName = "Utfall/Resultat", value = saksdata.utfall!!.navn, type = STRING))
                 add(Field(fieldName = "Hjemmel", value = saksdata.registreringshjemler.toHjemlerString(), type = STRING))
 
@@ -394,10 +394,6 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
     private fun Set<Registreringshjemmel>?.toHjemlerString() =
         this?.joinToString { "${it.lovKilde.beskrivelse} - ${it.spesifikasjon}" } ?: ""
-
-    private fun String?.toEnhetnummer(): String {
-        return Enhet.values().find { it.id == this }!!.navn
-    }
 
     data class Field(val fieldName: String, val value: Any?, val type: Type) {
         enum class Type {

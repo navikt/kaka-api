@@ -41,9 +41,9 @@ class AddRandomDataController(
         return Saksdata(
             sakstype = Type.values().random(),
             utfoerendeSaksbehandler = cohesiveTestData.ident,
-            tilknyttetEnhet = cohesiveTestData.enhetId,
+            tilknyttetEnhet = cohesiveTestData.enhet,
             ytelse = cohesiveTestData.ytelse,
-            vedtaksinstansEnhet = cohesiveTestData.vedtaksEnhetId,
+            vedtaksinstansEnhet = cohesiveTestData.vedtaksEnhet,
             utfall = Utfall.values().random(),
             registreringshjemler = cohesiveTestData.hjemler,
             sakenGjelder = "66666666666",
@@ -106,9 +106,9 @@ class AddRandomDataController(
         val ytelse = Ytelse.values().random()
         return CohesiveTestData(
             ident = listOf("Z994862", "Z994863", "Z994864").random(),
-            enhetId = ytelseTilKlageenheter[ytelse]!!.random().id,
+            enhet = ytelseTilKlageenheter[ytelse]!!.random().navn,
             ytelse = ytelse,
-            vedtaksEnhetId = ytelseTilVedtaksenheter[ytelse]!!.random().id,
+            vedtaksEnhet = ytelseTilVedtaksenheter[ytelse]!!.random().navn,
             hjemler = setOf(ytelseTilRegistreringshjemler[ytelse]!!.random())
         )
     }
@@ -116,9 +116,9 @@ class AddRandomDataController(
     data class CohesiveTestData(
         val ident: String,
         val hjemler: Set<Registreringshjemmel>,
-        val enhetId: String,
+        val enhet: String,
         val ytelse: Ytelse,
-        val vedtaksEnhetId: String
+        val vedtaksEnhet: String
     )
 
 }

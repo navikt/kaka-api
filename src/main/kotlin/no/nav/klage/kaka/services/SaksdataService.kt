@@ -33,7 +33,7 @@ class SaksdataService(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
                 tilknyttetEnhet = tilknyttetEnhet
-                    ?: axsysGateway.getKlageenheterForSaksbehandler(innloggetSaksbehandler).first().id,
+                    ?: axsysGateway.getKlageenheterForSaksbehandler(innloggetSaksbehandler).first().navn,
                 kvalitetsvurdering = Kvalitetsvurdering()
             )
         )
@@ -125,19 +125,19 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setVedtaksinstansEnhet(saksdataId: UUID, enhetsId: String, innloggetSaksbehandler: String): Saksdata {
+    fun setVedtaksinstansEnhet(saksdataId: UUID, enhetsnummer: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        saksdata.vedtaksinstansEnhet = enhetsId
+        saksdata.vedtaksinstansEnhet = enhetsnummer
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }
 
-    fun setTilknyttetEnhet(saksdataId: UUID, enhetsId: String, innloggetSaksbehandler: String): Saksdata {
+    fun setTilknyttetEnhet(saksdataId: UUID, enhetsnummer: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        if (saksdata.tilknyttetEnhet != enhetsId) {
+        if (saksdata.tilknyttetEnhet != enhetsnummer) {
             setYtelse(saksdataId, null, innloggetSaksbehandler)
         }
-        saksdata.tilknyttetEnhet = enhetsId
+        saksdata.tilknyttetEnhet = enhetsnummer
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }

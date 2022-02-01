@@ -11,7 +11,6 @@ import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kodeverk.Enhet
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
@@ -62,21 +61,21 @@ class KALederController(
         )
     }
 
-    @GetMapping("/statistics/enheter/{enhetId}/manager")
+    @GetMapping("/statistics/enheter/{enhetsnummer}/manager")
     fun getTotalForLeder(
-        @PathVariable(name = "enhetId") enhetId: String,
+        @PathVariable enhetsnummer: String,
         @RequestParam(required = false) fromMonth: String?,
         @RequestParam(required = false) toMonth: String?,
         @RequestParam(required = false) saksbehandlere: List<String>?,
     ): TotalResponse {
-        logger.debug("getTotalForLeder() called. enhetId param = $enhetId, " +
+        logger.debug("getTotalForLeder() called. enhetsnummer param = $enhetsnummer, " +
                 "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere")
 
         validateIsKALeder()
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
-        if (enhet.id != enhetId) {
-            throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet with id $enhetId")
+        if (enhet.navn != enhetsnummer) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
         return TotalResponse(
@@ -94,15 +93,15 @@ class KALederController(
         )
     }
 
-    @GetMapping("/enheter/{enhetId}/saksbehandlere")
+    @GetMapping("/enheter/{enhetsnummer}/saksbehandlere")
     fun getSaksbehandlereForEnhet(
-        @PathVariable(name = "enhetId") enhetId: String,
+        @PathVariable enhetsnummer: String,
     ): List<Saksbehandler> {
-        logger.debug("getSaksbehandlereForEnhet() called. enhetId param = $enhetId")
+        logger.debug("getSaksbehandlereForEnhet() called. enhetsnummer param = $enhetsnummer")
 
         validateIsKALeder()
 
-        val saksbehandlerIdentList = axsysGateway.getSaksbehandlereIEnhet(Enhet.values().find { it.id == enhetId }!!.navn)
+        val saksbehandlerIdentList = axsysGateway.getSaksbehandlereIEnhet(enhetsnummer)
         val saksbehandlere = mutableListOf<Saksbehandler>()
 
         saksbehandlerIdentList.forEach {
