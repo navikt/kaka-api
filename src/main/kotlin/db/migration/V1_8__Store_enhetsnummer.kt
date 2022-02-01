@@ -30,7 +30,7 @@ class V1_8__Store_enhetsnummer: BaseJavaMigration() {
                     preparedStatement.setString(2, vedtaksinstansEnhet?.navn)
                     preparedStatement.setString(3, id)
 
-                    preparedStatement.execute()
+                    preparedStatement.executeUpdate()
                 }
             }
         }
