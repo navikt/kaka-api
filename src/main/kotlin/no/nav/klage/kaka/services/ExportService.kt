@@ -124,13 +124,13 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
         val saksdataList = if (saksbehandlerIdentList == null) {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                enhet = enhet.navn,
+                enhet = enhet.id,
                 fromDateTime = fromDateTime,
                 toDateTime = toDateTime,
             )
         } else {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
-                enhet = enhet.navn,
+                enhet = enhet.id,
                 fromDateTime = fromDateTime,
                 toDateTime = toDateTime,
                 saksbehandlerIdentList = saksbehandlerIdentList,
@@ -152,12 +152,12 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
         val saksdataList = if (saksbehandlerIdentList == null) {
                 saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                    enhet = enhet.navn,
+                    enhet = enhet.id,
                     toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
                 )
         } else {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
-                enhet = enhet.navn,
+                enhet = enhet.id,
                 toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
                 saksbehandlerIdentList = saksbehandlerIdentList,
             )
