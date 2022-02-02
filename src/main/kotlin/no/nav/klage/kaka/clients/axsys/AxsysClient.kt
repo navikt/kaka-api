@@ -24,6 +24,26 @@ class AxsysClient(
     @Value("\${spring.application.name}")
     lateinit var applicationName: String
 
+//    @Retryable
+//    @Cacheable(SAKSBEHANDLERE_I_ENHET_CACHE)
+    fun getSaksbehandlereIEnhet(enhetNr: String): List<Bruker> {
+        logger.debug("Fetching brukere in enhet {}", enhetNr)
+
+        return axsysWebClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/enhet/{enhetNr}/brukere")
+                    .build(enhetNr)
+            }
+            .header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithAxsysScope()}")
+            .header("Nav-Call-Id", tracer.currentSpan().context().traceIdString())
+            .header("Nav-Consumer-Id", applicationName)
+
+            .retrieve()
+            .bodyToMono<List<Bruker>>()
+            .block() ?: throw RuntimeException("Brukere in enhet could not be fetched")
+    }
+
     //@Retryable
     //@Cacheable(TILGANGER_CACHE)
     fun getTilgangerForSaksbehandler(navIdent: String): Tilganger {

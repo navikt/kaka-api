@@ -70,8 +70,6 @@ internal class ExportServiceTest {
 
         File(fileLocation).writeBytes(
             exportService.getAsExcel(
-                listOf(Enhet.E4291, Enhet.E4295),
-                roles = listOf("ROLE_KLAGE_LEDER"),
                 year = Year.now()
             )
         )
@@ -96,8 +94,6 @@ internal class ExportServiceTest {
 
         File(fileLocation).writeBytes(
             exportService.getAsExcel(
-                listOf(Enhet.E4291, Enhet.E4295),
-                roles = listOf("ROLE_KLAGE_LEDER"),
                 year = Year.now()
             )
         )
@@ -110,9 +106,9 @@ internal class ExportServiceTest {
                     Saksdata(
                         sakstype = Type.KLAGE,
                         utfoerendeSaksbehandler = "someoneelse",
-                        tilknyttetEnhet = Enhet.E4295.id,
+                        tilknyttetEnhet = Enhet.E4295.navn,
                         ytelse = Ytelse.OMS_OMP,
-                        vedtaksinstansEnhet = Enhet.E0001.id,
+                        vedtaksinstansEnhet = Enhet.E0001.navn,
                         utfall = Utfall.STADFESTELSE,
                         registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4, Registreringshjemmel.FTRL_9_11),
                         sakenGjelder = "12345678910",

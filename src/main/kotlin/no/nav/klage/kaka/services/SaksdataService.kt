@@ -7,15 +7,13 @@ import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kodeverk.Source
-import no.nav.klage.kodeverk.Type
-import no.nav.klage.kodeverk.Utfall
-import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import java.util.*
 
 @Service
@@ -35,7 +33,7 @@ class SaksdataService(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
                 tilknyttetEnhet = tilknyttetEnhet
-                    ?: axsysGateway.getKlageenheterForSaksbehandler(innloggetSaksbehandler).first().id,
+                    ?: axsysGateway.getKlageenheterForSaksbehandler(innloggetSaksbehandler).first().navn,
                 kvalitetsvurdering = Kvalitetsvurdering()
             )
         )
@@ -127,19 +125,19 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setVedtaksinstansEnhet(saksdataId: UUID, enhetsId: String, innloggetSaksbehandler: String): Saksdata {
+    fun setVedtaksinstansEnhet(saksdataId: UUID, enhetsnummer: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        saksdata.vedtaksinstansEnhet = enhetsId
+        saksdata.vedtaksinstansEnhet = enhetsnummer
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }
 
-    fun setTilknyttetEnhet(saksdataId: UUID, enhetsId: String, innloggetSaksbehandler: String): Saksdata {
+    fun setTilknyttetEnhet(saksdataId: UUID, enhetsnummer: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        if (saksdata.tilknyttetEnhet != enhetsId) {
+        if (saksdata.tilknyttetEnhet != enhetsnummer) {
             setYtelse(saksdataId, null, innloggetSaksbehandler)
         }
-        saksdata.tilknyttetEnhet = enhetsId
+        saksdata.tilknyttetEnhet = enhetsnummer
         saksdata.modified = LocalDateTime.now()
         return saksdata
     }
@@ -229,6 +227,14 @@ class SaksdataService(
                 saksbehandlerIdent
             )
         }
+    }
+
+    fun searchAsFoersteinstansleder(saksbehandlerIdent: String, enhet: Enhet, fromDate: LocalDate, toDate: LocalDate): List<Saksdata> {
+        return saksdataRepository.findByVedtaksinstansEnhetAndAvsluttetAvSaksbehandlerBetweenAndSakstypeOrderByCreated(
+            vedtaksinstansEnhet = enhet.navn,
+            fromDateTime = fromDate.atStartOfDay(),
+            toDateTime = toDate.atTime(LocalTime.MAX),
+        )
     }
 
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {

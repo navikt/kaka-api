@@ -5,8 +5,6 @@ import java.util.*
 data class AnonymizedFinishedVurdering(
     /** unique and static id */
     val id: UUID,
-    val saksdataCreated: Date,
-    val saksdataModified: Date,
     val tilknyttetEnhet: String,
     val hjemmelIdList: List<String>,
     val avsluttetAvSaksbehandler: Date,
@@ -17,8 +15,6 @@ data class AnonymizedFinishedVurdering(
     val vedtaksinstansEnhet: String,
     val mottattKlageinstans: Date,
 
-    val kvalitetsvurderingCreated: Date,
-    val kvalitetsvurderingModified: Date,
     val arbeidsrettetBrukeroppfoelging: Boolean,
     val begrunnelseForHvorforAvslagOpprettholdes: Boolean,
     val begrunnelsenErIkkeKonkretOgIndividuell: Boolean,
@@ -65,15 +61,10 @@ data class AnonymizedUnfinishedVurdering(
     val id: UUID,
     val sakstypeId: String,
     val tilknyttetEnhet: String,
-    val saksdataCreated: Date,
-    val saksdataModified: Date,
 
-    val kvalitetsvurderingCreated: Date,
-    val kvalitetsvurderingModified: Date,
-
-    /** Første av de to created datoene. */
+    /** Første av de to created datoene (saksdata/kvalitetsvurdering). */
     val createdDate: Date,
-    /** Siste av de to modified datoene. */
+    /** Siste av de to modified datoene (saksdata/kvalitetsvurdering). */
     val modifiedDate: Date,
 ) {
 }
@@ -85,4 +76,9 @@ data class Date(
     val day: Int,
     val iso: String,
     val epochDay: Int
+)
+
+data class TotalResponse(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurdering>,
+    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
 )

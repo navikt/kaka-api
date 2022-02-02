@@ -26,6 +26,7 @@ class OpenApiConfig {
                 Tag("kaka-api:metadata", "API for KAKA Metadata"),
                 Tag("kaka-api:kabal-kvalitet", "API for KAKA Kvalitetsvurdering, brukt fra kabal-api"),
                 Tag("kaka-api:kaka-export", "API for exporting data"),
+                Tag("kaka-api:kaka-leder", "API for KA-ledere"),
             )
     }
 
