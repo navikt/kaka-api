@@ -106,7 +106,7 @@ class KALederController(
 
         saksbehandlerIdentList.forEach {
             try {
-                Saksbehandler(
+                saksbehandlere += Saksbehandler(
                     navIdent = it.navIdent,
                     navn = azureGateway.getPersonligDataOmSaksbehandlerMedIdent(it.navIdent).sammensattNavn
                 )
