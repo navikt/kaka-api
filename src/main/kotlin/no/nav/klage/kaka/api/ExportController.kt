@@ -24,18 +24,6 @@ class ExportController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    //TODO: Delete when not in use anymore
-    @GetMapping("/export/raw")
-    fun getAsRaw(
-        @RequestParam(name = "year", required = false) inputYear: Int?,
-        @RequestParam(required = false) fromDate: LocalDate?,
-        @RequestParam(required = false) toDate: LocalDate?,
-    ): TotalResponse {
-        logger.debug("getAsRaw() called. Year param = $inputYear, fromDate = $fromDate, toDate = $toDate")
-
-        return getTotalResponse(fromDate, toDate, inputYear)
-    }
-
     @GetMapping("/statistics/total")
     fun getTotal(
         @RequestParam(name = "year", required = false) inputYear: Int?,
