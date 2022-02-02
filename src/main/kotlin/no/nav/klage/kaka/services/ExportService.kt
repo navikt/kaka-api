@@ -27,8 +27,8 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
      */
     fun getAsExcel(year: Year): ByteArray {
         val saksdataList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                fromDateTime = LocalDate.of(year.value - 1, Month.DECEMBER, 31).atTime(LocalTime.MAX),
-                toDateTime = LocalDate.of(year.value + 1, Month.JANUARY, 1).atStartOfDay(),
+                fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
+                toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
             )
 
         val saksdataFields = mapToFields(saksdataList)
