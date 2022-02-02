@@ -3,6 +3,7 @@ package db.migration
 import no.nav.klage.kodeverk.Enhet
 import org.flywaydb.core.api.migration.BaseJavaMigration
 import org.flywaydb.core.api.migration.Context
+import java.util.*
 
 
 class V1_8__Store_enhetsnummer: BaseJavaMigration() {
@@ -19,7 +20,7 @@ class V1_8__Store_enhetsnummer: BaseJavaMigration() {
         context.connection.createStatement().use { select ->
             select.executeQuery("SELECT id, tilknyttet_enhet, vedtaksinstans_enhet FROM kaka.saksdata").use { rows ->
                 while (rows.next()) {
-                    val id = rows.getString(1)
+                    val id = rows.getObject(1, UUID::class.java)
                     val tilknyttetEnhetId = rows.getString(2)
                     val vedtaksinstansEnhetId = rows.getString(3)
 
@@ -28,7 +29,7 @@ class V1_8__Store_enhetsnummer: BaseJavaMigration() {
 
                     preparedStatement.setString(1, tilknyttetEnhet?.navn)
                     preparedStatement.setString(2, vedtaksinstansEnhet?.navn)
-                    preparedStatement.setString(3, id)
+                    preparedStatement.setObject(3, id)
 
                     preparedStatement.executeUpdate()
                 }
