@@ -7,6 +7,7 @@ import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logSaksdataMethodDetails
+import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.Ytelse
@@ -70,7 +71,15 @@ class SaksdataController(
             logger
         )
 
+        validateEnhetsnummer(input?.tilknyttetEnhet)
+
         return saksdataService.createSaksdata(innloggetSaksbehandler, input?.tilknyttetEnhet).toSaksdataView()
+    }
+
+    private fun validateEnhetsnummer(enhetsnummer: String?) {
+        if (!Enhet.values().any { it.navn == enhetsnummer }) {
+            throw RuntimeException("Not valid enhetsnummer")
+        }
     }
 
     @PostMapping("/{id}/reopen")
@@ -99,6 +108,8 @@ class SaksdataController(
             saksdataId,
             logger
         )
+
+        validateEnhetsnummer(input.value)
 
         return saksdataService.setTilknyttetEnhet(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
@@ -214,6 +225,8 @@ class SaksdataController(
             saksdataId,
             logger
         )
+
+        validateEnhetsnummer(input.value)
 
         return saksdataService.setVedtaksinstansEnhet(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
     }
