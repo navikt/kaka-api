@@ -25,19 +25,17 @@ class MicrosoftGraphClient(
     }
 
     fun getEnhetensAnsattesNavIdents(enhetNr: String): List<String> {
-        val saksbehandlerAccessTokenWithGraphScope = tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()
-        secureLogger.debug("token for graph: {}", saksbehandlerAccessTokenWithGraphScope)
         return microsoftGraphWebClient.get()
             .uri { uriBuilder ->
                 uriBuilder
                     .path("/users")
-                    .queryParam("\$filter", "streetAddress in $enhetNr")
+                    .queryParam("\$filter", "streetAddress eq $enhetNr")
                     .queryParam("\$count", true)
                     .queryParam("\$top", 500)
                     .queryParam("\$select", slimUserSelect)
                     .build()
             }
-            .header("Authorization", "Bearer $saksbehandlerAccessTokenWithGraphScope")
+            .header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
             .header("ConsistencyLevel", "eventual")
             .retrieve()
             .bodyToMono<AzureSlimUserList>()
