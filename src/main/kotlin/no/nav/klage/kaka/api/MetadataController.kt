@@ -33,7 +33,14 @@ class MetadataController(
 
     @GetMapping("/userdata", produces = ["application/json"])
     fun getUserData(): UserData {
-        val usersKlageenheter = axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent())
+        val roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
+
+        val usersKlageenheter = if (isLederVedtaksinstans(roller)) {
+            emptyList()
+        } else {
+            axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent())
+        }
+
         return UserData(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
@@ -45,8 +52,12 @@ class MetadataController(
                     beskrivelse = it.beskrivelse
                 )
             },
-            roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
+            roller = roller
         )
+    }
+
+    private fun isLederVedtaksinstans(roller: List<String>): Boolean {
+        return "ROLE_VEDTAKSINSTANS_LEDER" in roller
     }
 
     private fun SaksbehandlerPersonligInfo.toNavn(): UserData.Navn =
