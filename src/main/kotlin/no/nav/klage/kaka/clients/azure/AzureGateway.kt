@@ -22,7 +22,12 @@ class AzureGateway(
     }
 
     fun getAnsatteIEnhet(enhetNr: String): List<SaksbehandlerIdent> {
-        return microsoftGraphClient.getEnhetensAnsattesNavIdents(enhetNr).map { SaksbehandlerIdent(it) }
+        return microsoftGraphClient.getEnhetensAnsattesNavIdents(enhetNr)?.value?.map {
+            SaksbehandlerIdent(
+                navIdent = it.onPremisesSamAccountName,
+                displayName = it.displayName,
+            )
+        } ?: emptyList()
     }
 
     fun getKlageenheterForSaksbehandler(ident: String): List<Enhet> =

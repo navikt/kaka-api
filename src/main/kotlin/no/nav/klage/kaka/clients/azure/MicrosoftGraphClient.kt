@@ -24,7 +24,7 @@ class MicrosoftGraphClient(
         private const val slimUserSelect = "userPrincipalName,onPremisesSamAccountName,displayName"
     }
 
-    fun getEnhetensAnsattesNavIdents(enhetNr: String): List<String> {
+    fun getEnhetensAnsattesNavIdents(enhetNr: String): AzureSlimUserList? {
         return microsoftGraphWebClient.get()
             .uri { uriBuilder ->
                 uriBuilder
@@ -40,8 +40,6 @@ class MicrosoftGraphClient(
             .retrieve()
             .bodyToMono<AzureSlimUserList>()
             .block()
-            .let { userList -> userList?.value?.map { it.userPrincipalName } }
-            ?: throw RuntimeException("AzureAD data about authenticated user could not be fetched")
     }
 
     //@Retryable
