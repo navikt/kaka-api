@@ -28,4 +28,9 @@ class RolleMapper(
         adminRole to "ROLE_ADMIN",
         vedtaksinstansLederRole to "ROLE_VEDTAKSINSTANS_LEDER",
     )
+
+}
+
+fun isLederVedtaksinstans(roller: List<String>): Boolean {
+    return "ROLE_VEDTAKSINSTANS_LEDER" in roller
 }

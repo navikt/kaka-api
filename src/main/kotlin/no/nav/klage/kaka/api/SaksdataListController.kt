@@ -3,6 +3,7 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.api.view.SaksdataListView
+import no.nav.klage.kaka.api.view.isLederVedtaksinstans
 import no.nav.klage.kaka.api.view.toSaksdataSearchHitView
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
@@ -63,8 +64,8 @@ class SaksdataListController(
         validateIsSameUser(navIdent)
 
         val roles = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
-        if ("ROLE_VEDTAKSINSTANS_LEDER" !in roles) {
-            throw MissingTilgangException("user $navIdent does not have the role ROLE_VEDTAKSINSTANS_LEDER")
+        if (!isLederVedtaksinstans(roles)) {
+            throw MissingTilgangException("user $navIdent does is not leder vedtaksinstans")
         }
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet

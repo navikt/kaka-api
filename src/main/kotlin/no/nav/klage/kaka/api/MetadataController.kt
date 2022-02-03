@@ -5,6 +5,7 @@ import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.KodeDto
 import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.api.view.UserData
+import no.nav.klage.kaka.api.view.isLederVedtaksinstans
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
@@ -54,10 +55,6 @@ class MetadataController(
             },
             roller = roller
         )
-    }
-
-    private fun isLederVedtaksinstans(roller: List<String>): Boolean {
-        return "ROLE_VEDTAKSINSTANS_LEDER" in roller
     }
 
     private fun SaksbehandlerPersonligInfo.toNavn(): UserData.Navn =
