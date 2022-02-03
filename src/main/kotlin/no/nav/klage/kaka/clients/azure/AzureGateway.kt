@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.clients.azure
 
+import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerIdent
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerRolle
 import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
@@ -18,6 +19,15 @@ class AzureGateway(
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
         private val securelogger = getSecureLogger()
+    }
+
+    fun getAnsatteIEnhet(enhetNr: String): List<SaksbehandlerIdent> {
+        return microsoftGraphClient.getEnhetensAnsattesNavIdents(enhetNr)?.value?.map {
+            SaksbehandlerIdent(
+                navIdent = it.onPremisesSamAccountName,
+                displayName = it.displayName,
+            )
+        } ?: emptyList()
     }
 
     fun getKlageenheterForSaksbehandler(ident: String): List<Enhet> =

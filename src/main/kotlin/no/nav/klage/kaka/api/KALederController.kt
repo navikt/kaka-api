@@ -68,8 +68,10 @@ class KALederController(
         @RequestParam(required = false) toMonth: String?,
         @RequestParam(required = false) saksbehandlere: List<String>?,
     ): TotalResponse {
-        logger.debug("getTotalForLeder() called. enhetsnummer param = $enhetsnummer, " +
-                "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere")
+        logger.debug(
+            "getTotalForLeder() called. enhetsnummer param = $enhetsnummer, " +
+                    "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
+        )
 
         validateIsKALeder()
 
@@ -101,23 +103,15 @@ class KALederController(
 
         validateIsKALeder()
 
-        val saksbehandlerIdentList = axsysGateway.getSaksbehandlereIEnhet(enhetsnummer)
-        val saksbehandlere = mutableListOf<Saksbehandler>()
+        val saksbehandlerIdentList = azureGateway.getAnsatteIEnhet(enhetsnummer)
 
-        saksbehandlerIdentList.forEach {
-            try {
-                saksbehandlere += Saksbehandler(
-                    navIdent = it.navIdent,
-                    navn = azureGateway.getPersonligDataOmSaksbehandlerMedIdent(it.navIdent).sammensattNavn
-                )
-            } catch (e: Exception) {
-                logger.warn("Could not fetch name for ${it.navIdent} from Azure", e)
-            }
+        return saksbehandlerIdentList.map {
+            Saksbehandler(
+                navIdent = it.navIdent,
+                navn = it.displayName
+            )
         }
-
-        return saksbehandlere
     }
-
 
     private fun validateIsKALeder() {
         val roles = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }

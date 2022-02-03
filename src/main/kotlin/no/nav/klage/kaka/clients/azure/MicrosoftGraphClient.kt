@@ -20,6 +20,26 @@ class MicrosoftGraphClient(
 
         private const val userSelect =
             "onPremisesSamAccountName,displayName,givenName,surname,mail,officeLocation,userPrincipalName,id,jobTitle,streetAddress"
+
+        private const val slimUserSelect = "userPrincipalName,onPremisesSamAccountName,displayName"
+    }
+
+    fun getEnhetensAnsattesNavIdents(enhetNr: String): AzureSlimUserList? {
+        return microsoftGraphWebClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/users")
+                    .queryParam("\$filter", "streetAddress eq '$enhetNr'")
+                    .queryParam("\$count", true)
+                    .queryParam("\$top", 500)
+                    .queryParam("\$select", slimUserSelect)
+                    .build()
+            }
+            .header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
+            .header("ConsistencyLevel", "eventual")
+            .retrieve()
+            .bodyToMono<AzureSlimUserList>()
+            .block()
     }
 
     //@Retryable
