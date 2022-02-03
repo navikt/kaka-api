@@ -101,7 +101,7 @@ class KALederController(
 
         validateIsKALeder()
 
-        val saksbehandlerIdentList = axsysGateway.getSaksbehandlereIEnhet(enhetsnummer)
+        val saksbehandlerIdentList = azureGateway.getAnsatteIEnhet(enhetsnummer)
         val saksbehandlere = mutableListOf<Saksbehandler>()
 
         saksbehandlerIdentList.forEach {
