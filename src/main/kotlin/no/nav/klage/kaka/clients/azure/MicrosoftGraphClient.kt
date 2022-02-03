@@ -29,7 +29,7 @@ class MicrosoftGraphClient(
             .uri { uriBuilder ->
                 uriBuilder
                     .path("/users")
-                    .queryParam("\$filter", "streetAddress eq $enhetNr")
+                    .queryParam("\$filter", "streetAddress eq '$enhetNr'")
                     .queryParam("\$count", true)
                     .queryParam("\$top", 500)
                     .queryParam("\$select", slimUserSelect)
