@@ -5,6 +5,7 @@ import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kaka.exceptions.ValidationSection
+import no.nav.klage.kaka.util.isLederVedtaksinstans
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.RegistreringshjemmelConverter
@@ -86,8 +87,22 @@ class Saksdata(
         return id.hashCode()
     }
 
-    fun verifyAccess(innloggetIdent: String) {
-        if (innloggetIdent != utfoerendeSaksbehandler) throw MissingTilgangException("Innlogget bruker har ikke tilgang til saksdataen")
+    fun verifyReadAccess(innloggetIdent: String, roller: List<String> = emptyList(), ansattEnhet: String = "") {
+        if (innloggetIdent != utfoerendeSaksbehandler) {
+            if (isLederVedtaksinstans(roller) && ansattEnhet == vedtaksinstansEnhet) {
+                return
+            }
+        } else {
+            return
+        }
+
+        throw MissingTilgangException("Innlogget bruker har ikke tilgang til saksdataen")
+    }
+
+    fun verifyWriteAccess(innloggetIdent: String, roller: List<String> = emptyList(), ansattEnhet: String = "") {
+        if (innloggetIdent != utfoerendeSaksbehandler) {
+            throw MissingTilgangException("Innlogget bruker har ikke tilgang til å redigere saksdataen")
+        }
     }
 
     fun validate() {

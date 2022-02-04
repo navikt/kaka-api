@@ -3,14 +3,14 @@ package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.KodeDto
-import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.api.view.UserData
-import no.nav.klage.kaka.api.view.isLederVedtaksinstans
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
+import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kaka.util.isLederVedtaksinstans
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
