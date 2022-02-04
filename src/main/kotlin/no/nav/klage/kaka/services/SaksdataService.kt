@@ -1,12 +1,14 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
+import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
@@ -23,6 +25,8 @@ class SaksdataService(
     private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
     private val kvalitetsvurderingService: KvalitetsvurderingService,
     private val axsysGateway: AxsysGateway,
+    private val azureGateway: AzureGateway,
+    private val rolleMapper: RolleMapper,
 ) {
     fun getSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         return getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
@@ -195,8 +199,12 @@ class SaksdataService(
         if (saksdata.isEmpty) {
             throw SaksdataNotFoundException("Could not find saksdata with id $saksdataId")
         }
-        return saksdata.get().also {
-            it.verifyAccess(innloggetSaksbehandler)
+        return saksdata.get().also { s ->
+            s.verifyReadAccess(
+                innloggetIdent = innloggetSaksbehandler,
+                roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] },
+                ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.navn
+            )
         }
     }
 
@@ -210,7 +218,7 @@ class SaksdataService(
             throw SaksdataNotFoundException("Could not find saksdata with id $saksdataId")
         }
         return saksdata.get().also {
-            it.verifyAccess(innloggetSaksbehandler)
+            it.verifyWriteAccess(innloggetSaksbehandler)
             if (!isReopen && it.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException("Saksdataen er allerede fullført")
         }
     }

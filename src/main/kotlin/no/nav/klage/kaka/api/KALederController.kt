@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
-import no.nav.klage.kaka.api.view.RolleMapper
 import no.nav.klage.kaka.api.view.Saksbehandler
 import no.nav.klage.kaka.api.view.TotalResponse
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
@@ -9,6 +8,7 @@ import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportService
+import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
