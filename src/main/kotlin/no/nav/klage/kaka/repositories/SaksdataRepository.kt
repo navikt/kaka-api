@@ -29,6 +29,14 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
+    fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        saksbehandler: String,
+    ): List<Saksdata>
+
+    /** Dates are inclusive */
+    @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
         enhet: String,
         fromDateTime: LocalDateTime,
@@ -62,6 +70,12 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID> {
     @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
     fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
         toDateTime: LocalDateTime
+    ): List<Saksdata>
+
+    @EntityGraph(attributePaths = ["kvalitetsvurdering", "registreringshjemler"])
+    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
+        toDateTime: LocalDateTime,
+        saksbehandler: String,
     ): List<Saksdata>
 
     /** Dates are inclusive */
