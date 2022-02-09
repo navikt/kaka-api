@@ -289,7 +289,7 @@ class SaksdataRepositoryTest {
     }
 
     @Test
-    fun `ferdigstilt saksdata for saksbehandler`() {
+    fun `correct hits from db when getting stats for saksbehandler`() {
         val utfoerendeSaksbehandler = "abc123"
         val vedtaksinstansEnhet = "4020"
         val saksdataFullfoertInSamevedtaksinstans = Saksdata(
@@ -342,6 +342,7 @@ class SaksdataRepositoryTest {
                 saksbehandler = utfoerendeSaksbehandler,
             )
         assertThat(saksdataAvsluttet).hasSize(1)
+        assertThat(saksdataAvsluttet.first()).isEqualTo(saksdataFullfoertInSamevedtaksinstans)
 
         val saksdataPaagaaende =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
@@ -349,6 +350,7 @@ class SaksdataRepositoryTest {
                 saksbehandler = utfoerendeSaksbehandler,
             )
         assertThat(saksdataPaagaaende).hasSize(1)
+        assertThat(saksdataPaagaaende.first()).isEqualTo(saksdataPaagaaende1)
     }
 
 }
