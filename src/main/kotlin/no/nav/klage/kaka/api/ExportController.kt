@@ -38,12 +38,12 @@ class ExportController(
 
         if (fromDate != null && toDate != null) {
             return TotalResponse(
-                anonymizedFinishedVurderingList = exportService.getMyFinishedAsRawDataByDates(
+                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDatesAndSaksbehandler(
                     fromDate = fromDate,
                     toDate = toDate,
                     saksbehandler = innloggetSaksbehandler,
                 ),
-                anonymizedUnfinishedVurderingList = exportService.getMyUnfinishedAsRawDataByToDate(
+                anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByToDateAndSaksbehandler(
                     toDate = toDate,
                     saksbehandler = innloggetSaksbehandler,
                 )
@@ -51,7 +51,7 @@ class ExportController(
         } else {
             val year = getYear(inputYear)
             return TotalResponse(
-                anonymizedFinishedVurderingList = exportService.getMyFinishedAsRawDataByYear(
+                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByYearAndSaksbehandler(
                     year = year,
                     saksbehandler = innloggetSaksbehandler,
                 ),

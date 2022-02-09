@@ -185,9 +185,9 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     }
 
     /**
-     * Return my 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
+     * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and saksbehandler
      */
-    fun getMyFinishedAsRawDataByDates(fromDate: LocalDate, toDate: LocalDate, saksbehandler: String): List<AnonymizedFinishedVurdering> {
+    fun getFinishedAsRawDataByDatesAndSaksbehandler(fromDate: LocalDate, toDate: LocalDate, saksbehandler: String): List<AnonymizedFinishedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
                 fromDateTime = fromDate.atStartOfDay(),
@@ -214,9 +214,9 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     }
 
     /**
-     * Return my 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year
+     * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year and saksbehandler
      */
-    fun getMyFinishedAsRawDataByYear(year: Year, saksbehandler: String): List<AnonymizedFinishedVurdering> {
+    fun getFinishedAsRawDataByYearAndSaksbehandler(year: Year, saksbehandler: String): List<AnonymizedFinishedVurdering> {
         val fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay()
         val toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX)
 
@@ -243,9 +243,9 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     }
 
     /**
-     * Return my 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given year
+     * Return 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given year and saksbehandler
      */
-    fun getMyUnfinishedAsRawDataByYear(year: Year, saksbehandler: String): List<AnonymizedUnfinishedVurdering> {
+    fun getUnfinishedAsRawDataByYearAndSaksbehandler(year: Year, saksbehandler: String): List<AnonymizedUnfinishedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
                 toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
@@ -267,9 +267,9 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     }
 
     /**
-     * Return my 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
+     * Return 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate and saksbehandler
      */
-    fun getMyUnfinishedAsRawDataByToDate(toDate: LocalDate, saksbehandler: String): List<AnonymizedUnfinishedVurdering> {
+    fun getUnfinishedAsRawDataByToDateAndSaksbehandler(toDate: LocalDate, saksbehandler: String): List<AnonymizedUnfinishedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
                 toDateTime = toDate.atTime(LocalTime.MAX),
