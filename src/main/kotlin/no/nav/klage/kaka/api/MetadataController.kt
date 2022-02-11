@@ -64,5 +64,3 @@ class MetadataController(
             sammensattNavn = this.sammensattNavn,
         )
 }
-
-
