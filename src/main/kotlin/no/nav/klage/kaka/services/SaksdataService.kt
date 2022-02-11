@@ -202,7 +202,7 @@ class SaksdataService(
         return saksdata.get().also { s ->
             s.verifyReadAccess(
                 innloggetIdent = innloggetSaksbehandler,
-                roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] },
+                roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler()),
                 ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.navn
             )
         }

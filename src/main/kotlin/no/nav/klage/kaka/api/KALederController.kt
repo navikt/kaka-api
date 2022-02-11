@@ -114,7 +114,7 @@ class KALederController(
     }
 
     private fun validateIsKALeder() {
-        val roles = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
+        val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
         if ("ROLE_KLAGE_LEDER" !in roles) {
             throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role ROLE_KLAGE_LEDER")
         }

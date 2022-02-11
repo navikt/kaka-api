@@ -34,7 +34,7 @@ class MetadataController(
 
     @GetMapping("/userdata", produces = ["application/json"])
     fun getUserData(): UserData {
-        val roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
+        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
 
         val usersKlageenheter = if (isLederVedtaksinstans(roller)) {
             emptyList()
@@ -64,3 +64,5 @@ class MetadataController(
             sammensattNavn = this.sammensattNavn,
         )
 }
+
+
