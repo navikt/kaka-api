@@ -63,7 +63,7 @@ class SaksdataListController(
         )
         validateIsSameUser(navIdent)
 
-        val roller = azureGateway.getRollerForInnloggetSaksbehandler().mapNotNull { rolleMapper.rolleMap[it.id] }
+        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
         if (!isLederVedtaksinstans(roller)) {
             throw MissingTilgangException("user $navIdent is not leder vedtaksinstans")
         }
