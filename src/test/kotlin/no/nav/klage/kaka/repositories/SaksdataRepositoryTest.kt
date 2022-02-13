@@ -4,6 +4,7 @@ package no.nav.klage.kaka.repositories
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -243,6 +244,7 @@ class SaksdataRepositoryTest {
             kvalitetsvurdering = Kvalitetsvurdering(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
         )
         val saksdataFullfoertOtherVedtaksinstans = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
@@ -251,6 +253,7 @@ class SaksdataRepositoryTest {
             kvalitetsvurdering = Kvalitetsvurdering(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
         )
         val saksdataPaagaaende1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
@@ -258,6 +261,7 @@ class SaksdataRepositoryTest {
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
         )
         val saksdataPaagaaende2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
@@ -265,6 +269,7 @@ class SaksdataRepositoryTest {
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
         )
 
         saksdataRepository.saveAll(
@@ -280,10 +285,264 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findByVedtaksinstansEnhetAndAvsluttetAvSaksbehandlerBetweenAndSakstypeOrderByCreated(
+            saksdataRepository.findForVedtaksinstansleder(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = emptyList(),
+                kommentarer = emptyList(),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
+
+    @Test
+    fun `saksdata for leder in foerste instans avvik kommentar`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                betydeligAvvikText = "et avvik"
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = emptyList(),
+                kommentarer = listOf("avvik"),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
+
+    @Test
+    fun `saksdata for leder in foerste instans utredningen kommentar`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                utredningenAvAndreAktuelleForholdISakenText = "text"
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = emptyList(),
+                kommentarer = listOf("utredningen"),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
+
+    @Test
+    fun `saksdata for leder in foerste instans opplaering kommentar`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                brukIOpplaeringText = "text"
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = emptyList(),
+                kommentarer = listOf("opplaering"),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
+
+    @Test
+    fun `saksdata for leder in foerste instans forberedelsen mangelfull`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = listOf("forberedelsen"),
+                kommentarer = emptyList(),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
+
+    @Test
+    fun `saksdata for leder in foerste instans utredningen mangelfull`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                utredningenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = listOf("utredningen"),
+                kommentarer = emptyList(),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
+
+    @Test
+    fun `saksdata for leder in foerste instans rol mangelfull`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                brukAvRaadgivendeLegeRadioValg = Kvalitetsvurdering.RadioValgRaadgivendeLege.MANGELFULLT
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = listOf("rol"),
+                kommentarer = emptyList(),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
+
+    @Test
+    fun `saksdata for leder in foerste instans vedtaket mangelfull`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = listOf("vedtaket"),
+                kommentarer = emptyList(),
             )
         assertThat(saksdata).hasSize(1)
     }

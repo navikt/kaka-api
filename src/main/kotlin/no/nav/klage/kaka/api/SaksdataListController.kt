@@ -53,13 +53,17 @@ class SaksdataListController(
         @RequestParam navIdent: String,
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
+        @RequestParam mangelfullt: List<String>,
+        @RequestParam kommentarer: List<String>,
     ): SaksdataListView {
         logger.debug(
-            "{} is requested by ident {}. fromDate = {}, toDate = {}",
+            "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
             ::searchVedtaksinstansleder.name,
             tokenUtil.getIdent(),
             fromDate,
             toDate,
+            mangelfullt,
+            kommentarer,
         )
         validateIsSameUser(navIdent)
 
@@ -71,11 +75,13 @@ class SaksdataListController(
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
         return SaksdataListView(
-            searchHits = saksdataService.searchAsFoersteinstansleder(
-                navIdent,
-                enhet,
-                fromDate,
-                toDate
+            searchHits = saksdataService.searchAsVedtaksinstansleder(
+                saksbehandlerIdent = navIdent,
+                enhet = enhet,
+                fromDate = fromDate,
+                toDate = toDate,
+                mangelfullt = mangelfullt,
+                kommentarer = kommentarer,
             ).map { it.toSaksdataSearchHitView() }
         )
     }

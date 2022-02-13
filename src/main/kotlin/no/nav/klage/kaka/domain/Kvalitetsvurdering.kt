@@ -7,10 +7,7 @@ import no.nav.klage.kodeverk.Ytelse.*
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "kvalitetsvurdering", schema = "kaka")
@@ -19,6 +16,7 @@ class Kvalitetsvurdering(
     @Id
     val id: UUID = UUID.randomUUID(),
     @Column(name = "klageforberedelsen_radio_valg")
+    @Convert(converter = RadioValgConverter::class)
     var klageforberedelsenRadioValg: RadioValg? = null,
     @Column(name = "sakens_dokumenter")
     var sakensDokumenter: Boolean = false,
@@ -33,6 +31,7 @@ class Kvalitetsvurdering(
     @Column(name = "oversendelsesbrevets_innhold_ikke_i_samsvar_med_tema")
     var oversendelsesbrevetsInnholdIkkeISamsvarMedTema: Boolean = false,
     @Column(name = "utredningen_radio_valg")
+    @Convert(converter = RadioValgConverter::class)
     var utredningenRadioValg: RadioValg? = null,
     @Column(name = "utredningen_av_medisinske_forhold")
     var utredningenAvMedisinskeForhold: Boolean = false,
@@ -63,6 +62,7 @@ class Kvalitetsvurdering(
     @Column(name = "veiledning_fra_nav_text")
     var veiledningFraNavText: String? = null,
     @Column(name = "bruk_av_raadgivende_lege_radio_valg")
+    @Convert(converter = RadioValgRaadgivendeLegeConverter::class)
     var brukAvRaadgivendeLegeRadioValg: RadioValgRaadgivendeLege? = null,
     @Column(name = "raadgivende_lege_er_ikke_brukt")
     var raadgivendeLegeErIkkeBrukt: Boolean = false,
@@ -73,6 +73,7 @@ class Kvalitetsvurdering(
     @Column(name = "raadgivende_lege_er_brukt_mangelfull_dokumentasjon")
     var raadgivendeLegeErBruktMangelfullDokumentasjon: Boolean = false,
     @Column(name = "vedtaket_radio_valg")
+    @Convert(converter = RadioValgConverter::class)
     var vedtaketRadioValg: RadioValg? = null,
     @Column(name = "det_er_ikke_brukt_riktig_hjemmel")
     var detErIkkeBruktRiktigHjemmel: Boolean = false,
@@ -351,3 +352,22 @@ private val raadgivendeLegeYtelser = setOf(
     UFO_TVF,
 )
 
+@Converter
+class RadioValgConverter : AttributeConverter<Kvalitetsvurdering.RadioValg, String?> {
+
+    override fun convertToDatabaseColumn(entity: Kvalitetsvurdering.RadioValg?): String? =
+        entity?.ordinal?.toString()
+
+    override fun convertToEntityAttribute(id: String?): Kvalitetsvurdering.RadioValg? =
+        id?.let { Kvalitetsvurdering.RadioValg.values()[id.toInt()] }
+}
+
+@Converter
+class RadioValgRaadgivendeLegeConverter : AttributeConverter<Kvalitetsvurdering.RadioValgRaadgivendeLege, String?> {
+
+    override fun convertToDatabaseColumn(entity: Kvalitetsvurdering.RadioValgRaadgivendeLege?): String? =
+        entity?.ordinal?.toString()
+
+    override fun convertToEntityAttribute(id: String?): Kvalitetsvurdering.RadioValgRaadgivendeLege? =
+        id?.let { Kvalitetsvurdering.RadioValgRaadgivendeLege.values()[id.toInt()] }
+}
