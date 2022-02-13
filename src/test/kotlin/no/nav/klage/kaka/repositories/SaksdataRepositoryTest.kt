@@ -344,7 +344,6 @@ class SaksdataRepositoryTest {
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
-            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
         )
 
         saksdataRepository.saveAll(
