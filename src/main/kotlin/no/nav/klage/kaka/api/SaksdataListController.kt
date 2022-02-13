@@ -53,8 +53,8 @@ class SaksdataListController(
         @RequestParam navIdent: String,
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
-        @RequestParam mangelfullt: List<String>,
-        @RequestParam kommentarer: List<String>,
+        @RequestParam(required = false) mangelfullt: List<String> = emptyList(),
+        @RequestParam(required = false) kommentarer: List<String> = emptyList(),
     ): SaksdataListView {
         logger.debug(
             "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
