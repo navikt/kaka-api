@@ -55,8 +55,9 @@ class ExportController(
                     year = year,
                     saksbehandler = innloggetSaksbehandler,
                 ),
-                anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByYear(
-                    year = year
+                anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByYearAndSaksbehandler(
+                    year = year,
+                    saksbehandler = innloggetSaksbehandler,
                 )
             )
         }
