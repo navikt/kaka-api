@@ -2,10 +2,15 @@ package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.TotalResponse
+import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheter
+import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
+import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportService
+import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kaka.util.isLederVedtaksinstans
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,6 +24,8 @@ import java.time.Year
 class ExportController(
     private val exportService: ExportService,
     private val tokenUtil: TokenUtil,
+    private val azureGateway: AzureGateway,
+    private val rolleMapper: RolleMapper,
 ) {
 
     companion object {
@@ -89,6 +96,53 @@ class ExportController(
                 ),
                 anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByYear(
                     year = year
+                )
+            )
+        }
+    }
+
+    @GetMapping("/statistics/vedtaksinstansleder")
+    fun getTotalForVedtaksinstansleder(
+        @RequestParam(name = "year", required = false) inputYear: Int?,
+        @RequestParam(required = false) fromDate: LocalDate?,
+        @RequestParam(required = false) toDate: LocalDate?,
+        @RequestParam(required = false) mangelfullt: List<String>?,
+        @RequestParam(required = false) kommentarer: List<String>?,
+    ): TotalResponseWithoutEnheter {
+        logger.debug(
+            "getTotalForVedtaksinstansleder() called. Year param = {}, fromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
+            inputYear,
+            fromDate,
+            toDate,
+            mangelfullt,
+            kommentarer
+        )
+
+        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        if (!isLederVedtaksinstans(roller)) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leder vedtaksinstans")
+        }
+
+        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+
+        if (fromDate != null && toDate != null) {
+            return TotalResponseWithoutEnheter(
+                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDatesForVedtaksinstansleder(
+                    fromDate = fromDate,
+                    toDate = toDate,
+                    vedtaksinstansEnhet = enhet,
+                    mangelfullt = mangelfullt ?: emptyList(),
+                    kommentarer = kommentarer ?: emptyList(),
+                )
+            )
+        } else {
+            val year = getYear(inputYear)
+            return TotalResponseWithoutEnheter(
+                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByYearForVedtaksinstansleder(
+                    year = year,
+                    vedtaksinstansEnhet = enhet,
+                    mangelfullt = mangelfullt ?: emptyList(),
+                    kommentarer = kommentarer ?: emptyList(),
                 )
             )
         }

@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurdering
+import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheter
 import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurdering
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
@@ -27,9 +28,9 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
      */
     fun getAsExcel(year: Year): ByteArray {
         val saksdataList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
-                toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
-            )
+            fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
+            toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
+        )
 
         val saksdataFields = mapToFields(saksdataList)
 
@@ -151,10 +152,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         validateNotCurrentMonth(toMonth)
 
         val saksdataList = if (saksbehandlerIdentList == null) {
-                saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                    enhet = enhet.navn,
-                    toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
-                )
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+                enhet = enhet.navn,
+                toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
+            )
         } else {
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
                 enhet = enhet.navn,
@@ -185,9 +186,59 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     }
 
     /**
+     * Return all 'finished' saksdata for vedtaksinstansleder (anonymized (no fnr or navIdent)) based on given dates
+     */
+    fun getFinishedAsRawDataByDatesForVedtaksinstansleder(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        vedtaksinstansEnhet: Enhet,
+        mangelfullt: List<String>,
+        kommentarer: List<String>,
+    ): List<AnonymizedFinishedVurderingWithoutEnheter> {
+        val saksdataList =
+            saksdataRepository.findForVedtaksinstansleder(
+                fromDateTime = fromDate.atStartOfDay(),
+                toDateTime = toDate.atTime(LocalTime.MAX),
+                vedtaksinstansEnhet = vedtaksinstansEnhet.navn,
+                mangelfullt = mangelfullt,
+                kommentarer = kommentarer,
+            )
+        return privateGetFinishedAsRawDataWithoutEnheter(saksdataList = saksdataList)
+    }
+
+
+    /**
+     * Return all 'finished' saksdata for vedtaksinstansleder (anonymized (no fnr or navIdent)) based on given year
+     */
+    fun getFinishedAsRawDataByYearForVedtaksinstansleder(
+        year: Year,
+        vedtaksinstansEnhet: Enhet,
+        mangelfullt: List<String>,
+        kommentarer: List<String>,
+    ): List<AnonymizedFinishedVurderingWithoutEnheter> {
+        val fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay()
+        val toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX)
+
+        val saksdataList =
+            saksdataRepository.findForVedtaksinstansleder(
+                fromDateTime = fromDateTime,
+                toDateTime = toDateTime,
+                vedtaksinstansEnhet = vedtaksinstansEnhet.navn,
+                mangelfullt = mangelfullt,
+                kommentarer = kommentarer,
+            )
+
+        return privateGetFinishedAsRawDataWithoutEnheter(saksdataList = saksdataList)
+    }
+
+    /**
      * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and saksbehandler
      */
-    fun getFinishedAsRawDataByDatesAndSaksbehandler(fromDate: LocalDate, toDate: LocalDate, saksbehandler: String): List<AnonymizedFinishedVurdering> {
+    fun getFinishedAsRawDataByDatesAndSaksbehandler(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        saksbehandler: String
+    ): List<AnonymizedFinishedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
                 fromDateTime = fromDate.atStartOfDay(),
@@ -216,7 +267,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year and saksbehandler
      */
-    fun getFinishedAsRawDataByYearAndSaksbehandler(year: Year, saksbehandler: String): List<AnonymizedFinishedVurdering> {
+    fun getFinishedAsRawDataByYearAndSaksbehandler(
+        year: Year,
+        saksbehandler: String
+    ): List<AnonymizedFinishedVurdering> {
         val fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay()
         val toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX)
 
@@ -245,7 +299,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Return 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given year and saksbehandler
      */
-    fun getUnfinishedAsRawDataByYearAndSaksbehandler(year: Year, saksbehandler: String): List<AnonymizedUnfinishedVurdering> {
+    fun getUnfinishedAsRawDataByYearAndSaksbehandler(
+        year: Year,
+        saksbehandler: String
+    ): List<AnonymizedUnfinishedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
                 toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
@@ -269,7 +326,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     /**
      * Return 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate and saksbehandler
      */
-    fun getUnfinishedAsRawDataByToDateAndSaksbehandler(toDate: LocalDate, saksbehandler: String): List<AnonymizedUnfinishedVurdering> {
+    fun getUnfinishedAsRawDataByToDateAndSaksbehandler(
+        toDate: LocalDate,
+        saksbehandler: String
+    ): List<AnonymizedUnfinishedVurdering> {
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
                 toDateTime = toDate.atTime(LocalTime.MAX),
@@ -289,11 +349,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
 
-            val mottattForrigeInstans = if (saksdata.sakstype == Type.ANKE) {
-                saksdata.mottattKlageinstans!!.toDate()
-            } else {
-                saksdata.mottattVedtaksinstans!!.toDate()
-            }
+            val mottattForrigeInstans = getMottattForrigeInstans(saksdata)
 
             val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
             val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
@@ -346,6 +402,79 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 modifiedDate = getModifiedDate(saksdata),
             )
         }
+    }
+
+    /**
+     * Return all 'finished' saksdata (anonymized (no fnr, navIdent or enheter)) based on given dates.
+     */
+    private fun privateGetFinishedAsRawDataWithoutEnheter(
+        saksdataList: List<Saksdata>,
+    ): List<AnonymizedFinishedVurderingWithoutEnheter> {
+
+        return saksdataList.map { saksdata ->
+            val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
+            val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
+
+            val mottattForrigeInstans = getMottattForrigeInstans(saksdata)
+
+            val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+            val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
+
+            AnonymizedFinishedVurderingWithoutEnheter(
+                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
+                hjemmelIdList = saksdata.registreringshjemler!!.map { it.id },
+                avsluttetAvSaksbehandler = avsluttetAvSaksbehandlerDate,
+                ytelseId = saksdata.ytelse!!.id,
+                utfallId = saksdata.utfall!!.id,
+                sakstypeId = saksdata.sakstype.id,
+                mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
+                mottattKlageinstans = mottattKlageinstansDate,
+                arbeidsrettetBrukeroppfoelging = saksdata.kvalitetsvurdering.arbeidsrettetBrukeroppfoelging,
+                begrunnelseForHvorforAvslagOpprettholdes = saksdata.kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes,
+                begrunnelsenErIkkeKonkretOgIndividuell = saksdata.kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell,
+                betydeligAvvik = saksdata.kvalitetsvurdering.betydeligAvvik,
+                brukIOpplaering = saksdata.kvalitetsvurdering.brukIOpplaering,
+                detErFeilIKonkretRettsanvendelse = saksdata.kvalitetsvurdering.detErFeilIKonkretRettsanvendelse,
+                detErIkkeBruktRiktigHjemmel = saksdata.kvalitetsvurdering.detErIkkeBruktRiktigHjemmel,
+                innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = saksdata.kvalitetsvurdering.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                klagerensRelevanteAnfoerslerIkkeKommentert = saksdata.kvalitetsvurdering.klagerensRelevanteAnfoerslerIkkeKommentert,
+                konklusjonen = saksdata.kvalitetsvurdering.konklusjonen,
+                nyeOpplysningerMottatt = saksdata.kvalitetsvurdering.nyeOpplysningerMottatt,
+                oversendelsesbrevetsInnholdIkkeISamsvarMedTema = saksdata.kvalitetsvurdering.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
+                oversittetKlagefristIkkeKommentert = saksdata.kvalitetsvurdering.oversittetKlagefristIkkeKommentert,
+                raadgivendeLegeErBruktFeilSpoersmaal = saksdata.kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal,
+                raadgivendeLegeErBruktMangelfullDokumentasjon = saksdata.kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon,
+                raadgivendeLegeErIkkeBrukt = saksdata.kvalitetsvurdering.raadgivendeLegeErIkkeBrukt,
+                raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = saksdata.kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
+                rettsregelenErBenyttetFeil = saksdata.kvalitetsvurdering.rettsregelenErBenyttetFeil,
+                sakensDokumenter = saksdata.kvalitetsvurdering.sakensDokumenter,
+                spraaketErIkkeTydelig = saksdata.kvalitetsvurdering.spraaketErIkkeTydelig,
+                utredningenAvAndreAktuelleForholdISaken = saksdata.kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvArbeid = saksdata.kvalitetsvurdering.utredningenAvArbeid,
+                utredningenAvEoesProblematikk = saksdata.kvalitetsvurdering.utredningenAvEoesProblematikk,
+                utredningenAvInntektsforhold = saksdata.kvalitetsvurdering.utredningenAvInntektsforhold,
+                utredningenAvMedisinskeForhold = saksdata.kvalitetsvurdering.utredningenAvMedisinskeForhold,
+                veiledningFraNav = saksdata.kvalitetsvurdering.veiledningFraNav,
+                vurderingAvFaktumErMangelfull = saksdata.kvalitetsvurdering.vurderingAvFaktumErMangelfull,
+                klageforberedelsenRadioValg = saksdata.kvalitetsvurdering.klageforberedelsenRadioValg?.name,
+                utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
+                vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
+                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
+                behandlingstidDays = behandlingstidDays,
+                totalBehandlingstidDays = totalBehandlingstidDays,
+                createdDate = getCreatedDate(saksdata),
+                modifiedDate = getModifiedDate(saksdata),
+            )
+        }
+    }
+
+    private fun getMottattForrigeInstans(saksdata: Saksdata): Date {
+        val mottattForrigeInstans = if (saksdata.sakstype == Type.ANKE) {
+            saksdata.mottattKlageinstans!!.toDate()
+        } else {
+            saksdata.mottattVedtaksinstans!!.toDate()
+        }
+        return mottattForrigeInstans
     }
 
     private fun getCreatedDate(saksdata: Saksdata): Date {
