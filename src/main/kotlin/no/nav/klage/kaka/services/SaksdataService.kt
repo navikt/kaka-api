@@ -237,11 +237,20 @@ class SaksdataService(
         }
     }
 
-    fun searchAsFoersteinstansleder(saksbehandlerIdent: String, enhet: Enhet, fromDate: LocalDate, toDate: LocalDate): List<Saksdata> {
-        return saksdataRepository.findByVedtaksinstansEnhetAndAvsluttetAvSaksbehandlerBetweenAndSakstypeOrderByCreated(
+    fun searchAsVedtaksinstansleder(
+        saksbehandlerIdent: String,
+        enhet: Enhet,
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        mangelfullt: List<String>,
+        kommentarer: List<String>,
+    ): List<Saksdata> {
+        return saksdataRepository.findForVedtaksinstansleder(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),
+            mangelfullt = mangelfullt,
+            kommentarer = kommentarer,
         )
     }
 
