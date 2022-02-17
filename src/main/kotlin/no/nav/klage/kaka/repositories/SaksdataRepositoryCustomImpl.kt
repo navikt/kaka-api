@@ -28,7 +28,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
                 WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
                 AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
                 AND s.sakstype = :sakstype
-                ${mangelfulltQuery(mangelfullt)}
+                ${getMangelfulltQuery(mangelfullt)}
                 ${getKommentarerQuery(kommentarer)}
                 ORDER BY s.created
         """
@@ -41,7 +41,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .resultList
     }
 
-    private fun mangelfulltQuery(mangelfullt: List<String>): String {
+    private fun getMangelfulltQuery(mangelfullt: List<String>): String {
         if (mangelfullt.isEmpty()) {
             return ""
         }
@@ -55,7 +55,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
 
         var query = ""
 
-        if (queryParts.isNotEmpty()) {
+        if (queryParts.filterNotNull().isNotEmpty()) {
             query += " AND ( "
         } else {
             return ""
