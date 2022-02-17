@@ -72,33 +72,17 @@ class ExportController(
 
     @GetMapping("/statistics/open")
     fun getOpen(
-        @RequestParam(name = "year", required = false) inputYear: Int?,
-        @RequestParam(required = false) fromDate: LocalDate?,
-        @RequestParam(required = false) toDate: LocalDate?,
-    ): TotalResponse {
-        logger.debug("getOpen() called. Year param = $inputYear, fromDate = $fromDate, toDate = $toDate")
+        @RequestParam fromDate: LocalDate,
+        @RequestParam toDate: LocalDate,
+    ): TotalResponseWithoutEnheter {
+        logger.debug("getOpen() called. fromDate = $fromDate, toDate = $toDate")
 
-        if (fromDate != null && toDate != null) {
-            return TotalResponse(
-                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDates(
-                    fromDate = fromDate,
-                    toDate = toDate
-                ),
-                anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByToDate(
-                    toDate = toDate
-                )
+        return TotalResponseWithoutEnheter(
+            anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDatesWithoutEnheter(
+                fromDate = fromDate,
+                toDate = toDate
             )
-        } else {
-            val year = getYear(inputYear)
-            return TotalResponse(
-                anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByYear(
-                    year = year
-                ),
-                anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByYear(
-                    year = year
-                )
-            )
-        }
+        )
     }
 
     @GetMapping("/statistics/total")

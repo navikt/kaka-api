@@ -186,6 +186,18 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
     }
 
     /**
+     * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
+     */
+    fun getFinishedAsRawDataByDatesWithoutEnheter(fromDate: LocalDate, toDate: LocalDate): List<AnonymizedFinishedVurderingWithoutEnheter> {
+        val saksdataList =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                fromDateTime = fromDate.atStartOfDay(),
+                toDateTime = toDate.atTime(LocalTime.MAX)
+            )
+        return privateGetFinishedAsRawDataWithoutEnheter(saksdataList = saksdataList)
+    }
+
+    /**
      * Return all 'finished' saksdata for vedtaksinstansleder (anonymized (no fnr or navIdent)) based on given dates
      */
     fun getFinishedAsRawDataByDatesForVedtaksinstansleder(
