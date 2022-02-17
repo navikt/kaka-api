@@ -23,7 +23,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         kommentarer: List<String>,
     ): List<Saksdata> {
         val query = """
-            SELECT s FROM Saksdata s JOIN FETCH s.kvalitetsvurdering k LEFT JOIN FETCH s.registreringshjemler h
+            SELECT DISTINCT s FROM Saksdata s JOIN FETCH s.kvalitetsvurdering k LEFT JOIN FETCH s.registreringshjemler h
                 WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
                 AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
                 AND s.sakstype = :sakstype
