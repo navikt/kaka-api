@@ -46,28 +46,28 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     private fun getForberedelsenQuery(mangelfullt: List<String>) =
         if ("forberedelsen" in mangelfullt) {
             """
-                AND k.klageforberedelsenRadioValg = '${MANGELFULLT.ordinal}'
+                OR k.klageforberedelsenRadioValg = '${MANGELFULLT.ordinal}'
             """.trimIndent()
         } else ""
 
     private fun getUtredningenQuery(mangelfullt: List<String>) =
         if ("utredningen" in mangelfullt) {
             """
-                AND k.utredningenRadioValg = '${MANGELFULLT.ordinal}'
+                OR k.utredningenRadioValg = '${MANGELFULLT.ordinal}'
             """.trimIndent()
         } else ""
 
     private fun getVedtaketQuery(mangelfullt: List<String>) =
         if ("vedtaket" in mangelfullt) {
             """
-                AND k.vedtaketRadioValg = '${MANGELFULLT.ordinal}'
+                OR k.vedtaketRadioValg = '${MANGELFULLT.ordinal}'
             """.trimIndent()
         } else ""
 
     private fun getROLQuery(mangelfullt: List<String>) =
         if ("rol" in mangelfullt) {
             """
-                AND k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.ordinal}'
+                OR k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.ordinal}'
             """.trimIndent()
         } else ""
 
