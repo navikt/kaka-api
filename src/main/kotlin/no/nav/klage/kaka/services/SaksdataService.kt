@@ -2,6 +2,8 @@ package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
+import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
+import no.nav.klage.kaka.clients.pdl.PdlFacade
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
@@ -9,6 +11,8 @@ import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.RolleMapper
+import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
@@ -27,7 +31,17 @@ class SaksdataService(
     private val axsysGateway: AxsysGateway,
     private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
+    private val pdlFacade: PdlFacade,
+    private val egenAnsattService: EgenAnsattService,
 ) {
+
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger = getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
+    }
+
+
     fun getSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         return getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
     }
@@ -245,17 +259,71 @@ class SaksdataService(
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): List<Saksdata> {
+        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
         return saksdataRepository.findForVedtaksinstansleder(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),
             mangelfullt = mangelfullt,
             kommentarer = kommentarer,
-        )
+        ).filter {
+            verifiserTilgangTilPersonForSaksbehandler(
+                fnr = it.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                ident = saksbehandlerIdent,
+                kanBehandleStrengtFortrolig = "ROLE_KLAGE_STRENGT_FORTROLIG" in roller,
+                kanBehandleFortrolig = "ROLE_KLAGE_FORTROLIG" in roller,
+                kanBehandleEgenAnsatt = "ROLE_KLAGE_EGEN_ANSATT" in roller,
+            )
+        }
     }
 
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
         getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdataRepository.deleteById(saksdataId)
+    }
+
+    private fun verifiserTilgangTilPersonForSaksbehandler(
+        fnr: String,
+        ident: String,
+        kanBehandleStrengtFortrolig: Boolean,
+        kanBehandleFortrolig: Boolean,
+        kanBehandleEgenAnsatt: Boolean
+    ): Boolean {
+        val personInfo = pdlFacade.getPersonInfo(fnr)
+        val harBeskyttelsesbehovFortrolig = personInfo.harBeskyttelsesbehovFortrolig()
+        val harBeskyttelsesbehovStrengtFortrolig = personInfo.harBeskyttelsesbehovStrengtFortrolig()
+        val erEgenAnsatt = egenAnsattService.erEgenAnsatt(fnr)
+
+        if (harBeskyttelsesbehovStrengtFortrolig) {
+            secureLogger.info("erStrengtFortrolig")
+            //Merk at vi ikke sjekker egenAnsatt her, strengt fortrolig trumfer det
+            if (kanBehandleStrengtFortrolig) {
+                secureLogger.info("Access granted to strengt fortrolig for $ident")
+            } else {
+                secureLogger.info("Access denied to strengt fortrolig for $ident")
+                return false
+            }
+        }
+        if (harBeskyttelsesbehovFortrolig) {
+            secureLogger.info("erFortrolig")
+            //Merk at vi ikke sjekker egenAnsatt her, fortrolig trumfer det
+            if (kanBehandleFortrolig) {
+                secureLogger.info("Access granted to fortrolig for $ident")
+            } else {
+                secureLogger.info("Access denied to fortrolig for $ident")
+                return false
+            }
+        }
+        if (erEgenAnsatt && !(harBeskyttelsesbehovFortrolig || harBeskyttelsesbehovStrengtFortrolig)) {
+            secureLogger.info("erEgenAnsatt")
+            //Er kun egenAnsatt, har ikke et beskyttelsesbehov i tillegg
+            if (kanBehandleEgenAnsatt) {
+                secureLogger.info("Access granted to egen ansatt for $ident")
+            } else {
+                secureLogger.info("Access denied to egen ansatt for $ident")
+                return false
+            }
+        }
+        return true
     }
 }
