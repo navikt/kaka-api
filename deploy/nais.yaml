@@ -88,6 +88,8 @@ spec:
       {{/each}}
   envFrom:
     - secret: axsys
+    - secret: sts-apikey
+    - secret: pdl-apikey
   resources:
     limits:
       cpu: 2000m
