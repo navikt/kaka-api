@@ -110,3 +110,5 @@ KABAL_ANKE_API_APP_NAME: "kabal-anke-api"
 MICROSOFT_GRAPH_URL: https://graph.microsoft.com/v1.0
 
 SERVICE_USER_USERNAME: srvklage-saksbeh
+
+EGENANSATT_KAFKA_TOPIC: nom.skjermede-personer-v1
