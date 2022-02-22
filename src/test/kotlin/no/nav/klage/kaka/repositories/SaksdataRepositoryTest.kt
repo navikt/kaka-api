@@ -403,6 +403,68 @@ class SaksdataRepositoryTest {
     }
 
     @Test
+    fun `saksdata for leder in foerste instans forberedelsen and utredningen mangelfull`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdata1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                utredningenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        val saksdata2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurdering = Kvalitetsvurdering(
+                klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        val saksdata3NotRelated = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = "1111",
+            kvalitetsvurdering = Kvalitetsvurdering(
+                klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = null,
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4)
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdata1,
+                saksdata2,
+                saksdata3NotRelated,
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = listOf("forberedelsen", "utredningen"),
+                kommentarer = emptyList(),
+            )
+        assertThat(saksdata).hasSize(2)
+    }
+
+    @Test
     fun `saksdata for leder in foerste instans forberedelsen mangelfull`() {
         val utfoerendeSaksbehandler = "abc123"
         val vedtaksinstansEnhet = "4020"
