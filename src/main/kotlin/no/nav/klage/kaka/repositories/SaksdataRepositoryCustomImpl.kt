@@ -22,15 +22,13 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): List<Saksdata> {
+
         val query = """
             SELECT DISTINCT s FROM Saksdata s JOIN FETCH s.kvalitetsvurdering k LEFT JOIN FETCH s.registreringshjemler h
                 WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
                 AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
                 AND s.sakstype = :sakstype
-                ${getForberedelsenQuery(mangelfullt)}
-                ${getUtredningenQuery(mangelfullt)}
-                ${getVedtaketQuery(mangelfullt)}
-                ${getROLQuery(mangelfullt)}
+                ${getMangelfulltQuery(mangelfullt)}
                 ${getKommentarerQuery(kommentarer)}
                 ORDER BY s.created
         """
@@ -43,33 +41,66 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .resultList
     }
 
+    private fun getMangelfulltQuery(mangelfullt: List<String>): String {
+        if (mangelfullt.isEmpty()) {
+            return ""
+        }
+
+        val queryParts = mutableListOf<String?>()
+
+        queryParts += getForberedelsenQuery(mangelfullt)
+        queryParts += getUtredningenQuery(mangelfullt)
+        queryParts += getVedtaketQuery(mangelfullt)
+        queryParts += getROLQuery(mangelfullt)
+
+        var query = ""
+
+        if (queryParts.filterNotNull().isNotEmpty()) {
+            query += " AND ( "
+        } else {
+            return ""
+        }
+
+        for ((index, q) in queryParts.filterNotNull().withIndex()) {
+            query += if (index == 0) {
+                q
+            } else {
+                " OR $q"
+            }
+        }
+
+        query += " ) "
+
+        return query
+    }
+
     private fun getForberedelsenQuery(mangelfullt: List<String>) =
         if ("forberedelsen" in mangelfullt) {
             """
-                AND k.klageforberedelsenRadioValg = '${MANGELFULLT.ordinal}'
+                k.klageforberedelsenRadioValg = '${MANGELFULLT.ordinal}'
             """.trimIndent()
-        } else ""
+        } else null
 
     private fun getUtredningenQuery(mangelfullt: List<String>) =
         if ("utredningen" in mangelfullt) {
             """
-                AND k.utredningenRadioValg = '${MANGELFULLT.ordinal}'
+                k.utredningenRadioValg = '${MANGELFULLT.ordinal}'
             """.trimIndent()
-        } else ""
+        } else null
 
     private fun getVedtaketQuery(mangelfullt: List<String>) =
         if ("vedtaket" in mangelfullt) {
             """
-                AND k.vedtaketRadioValg = '${MANGELFULLT.ordinal}'
+                k.vedtaketRadioValg = '${MANGELFULLT.ordinal}'
             """.trimIndent()
-        } else ""
+        } else null
 
     private fun getROLQuery(mangelfullt: List<String>) =
         if ("rol" in mangelfullt) {
             """
-                AND k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.ordinal}'
+                k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.ordinal}'
             """.trimIndent()
-        } else ""
+        } else null
 
     private fun getKommentarerQuery(
         kommentarer: List<String>,
