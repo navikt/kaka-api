@@ -289,41 +289,47 @@ class SaksdataService(
         kanBehandleFortrolig: Boolean,
         kanBehandleEgenAnsatt: Boolean
     ): Boolean {
-        val personInfo = pdlFacade.getPersonInfo(fnr)
-        val harBeskyttelsesbehovFortrolig = personInfo.harBeskyttelsesbehovFortrolig()
-        val harBeskyttelsesbehovStrengtFortrolig = personInfo.harBeskyttelsesbehovStrengtFortrolig()
-        val erEgenAnsatt = egenAnsattService.erEgenAnsatt(fnr)
+        try {
+            val personInfo = pdlFacade.getPersonInfo(fnr)
+            val harBeskyttelsesbehovFortrolig = personInfo.harBeskyttelsesbehovFortrolig()
+            val harBeskyttelsesbehovStrengtFortrolig = personInfo.harBeskyttelsesbehovStrengtFortrolig()
+            val erEgenAnsatt = egenAnsattService.erEgenAnsatt(fnr)
 
-        if (harBeskyttelsesbehovStrengtFortrolig) {
-            secureLogger.info("erStrengtFortrolig")
-            //Merk at vi ikke sjekker egenAnsatt her, strengt fortrolig trumfer det
-            if (kanBehandleStrengtFortrolig) {
-                secureLogger.info("Access granted to strengt fortrolig for $ident")
-            } else {
-                secureLogger.info("Access denied to strengt fortrolig for $ident")
-                return false
+            if (harBeskyttelsesbehovStrengtFortrolig) {
+                secureLogger.info("erStrengtFortrolig")
+                //Merk at vi ikke sjekker egenAnsatt her, strengt fortrolig trumfer det
+                if (kanBehandleStrengtFortrolig) {
+                    secureLogger.info("Access granted to strengt fortrolig for $ident")
+                } else {
+                    secureLogger.info("Access denied to strengt fortrolig for $ident")
+                    return false
+                }
             }
-        }
-        if (harBeskyttelsesbehovFortrolig) {
-            secureLogger.info("erFortrolig")
-            //Merk at vi ikke sjekker egenAnsatt her, fortrolig trumfer det
-            if (kanBehandleFortrolig) {
-                secureLogger.info("Access granted to fortrolig for $ident")
-            } else {
-                secureLogger.info("Access denied to fortrolig for $ident")
-                return false
+            if (harBeskyttelsesbehovFortrolig) {
+                secureLogger.info("erFortrolig")
+                //Merk at vi ikke sjekker egenAnsatt her, fortrolig trumfer det
+                if (kanBehandleFortrolig) {
+                    secureLogger.info("Access granted to fortrolig for $ident")
+                } else {
+                    secureLogger.info("Access denied to fortrolig for $ident")
+                    return false
+                }
             }
-        }
-        if (erEgenAnsatt && !(harBeskyttelsesbehovFortrolig || harBeskyttelsesbehovStrengtFortrolig)) {
-            secureLogger.info("erEgenAnsatt")
-            //Er kun egenAnsatt, har ikke et beskyttelsesbehov i tillegg
-            if (kanBehandleEgenAnsatt) {
-                secureLogger.info("Access granted to egen ansatt for $ident")
-            } else {
-                secureLogger.info("Access denied to egen ansatt for $ident")
-                return false
+            if (erEgenAnsatt && !(harBeskyttelsesbehovFortrolig || harBeskyttelsesbehovStrengtFortrolig)) {
+                secureLogger.info("erEgenAnsatt")
+                //Er kun egenAnsatt, har ikke et beskyttelsesbehov i tillegg
+                if (kanBehandleEgenAnsatt) {
+                    secureLogger.info("Access granted to egen ansatt for $ident")
+                } else {
+                    secureLogger.info("Access denied to egen ansatt for $ident")
+                    return false
+                }
             }
+            return true
+        } catch (e: Exception) {
+            logger.error("Could not verify access to person. See secure logs.")
+            secureLogger.error("Could not verify access to person", e)
+            return false
         }
-        return true
     }
 }
