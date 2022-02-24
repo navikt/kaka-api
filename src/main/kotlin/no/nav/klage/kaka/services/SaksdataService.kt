@@ -260,6 +260,11 @@ class SaksdataService(
         kommentarer: List<String>,
     ): List<Saksdata> {
         val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+
+        val kanBehandleStrengtFortrolig = "ROLE_KLAGE_STRENGT_FORTROLIG" in roller
+        val kanBehandleFortrolig = "ROLE_KLAGE_FORTROLIG" in roller
+        val kanBehandleEgenAnsatt = "ROLE_KLAGE_EGEN_ANSATT" in roller
+
         return saksdataRepository.findForVedtaksinstansleder(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
@@ -270,9 +275,9 @@ class SaksdataService(
             verifiserTilgangTilPersonForSaksbehandler(
                 fnr = it.sakenGjelder ?: throw RuntimeException("missing fnr"),
                 ident = saksbehandlerIdent,
-                kanBehandleStrengtFortrolig = "ROLE_KLAGE_STRENGT_FORTROLIG" in roller,
-                kanBehandleFortrolig = "ROLE_KLAGE_FORTROLIG" in roller,
-                kanBehandleEgenAnsatt = "ROLE_KLAGE_EGEN_ANSATT" in roller,
+                kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
+                kanBehandleFortrolig = kanBehandleFortrolig,
+                kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
             )
         }
     }
