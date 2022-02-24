@@ -8,13 +8,17 @@ import org.springframework.stereotype.Component
 class RolleMapper(
     @Value("\${ROLE_KAKA_SAKSBEHANDLER}") private val kakaSaksbehandlerRole: String,
     @Value("\${ROLE_KLAGE_LEDER}") private val lederRole: String,
-    @Value("\${ROLE_KLAGE_STRENGT_FORTROLIG}") private val kanBehandleStrengtFortroligRole: String,
     @Value("\${ROLE_VEDTAKSINSTANS_LEDER}") private val vedtaksinstansLederRole: String,
+    @Value("\${ROLE_KLAGE_EGEN_ANSATT}") private val kanBehandleEgenAnsattRole: String,
+    @Value("\${ROLE_KLAGE_FORTROLIG}") private val kanBehandleFortroligRole: String,
+    @Value("\${ROLE_KLAGE_STRENGT_FORTROLIG}") private val kanBehandleStrengtFortroligRole: String,
     @Value("\${ROLE_ADMIN}") private val adminRole: String,
 ) {
     private val rolleMap = mapOf(
         kakaSaksbehandlerRole to "ROLE_KAKA_SAKSBEHANDLER",
         lederRole to "ROLE_KLAGE_LEDER",
+        kanBehandleEgenAnsattRole to "ROLE_KLAGE_EGEN_ANSATT",
+        kanBehandleFortroligRole to "ROLE_KLAGE_FORTROLIG",
         kanBehandleStrengtFortroligRole to "ROLE_KLAGE_STRENGT_FORTROLIG",
         vedtaksinstansLederRole to "ROLE_VEDTAKSINSTANS_LEDER",
         adminRole to "ROLE_ADMIN",

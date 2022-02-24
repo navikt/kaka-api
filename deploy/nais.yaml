@@ -27,6 +27,8 @@ spec:
         cascadingDelete: false
         databases:
           - name: kaka-api
+  kafka:
+    pool: {{kafka_pool}}
   startup:
     failureThreshold: 20
     initialDelay: 30
@@ -52,13 +54,12 @@ spec:
       tenant: {{tenant}}
       claims:
         groups:
-          - id: {{ROLE_KAKA_SAKSBEHANDLER}}
-          - id: {{ROLE_KLAGE_STRENGT_FORTROLIG}}
-          - id: {{ROLE_KLAGE_LEDER}}
-          - id: {{ROLE_VEDTAKSINSTANS_LEDER}}
-          {{#if ROLE_ADMIN}}
+        {{#if ROLE_ADMIN}}
           - id: {{ROLE_ADMIN}}
-          {{/if}}
+        {{/if}}
+        {{#each roles as |role|}}
+          - id: {{role}}
+        {{/each}}
         extra:
           - NAVident
           - azp_name
@@ -87,6 +88,8 @@ spec:
       {{/each}}
   envFrom:
     - secret: axsys
+    - secret: sts-apikey
+    - secret: pdl-apikey
   resources:
     limits:
       cpu: 2000m

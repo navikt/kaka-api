@@ -28,7 +28,16 @@ internal class SaksdataServiceTest {
         )
 
         val saksdataService =
-            SaksdataService(saksdataRepository, mockk(), kvalitetsvurderingService, axsysGateway, mockk(), mockk())
+            SaksdataService(
+                saksdataRepository,
+                mockk(),
+                kvalitetsvurderingService,
+                axsysGateway,
+                mockk(),
+                mockk(),
+                mockk(),
+                mockk()
+            )
 
         assertThrows<MissingTilgangException> {
             saksdataService.deleteSaksdata(saksdataId = UUID.randomUUID(), innloggetSaksbehandler = "otherIdent")
