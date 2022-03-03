@@ -61,7 +61,7 @@ class SaksdataService(
         sakenGjelder: String,
         sakstype: Type,
         ytelse: Ytelse,
-        mottattVedtaksinstans: LocalDate,
+        mottattVedtaksinstans: LocalDate?,
         vedtaksinstansEnhet: String?,
         mottattKlageinstans: LocalDate,
         utfall: Utfall,
