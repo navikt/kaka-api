@@ -363,7 +363,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
             val mottattForrigeInstans = getMottattForrigeInstans(saksdata)
 
-            val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+            val kaBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+
+            val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
+
             val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
 
             AnonymizedFinishedVurdering(
@@ -408,7 +411,9 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
                 vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
                 brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
-                behandlingstidDays = behandlingstidDays,
+                behandlingstidDays = kaBehandlingstidDays,
+                kaBehandlingstidDays = kaBehandlingstidDays,
+                vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
                 createdDate = getCreatedDate(saksdata),
                 modifiedDate = getModifiedDate(saksdata),
@@ -429,8 +434,10 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
 
             val mottattForrigeInstans = getMottattForrigeInstans(saksdata)
 
-            val behandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+            val kaBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
             val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
+
+            val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
 
             AnonymizedFinishedVurderingWithoutEnheter(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -472,11 +479,22 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
                 vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
                 brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
-                behandlingstidDays = behandlingstidDays,
+                behandlingstidDays = kaBehandlingstidDays,
+                kaBehandlingstidDays = kaBehandlingstidDays,
+                vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
                 createdDate = getCreatedDate(saksdata),
                 modifiedDate = getModifiedDate(saksdata),
             )
+        }
+    }
+
+    private fun getVedtaksinstansBehandlingstidDays(saksdata: Saksdata): Int {
+        return if (saksdata.sakstype == Type.KLAGE) {
+            saksdata.mottattKlageinstans!!.toDate().epochDay - saksdata.mottattVedtaksinstans!!.toEpochDay().toInt()
+        } else {
+            //FE wants 0 for anker as of now.
+            0
         }
     }
 

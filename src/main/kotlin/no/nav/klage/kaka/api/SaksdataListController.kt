@@ -47,7 +47,7 @@ class SaksdataListController(
         )
     }
 
-    @GetMapping("/saksdatalistelederfoersteinstans")
+    @GetMapping("/saksdatalisteledervedtaksinstans")
     fun searchVedtaksinstansleder(
         @RequestParam navIdent: String,
         @RequestParam fromDate: LocalDate,
@@ -58,6 +58,45 @@ class SaksdataListController(
         logger.debug(
             "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
             ::searchVedtaksinstansleder.name,
+            tokenUtil.getIdent(),
+            fromDate,
+            toDate,
+            mangelfullt,
+            kommentarer,
+        )
+        validateIsSameUser(navIdent)
+
+        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        if (!isLederVedtaksinstans(roller)) {
+            throw MissingTilgangException("user $navIdent is not leder vedtaksinstans")
+        }
+
+        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+
+        return SaksdataListView(
+            searchHits = saksdataService.searchAsVedtaksinstansleder(
+                saksbehandlerIdent = navIdent,
+                enhet = enhet,
+                fromDate = fromDate,
+                toDate = toDate,
+                mangelfullt = mangelfullt ?: emptyList(),
+                kommentarer = kommentarer ?: emptyList(),
+            ).map { it.toSaksdataSearchHitView() }
+        )
+    }
+
+    @Deprecated(message = "replaced with saksdatalisteledervedtaksinstans")
+    @GetMapping("/saksdatalistelederfoersteinstans")
+    fun searchVedtakslederFoersteinstans(
+        @RequestParam navIdent: String,
+        @RequestParam fromDate: LocalDate,
+        @RequestParam toDate: LocalDate,
+        @RequestParam(required = false) mangelfullt: List<String>?,
+        @RequestParam(required = false) kommentarer: List<String>?,
+    ): SaksdataListView {
+        logger.debug(
+            "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
+            ::searchVedtakslederFoersteinstans.name,
             tokenUtil.getIdent(),
             fromDate,
             toDate,

@@ -47,7 +47,10 @@ data class AnonymizedFinishedVurdering(
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
 
+    @Deprecated(message = "replaced with kaBehandlingstidDays")
     val behandlingstidDays: Int,
+    val kaBehandlingstidDays: Int,
+    val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
 
     /** Første av de to created datoene. */
@@ -99,7 +102,10 @@ data class AnonymizedFinishedVurderingWithoutEnheter(
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
 
+    @Deprecated(message = "replaced with kaBehandlingstidDays")
     val behandlingstidDays: Int,
+    val kaBehandlingstidDays: Int,
+    val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
 
     /** Første av de to created datoene. */
