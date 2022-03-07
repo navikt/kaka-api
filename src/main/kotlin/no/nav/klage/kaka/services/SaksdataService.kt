@@ -295,6 +295,10 @@ class SaksdataService(
         kanBehandleEgenAnsatt: Boolean
     ): Boolean {
         try {
+            //if foretak, no need to check access
+            if (fnr.length == 9) {
+                return true
+            }
             val personInfo = pdlFacade.getPersonInfo(fnr)
             val harBeskyttelsesbehovFortrolig = personInfo.harBeskyttelsesbehovFortrolig()
             val harBeskyttelsesbehovStrengtFortrolig = personInfo.harBeskyttelsesbehovStrengtFortrolig()
