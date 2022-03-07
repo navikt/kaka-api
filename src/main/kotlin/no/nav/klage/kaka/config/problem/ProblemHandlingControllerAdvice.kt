@@ -52,6 +52,13 @@ interface KakaExceptionAdviceTrait : AdviceTrait {
         create(Status.FORBIDDEN, ex, request)
 
     @ExceptionHandler
+    fun handleInvalidSakenGjelderException(
+        ex: InvalidSakenGjelderException,
+        request: NativeWebRequest
+    ): ResponseEntity<Problem> =
+        create(Status.BAD_REQUEST, ex, request)
+
+    @ExceptionHandler
     fun handleSectionedValidationErrorWithDetailsException(
         ex: SectionedValidationErrorWithDetailsException,
         request: NativeWebRequest

@@ -6,13 +6,12 @@ import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.exceptions.InvalidSakenGjelderException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kaka.util.RolleMapper
-import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kaka.util.*
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
@@ -113,6 +112,7 @@ class SaksdataService(
     }
 
     fun setSakenGjelder(saksdataId: UUID, sakenGjelder: String, innloggetSaksbehandler: String): Saksdata {
+        validateSakenGjelder(sakenGjelder)
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakenGjelder = sakenGjelder
         saksdata.modified = LocalDateTime.now()
@@ -285,6 +285,20 @@ class SaksdataService(
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
         getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdataRepository.deleteById(saksdataId)
+    }
+
+    private fun validateSakenGjelder(sakenGjelder: String) {
+        if (sakenGjelder.length == 11) {
+            if (!isValidFnrOrDnr(sakenGjelder)) {
+                throw InvalidSakenGjelderException("Invalid input value")
+            }
+        } else if (sakenGjelder.length == 9) {
+            if (!isValidOrgnr(sakenGjelder)) {
+                throw InvalidSakenGjelderException("Invalid input value")
+            }
+        } else {
+            throw InvalidSakenGjelderException("Invalid input value")
+        }
     }
 
     private fun verifiserTilgangTilPersonForSaksbehandler(
