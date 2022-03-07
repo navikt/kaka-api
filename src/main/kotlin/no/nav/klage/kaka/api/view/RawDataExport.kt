@@ -48,6 +48,8 @@ data class AnonymizedFinishedVurdering(
     val brukAvRaadgivendeLegeRadioValg: String?,
 
     val behandlingstidDays: Int,
+    val kaBehandlingstidDays: Int,
+    val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
 
     /** Første av de to created datoene. */
@@ -100,6 +102,8 @@ data class AnonymizedFinishedVurderingWithoutEnheter(
     val brukAvRaadgivendeLegeRadioValg: String?,
 
     val behandlingstidDays: Int,
+    val kaBehandlingstidDays: Int,
+    val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
 
     /** Første av de to created datoene. */
