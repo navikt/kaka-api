@@ -12,6 +12,8 @@ class KvalitetsvurderingFinalizedException(msg: String) : RuntimeException(msg)
 
 class SaksdataFinalizedException(msg: String) : RuntimeException(msg)
 
+class InvalidSakenGjelderException(msg: String) : RuntimeException(msg)
+
 class EnhetNotFoundForSaksbehandlerException(msg: String) : RuntimeException(msg)
 
 data class InvalidProperty(val field: String, val reason: String)
