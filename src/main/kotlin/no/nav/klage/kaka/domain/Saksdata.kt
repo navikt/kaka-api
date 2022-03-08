@@ -6,6 +6,8 @@ import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kaka.exceptions.ValidationSection
 import no.nav.klage.kaka.util.isLederVedtaksinstans
+import no.nav.klage.kaka.util.isValidFnrOrDnr
+import no.nav.klage.kaka.util.isValidOrgnr
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.RegistreringshjemmelConverter
@@ -149,10 +151,11 @@ class Saksdata(
 
     private fun validateCommonProperties(): List<InvalidProperty> {
         val validationErrors = mutableListOf<InvalidProperty>()
-        if (sakenGjelder == null) {
-            validationErrors.add(
-                createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
-            )
+
+        val sakenGjelderError = getSakenGjelderError(sakenGjelder)
+
+        if (sakenGjelderError != null) {
+            validationErrors.add(sakenGjelderError)
         }
 
         if (vedtaksinstansEnhet == null) {
@@ -199,6 +202,23 @@ class Saksdata(
         return validationErrors
     }
 
+    private fun getSakenGjelderError(sakenGjelder: String?): InvalidProperty? {
+        if (sakenGjelder == null) {
+            return createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
+        } else if (sakenGjelder.length == 11) {
+            if (!isValidFnrOrDnr(sakenGjelder)) {
+                return createInvalidFnrDnrError(SaksdataView::sakenGjelder.name)
+            }
+        } else if (sakenGjelder.length == 9) {
+            if (!isValidOrgnr(sakenGjelder)) {
+                return createInvalidOrgNrError(SaksdataView::sakenGjelder.name)
+            }
+        } else {
+            return createInvalidSakenGjelderError(SaksdataView::sakenGjelder.name)
+        }
+        return null
+    }
+
     private fun createMustBeFilledValidationError(variableName: String): InvalidProperty {
         return InvalidProperty(
             field = variableName,
@@ -210,6 +230,27 @@ class Saksdata(
         return InvalidProperty(
             field = variableName,
             reason = "Må være valgt."
+        )
+    }
+
+    private fun createInvalidFnrDnrError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Dette er ikke et gyldig fnr/dnr."
+        )
+    }
+
+    private fun createInvalidOrgNrError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Dette er ikke et gyldig organisasjonsnummer."
+        )
+    }
+
+    private fun createInvalidSakenGjelderError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Dette er ikke et gyldig id-nummer."
         )
     }
 }

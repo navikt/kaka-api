@@ -112,7 +112,6 @@ class SaksdataService(
     }
 
     fun setSakenGjelder(saksdataId: UUID, sakenGjelder: String, innloggetSaksbehandler: String): Saksdata {
-        validateSakenGjelder(sakenGjelder)
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakenGjelder = sakenGjelder
         saksdata.modified = LocalDateTime.now()
@@ -285,20 +284,6 @@ class SaksdataService(
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
         getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdataRepository.deleteById(saksdataId)
-    }
-
-    private fun validateSakenGjelder(sakenGjelder: String) {
-        if (sakenGjelder.length == 11) {
-            if (!isValidFnrOrDnr(sakenGjelder)) {
-                throw InvalidSakenGjelderException("Invalid input value")
-            }
-        } else if (sakenGjelder.length == 9) {
-            if (!isValidOrgnr(sakenGjelder)) {
-                throw InvalidSakenGjelderException("Invalid input value")
-            }
-        } else {
-            throw InvalidSakenGjelderException("Invalid input value")
-        }
     }
 
     private fun verifiserTilgangTilPersonForSaksbehandler(
