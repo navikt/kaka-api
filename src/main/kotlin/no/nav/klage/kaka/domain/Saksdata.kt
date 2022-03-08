@@ -151,26 +151,11 @@ class Saksdata(
 
     private fun validateCommonProperties(): List<InvalidProperty> {
         val validationErrors = mutableListOf<InvalidProperty>()
-        if (sakenGjelder == null) {
-            validationErrors.add(
-                createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
-            )
-        } else if (sakenGjelder!!.length == 11) {
-            if (!isValidFnrOrDnr(sakenGjelder!!)) {
-                validationErrors.add(
-                    createInvalidFnrDnrError(SaksdataView::sakenGjelder.name)
-                )
-            }
-        } else if (sakenGjelder!!.length == 9) {
-            if (!isValidOrgnr(sakenGjelder!!)) {
-                validationErrors.add(
-                    createInvalidOrgNrError(SaksdataView::sakenGjelder.name)
-                )
-            }
-        } else {
-            validationErrors.add(
-                createInvalidSakenGjelderError(SaksdataView::sakenGjelder.name)
-            )
+
+        val sakenGjelderError = getSakenGjelderError(sakenGjelder)
+
+        if (sakenGjelderError != null) {
+            validationErrors.add(sakenGjelderError)
         }
 
         if (vedtaksinstansEnhet == null) {
@@ -215,6 +200,23 @@ class Saksdata(
         }
 
         return validationErrors
+    }
+
+    private fun getSakenGjelderError(sakenGjelder: String?): InvalidProperty? {
+        if (sakenGjelder == null) {
+            return createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
+        } else if (sakenGjelder.length == 11) {
+            if (!isValidFnrOrDnr(sakenGjelder)) {
+                return createInvalidFnrDnrError(SaksdataView::sakenGjelder.name)
+            }
+        } else if (sakenGjelder.length == 9) {
+            if (!isValidOrgnr(sakenGjelder)) {
+                return createInvalidOrgNrError(SaksdataView::sakenGjelder.name)
+            }
+        } else {
+            return createInvalidSakenGjelderError(SaksdataView::sakenGjelder.name)
+        }
+        return null
     }
 
     private fun createMustBeFilledValidationError(variableName: String): InvalidProperty {
