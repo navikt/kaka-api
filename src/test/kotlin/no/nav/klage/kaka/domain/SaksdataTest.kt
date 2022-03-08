@@ -10,6 +10,8 @@ import java.time.LocalDate
 
 internal class SaksdataTest {
 
+    private val SAKEN_GJELDER = "15436621822"
+
     @Test
     fun `validation on empty saksdata gives correct number of errors`() {
         val saksdata = Saksdata(
@@ -30,7 +32,7 @@ internal class SaksdataTest {
             utfoerendeSaksbehandler = "SAKSBEHANDLER",
             tilknyttetEnhet = "4295",
             mottattVedtaksinstans = LocalDate.now(),
-            sakenGjelder = "12345678910",
+            sakenGjelder = SAKEN_GJELDER,
             vedtaksinstansEnhet = "1",
             ytelse = Ytelse.OMS_OMP,
             mottattKlageinstans = LocalDate.now(),
@@ -47,6 +49,7 @@ internal class SaksdataTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             kvalitetsvurdering = Kvalitetsvurdering(),
+            sakenGjelder = SAKEN_GJELDER,
         )
 
         saksdata.verifyReadAccess(utfoerendeSaksbehandler)
@@ -59,6 +62,7 @@ internal class SaksdataTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             kvalitetsvurdering = Kvalitetsvurdering(),
+            sakenGjelder = SAKEN_GJELDER,
         )
 
         assertThrows<MissingTilgangException> {
@@ -75,6 +79,7 @@ internal class SaksdataTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(),
+            sakenGjelder = SAKEN_GJELDER,
         )
 
         saksdata.verifyReadAccess(
@@ -92,6 +97,7 @@ internal class SaksdataTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = "4000",
             kvalitetsvurdering = Kvalitetsvurdering(),
+            sakenGjelder = SAKEN_GJELDER,
         )
 
         assertThrows<MissingTilgangException> {
