@@ -5,11 +5,9 @@ import io.mockk.mockk
 import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.exceptions.InvalidSakenGjelderException
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -53,60 +51,4 @@ internal class SaksdataServiceTest {
             saksdataService.deleteSaksdata(saksdataId = UUID.randomUUID(), innloggetSaksbehandler = OTHER_IDENT)
         }
     }
-
-    @Nested
-    inner class SakenGjelder {
-        @Test
-        fun `incorrect fnr`() {
-            assertThrows<InvalidSakenGjelderException> {
-                saksdataService.setSakenGjelder(
-                    saksdataId = UUID.randomUUID(),
-                    sakenGjelder = "16436621822",
-                    innloggetSaksbehandler = SAKSBEHANDLER_IDENT
-                )
-            }
-        }
-
-        @Test
-        fun `incorrect orgnr`() {
-            assertThrows<InvalidSakenGjelderException> {
-                saksdataService.setSakenGjelder(
-                    saksdataId = UUID.randomUUID(),
-                    sakenGjelder = "974652289",
-                    innloggetSaksbehandler = SAKSBEHANDLER_IDENT
-                )
-            }
-        }
-
-        @Test
-        fun `correct fnr`() {
-            saksdataService.setSakenGjelder(
-                saksdataId = UUID.randomUUID(),
-                sakenGjelder = "15436621822",
-                innloggetSaksbehandler = SAKSBEHANDLER_IDENT
-            )
-        }
-
-        @Test
-        fun `correct orgnr`() {
-            saksdataService.setSakenGjelder(
-                saksdataId = UUID.randomUUID(),
-                sakenGjelder = "974652269",
-                innloggetSaksbehandler = SAKSBEHANDLER_IDENT
-            )
-        }
-
-        @Test
-        fun `incorrect input`() {
-            assertThrows<InvalidSakenGjelderException> {
-                saksdataService.setSakenGjelder(
-                    saksdataId = UUID.randomUUID(),
-                    sakenGjelder = SAKSBEHANDLER_IDENT,
-                    innloggetSaksbehandler = SAKSBEHANDLER_IDENT
-                )
-            }
-        }
-    }
-
-
 }

@@ -6,6 +6,8 @@ import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kaka.exceptions.ValidationSection
 import no.nav.klage.kaka.util.isLederVedtaksinstans
+import no.nav.klage.kaka.util.isValidFnrOrDnr
+import no.nav.klage.kaka.util.isValidOrgnr
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.RegistreringshjemmelConverter
@@ -153,6 +155,22 @@ class Saksdata(
             validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)
             )
+        } else if (sakenGjelder!!.length == 11) {
+            if (!isValidFnrOrDnr(sakenGjelder!!)) {
+                validationErrors.add(
+                    createInvalidFnrDnrError(SaksdataView::sakenGjelder.name)
+                )
+            }
+        } else if (sakenGjelder!!.length == 9) {
+            if (!isValidOrgnr(sakenGjelder!!)) {
+                validationErrors.add(
+                    createInvalidOrgNrError(SaksdataView::sakenGjelder.name)
+                )
+            }
+        } else {
+            validationErrors.add(
+                createInvalidSakenGjelderError(SaksdataView::sakenGjelder.name)
+            )
         }
 
         if (vedtaksinstansEnhet == null) {
@@ -210,6 +228,27 @@ class Saksdata(
         return InvalidProperty(
             field = variableName,
             reason = "Må være valgt."
+        )
+    }
+
+    private fun createInvalidFnrDnrError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Dette er ikke et gyldig fnr/dnr."
+        )
+    }
+
+    private fun createInvalidOrgNrError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Dette er ikke et gyldig organisasjonsnummer."
+        )
+    }
+
+    private fun createInvalidSakenGjelderError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Dette er ikke et gyldig id-nummer."
         )
     }
 }
