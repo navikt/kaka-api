@@ -71,9 +71,7 @@ class SaksdataController(
             logger
         )
 
-        validateEnhetsnummer(input?.tilknyttetEnhet)
-
-        return saksdataService.createSaksdata(innloggetSaksbehandler, input?.tilknyttetEnhet).toSaksdataView()
+        return saksdataService.createSaksdata(innloggetSaksbehandler).toSaksdataView()
     }
 
     private fun validateEnhetsnummer(enhetsnummer: String?) {
