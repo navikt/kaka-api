@@ -30,8 +30,6 @@ class KabalKvalitetsvurderingController(
     private val tokenUtil: TokenUtil,
     @Value("\${kabalApiName}")
     private val kabalApiName: String,
-    @Value("\${kabalAnkeApiName}")
-    private val kabalAnkeApiName: String,
 ) {
 
     companion object {
@@ -94,7 +92,7 @@ class KabalKvalitetsvurderingController(
 
     private fun verifyAndGetCallingApplication(): String {
         val callingApplication = tokenUtil.getCallingApplication()
-        if (callingApplication !in listOf(kabalApiName, kabalAnkeApiName)) {
+        if (callingApplication !in listOf(kabalApiName)) {
             throw MissingTilgangException("Calling application not allowed: $callingApplication")
         }
         return callingApplication

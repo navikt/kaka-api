@@ -102,10 +102,8 @@ navCallId: Nav-Callid
 navConsumerId: Nav-Consumer-Id
 
 kabalApiName: ${NAIS_CLUSTER_NAME}:${NAIS_NAMESPACE}:${KABAL_API_APP_NAME}
-kabalAnkeApiName: ${NAIS_CLUSTER_NAME}:${NAIS_NAMESPACE}:${KABAL_ANKE_API_APP_NAME}
 
 KABAL_API_APP_NAME: "kabal-api"
-KABAL_ANKE_API_APP_NAME: "kabal-anke-api"
 
 MICROSOFT_GRAPH_URL: https://graph.microsoft.com/v1.0
 
