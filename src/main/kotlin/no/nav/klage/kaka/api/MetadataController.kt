@@ -4,7 +4,6 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.KodeDto
 import no.nav.klage.kaka.api.view.UserData
-import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
 import no.nav.klage.kaka.util.RolleMapper
@@ -21,9 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/metadata")
 class MetadataController(
     private val tokenUtil: TokenUtil,
-    private val axsysGateway: AxsysGateway,
     private val azureGateway: AzureGateway,
-    private val rolleMapper: RolleMapper
+    private val rolleMapper: RolleMapper,
 ) {
 
     companion object {
