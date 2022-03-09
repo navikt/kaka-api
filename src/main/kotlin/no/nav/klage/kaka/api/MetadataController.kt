@@ -10,7 +10,6 @@ import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.isLederVedtaksinstans
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -36,16 +35,10 @@ class MetadataController(
     fun getUserData(): UserData {
         val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
 
-        val usersKlageenheter = if (isLederVedtaksinstans(roller)) {
-            emptyList()
-        } else {
-            axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent())
-        }
-
         return UserData(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
-            klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) },
+            klageenheter = emptyList(),
             ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.let {
                 KodeDto(
                     id = it.id,
