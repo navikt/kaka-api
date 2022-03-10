@@ -4,13 +4,11 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.KodeDto
 import no.nav.klage.kaka.api.view.UserData
-import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.isLederVedtaksinstans
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -22,9 +20,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/metadata")
 class MetadataController(
     private val tokenUtil: TokenUtil,
-    private val axsysGateway: AxsysGateway,
     private val azureGateway: AzureGateway,
-    private val rolleMapper: RolleMapper
+    private val rolleMapper: RolleMapper,
 ) {
 
     companion object {
@@ -36,19 +33,13 @@ class MetadataController(
     fun getUserData(): UserData {
         val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
 
-        val usersKlageenheter = if (isLederVedtaksinstans(roller)) {
-            emptyList()
-        } else {
-            axsysGateway.getKlageenheterForSaksbehandler(tokenUtil.getIdent())
-        }
-
         return UserData(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
-            klageenheter = usersKlageenheter.map { KodeDto(id = it.id, navn = it.navn, beskrivelse = it.beskrivelse) },
             ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.let {
+                //use name as id
                 KodeDto(
-                    id = it.id,
+                    id = it.navn,
                     navn = it.navn,
                     beskrivelse = it.beskrivelse
                 )

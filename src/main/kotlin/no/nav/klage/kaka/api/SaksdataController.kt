@@ -2,8 +2,11 @@ package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.*
+import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
+import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.SaksdataService
+import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logSaksdataMethodDetails
@@ -22,7 +25,9 @@ import java.util.*
 @RequestMapping("/saksdata")
 class SaksdataController(
     private val saksdataService: SaksdataService,
-    private val tokenUtil: TokenUtil
+    private val tokenUtil: TokenUtil,
+    private val azureGateway: AzureGateway,
+    private val rolleMapper: RolleMapper,
 ) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
@@ -71,9 +76,12 @@ class SaksdataController(
             logger
         )
 
-        validateEnhetsnummer(input?.tilknyttetEnhet)
+        val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        if ("ROLE_KAKA_SAKSBEHANDLER" !in roles) {
+            throw MissingTilgangException("User does not have access to create saksdata")
+        }
 
-        return saksdataService.createSaksdata(innloggetSaksbehandler, input?.tilknyttetEnhet).toSaksdataView()
+        return saksdataService.createSaksdata(innloggetSaksbehandler).toSaksdataView()
     }
 
     private fun validateEnhetsnummer(enhetsnummer: String?) {

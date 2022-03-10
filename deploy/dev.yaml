@@ -5,13 +5,6 @@ externalHosts:
 springProfile: dev-gcp
 tenant: trygdeetaten.no
 kafka_pool: nav-dev
-roles:
-  - a4dbd743-5adb-45c8-8918-59c2c6e8e3f2 # ROLE_KAKA_SAKSBEHANDLER
-  - 016fb83f-4e7c-47ec-ae8a-e3efa72a43e7 # ROLE_KLAGE_LEDER
-  - ef9eaacb-a19d-4d13-bfc5-930e4fb217cd # ROLE_VEDTAKSINSTANS_LEDER
-  - 011af9b0-792d-4d2c-a2eb-9a59fc095002 # ROLE_KLAGE_EGEN_ANSATT
-  - 2980c598-8af7-473f-b7d1-233f785d7001 # ROLE_KLAGE_FORTROLIG
-  - de92036b-c350-471c-9249-753f36acd24d # ROLE_KLAGE_STRENGT_FORTROLIG
 db_tier: db-custom-1-3840
 db_size: 10
 db_ha: true
