@@ -36,7 +36,6 @@ class MetadataController(
         return UserData(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
-            klageenheter = emptyList(),
             ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.let {
                 //use name as id
                 KodeDto(
