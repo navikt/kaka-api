@@ -40,7 +40,7 @@ class MetadataController(
                 //use name as id
                 KodeDto(
                     id = it.navn,
-                    navn = it.navn,
+                    navn = it.beskrivelse,
                     beskrivelse = it.beskrivelse
                 )
             },
