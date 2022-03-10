@@ -3,7 +3,7 @@ package no.nav.klage.kaka.api.view
 data class UserData(
     val ident: String,
     val navn: Navn,
-    val ansattEnhet: KodeDto,
+    val ansattEnhet: EnhetKodeDto,
     val roller: List<String>,
 ) {
     data class Navn(
@@ -13,4 +13,4 @@ data class UserData(
     )
 }
 
-data class KodeDto(val id: String, val navn: String, val beskrivelse: String)
+data class EnhetKodeDto(val id: String, val navn: String)
