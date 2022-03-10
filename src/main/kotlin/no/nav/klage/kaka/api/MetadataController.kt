@@ -2,7 +2,7 @@ package no.nav.klage.kaka.api
 
 
 import io.swagger.annotations.Api
-import no.nav.klage.kaka.api.view.KodeDto
+import no.nav.klage.kaka.api.view.EnhetKodeDto
 import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
@@ -37,11 +37,9 @@ class MetadataController(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
             ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.let {
-                //use name as id
-                KodeDto(
+                EnhetKodeDto(
                     id = it.navn,
                     navn = it.beskrivelse,
-                    beskrivelse = it.beskrivelse
                 )
             },
             roller = roller
