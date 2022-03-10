@@ -38,8 +38,9 @@ class MetadataController(
             navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
             klageenheter = emptyList(),
             ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.let {
+                //use name as id
                 KodeDto(
-                    id = it.id,
+                    id = it.navn,
                     navn = it.navn,
                     beskrivelse = it.beskrivelse
                 )
