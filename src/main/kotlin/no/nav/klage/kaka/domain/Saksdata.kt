@@ -201,13 +201,13 @@ class Saksdata(
             validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name)
             )
-        } else if (LocalDate.now().isBefore(mottattVedtaksinstans)) {
-            validationErrors.add(
-                createFutureDateError(SaksdataView::mottattVedtaksinstans.name)
-            )
         } else if (mottattKlageinstans!!.isBefore(mottattVedtaksinstans)) {
             validationErrors.add(
                 createConflictingDatesError(SaksdataView::mottattVedtaksinstans.name)
+            )
+        } else if (LocalDate.now().isBefore(mottattVedtaksinstans)) {
+            validationErrors.add(
+                createFutureDateError(SaksdataView::mottattVedtaksinstans.name)
             )
         }
 
