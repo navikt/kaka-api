@@ -174,6 +174,10 @@ class Saksdata(
             validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::mottattKlageinstans.name)
             )
+        } else if (LocalDate.now().isBefore(mottattKlageinstans)) {
+            validationErrors.add(
+                createFutureDateError(SaksdataView::mottattKlageinstans.name)
+            )
         }
 
         if (utfall == null) {
@@ -196,6 +200,14 @@ class Saksdata(
         if (mottattVedtaksinstans == null) {
             validationErrors.add(
                 createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name)
+            )
+        } else if (mottattKlageinstans!!.isBefore(mottattVedtaksinstans)) {
+            validationErrors.add(
+                createConflictingDatesError(SaksdataView::mottattVedtaksinstans.name)
+            )
+        } else if (LocalDate.now().isBefore(mottattVedtaksinstans)) {
+            validationErrors.add(
+                createFutureDateError(SaksdataView::mottattVedtaksinstans.name)
             )
         }
 
@@ -251,6 +263,20 @@ class Saksdata(
         return InvalidProperty(
             field = variableName,
             reason = "Dette er ikke et gyldig id-nummer."
+        )
+    }
+
+    private fun createFutureDateError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Datoen kan ikke være i fremtiden."
+        )
+    }
+
+    private fun createConflictingDatesError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Denne datoen kan ikke være lenger frem i tid enn datoen for mottatt klageinstans."
         )
     }
 }
