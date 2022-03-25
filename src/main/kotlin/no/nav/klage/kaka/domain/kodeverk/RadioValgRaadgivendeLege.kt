@@ -1,4 +1,5 @@
 package no.nav.klage.kaka.domain.kodeverk
+
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter
 
@@ -8,7 +9,7 @@ enum class RadioValgRaadgivendeLege(override val id: String, override val navn: 
     MANGELFULLT("2", "Mangelfullt");
 
     override fun toString(): String {
-        return "RadioValg(id=$id, " +
+        return "RadioValgRaadgivendeLege(id=$id, " +
                 "navn=$navn)"
     }
 

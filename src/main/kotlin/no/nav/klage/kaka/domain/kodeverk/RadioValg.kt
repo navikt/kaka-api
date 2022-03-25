@@ -9,7 +9,7 @@ enum class RadioValg(override val id: String, override val navn: String) : Radio
 
     override fun toString(): String {
         return "RadioValg(id=$id, " +
-        "navn=$navn)"
+                "navn=$navn)"
     }
 
     companion object {
@@ -26,7 +26,7 @@ enum class RadioValg(override val id: String, override val navn: String) : Radio
 }
 
 @Converter
-class RadioValgConverter : AttributeConverter<RadioValg, String?> {
+class xRadioValgConverter : AttributeConverter<RadioValg, String?> {
 
     override fun convertToDatabaseColumn(entity: RadioValg?): String? =
         entity?.id
