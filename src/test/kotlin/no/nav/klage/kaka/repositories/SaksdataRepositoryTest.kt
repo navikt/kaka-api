@@ -3,6 +3,8 @@ package no.nav.klage.kaka.repositories
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kodeverk.RadioValg
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
@@ -411,7 +413,7 @@ class SaksdataRepositoryTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(
-                utredningenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+                utredningenRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
@@ -423,7 +425,7 @@ class SaksdataRepositoryTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(
-                klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
+                klageforberedelsenRadioValg = RadioValg.MANGELFULLT,
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
@@ -435,7 +437,7 @@ class SaksdataRepositoryTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = "1111",
             kvalitetsvurdering = Kvalitetsvurdering(
-                klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
+                klageforberedelsenRadioValg = RadioValg.MANGELFULLT,
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = null,
@@ -473,7 +475,7 @@ class SaksdataRepositoryTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(
-                klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+                klageforberedelsenRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
@@ -509,7 +511,7 @@ class SaksdataRepositoryTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(
-                utredningenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+                utredningenRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
@@ -545,7 +547,7 @@ class SaksdataRepositoryTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(
-                brukAvRaadgivendeLegeRadioValg = Kvalitetsvurdering.RadioValgRaadgivendeLege.MANGELFULLT
+                brukAvRaadgivendeLegeRadioValg = RadioValgRaadgivendeLege.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
@@ -581,7 +583,7 @@ class SaksdataRepositoryTest {
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
             kvalitetsvurdering = Kvalitetsvurdering(
-                vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+                vedtaketRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),

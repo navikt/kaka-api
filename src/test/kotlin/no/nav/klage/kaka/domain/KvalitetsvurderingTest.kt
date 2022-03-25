@@ -1,5 +1,7 @@
 package no.nav.klage.kaka.domain
 
+import no.nav.klage.kaka.domain.kodeverk.RadioValg
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
@@ -12,15 +14,15 @@ internal class KvalitetsvurderingTest {
     @Test
     fun cleanup() {
         val kvalitetsvurdering = Kvalitetsvurdering(
-            klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.BRA,
+            klageforberedelsenRadioValg = RadioValg.BRA,
             sakensDokumenter = true,
             konklusjonen = true,
-            utredningenRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
+            utredningenRadioValg = RadioValg.MANGELFULLT,
             utredningenAvAndreAktuelleForholdISaken = false,
             utredningenAvAndreAktuelleForholdISakenText = "TEXT",
             arbeidsrettetBrukeroppfoelging = true,
             arbeidsrettetBrukeroppfoelgingText = "TEXT",
-            vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
+            vedtaketRadioValg = RadioValg.MANGELFULLT,
             detErFeilIKonkretRettsanvendelse = true,
             rettsregelenErBenyttetFeil = false
         )
@@ -54,8 +56,8 @@ internal class KvalitetsvurderingTest {
     @Test
     fun `validation on partly filled kvalitetsvurdering gives correct number of errors`() {
         val kvalitetsvurdering = Kvalitetsvurdering(
-            klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.BRA,
-            vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+            klageforberedelsenRadioValg = RadioValg.BRA,
+            vedtaketRadioValg = RadioValg.MANGELFULLT
         )
         val results = kvalitetsvurdering.getInvalidProperties(null, Type.KLAGE)
         assertThat(results).hasSize(2)
@@ -64,8 +66,8 @@ internal class KvalitetsvurderingTest {
     @Test
     fun `validation on partly filled kvalitetsvurdering requiring raadgivende lege gives correct number of errors`() {
         val kvalitetsvurdering = Kvalitetsvurdering(
-            klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.BRA,
-            vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT
+            klageforberedelsenRadioValg = RadioValg.BRA,
+            vedtaketRadioValg = RadioValg.MANGELFULLT
         )
         val results = kvalitetsvurdering.getInvalidProperties(Ytelse.GRU_GRU, Type.KLAGE)
         assertThat(results).hasSize(3)
@@ -80,9 +82,9 @@ internal class KvalitetsvurderingTest {
     @Test
     fun `validation on partly filled brukAvRaadgivendeLege gives correct number of errors`() {
         val kvalitetsvurdering = Kvalitetsvurdering(
-            klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.BRA,
-            vedtaketRadioValg = Kvalitetsvurdering.RadioValg.MANGELFULLT,
-            brukAvRaadgivendeLegeRadioValg = Kvalitetsvurdering.RadioValgRaadgivendeLege.MANGELFULLT
+            klageforberedelsenRadioValg = RadioValg.BRA,
+            vedtaketRadioValg = RadioValg.MANGELFULLT,
+            brukAvRaadgivendeLegeRadioValg = RadioValgRaadgivendeLege.MANGELFULLT
         )
         val results = kvalitetsvurdering.getInvalidProperties(Ytelse.GRU_GRU, Type.KLAGE)
         assertThat(results).hasSize(3)

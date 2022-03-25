@@ -1,6 +1,8 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.kodeverk.RadioValg
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
@@ -36,7 +38,7 @@ class KvalitetsvurderingService(
 
     fun setKlageforberedelsenRadioValg(
         kvalitetsvurderingId: UUID,
-        input: Kvalitetsvurdering.RadioValg,
+        input: RadioValg,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
@@ -116,7 +118,7 @@ class KvalitetsvurderingService(
 
     fun setUtredningenRadioValg(
         kvalitetsvurderingId: UUID,
-        input: Kvalitetsvurdering.RadioValg,
+        input: RadioValg,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
@@ -270,7 +272,7 @@ class KvalitetsvurderingService(
 
     fun setBrukAvRaadgivendeLegeRadioValg(
         kvalitetsvurderingId: UUID,
-        input: Kvalitetsvurdering.RadioValgRaadgivendeLege,
+        input: RadioValgRaadgivendeLege,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
@@ -336,7 +338,7 @@ class KvalitetsvurderingService(
 
     fun setVedtaketRadioValg(
         kvalitetsvurderingId: UUID,
-        input: Kvalitetsvurdering.RadioValg,
+        input: RadioValg,
         innloggetSaksbehandler: String
     ): Kvalitetsvurdering {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)

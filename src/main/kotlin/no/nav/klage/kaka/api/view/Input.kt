@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.api.view
 
-import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.kodeverk.RadioValg
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import java.time.LocalDate
 
 data class StringInput(
@@ -24,9 +25,9 @@ data class BooleanInput(
 )
 
 data class RadioValgInput(
-    val value: Kvalitetsvurdering.RadioValg
+    val value: RadioValg
 )
 
 data class RadioValgRaadgivendeLegeInput(
-    val value: Kvalitetsvurdering.RadioValgRaadgivendeLege
+    val value: RadioValgRaadgivendeLege
 )
