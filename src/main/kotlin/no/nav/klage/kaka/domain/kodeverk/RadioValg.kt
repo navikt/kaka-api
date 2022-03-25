@@ -26,7 +26,7 @@ enum class RadioValg(override val id: String, override val navn: String) : Radio
 }
 
 @Converter
-class xRadioValgConverter : AttributeConverter<RadioValg, String?> {
+class RadioValgConverter : AttributeConverter<RadioValg, String?> {
 
     override fun convertToDatabaseColumn(entity: RadioValg?): String? =
         entity?.id
