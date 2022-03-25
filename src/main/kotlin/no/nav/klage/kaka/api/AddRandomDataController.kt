@@ -2,6 +2,8 @@ package no.nav.klage.kaka.api
 
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kodeverk.RadioValg
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
@@ -59,14 +61,14 @@ class AddRandomDataController(
 
     private fun getRandomKvalitetsvurdering(): Kvalitetsvurdering {
         return Kvalitetsvurdering(
-            klageforberedelsenRadioValg = Kvalitetsvurdering.RadioValg.values().random(),
+            klageforberedelsenRadioValg = RadioValg.values().random(),
             sakensDokumenter = Random.nextBoolean(),
             oversittetKlagefristIkkeKommentert = Random.nextBoolean(),
             klagerensRelevanteAnfoerslerIkkeKommentert = Random.nextBoolean(),
             begrunnelseForHvorforAvslagOpprettholdes = Random.nextBoolean(),
             konklusjonen = Random.nextBoolean(),
             oversendelsesbrevetsInnholdIkkeISamsvarMedTema = Random.nextBoolean(),
-            utredningenRadioValg = Kvalitetsvurdering.RadioValg.values().random(),
+            utredningenRadioValg = RadioValg.values().random(),
             utredningenAvMedisinskeForhold = Random.nextBoolean(),
             utredningenAvMedisinskeForholdText = "en beskrivende tekst",
             utredningenAvInntektsforhold = Random.nextBoolean(),
@@ -81,12 +83,12 @@ class AddRandomDataController(
             utredningenAvEoesProblematikkText = null,
             veiledningFraNav = Random.nextBoolean(),
             veiledningFraNavText = null,
-            brukAvRaadgivendeLegeRadioValg = Kvalitetsvurdering.RadioValgRaadgivendeLege.values().random(),
+            brukAvRaadgivendeLegeRadioValg = RadioValgRaadgivendeLege.values().random(),
             raadgivendeLegeErIkkeBrukt = Random.nextBoolean(),
             raadgivendeLegeErBruktFeilSpoersmaal = Random.nextBoolean(),
             raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = Random.nextBoolean(),
             raadgivendeLegeErBruktMangelfullDokumentasjon = Random.nextBoolean(),
-            vedtaketRadioValg = Kvalitetsvurdering.RadioValg.values().random(),
+            vedtaketRadioValg = RadioValg.values().random(),
             detErIkkeBruktRiktigHjemmel = Random.nextBoolean(),
             innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = Random.nextBoolean(),
             rettsregelenErBenyttetFeil = Random.nextBoolean(),

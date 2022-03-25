@@ -1,8 +1,8 @@
 package no.nav.klage.kaka.repositories
 
-import no.nav.klage.kaka.domain.Kvalitetsvurdering.RadioValg.MANGELFULLT
-import no.nav.klage.kaka.domain.Kvalitetsvurdering.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kodeverk.RadioValg
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kodeverk.Type
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -77,28 +77,28 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     private fun getForberedelsenQuery(mangelfullt: List<String>) =
         if ("forberedelsen" in mangelfullt) {
             """
-                k.klageforberedelsenRadioValg = '${MANGELFULLT.ordinal}'
+                k.klageforberedelsenRadioValg = '${RadioValg.MANGELFULLT.id}'
             """.trimIndent()
         } else null
 
     private fun getUtredningenQuery(mangelfullt: List<String>) =
         if ("utredningen" in mangelfullt) {
             """
-                k.utredningenRadioValg = '${MANGELFULLT.ordinal}'
+                k.utredningenRadioValg = '${RadioValg.MANGELFULLT.id}'
             """.trimIndent()
         } else null
 
     private fun getVedtaketQuery(mangelfullt: List<String>) =
         if ("vedtaket" in mangelfullt) {
             """
-                k.vedtaketRadioValg = '${MANGELFULLT.ordinal}'
+                k.vedtaketRadioValg = '${RadioValg.MANGELFULLT.id}'
             """.trimIndent()
         } else null
 
     private fun getROLQuery(mangelfullt: List<String>) =
         if ("rol" in mangelfullt) {
             """
-                k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.ordinal}'
+                k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.id}'
             """.trimIndent()
         } else null
 

@@ -1,5 +1,9 @@
 package no.nav.klage.kaka.domain
 
+import no.nav.klage.kaka.domain.kodeverk.RadioValg
+import no.nav.klage.kaka.domain.kodeverk.RadioValgConverter
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
+import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLegeConverter
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
@@ -117,17 +121,6 @@ class Kvalitetsvurdering(
 
     override fun hashCode(): Int {
         return id.hashCode()
-    }
-
-    enum class RadioValgRaadgivendeLege {
-        IKKE_AKTUELT,
-        BRA,
-        MANGELFULLT
-    }
-
-    enum class RadioValg {
-        BRA,
-        MANGELFULLT
     }
 
     fun cleanup() {
@@ -351,23 +344,3 @@ private val raadgivendeLegeYtelser = setOf(
     FOR_SVA,
     UFO_TVF,
 )
-
-@Converter
-class RadioValgConverter : AttributeConverter<Kvalitetsvurdering.RadioValg, String?> {
-
-    override fun convertToDatabaseColumn(entity: Kvalitetsvurdering.RadioValg?): String? =
-        entity?.ordinal?.toString()
-
-    override fun convertToEntityAttribute(id: String?): Kvalitetsvurdering.RadioValg? =
-        id?.let { Kvalitetsvurdering.RadioValg.values()[id.toInt()] }
-}
-
-@Converter
-class RadioValgRaadgivendeLegeConverter : AttributeConverter<Kvalitetsvurdering.RadioValgRaadgivendeLege, String?> {
-
-    override fun convertToDatabaseColumn(entity: Kvalitetsvurdering.RadioValgRaadgivendeLege?): String? =
-        entity?.ordinal?.toString()
-
-    override fun convertToEntityAttribute(id: String?): Kvalitetsvurdering.RadioValgRaadgivendeLege? =
-        id?.let { Kvalitetsvurdering.RadioValgRaadgivendeLege.values()[id.toInt()] }
-}
