@@ -77,7 +77,7 @@ class SaksdataController(
         )
 
         val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
-        if ("ROLE_KAKA_SAKSBEHANDLER" !in roles) {
+        if ("ROLE_KAKA_KVALITETSVURDERING" !in roles) {
             throw MissingTilgangException("User does not have access to create saksdata")
         }
 

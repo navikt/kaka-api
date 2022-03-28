@@ -84,7 +84,7 @@ internal class SaksdataTest {
 
         saksdata.verifyReadAccess(
             innloggetIdent = "other",
-            roller = listOf("ROLE_VEDTAKSINSTANS_LEDER"),
+            roller = listOf("ROLE_KAKA_KVALITETSTILBAKEMELDINGER"),
             ansattEnhet = vedtaksinstansEnhet
         )
     }
@@ -103,7 +103,7 @@ internal class SaksdataTest {
         assertThrows<MissingTilgangException> {
             saksdata.verifyReadAccess(
                 innloggetIdent = "other",
-                roller = listOf("ROLE_VEDTAKSINSTANS_LEDER"),
+                roller = listOf("ROLE_KAKA_KVALITETSTILBAKEMELDINGER"),
                 ansattEnhet = "5000"
             )
         }
