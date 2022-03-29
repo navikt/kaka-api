@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.domain
 
+import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_KVALITETSTILBAKEMELDINGER
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kodeverk.Utfall
@@ -84,7 +85,7 @@ internal class SaksdataTest {
 
         saksdata.verifyReadAccess(
             innloggetIdent = "other",
-            roller = listOf("ROLE_KAKA_KVALITETSTILBAKEMELDINGER"),
+            roller = setOf(ROLE_KAKA_KVALITETSTILBAKEMELDINGER),
             ansattEnhet = vedtaksinstansEnhet
         )
     }
@@ -103,7 +104,7 @@ internal class SaksdataTest {
         assertThrows<MissingTilgangException> {
             saksdata.verifyReadAccess(
                 innloggetIdent = "other",
-                roller = listOf("ROLE_KAKA_KVALITETSTILBAKEMELDINGER"),
+                roller = setOf(ROLE_KAKA_KVALITETSTILBAKEMELDINGER),
                 ansattEnhet = "5000"
             )
         }

@@ -42,7 +42,7 @@ class MetadataController(
                     navn = it.beskrivelse,
                 )
             },
-            roller = roller
+            roller = roller.map { it.name }
         )
     }
 

@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.api.view.SaksdataView
+import no.nav.klage.kaka.domain.kodeverk.Role
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
@@ -89,7 +90,7 @@ class Saksdata(
         return id.hashCode()
     }
 
-    fun verifyReadAccess(innloggetIdent: String, roller: List<String> = emptyList(), ansattEnhet: String = "") {
+    fun verifyReadAccess(innloggetIdent: String, roller: Set<Role> = emptySet(), ansattEnhet: String = "") {
         if (innloggetIdent != utfoerendeSaksbehandler) {
             if (isAllowedToReadKvalitetstilbakemeldinger(roller) && ansattEnhet == vedtaksinstansEnhet) {
                 return
