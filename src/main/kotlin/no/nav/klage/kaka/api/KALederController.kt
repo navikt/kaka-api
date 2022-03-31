@@ -3,9 +3,9 @@ package no.nav.klage.kaka.api
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.Saksbehandler
 import no.nav.klage.kaka.api.view.TotalResponse
-import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
+import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_LEDERSTATISTIKK
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportService
 import no.nav.klage.kaka.util.RolleMapper
@@ -29,7 +29,6 @@ import java.time.YearMonth
 class KALederController(
     private val exportService: ExportService,
     private val azureGateway: AzureGateway,
-    private val axsysGateway: AxsysGateway,
     private val rolleMapper: RolleMapper,
     private val tokenUtil: TokenUtil
 ) {
@@ -115,8 +114,8 @@ class KALederController(
 
     private fun validateIsKALeder() {
         val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
-        if ("ROLE_KLAGE_LEDER" !in roles) {
-            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role ROLE_KLAGE_LEDER")
+        if (ROLE_KAKA_LEDERSTATISTIKK !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KAKA_LEDERSTATISTIKK")
         }
     }
 }

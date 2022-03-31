@@ -6,6 +6,7 @@ import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kodeverk.Role.*
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
@@ -261,9 +262,9 @@ class SaksdataService(
     ): List<Saksdata> {
         val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
 
-        val kanBehandleStrengtFortrolig = "ROLE_KLAGE_STRENGT_FORTROLIG" in roller
-        val kanBehandleFortrolig = "ROLE_KLAGE_FORTROLIG" in roller
-        val kanBehandleEgenAnsatt = "ROLE_KLAGE_EGEN_ANSATT" in roller
+        val kanBehandleStrengtFortrolig = ROLE_KLAGE_STRENGT_FORTROLIG in roller
+        val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
+        val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
 
         return saksdataRepository.findForVedtaksinstansleder(
             vedtaksinstansEnhet = enhet.navn,

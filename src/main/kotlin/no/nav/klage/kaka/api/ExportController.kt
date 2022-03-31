@@ -10,7 +10,7 @@ import no.nav.klage.kaka.services.ExportService
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.isLederVedtaksinstans
+import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -134,8 +134,8 @@ class ExportController(
         )
 
         val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
-        if (!isLederVedtaksinstans(roller)) {
-            throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leder vedtaksinstans")
+        if (!isAllowedToReadKvalitetstilbakemeldinger(roller)) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} is not allowed to read kvalitetstilbakemeldinger")
         }
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
