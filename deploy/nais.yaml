@@ -83,6 +83,7 @@ spec:
     - secret: axsys
     - secret: sts-apikey
     - secret: pdl-apikey
+    - secret: ereg
   resources:
     limits:
       cpu: 2000m
