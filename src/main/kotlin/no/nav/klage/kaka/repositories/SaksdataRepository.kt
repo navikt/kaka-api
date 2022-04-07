@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.repositories
 
+import no.nav.klage.kaka.domain.SakenGjelderView
 import no.nav.klage.kaka.domain.Saksdata
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
@@ -9,6 +10,8 @@ import java.util.*
 
 @Repository
 interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepositoryCustom {
+
+    fun findAllSakenGjelder(): List<SakenGjelderView>
 
     fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerIsNullOrderByCreated(saksbehandlerIdent: String): List<Saksdata>
 
