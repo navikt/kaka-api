@@ -37,13 +37,8 @@ class EregClient(
                 .block()
         }.fold(
             onSuccess = { it },
-            onFailure = { error ->
-                when (error) {
-                    is WebClientResponseException.NotFound -> {
-                        null
-                    }
-                    else -> throw error
-                }
+            onFailure = {
+                null
             }
 
         )

@@ -18,7 +18,6 @@ class HentPersonMapper {
 
     fun mapToPerson(fnr: String, pdlPerson: PdlPerson): Person {
 
-        secureLogger.debug("pdl returned {}", pdlPerson)
         return Person(
             foedselsnr = fnr,
             fornavn = pdlPerson.navn.firstOrNull()?.fornavn,
