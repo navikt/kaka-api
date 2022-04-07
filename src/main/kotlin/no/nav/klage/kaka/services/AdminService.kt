@@ -17,7 +17,7 @@ class AdminService(
     }
 
     fun logCorruptData() {
-        val results = saksdataRepository.findAllSakenGjelder()
+        val results = saksdataRepository.findAll()
         secureLogger.debug("Testing, testing")
         secureLogger.debug("Size: " +results.size)
         secureLogger.debug("First: " +results[0])

@@ -11,8 +11,6 @@ import java.util.*
 @Repository
 interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepositoryCustom {
 
-    fun findAllSakenGjelder(): List<SakenGjelderView>
-
     fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerIsNullOrderByCreated(saksbehandlerIdent: String): List<Saksdata>
 
     fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerGreaterThanEqualOrderByModified(
