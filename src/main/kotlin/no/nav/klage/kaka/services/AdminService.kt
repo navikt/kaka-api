@@ -22,27 +22,34 @@ class AdminService(
         private val secureLogger = getSecureLogger()
     }
 
-    fun logCorruptData() {
+    fun logInvalidSakenGjelder() {
         val results = saksdataRepository.findAll()
-        secureLogger.debug("Testing, testing")
+        var errorsFound = 0
+        secureLogger.debug("Getting all invalid registered sakenGjelder values.")
         secureLogger.debug("Size: " +results.size)
         results.forEach{
             if (it.sakenGjelder?.length == 11) {
                 if (!isValidFnrOrDnr(it.sakenGjelder!!)) {
                     secureLogger.debug("Invalid fnr ${it.sakenGjelder}, saksdata id ${it.id}")
+                    errorsFound++
                 } else if (!pdlFacade.personExists(it.sakenGjelder!!)) {
                     secureLogger.debug("Fnr not found in pdl ${it.sakenGjelder}, saksdata id ${it.id}")
+                    errorsFound++
                 }
 
             } else if (it.sakenGjelder?.length == 9) {
                 if (!isValidOrgnr(it.sakenGjelder!!)){
                     secureLogger.debug("Invalid orgnr ${it.sakenGjelder}, saksdata id ${it.id}")
+                    errorsFound++
                 } else if (eregClient.organisasjonExists(it.sakenGjelder!!)) {
                     secureLogger.debug("Orgnr not found in ereg ${it.sakenGjelder}, saksdata id ${it.id}")
+                    errorsFound++
                 }
             } else {
                 secureLogger.debug("Invalid sakenGjelder nr ${it.sakenGjelder}, saksdata id ${it.id}")
+                errorsFound++
             }
         }
+        secureLogger.debug("Number of invalid values found: $errorsFound")
     }
 }

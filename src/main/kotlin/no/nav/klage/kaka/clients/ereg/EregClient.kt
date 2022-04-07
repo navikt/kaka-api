@@ -20,7 +20,7 @@ class EregClient(
     @Value("\${spring.application.name}")
     lateinit var applicationName: String
 
-    fun hentOrganisasjon(orgnummer: String): Organisasjon? {
+    private fun hentOrganisasjon(orgnummer: String): Organisasjon? {
         return kotlin.runCatching {
             eregWebClient.get()
                 .uri { uriBuilder ->
