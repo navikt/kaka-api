@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.repositories
 
-import no.nav.klage.kaka.domain.SakenGjelderView
 import no.nav.klage.kaka.domain.Saksdata
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
