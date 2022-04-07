@@ -17,3 +17,5 @@ ROLE_ADMIN: cd78b8e8-73a3-4fb6-8234-7bebb5e5b9e9
 
 PDL_BASE_URL: https://pdl-api.prod-fss-pub.nais.io/graphql
 PDL_SCOPE: prod-fss.pdl.pdl-api
+
+EREG_URL: https://api-gw.oera.no/ereg/api
