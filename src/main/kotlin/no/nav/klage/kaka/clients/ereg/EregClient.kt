@@ -38,7 +38,7 @@ class EregClient(
         }.fold(
             onSuccess = { it },
             onFailure = {
-                null
+                throw it
             }
 
         )
