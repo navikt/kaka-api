@@ -32,23 +32,23 @@ class AdminService(
             if (it.avsluttetAvSaksbehandler != null) {
                 if (it.sakenGjelder?.length == 11) {
                     if (!isValidFnrOrDnr(it.sakenGjelder!!)) {
-                        errorString += "Invalid fnr ${it.sakenGjelder}, saksdata id ${it.id}, - "
+                        errorString += "Invalid fnr ${it.sakenGjelder}, saksdata id ${it.id}, saksbehandler ${it.utfoerendeSaksbehandler} - "
                         errorsFound++
                     } else if (!pdlFacade.personExists(it.sakenGjelder!!)) {
-                        errorString += "Fnr not found in pdl ${it.sakenGjelder}, saksdata id ${it.id}, - "
+                        errorString += "Fnr not found in pdl ${it.sakenGjelder}, saksdata id ${it.id}, saksbehandler ${it.utfoerendeSaksbehandler} - "
                         errorsFound++
                     }
 
                 } else if (it.sakenGjelder?.length == 9) {
                     if (!isValidOrgnr(it.sakenGjelder!!)) {
-                        errorString += "Invalid orgnr ${it.sakenGjelder}, saksdata id ${it.id}, - "
+                        errorString += "Invalid orgnr ${it.sakenGjelder}, saksdata id ${it.id}, saksbehandler ${it.utfoerendeSaksbehandler} - "
                         errorsFound++
                     } else if (eregClient.organisasjonExists(it.sakenGjelder!!)) {
-                        errorString += "Orgnr not found in ereg ${it.sakenGjelder}, saksdata id ${it.id}, - "
+                        errorString += "Orgnr not found in ereg ${it.sakenGjelder}, saksdata id ${it.id}, saksbehandler ${it.utfoerendeSaksbehandler} - "
                         errorsFound++
                     }
                 } else {
-                    errorString += "Invalid sakenGjelder nr ${it.sakenGjelder}, saksdata id ${it.id}, - "
+                    errorString += "Invalid sakenGjelder nr ${it.sakenGjelder}, saksdata id ${it.id}, saksbehandler ${it.utfoerendeSaksbehandler} - "
                     errorsFound++
                 }
             }
