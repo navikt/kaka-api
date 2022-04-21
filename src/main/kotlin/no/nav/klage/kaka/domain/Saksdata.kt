@@ -215,6 +215,7 @@ class Saksdata(
         return validationErrors
     }
 
+    //TODO: Gjør en refaktorering, disse sjekkene må også gjøres mot pdl og ereg.
     private fun getSakenGjelderError(sakenGjelder: String?): InvalidProperty? {
         if (sakenGjelder == null) {
             return createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)

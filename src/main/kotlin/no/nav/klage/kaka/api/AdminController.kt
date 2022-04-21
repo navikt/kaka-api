@@ -32,14 +32,6 @@ class AdminController(
         adminService.logInvalidSakenGjelder()
     }
 
-    @GetMapping("/organisasjon/{orgnr}")
-    fun organisasjon(
-        @PathVariable("orgnr") orgnr: String
-    ): Boolean {
-        krevAdminTilgang()
-        return adminService.getEregOrg(orgnr)
-    }
-
     private fun krevAdminTilgang() {
         val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
         if (!roller.contains(Role.ROLE_ADMIN)) {

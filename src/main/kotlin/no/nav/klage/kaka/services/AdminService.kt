@@ -56,8 +56,4 @@ class AdminService(
         secureLogger.debug("Errors found: $errorString")
         secureLogger.debug("Number of invalid values found: $errorsFound")
     }
-
-    fun getEregOrg(organisasjonsnummer: String): Boolean {
-        return eregClient.organisasjonExists(organisasjonsnummer)
-    }
 }
