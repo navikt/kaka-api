@@ -9,6 +9,7 @@ import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.getLogger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -36,7 +37,5 @@ class AdminController(
         if (!roller.contains(Role.ROLE_ADMIN)) {
             throw MissingTilgangException("Not an admin")
         }
-
     }
-
 }

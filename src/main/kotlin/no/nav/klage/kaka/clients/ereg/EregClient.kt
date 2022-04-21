@@ -1,21 +1,26 @@
 package no.nav.klage.kaka.clients.ereg
 
 
-
 import brave.Tracer
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import no.nav.klage.kaka.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import org.springframework.web.reactive.function.client.bodyToMono
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
 @Component
 class EregClient(
     private val eregWebClient: WebClient,
     private val tracer: Tracer
 ) {
+
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger = getLogger(javaClass.enclosingClass)
+    }
 
     @Value("\${spring.application.name}")
     lateinit var applicationName: String
@@ -37,10 +42,18 @@ class EregClient(
                 .block()
         }.fold(
             onSuccess = { it },
-            onFailure = {
-                throw it
+            onFailure = { error ->
+                when (error) {
+                    is WebClientResponseException.NotFound -> {
+                        logger.debug("$orgnummer not found in ereg")
+                        null
+                    }
+                    else -> {
+                        logger.debug("Error from ereg: $error")
+                        null
+                    }
+                }
             }
-
         )
     }
 
@@ -48,8 +61,6 @@ class EregClient(
         return hentOrganisasjon(orgnummer) != null
     }
 }
-
-
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)

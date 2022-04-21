@@ -18,7 +18,7 @@ class EregClientConfiguration(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @Value("\${EREG_APIKEY}")
+    @Value("\${EREG_SERVICES_KAKA_APIKEY}")
     private lateinit var apiKey: String
 
     @Value("\${EREG_URL}")

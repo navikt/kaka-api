@@ -84,6 +84,7 @@ spec:
     - secret: sts-apikey
     - secret: pdl-apikey
     - secret: ereg
+    - secret: ereg-services
   resources:
     limits:
       cpu: 2000m
