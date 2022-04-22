@@ -60,7 +60,24 @@ class EregClient(
     fun organisasjonExists(orgnummer: String): Boolean {
         return hentOrganisasjon(orgnummer) != null
     }
+
+    fun getOrganisasjon(orgnummer: String): Organisasjon? {
+        return eregWebClient.get()
+            .uri { uriBuilder ->
+                uriBuilder
+                    .path("/v1/organisasjon/{orgnummer}")
+                    .queryParam("inkluderHierarki", false)
+                    .build(orgnummer)
+            }
+            .accept(MediaType.APPLICATION_JSON)
+            .header("Nav-Call-Id", tracer.currentSpan().context().traceIdString())
+            .header("Nav-Consumer-Id", applicationName)
+            .retrieve()
+            .bodyToMono<Organisasjon>()
+            .block()
+    }
 }
+
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)

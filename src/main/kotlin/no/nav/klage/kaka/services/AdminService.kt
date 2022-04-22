@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.clients.ereg.EregClient
+import no.nav.klage.kaka.clients.ereg.Organisasjon
 import no.nav.klage.kaka.clients.pdl.PdlFacade
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.getLogger
@@ -55,5 +56,9 @@ class AdminService(
         }
         secureLogger.debug("Errors found: $errorString")
         secureLogger.debug("Number of invalid values found: $errorsFound")
+    }
+
+    fun getOrganisasjon(orgnr: String): Organisasjon? {
+        return eregClient.getOrganisasjon(orgnr)
     }
 }
