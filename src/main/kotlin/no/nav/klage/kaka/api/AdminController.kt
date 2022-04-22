@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.api
 
 import no.nav.klage.kaka.clients.azure.AzureGateway
-import no.nav.klage.kaka.clients.ereg.Organisasjon
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.domain.kodeverk.Role
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -10,7 +9,6 @@ import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.getLogger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -38,14 +36,5 @@ class AdminController(
         if (!roller.contains(Role.ROLE_ADMIN)) {
             throw MissingTilgangException("Not an admin")
         }
-    }
-
-    //Temporary for debugging in prod
-    @GetMapping("/organisasjon/{orgnr}")
-    fun getOrganisasjon(
-        @PathVariable("orgnr") orgnr: String
-    ): Organisasjon? {
-        krevAdminTilgang()
-        return adminService.getOrganisasjon(orgnr)
     }
 }

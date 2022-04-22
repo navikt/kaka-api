@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.clients.ereg.EregClient
-import no.nav.klage.kaka.clients.ereg.Organisasjon
 import no.nav.klage.kaka.clients.pdl.PdlFacade
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.getLogger
@@ -28,8 +27,8 @@ class AdminService(
         var errorsFound = 0
         var errorString = ""
         secureLogger.debug("Getting all invalid registered sakenGjelder values.")
-        secureLogger.debug("Size: " +results.size)
-        results.forEach{
+        secureLogger.debug("Size: " + results.size)
+        results.forEach {
             if (it.avsluttetAvSaksbehandler != null) {
                 if (it.sakenGjelder?.length == 11) {
                     if (!isValidFnrOrDnr(it.sakenGjelder!!)) {
@@ -44,7 +43,7 @@ class AdminService(
                     if (!isValidOrgnr(it.sakenGjelder!!)) {
                         errorString += "Invalid orgnr ${it.sakenGjelder}, saksdata id ${it.id}, saksbehandler ${it.utfoerendeSaksbehandler} - "
                         errorsFound++
-                    } else if (eregClient.organisasjonExists(it.sakenGjelder!!)) {
+                    } else if (!eregClient.organisasjonExists(it.sakenGjelder!!)) {
                         errorString += "Orgnr not found in ereg ${it.sakenGjelder}, saksdata id ${it.id}, saksbehandler ${it.utfoerendeSaksbehandler} - "
                         errorsFound++
                     }
@@ -56,9 +55,5 @@ class AdminService(
         }
         secureLogger.debug("Errors found: $errorString")
         secureLogger.debug("Number of invalid values found: $errorsFound")
-    }
-
-    fun getOrganisasjon(orgnr: String): Organisasjon? {
-        return eregClient.getOrganisasjon(orgnr)
     }
 }
