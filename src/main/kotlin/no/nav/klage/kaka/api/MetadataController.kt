@@ -2,10 +2,9 @@ package no.nav.klage.kaka.api
 
 
 import io.swagger.annotations.Api
-import no.nav.klage.kaka.api.view.EnhetKodeDto
 import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.clients.azure.AzureGateway
-import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
+import no.nav.klage.kaka.services.MetadataService
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
@@ -22,6 +21,7 @@ class MetadataController(
     private val tokenUtil: TokenUtil,
     private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
+    private val metadataService: MetadataService,
 ) {
 
     companion object {
@@ -35,21 +35,15 @@ class MetadataController(
 
         return UserData(
             ident = tokenUtil.getIdent(),
-            navn = azureGateway.getDataOmInnloggetSaksbehandler().toNavn(),
-            ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.let {
-                EnhetKodeDto(
-                    id = it.navn,
-                    navn = it.beskrivelse,
-                )
-            },
+            navn = azureGateway.getNavnInnloggetSaksehandler().toNavnView(),
+            ansattEnhet = metadataService.getInnloggetSaksbehandlerEnhetKodeDto(),
             roller = roller.map { it.name }
         )
     }
 
-    private fun SaksbehandlerPersonligInfo.toNavn(): UserData.Navn =
-        UserData.Navn(
-            fornavn = this.fornavn,
-            etternavn = this.etternavn,
-            sammensattNavn = this.sammensattNavn,
+    fun AzureGateway.Navn.toNavnView(): UserData.Navn {
+        return UserData.Navn(
+            fornavn = fornavn, etternavn = etternavn, sammensattNavn = sammensattNavn
         )
+    }
 }
