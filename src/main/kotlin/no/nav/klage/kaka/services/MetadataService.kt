@@ -11,7 +11,7 @@ class MetadataService(
     private val azureGateway: AzureGateway,
 ) {
     fun getInnloggetSaksbehandlerEnhetKodeDto(): EnhetKodeDto {
-        val enhet = norg2Client.hentEnhet(azureGateway.getStreetAdressInnloggetSaksbehandler())!!
+        val enhet = norg2Client.getEnhet(azureGateway.getStreetAddressInnloggetSaksbehandler())!!
         return EnhetKodeDto(
             id = enhet.enhetNr,
             navn = enhet.navn,

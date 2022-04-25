@@ -18,7 +18,7 @@ class Norg2Client(
     @Value("\${spring.application.name}")
     lateinit var applicationName: String
 
-    fun hentEnhet(enhetsnummer: String): Norg2Enhet? {
+    fun getEnhet(enhetsnummer: String): Norg2Enhet? {
         return kotlin.runCatching {
             norg2WebClient.get()
                 .uri { uriBuilder ->

@@ -52,7 +52,7 @@ class AzureGateway(
         )
     }
 
-    fun getStreetAdressInnloggetSaksbehandler(): String {
+    fun getStreetAddressInnloggetSaksbehandler(): String {
         val data = try {
             microsoftGraphClient.getInnloggetSaksbehandler()
         } catch (e: Exception) {
@@ -108,8 +108,8 @@ class AzureGateway(
             ?: throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetNr")
 
     data class Navn(
-        val fornavn: String? = null,
-        val etternavn: String? = null,
-        val sammensattNavn: String?,
+        val fornavn: String,
+        val etternavn: String,
+        val sammensattNavn: String,
     )
 }
