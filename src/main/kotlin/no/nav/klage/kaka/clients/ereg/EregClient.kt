@@ -45,11 +45,11 @@ class EregClient(
             onFailure = { error ->
                 when (error) {
                     is WebClientResponseException.NotFound -> {
-                        logger.debug("$orgnummer not found in ereg")
+                        logger.error("$orgnummer not found in ereg")
                         null
                     }
                     else -> {
-                        logger.debug("Error from ereg: $error")
+                        logger.error("Error from ereg: $error")
                         null
                     }
                 }
