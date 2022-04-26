@@ -20,4 +20,4 @@ PDL_SCOPE: prod-fss.pdl.pdl-api
 
 EREG_URL: https://api-gw.oera.no/ereg-services/api
 
-NORG2_BASE_URL: https://norg2.dev-fss-pub.nais.io/norg2/api/v1
+NORG2_BASE_URL: https://norg2.prod-fss-pub.nais.io/norg2/api/v1
