@@ -43,7 +43,7 @@ class Norg2Client(
         }.fold(
             onSuccess = { it },
             onFailure = {
-                secureLogger.error("Error from Norg2: $it")
+                logger.error("Error from Norg2.", it)
                 throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetsnummer, error: $it")
             }
         )
