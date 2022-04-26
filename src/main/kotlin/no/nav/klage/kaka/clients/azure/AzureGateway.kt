@@ -52,6 +52,30 @@ class AzureGateway(
         )
     }
 
+    fun getStreetAddressInnloggetSaksbehandler(): String {
+        val data = try {
+            microsoftGraphClient.getInnloggetSaksbehandler()
+        } catch (e: Exception) {
+            logger.error("Failed to call getInnloggetSaksbehandler", e)
+            throw e
+        }
+        return data.streetAddress
+    }
+
+    fun getNavnInnloggetSaksehandler(): Navn {
+        val data = try {
+            microsoftGraphClient.getInnloggetSaksbehandler()
+        } catch (e: Exception) {
+            logger.error("Failed to call getInnloggetSaksbehandler", e)
+            throw e
+        }
+        return Navn(
+            data.givenName,
+            data.surname,
+            data.displayName,
+        )
+    }
+
     fun getDataOmInnloggetSaksbehandler(): SaksbehandlerPersonligInfo {
         val data = try {
             microsoftGraphClient.getInnloggetSaksbehandler()
@@ -83,4 +107,9 @@ class AzureGateway(
         Enhet.values().find { it.navn == enhetNr }
             ?: throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetNr")
 
+    data class Navn(
+        val fornavn: String,
+        val etternavn: String,
+        val sammensattNavn: String,
+    )
 }
