@@ -3,6 +3,7 @@ package no.nav.klage.kaka.clients.norg2
 import brave.Tracer
 import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
 import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kaka.util.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -19,6 +20,7 @@ class Norg2Client(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
     }
 
     @Value("\${spring.application.name}")
@@ -41,8 +43,8 @@ class Norg2Client(
         }.fold(
             onSuccess = { it },
             onFailure = {
-                logger.error("Error from Norg2: $it")
-                throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetsnummer")
+                secureLogger.error("Error from Norg2: $it")
+                throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetsnummer, error: $it")
             }
         )
     }
