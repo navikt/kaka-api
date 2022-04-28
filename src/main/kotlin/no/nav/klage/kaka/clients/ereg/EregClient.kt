@@ -4,6 +4,7 @@ package no.nav.klage.kaka.clients.ereg
 import brave.Tracer
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kaka.util.getSecureLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -20,6 +21,7 @@ class EregClient(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
+        private val secureLogger = getSecureLogger()
     }
 
     @Value("\${spring.application.name}")
@@ -45,11 +47,11 @@ class EregClient(
             onFailure = { error ->
                 when (error) {
                     is WebClientResponseException.NotFound -> {
-                        logger.debug("$orgnummer not found in ereg")
+                        logger.error("$orgnummer not found in ereg", error)
                         null
                     }
                     else -> {
-                        logger.debug("Error from ereg: $error")
+                        logger.error("Error from ereg.", error)
                         null
                     }
                 }

@@ -44,7 +44,6 @@ class AxsysClient(
                 .retrieve()
                 .bodyToMono<Tilganger>()
                 .block() ?: throw RuntimeException("Tilganger could not be fetched")
-
             tilganger
         } catch (notFound: WebClientResponseException.NotFound) {
             logger.warn("Got a 404 fetching tilganger for saksbehandler {}, throwing exception", navIdent, notFound)
