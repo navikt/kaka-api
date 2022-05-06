@@ -12,6 +12,8 @@ spec:
       labels:
         job-name: {{jobname}}
         app: {{app}}
+      annotations:
+        linkerd.io/inject: "false"  
     spec:
       imagePullSecrets:
         - name: gpr-credentials
