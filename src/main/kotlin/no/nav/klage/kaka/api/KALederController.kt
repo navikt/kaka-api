@@ -6,6 +6,7 @@ import no.nav.klage.kaka.api.view.TotalResponse
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_LEDERSTATISTIKK
+import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KLAGE_LEDER
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportService
 import no.nav.klage.kaka.util.RolleMapper
@@ -114,8 +115,8 @@ class KALederController(
 
     private fun validateIsKALeder() {
         val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
-        if (ROLE_KAKA_LEDERSTATISTIKK !in roles) {
-            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KAKA_LEDERSTATISTIKK")
+        if (ROLE_KLAGE_LEDER !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KLAGE_LEDER")
         }
     }
 
