@@ -72,7 +72,7 @@ class KALederController(
                     "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
         )
 
-        validateIsKALeder()
+        validateIsKakaLeder()
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
         if (enhet.navn != enhetsnummer) {
@@ -100,7 +100,7 @@ class KALederController(
     ): List<Saksbehandler> {
         logger.debug("getSaksbehandlereForEnhet() called. enhetsnummer param = $enhetsnummer")
 
-        validateIsKALeder()
+        validateIsKakaLeder()
 
         val saksbehandlerIdentList = azureGateway.getAnsatteIEnhet(enhetsnummer)
 
@@ -113,6 +113,13 @@ class KALederController(
     }
 
     private fun validateIsKALeder() {
+        val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        if (ROLE_KAKA_LEDERSTATISTIKK !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KAKA_LEDERSTATISTIKK")
+        }
+    }
+
+    private fun validateIsKakaLeder() {
         val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
         if (ROLE_KAKA_LEDERSTATISTIKK !in roles) {
             throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KAKA_LEDERSTATISTIKK")
