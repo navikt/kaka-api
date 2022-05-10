@@ -337,8 +337,8 @@ class SaksdataService(
             }
             return true
         } catch (e: Exception) {
-            logger.error("Could not verify access to person. See secure logs.")
-            secureLogger.error("Could not verify access to person", e)
+            logger.warn("Could not verify access to person. See secure logs.")
+            secureLogger.warn("Could not verify access to person", e)
             return false
         }
     }
