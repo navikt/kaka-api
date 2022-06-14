@@ -13,3 +13,14 @@ envs:
     value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
   - name: JAVA_OPTS
     value: "-Xms512m -Xmx2048m"
+
+groups:
+  - {{ROLE_KAKA_KVALITETSVURDERING}}
+  - {{ROLE_KLAGE_LEDER}}
+  - {{ROLE_KAKA_KVALITETSTILBAKEMELDINGER}}
+  - {{ROLE_KLAGE_EGEN_ANSATT}}
+  - {{ROLE_KLAGE_FORTROLIG}}
+  - {{ROLE_KLAGE_STRENGT_FORTROLIG}}
+  - {{ROLE_KAKA_TOTALSTATISTIKK}}
+  - {{ROLE_KAKA_LEDERSTATISTIKK}}
+  - {{ROLE_ADMIN}}

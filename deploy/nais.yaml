@@ -54,6 +54,10 @@ spec:
       tenant: {{tenant}}
       allowAllUsers: true
       claims:
+        groups:
+        {{#each groups as |group|}}
+           - id: {{group}}
+        {{/each}}
         extra:
           - NAVident
           - azp_name
