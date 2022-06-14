@@ -33,7 +33,7 @@ class MetadataController(
     fun getUserData(): UserData {
         logger.debug("roller fra token: " + tokenUtil.getGroups())
 
-        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
 
         return UserData(
             ident = tokenUtil.getIdent(),

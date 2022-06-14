@@ -133,7 +133,7 @@ class ExportController(
             kommentarer
         )
 
-        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
         if (!isAllowedToReadKvalitetstilbakemeldinger(roller)) {
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not allowed to read kvalitetstilbakemeldinger")
         }

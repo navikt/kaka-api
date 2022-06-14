@@ -2,7 +2,6 @@ package no.nav.klage.kaka.services
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -19,14 +18,13 @@ internal class SaksdataServiceTest {
 
     val saksdataRepository = mockk<SaksdataRepository>()
     val kvalitetsvurderingService = mockk<KvalitetsvurderingService>()
-    val axsysGateway = mockk<AxsysGateway>()
 
     val saksdataService =
         SaksdataService(
             saksdataRepository,
             mockk(),
             kvalitetsvurderingService,
-            axsysGateway,
+            mockk(),
             mockk(),
             mockk(),
             mockk(),

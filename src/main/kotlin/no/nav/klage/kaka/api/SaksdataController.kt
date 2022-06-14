@@ -2,7 +2,6 @@ package no.nav.klage.kaka.api
 
 import io.swagger.annotations.Api
 import no.nav.klage.kaka.api.view.*
-import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_KVALITETSVURDERING
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -27,7 +26,6 @@ import java.util.*
 class SaksdataController(
     private val saksdataService: SaksdataService,
     private val tokenUtil: TokenUtil,
-    private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
 ) {
     companion object {
@@ -77,7 +75,7 @@ class SaksdataController(
             logger
         )
 
-        val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roles = rolleMapper.toRoles(tokenUtil.getGroups())
         if (ROLE_KAKA_KVALITETSVURDERING !in roles) {
             throw MissingTilgangException("User does not have access to create saksdata")
         }
