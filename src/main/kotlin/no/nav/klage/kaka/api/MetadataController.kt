@@ -31,8 +31,6 @@ class MetadataController(
 
     @GetMapping("/userdata", produces = ["application/json"])
     fun getUserData(): UserData {
-        logger.debug("roller fra token: " + tokenUtil.getGroups())
-
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
 
         return UserData(
