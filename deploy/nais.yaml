@@ -55,8 +55,8 @@ spec:
       allowAllUsers: true
       claims:
         groups:
-        {{#each groups as |group|}}
-          - id: {{group}}
+        {{#each groups}}
+          - id: {{value}}
         {{/each}}
         extra:
           - NAVident
@@ -108,8 +108,10 @@ spec:
     - name: SPRING_PROFILES_ACTIVE
       value: {{springProfile}}
   {{#each envs}}
-    - name: {{name }}
+    - name: {{name}}
       value: {{value}}
   {{/each}}
-    - name: JAVA_OPTS
-      value: "-Xms512m -Xmx2048m"
+  {{#each groups}}
+    - name: {{name}}
+      value: {{value}}
+  {{/each}}
