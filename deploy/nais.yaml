@@ -55,15 +55,9 @@ spec:
       allowAllUsers: true
       claims:
         groups:
-          - id: {{ROLE_KAKA_KVALITETSVURDERING}}
-          - id: {{ROLE_KLAGE_LEDER}}
-          - id: {{ROLE_KAKA_KVALITETSTILBAKEMELDINGER}}
-          - id: {{ROLE_KLAGE_EGEN_ANSATT}}
-          - id: {{ROLE_KLAGE_FORTROLIG}}
-          - id: {{ROLE_KLAGE_STRENGT_FORTROLIG}}
-          - id: {{ROLE_KAKA_TOTALSTATISTIKK}}
-          - id: {{ROLE_KAKA_LEDERSTATISTIKK}}
-          - id: {{ROLE_ADMIN}}
+        {{#each groups as |group|}}
+          - id: {{group}}
+        {{/each}}
         extra:
           - NAVident
           - azp_name
