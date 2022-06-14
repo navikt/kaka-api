@@ -56,7 +56,7 @@ spec:
       claims:
         groups:
         {{#each groups as |group|}}
-           - id: {{group}}
+          - id: {{group}}
         {{/each}}
         extra:
           - NAVident
