@@ -114,14 +114,14 @@ class KALederController(
     }
 
     private fun validateIsKALeder() {
-        val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roles = rolleMapper.toRoles(tokenUtil.getGroups())
         if (ROLE_KLAGE_LEDER !in roles) {
             throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KLAGE_LEDER")
         }
     }
 
     private fun validateIsKakaLeder() {
-        val roles = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roles = rolleMapper.toRoles(tokenUtil.getGroups())
         if (ROLE_KAKA_LEDERSTATISTIKK !in roles) {
             throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KAKA_LEDERSTATISTIKK")
         }
