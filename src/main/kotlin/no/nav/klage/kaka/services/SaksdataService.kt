@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.services
 
-import no.nav.klage.kaka.clients.axsys.AxsysGateway
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
@@ -12,6 +11,7 @@ import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.RolleMapper
+import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.*
@@ -29,8 +29,8 @@ class SaksdataService(
     private val saksdataRepository: SaksdataRepository,
     private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
     private val kvalitetsvurderingService: KvalitetsvurderingService,
-    private val axsysGateway: AxsysGateway,
     private val azureGateway: AzureGateway,
+    private val tokenUtil: TokenUtil,
     private val rolleMapper: RolleMapper,
     private val pdlFacade: PdlFacade,
     private val egenAnsattService: EgenAnsattService,
@@ -217,7 +217,7 @@ class SaksdataService(
         return saksdata.get().also { s ->
             s.verifyReadAccess(
                 innloggetIdent = innloggetSaksbehandler,
-                roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler()),
+                roller = rolleMapper.toRoles(tokenUtil.getGroups()),
                 ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.navn
             )
         }
@@ -260,7 +260,7 @@ class SaksdataService(
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): List<Saksdata> {
-        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
 
         val kanBehandleStrengtFortrolig = ROLE_KLAGE_STRENGT_FORTROLIG in roller
         val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller

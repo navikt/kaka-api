@@ -11,3 +11,23 @@ db_ha: true
 envs:
   - name: JAVA_OPTS
     value: "-Xms1024m -Xmx4096m"
+
+groups:
+  - name: ROLE_KAKA_KVALITETSVURDERING
+    value: 3cc106d4-1b0d-4bbc-b918-8ec5213f138b
+  - name: ROLE_KLAGE_LEDER
+    value: e9de217a-7244-45ac-8a06-1994905d7964
+  - name: ROLE_KAKA_KVALITETSTILBAKEMELDINGER
+    value: ae3f82ff-c1b9-4e59-93c5-1d8c3b860ba6
+  - name: ROLE_KLAGE_EGEN_ANSATT
+    value: b14cf640-30bc-4420-b34c-26488c15e71e
+  - name: ROLE_KLAGE_FORTROLIG
+    value: 94f37fa2-94c9-49f7-b4df-e6be7c0d1082
+  - name: ROLE_KLAGE_STRENGT_FORTROLIG
+    value: ac0f28e8-115e-4972-b063-162366bb9399
+  - name: ROLE_KAKA_TOTALSTATISTIKK
+    value: 596cbd6f-bc5c-4a4c-bf9e-9f734d556051
+  - name: ROLE_KAKA_LEDERSTATISTIKK
+    value: d399dc50-0e80-47fd-8b0e-4118c0fc5c9b
+  - name: ROLE_ADMIN
+    value: cd78b8e8-73a3-4fb6-8234-7bebb5e5b9e9

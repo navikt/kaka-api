@@ -31,7 +31,7 @@ class MetadataController(
 
     @GetMapping("/userdata", produces = ["application/json"])
     fun getUserData(): UserData {
-        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
 
         return UserData(
             ident = tokenUtil.getIdent(),

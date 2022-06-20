@@ -54,6 +54,10 @@ spec:
       tenant: {{tenant}}
       allowAllUsers: true
       claims:
+        groups:
+        {{#each groups}}
+          - id: {{value}}
+        {{/each}}
         extra:
           - NAVident
           - azp_name
@@ -104,6 +108,10 @@ spec:
     - name: SPRING_PROFILES_ACTIVE
       value: {{springProfile}}
   {{#each envs}}
-    - name: {{name }}
+    - name: {{name}}
+      value: {{value}}
+  {{/each}}
+  {{#each groups}}
+    - name: {{name}}
       value: {{value}}
   {{/each}}

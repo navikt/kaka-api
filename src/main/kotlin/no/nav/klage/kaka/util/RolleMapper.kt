@@ -3,7 +3,6 @@ package no.nav.klage.kaka.util
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.domain.kodeverk.Role
 import no.nav.klage.kaka.domain.kodeverk.Role.*
-import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerRolle
 import no.nav.klage.kodeverk.klageenheter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -39,10 +38,10 @@ class RolleMapper(
         klageLederRole to ROLE_KLAGE_LEDER,
     )
 
-    fun toRoles(roleIdList: List<SaksbehandlerRolle>): Set<Role> {
-        val roles = roleIdList.mapNotNull { rolleMap[it.id] }.toMutableSet()
+    fun toRoles(roleIdList: List<String>): Set<Role> {
+        val roles = roleIdList.mapNotNull { rolleMap[it] }.toMutableSet()
 
-        //TODO: Remove all special handling after 2022-04-01
+        //TODO: Review all special handling after 2022-04-01
 
         //give FE old names for roles for compatibility.
         if (ROLE_KAKA_KVALITETSVURDERING in roles) {

@@ -66,7 +66,7 @@ class SaksdataListController(
         )
         validateIsSameUser(navIdent)
 
-        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
         if (!isAllowedToReadKvalitetstilbakemeldinger(roller)) {
             throw MissingTilgangException("user $navIdent is not allowed to read kvalitetstilbakemeldinger")
         }
@@ -105,7 +105,7 @@ class SaksdataListController(
         )
         validateIsSameUser(navIdent)
 
-        val roller = rolleMapper.toRoles(azureGateway.getRollerForInnloggetSaksbehandler())
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
         if (!isAllowedToReadKvalitetstilbakemeldinger(roller)) {
             throw MissingTilgangException("user $navIdent is not allowed to read kvalitetstilbakemeldinger")
         }
