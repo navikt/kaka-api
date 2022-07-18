@@ -218,31 +218,6 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
         return privateGetFinishedAsRawDataWithoutEnheter(saksdataList = saksdataList)
     }
 
-
-    /**
-     * Return all 'finished' saksdata for vedtaksinstansleder (anonymized (no fnr or navIdent)) based on given year
-     */
-    fun getFinishedAsRawDataByYearForVedtaksinstansleder(
-        year: Year,
-        vedtaksinstansEnhet: Enhet,
-        mangelfullt: List<String>,
-        kommentarer: List<String>,
-    ): List<AnonymizedFinishedVurderingWithoutEnheter> {
-        val fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay()
-        val toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX)
-
-        val saksdataList =
-            saksdataRepository.findForVedtaksinstansleder(
-                fromDateTime = fromDateTime,
-                toDateTime = toDateTime,
-                vedtaksinstansEnhet = vedtaksinstansEnhet.navn,
-                mangelfullt = mangelfullt,
-                kommentarer = kommentarer,
-            )
-
-        return privateGetFinishedAsRawDataWithoutEnheter(saksdataList = saksdataList)
-    }
-
     /**
      * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and saksbehandler
      */
@@ -258,70 +233,6 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 saksbehandler = saksbehandler,
             )
         return privateGetFinishedAsRawData(saksdataList = saksdataList)
-    }
-
-    /**
-     * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year
-     */
-    fun getFinishedAsRawDataByYear(year: Year): List<AnonymizedFinishedVurdering> {
-        val fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay()
-        val toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX)
-
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                fromDateTime = fromDateTime,
-                toDateTime = toDateTime
-            )
-
-        return privateGetFinishedAsRawData(saksdataList = saksdataList)
-    }
-
-    /**
-     * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given year and saksbehandler
-     */
-    fun getFinishedAsRawDataByYearAndSaksbehandler(
-        year: Year,
-        saksbehandler: String
-    ): List<AnonymizedFinishedVurdering> {
-        val fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay()
-        val toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX)
-
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
-                fromDateTime = fromDateTime,
-                toDateTime = toDateTime,
-                saksbehandler = saksbehandler,
-            )
-
-        return privateGetFinishedAsRawData(saksdataList = saksdataList)
-    }
-
-    /**
-     * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given year
-     */
-    fun getUnfinishedAsRawDataByYear(year: Year): List<AnonymizedUnfinishedVurdering> {
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX)
-            )
-
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
-    }
-
-    /**
-     * Return 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given year and saksbehandler
-     */
-    fun getUnfinishedAsRawDataByYearAndSaksbehandler(
-        year: Year,
-        saksbehandler: String
-    ): List<AnonymizedUnfinishedVurdering> {
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
-                toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
-                saksbehandler = saksbehandler,
-            )
-
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
     }
 
     /**

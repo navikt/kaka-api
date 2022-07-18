@@ -19,41 +19,6 @@ import java.time.Year
 internal class ExportServiceTest {
 
     @Test
-    fun exportRawData() {
-        val saksdataRepository = mockk<SaksdataRepository>()
-
-        every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                any(),
-                any()
-            )
-        } returns getSaksdata(amount = 10)
-
-        val exportService = ExportService(saksdataRepository)
-
-        val data = exportService.getFinishedAsRawDataByYear(Year.now())
-
-//        println(data)
-    }
-
-    @Test
-    fun exportUnfinishedRawData() {
-        val saksdataRepository = mockk<SaksdataRepository>()
-
-        every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                any()
-            )
-        } returns getSaksdata(amount = 10)
-
-        val exportService = ExportService(saksdataRepository)
-
-        val data = exportService.getUnfinishedAsRawDataByYear(Year.now())
-
-//        println(data)
-    }
-
-    @Test
     fun generateExcelFileAsLeder() {
         val saksdataRepository = mockk<SaksdataRepository>()
 
