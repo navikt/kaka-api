@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'kafka-aiven/**'
+      - '.github/dependabot.yml'
 
 env:
   IMAGE: ghcr.io/${{ github.repository }}/kaka-api:${{ github.sha }}
