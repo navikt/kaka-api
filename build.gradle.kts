@@ -9,7 +9,7 @@ val springSleuthVersion = "3.0.4"
 val tokenValidationVersion = "2.1.2"
 val archunitVersion = "0.23.1"
 val testContainersVersion = "1.17.3"
-val mockkVersion = "1.10.5"
+val mockkVersion = "1.12.5"
 val apachePoiVersion = "5.2.2"
 
 val githubUser: String by project
