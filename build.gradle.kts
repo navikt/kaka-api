@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val logstashVersion = "6.6"
+val logstashVersion = "7.2"
 val springVersion = "2.5.5"
 val kotlinVersion = "1.5.31"
 val problemSpringWebStartVersion = "0.26.2"
