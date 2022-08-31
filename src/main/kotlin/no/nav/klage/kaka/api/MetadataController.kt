@@ -1,7 +1,7 @@
 package no.nav.klage.kaka.api
 
 
-import io.swagger.annotations.Api
+import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.services.MetadataService
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@Api(tags = ["kaka-api:metadata"])
+@Tag(name = "kaka-api:metadata")
 @Unprotected
 @RequestMapping("/metadata")
 class MetadataController(

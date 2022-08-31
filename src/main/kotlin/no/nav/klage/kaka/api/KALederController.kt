@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api
 
-import io.swagger.annotations.Api
+import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.Saksbehandler
 import no.nav.klage.kaka.api.view.TotalResponse
 import no.nav.klage.kaka.clients.azure.AzureGateway
@@ -25,7 +25,7 @@ import java.time.Year
 import java.time.YearMonth
 
 @RestController
-@Api(tags = ["kaka-api:kaka-leder"])
+@Tag(name = "kaka-api:kaka-leder")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 class KALederController(
     private val exportService: ExportService,

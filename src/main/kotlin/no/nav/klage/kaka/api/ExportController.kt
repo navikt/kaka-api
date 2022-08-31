@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api
 
-import io.swagger.annotations.Api
+import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.TotalResponse
 import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheter
 import no.nav.klage.kaka.clients.azure.AzureGateway
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@Api(tags = ["kaka-api:kaka-export"])
+@Tag(name = "kaka-api:kaka-export")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 class ExportController(
     private val exportService: ExportService,

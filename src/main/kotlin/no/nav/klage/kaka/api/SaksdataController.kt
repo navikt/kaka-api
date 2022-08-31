@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api
 
-import io.swagger.annotations.Api
+import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_KVALITETSVURDERING
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@Api(tags = ["kaka-api:saksdata"])
+@Tag(name = "kaka-api:saksdata")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 @RequestMapping("/saksdata")
 class SaksdataController(
