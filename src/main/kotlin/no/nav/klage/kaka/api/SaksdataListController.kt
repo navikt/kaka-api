@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api
 
-import io.swagger.annotations.Api
+import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.SaksdataListView
 import no.nav.klage.kaka.api.view.toSaksdataSearchHitView
 import no.nav.klage.kaka.clients.azure.AzureGateway
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@Api(tags = ["kaka-api:saksdata"])
+@Tag(name = "kaka-api:saksdata")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 class SaksdataListController(
     private val tokenUtil: TokenUtil,
@@ -23,7 +23,7 @@ class SaksdataListController(
     private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
 
-) {
+    ) {
 
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")

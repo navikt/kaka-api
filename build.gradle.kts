@@ -4,13 +4,13 @@ val logstashVersion = "7.2"
 val springVersion = "2.5.5"
 val kotlinVersion = "1.5.31"
 val problemSpringWebStartVersion = "0.27.0"
-val springFoxVersion = "3.0.0"
 val springSleuthVersion = "3.0.4"
 val tokenValidationVersion = "2.1.4"
 val archunitVersion = "0.23.1"
 val testContainersVersion = "1.17.3"
 val mockkVersion = "1.12.7"
 val apachePoiVersion = "5.2.2"
+val springDocVersion = "1.6.11"
 
 val githubUser: String by project
 val githubPassword: String by project
@@ -56,7 +56,7 @@ dependencies {
     implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
     implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
     implementation("org.zalando:problem-spring-web-starter:$problemSpringWebStartVersion")
-    implementation("io.springfox:springfox-boot-starter:$springFoxVersion")
+    implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
     implementation("org.flywaydb:flyway-core")
     implementation("org.postgresql:postgresql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

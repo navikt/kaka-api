@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api
 
-import io.swagger.annotations.Api
+import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.KabalSaksdataInput
 import no.nav.klage.kaka.api.view.KabalView
 import no.nav.klage.kaka.api.view.ValidationErrors
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@Api(tags = ["kaka-api:kabal-kvalitet"])
+@Tag(name = "kaka-api:kabal-kvalitet")
 @ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kabal")
 class KabalKvalitetsvurderingController(
