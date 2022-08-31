@@ -1,10 +1,9 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "7.2"
-val springVersion = "2.5.5"
 val kotlinVersion = "1.5.31"
 val problemSpringWebStartVersion = "0.27.0"
-val springSleuthVersion = "3.0.4"
+val springSleuthVersion = "3.1.3"
 val tokenValidationVersion = "2.1.4"
 val archunitVersion = "0.23.1"
 val testContainersVersion = "1.17.3"
@@ -16,15 +15,14 @@ val githubUser: String by project
 val githubPassword: String by project
 
 plugins {
-    id("org.springframework.boot") version "2.5.12"
-    id("io.spring.dependency-management") version "1.0.13.RELEASE"
+    id("org.springframework.boot") version "2.7.3"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.7.10"
     kotlin("jvm") version "1.7.10"
     kotlin("plugin.spring") version "1.7.10"
 }
 
-group = "no.nav.klage"
-version = "0.0.1-SNAPSHOT"
+apply(plugin = "io.spring.dependency-management")
+
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
@@ -39,18 +37,16 @@ repositories {
     maven("https://jitpack.io")
 }
 
-apply(plugin = "io.spring.dependency-management")
-
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
-    implementation("org.springframework.boot:spring-boot-starter:$springVersion")
-    implementation("org.springframework.boot:spring-boot-starter-web:$springVersion")
-    implementation("org.springframework.boot:spring-boot-starter-actuator:$springVersion")
-    implementation("org.springframework.boot:spring-boot-starter-webflux:$springVersion")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa:$springVersion")
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:$springVersion")
+    implementation("org.springframework.boot:spring-boot-starter")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
