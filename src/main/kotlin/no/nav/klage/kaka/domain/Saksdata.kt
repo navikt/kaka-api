@@ -130,7 +130,8 @@ class Saksdata(
 
         //Don't check kvalitetsvurdering if utfall is TRUKKET
         if (utfall != Utfall.TRUKKET) {
-            val kvalitetsvurderingValidationErrors = kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
+            val kvalitetsvurderingValidationErrors =
+                kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
 
             if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
                 sectionList.add(
@@ -178,6 +179,13 @@ class Saksdata(
         } else if (LocalDate.now().isBefore(mottattKlageinstans)) {
             validationErrors.add(
                 createFutureDateError(SaksdataView::mottattKlageinstans.name)
+            )
+        }
+
+        //TODO: Create test for invalid utfall when such are added
+        if (!typeTilUtfall[sakstype]!!.contains(utfall)) {
+            validationErrors.add(
+                createInvalidUtfallValidationError(SaksdataView::utfallId.name)
             )
         }
 
@@ -244,6 +252,13 @@ class Saksdata(
         return InvalidProperty(
             field = variableName,
             reason = "Må være valgt."
+        )
+    }
+
+    private fun createInvalidUtfallValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Dette utfallet er ikke gyldig for denne behanlingstypen."
         )
     }
 

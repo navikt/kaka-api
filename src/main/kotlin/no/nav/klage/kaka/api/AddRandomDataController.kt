@@ -41,12 +41,12 @@ class AddRandomDataController(
         val avsluttetAvSaksbehandler = if (potentialEndDate > LocalDate.now()) LocalDate.now() else potentialEndDate
 
         return Saksdata(
-            sakstype = Type.values().random(),
+            sakstype = cohesiveTestData.type,
             utfoerendeSaksbehandler = cohesiveTestData.ident,
             tilknyttetEnhet = cohesiveTestData.enhet,
             ytelse = cohesiveTestData.ytelse,
             vedtaksinstansEnhet = cohesiveTestData.vedtaksEnhet,
-            utfall = Utfall.values().random(),
+            utfall = cohesiveTestData.utfall,
             registreringshjemler = cohesiveTestData.hjemler,
             sakenGjelder = "66666666666",
             mottattVedtaksinstans = mottattVedtaksinstans,
@@ -106,7 +106,10 @@ class AddRandomDataController(
 
     private fun getCohesiveTestData(): CohesiveTestData {
         val ytelse = Ytelse.values().random()
+        val type = Type.values().random()
         return CohesiveTestData(
+            type = type,
+            utfall = typeTilUtfall[type]!!.random(),
             ident = listOf("Z994862", "Z994863", "Z994864").random(),
             enhet = ytelseTilKlageenheter[ytelse]!!.random().navn,
             ytelse = ytelse,
@@ -116,11 +119,12 @@ class AddRandomDataController(
     }
 
     data class CohesiveTestData(
+        val type: Type,
+        val utfall: Utfall,
         val ident: String,
         val hjemler: Set<Registreringshjemmel>,
         val enhet: String,
         val ytelse: Ytelse,
         val vedtaksEnhet: String
     )
-
 }
