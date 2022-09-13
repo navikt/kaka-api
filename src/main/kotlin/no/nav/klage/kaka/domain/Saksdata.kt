@@ -258,7 +258,7 @@ class Saksdata(
     private fun createInvalidUtfallValidationError(variableName: String): InvalidProperty {
         return InvalidProperty(
             field = variableName,
-            reason = "Dette utfallet er ikke gyldig for denne behanlingstypen."
+            reason = "Dette utfallet er ikke gyldig for denne behandlingstypen."
         )
     }
 
