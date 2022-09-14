@@ -151,16 +151,6 @@ class SaksdataService(
         return saksdata
     }
 
-    fun setTilknyttetEnhet(saksdataId: UUID, enhetsnummer: String, innloggetSaksbehandler: String): Saksdata {
-        val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        if (saksdata.tilknyttetEnhet != enhetsnummer) {
-            setYtelse(saksdataId, null, innloggetSaksbehandler)
-        }
-        saksdata.tilknyttetEnhet = enhetsnummer
-        saksdata.modified = LocalDateTime.now()
-        return saksdata
-    }
-
     fun setMottattKlageinstans(saksdataId: UUID, dato: LocalDate?, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.mottattKlageinstans = dato

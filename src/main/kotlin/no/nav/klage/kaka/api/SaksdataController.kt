@@ -103,24 +103,6 @@ class SaksdataController(
         return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler)
     }
 
-    @PutMapping("/{id}/tilknyttetenhet")
-    fun setTilknyttetEnhet(
-        @PathVariable("id") saksdataId: UUID,
-        @RequestBody input: StringInput
-    ): SaksdataView {
-        val innloggetSaksbehandler = tokenUtil.getIdent()
-        logSaksdataMethodDetails(
-            ::setTilknyttetEnhet.name,
-            innloggetSaksbehandler,
-            saksdataId,
-            logger
-        )
-
-        validateEnhetsnummer(input.value)
-
-        return saksdataService.setTilknyttetEnhet(saksdataId, input.value, innloggetSaksbehandler).toSaksdataView()
-    }
-
     @PutMapping("/{id}/sakengjelder")
     fun setSakenGjelder(
         @PathVariable("id") saksdataId: UUID,
