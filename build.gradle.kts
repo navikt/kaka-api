@@ -7,7 +7,7 @@ val springSleuthVersion = "3.1.4"
 val tokenValidationVersion = "2.1.4"
 val archunitVersion = "0.23.1"
 val testContainersVersion = "1.17.3"
-val mockkVersion = "1.12.7"
+val mockkVersion = "1.12.8"
 val apachePoiVersion = "5.2.2"
 val springDocVersion = "1.6.11"
 
