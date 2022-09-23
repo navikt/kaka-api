@@ -63,7 +63,7 @@ spec:
           - azp_name
   {{#if ingress}}
   ingresses:
-    - {{ingress } }
+    - {{ingress}}
   {{/if}}
   accessPolicy:
     inbound:
