@@ -16,7 +16,7 @@ val githubPassword: String by project
 
 plugins {
     id("org.springframework.boot") version "2.7.4"
-    id("org.jetbrains.kotlin.plugin.jpa") version "1.7.10"
+    id("org.jetbrains.kotlin.plugin.jpa") version "1.7.20"
     kotlin("jvm") version "1.7.10"
     kotlin("plugin.spring") version "1.7.10"
 }
