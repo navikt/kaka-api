@@ -182,13 +182,12 @@ class Saksdata(
             )
         }
 
-        //TODO: Reintroduce when clients are updated
-//        //TODO: Create test for invalid utfall when such are added
-//        if (!typeTilUtfall[sakstype]!!.contains(utfall)) {
-//            validationErrors.add(
-//                createInvalidUtfallValidationError(SaksdataView::utfallId.name)
-//            )
-//        }
+        //TODO: Create test for invalid utfall when such are added
+        if (!typeTilUtfall[sakstype]!!.contains(utfall)) {
+            validationErrors.add(
+                createInvalidUtfallValidationError(SaksdataView::utfallId.name)
+            )
+        }
 
         if (utfall == null) {
             validationErrors.add(
