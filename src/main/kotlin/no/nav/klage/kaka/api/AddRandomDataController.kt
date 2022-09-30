@@ -106,7 +106,7 @@ class AddRandomDataController(
 
     private fun getCohesiveTestData(): CohesiveTestData {
         val ytelse = Ytelse.values().random()
-        val type = Type.values().random()
+        val type = Type.values().filter { it != Type.ANKE_I_TRYGDERETTEN }.random()
         return CohesiveTestData(
             type = type,
             utfall = typeTilUtfall[type]!!.random(),
