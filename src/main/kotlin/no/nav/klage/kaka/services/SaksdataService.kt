@@ -196,8 +196,10 @@ class SaksdataService(
         if (saksdata.hasKvalitetsvurdering()) {
             kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurdering.id)
         } else {
-            saksdata.kvalitetsvurdering = Kvalitetsvurdering(
-                id = saksdata.kvalitetsvurdering.id
+            kvalitetsvurderingRepository.save(
+                Kvalitetsvurdering(
+                    id = saksdata.kvalitetsvurdering.id
+                )
             )
         }
 
