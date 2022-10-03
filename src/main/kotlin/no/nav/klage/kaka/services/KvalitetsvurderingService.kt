@@ -25,6 +25,12 @@ class KvalitetsvurderingService(
         )
     }
 
+    fun deleteKvalitetsvurdering(kvalitetsvurderingId: UUID) {
+        return kvalitetsvurderingRepository.deleteById(
+            kvalitetsvurderingId
+        )
+    }
+
     fun getKvalitetsvurdering(
         kvalitetsvurderingId: UUID,
         innloggetSaksbehandler: String

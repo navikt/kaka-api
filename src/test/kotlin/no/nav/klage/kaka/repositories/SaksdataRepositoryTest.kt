@@ -8,6 +8,7 @@ import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -58,6 +59,41 @@ class SaksdataRepositoryTest {
 
         val foundSaksdata = saksdataRepository.getById(saksdata.id)
         assertThat(foundSaksdata).isEqualTo(saksdata)
+    }
+
+    @Test
+    fun `baaa add saksdata works`() {
+        val saksdata = Saksdata(
+            utfoerendeSaksbehandler = "abc123",
+            tilknyttetEnhet = "4295",
+            kvalitetsvurdering = Kvalitetsvurdering(
+                klageforberedelsenRadioValg = RadioValg.BRA
+            )
+        )
+
+        saksdataRepository.save(saksdata)
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        var foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
+        println("klageforberedelsenRadiovalg before " + foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg)
+        println("kvalitetsvurdering id before " + foundSaksdata.kvalitetsvurdering.id)
+
+        val newKvalitetsvurdering = Kvalitetsvurdering(
+            id = saksdata.kvalitetsvurdering.id
+        )
+        saksdata.kvalitetsvurdering = newKvalitetsvurdering
+
+        saksdataRepository.save(saksdata)
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
+        println("klageforberedelsenRadiovalg after " + foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg)
+        println("kvalitetsvurdering id after " + foundSaksdata.kvalitetsvurdering.id)
+        assertTrue(foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg == null)
     }
 
     @Test

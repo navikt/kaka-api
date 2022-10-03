@@ -18,7 +18,7 @@
             <appender-ref ref="text"/>
         </root>
         <logger name="org.springframework.web.filter.CommonsRequestLoggingFilter" level="debug"/>
-        <logger name="org.hibernate.type" level="trace"/>
+        <logger name="org.hibernate.type" level="info"/>
     </springProfile>
 
     <springProfile name="!local">
