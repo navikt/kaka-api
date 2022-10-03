@@ -62,7 +62,7 @@ class SaksdataRepositoryTest {
     }
 
     @Test
-    fun `baaa add saksdata works`() {
+    fun `recreate kvalitetsvurdering`() {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
             tilknyttetEnhet = "4295",
