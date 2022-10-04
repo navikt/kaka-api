@@ -76,10 +76,6 @@ class SaksdataRepositoryTest {
         testEntityManager.flush()
         testEntityManager.clear()
 
-        var foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
-        println("klageforberedelsenRadiovalg before " + foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg)
-        println("kvalitetsvurdering id before " + foundSaksdata.kvalitetsvurdering.id)
-
         val newKvalitetsvurdering = Kvalitetsvurdering(
             id = saksdata.kvalitetsvurdering.id
         )
@@ -90,10 +86,8 @@ class SaksdataRepositoryTest {
         testEntityManager.flush()
         testEntityManager.clear()
 
-        foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
-        println("klageforberedelsenRadiovalg after " + foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg)
-        println("kvalitetsvurdering id after " + foundSaksdata.kvalitetsvurdering.id)
-        assertTrue(foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg == null)
+        val foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
+        assertThat(foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg).isNull()
     }
 
     @Test

@@ -128,7 +128,6 @@ class Saksdata(
             )
         }
 
-        //Don't check kvalitetsvurdering if utfall is TRUKKET
         if (utfall !in noKvalitetsvurderingNeeded) {
             val kvalitetsvurderingValidationErrors =
                 kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
