@@ -128,8 +128,7 @@ class Saksdata(
             )
         }
 
-        //Don't check kvalitetsvurdering if utfall is TRUKKET
-        if (utfall != Utfall.TRUKKET) {
+        if (utfall !in noKvalitetsvurderingNeeded) {
             val kvalitetsvurderingValidationErrors =
                 kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
 
@@ -193,7 +192,7 @@ class Saksdata(
             validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::utfallId.name)
             )
-        } else if (utfall != Utfall.TRUKKET) {
+        } else if (utfall !in noRegistringshjemmelNeeded) {
             if (registreringshjemler.isNullOrEmpty()) {
                 validationErrors.add(
                     createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
@@ -296,5 +295,11 @@ class Saksdata(
             reason = "Denne datoen kan ikke være lenger frem i tid enn datoen for mottatt klageinstans."
         )
     }
+
+    fun hasKvalitetsvurdering(): Boolean =
+        utfall !in noKvalitetsvurderingNeeded
 }
+
+val noRegistringshjemmelNeeded = listOf(Utfall.TRUKKET, Utfall.RETUR)
+val noKvalitetsvurderingNeeded = listOf(Utfall.TRUKKET, Utfall.RETUR, Utfall.UGUNST)
 

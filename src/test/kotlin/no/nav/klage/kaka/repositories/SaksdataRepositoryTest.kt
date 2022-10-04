@@ -8,6 +8,7 @@ import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -58,6 +59,35 @@ class SaksdataRepositoryTest {
 
         val foundSaksdata = saksdataRepository.getById(saksdata.id)
         assertThat(foundSaksdata).isEqualTo(saksdata)
+    }
+
+    @Test
+    fun `recreate kvalitetsvurdering`() {
+        val saksdata = Saksdata(
+            utfoerendeSaksbehandler = "abc123",
+            tilknyttetEnhet = "4295",
+            kvalitetsvurdering = Kvalitetsvurdering(
+                klageforberedelsenRadioValg = RadioValg.BRA
+            )
+        )
+
+        saksdataRepository.save(saksdata)
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val newKvalitetsvurdering = Kvalitetsvurdering(
+            id = saksdata.kvalitetsvurdering.id
+        )
+        saksdata.kvalitetsvurdering = newKvalitetsvurdering
+
+        saksdataRepository.save(saksdata)
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
+        assertThat(foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg).isNull()
     }
 
     @Test

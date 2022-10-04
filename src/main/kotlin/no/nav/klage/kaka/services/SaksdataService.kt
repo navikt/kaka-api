@@ -6,6 +6,7 @@ import no.nav.klage.kaka.clients.pdl.PdlFacade
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kodeverk.Role.*
+import no.nav.klage.kaka.domain.noKvalitetsvurderingNeeded
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
@@ -73,9 +74,18 @@ class SaksdataService(
         avsluttetAvSaksbehandler: LocalDateTime,
         source: Source
     ): Saksdata {
-        kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
-
         val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
+
+        if (utfall !in noKvalitetsvurderingNeeded) {
+            kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+        } else {
+            kvalitetsvurderingRepository.save(
+                Kvalitetsvurdering(
+                    id = kvalitetsvurderingId
+                )
+            )
+        }
+
         return if (existingSaksdata != null) {
             existingSaksdata.sakenGjelder = sakenGjelder
             existingSaksdata.sakstype = sakstype
@@ -106,7 +116,7 @@ class SaksdataService(
                     avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                     utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                     tilknyttetEnhet = tilknyttetEnhet,
-                    kvalitetsvurdering = kvalitetsvurderingRepository.getById(kvalitetsvurderingId),
+                    kvalitetsvurdering = kvalitetsvurderingRepository.getReferenceById(kvalitetsvurderingId),
                     source = source
                 )
             )
@@ -183,7 +193,16 @@ class SaksdataService(
             saksdata.mottattVedtaksinstans = null
             kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurdering.id)
         }
-        kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurdering.id)
+        if (saksdata.hasKvalitetsvurdering()) {
+            kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurdering.id)
+        } else {
+            kvalitetsvurderingRepository.save(
+                Kvalitetsvurdering(
+                    id = saksdata.kvalitetsvurdering.id
+                )
+            )
+        }
+
         saksdata.avsluttetAvSaksbehandler = LocalDateTime.now()
         saksdata.modified = LocalDateTime.now()
         return saksdata
