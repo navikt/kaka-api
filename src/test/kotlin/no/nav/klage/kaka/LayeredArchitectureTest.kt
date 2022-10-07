@@ -10,7 +10,7 @@ import com.tngtech.archunit.library.Architectures.layeredArchitecture
 @AnalyzeClasses(packages = ["no.nav.klage.kaka"], importOptions = [ImportOption.DoNotIncludeTests::class])
 class LayeredArchitectureTest {
 
-    private fun kakaApiLayeredArchitecture() = layeredArchitecture()
+    private fun kakaApiLayeredArchitecture() = layeredArchitecture().consideringAllDependencies()
         .layer("Controllers").definedBy("no.nav.klage.kaka.api")
         .layer("View").definedBy("no.nav.klage.kaka.api.view")
         .layer("Services").definedBy("no.nav.klage.kaka.services..")
