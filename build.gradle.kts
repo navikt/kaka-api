@@ -8,7 +8,7 @@ val archunitVersion = "1.0.0"
 val testContainersVersion = "1.17.5"
 val mockkVersion = "1.13.2"
 val apachePoiVersion = "5.2.3"
-val springDocVersion = "1.6.11"
+val springDocVersion = "1.6.12"
 
 val githubUser: String by project
 val githubPassword: String by project
