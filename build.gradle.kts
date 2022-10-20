@@ -15,7 +15,7 @@ val githubPassword: String by project
 
 plugins {
     val kotlinVersion = "1.7.20"
-    id("org.springframework.boot") version "2.7.4"
+    id("org.springframework.boot") version "2.7.5"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
