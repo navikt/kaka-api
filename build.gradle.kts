@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "7.2"
 val problemSpringWebStartVersion = "0.27.0"
-val springSleuthVersion = "3.1.4"
+val springSleuthVersion = "3.1.5"
 val tokenValidationVersion = "2.1.7"
 val archunitVersion = "1.0.0"
 val testContainersVersion = "1.17.5"
