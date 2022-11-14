@@ -8,6 +8,8 @@ import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.Ytelse.*
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import no.nav.klage.kodeverk.hjemmel.RegistreringshjemmelConverter
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
@@ -103,6 +105,15 @@ class Kvalitetsvurdering(
     var betydeligAvvik: Boolean = false,
     @Column(name = "betydelig_avvik_text")
     var betydeligAvvikText: String? = null,
+    @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "kvalitetsvurdering_registreringshjemmel",
+        schema = "kaka",
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id", nullable = false)]
+    )
+    @Convert(converter = RegistreringshjemmelConverter::class)
+    @Column(name = "id")
+    var registreringshjemler: Set<Registreringshjemmel>? = null,
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
