@@ -1,16 +1,14 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.BooleanInput
-import no.nav.klage.kaka.api.view.RadioValgInput
-import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
-import no.nav.klage.kaka.api.view.StringInput
+import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.domain.Kvalitetsvurdering
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.*
 import java.util.*
@@ -816,6 +814,26 @@ class KvalitetsvurderingController(
             kvalitetsvurderingId,
             input.value,
             innloggetSaksbehandler
+        )
+    }
+
+    @PutMapping("/registreringshjemmelidlist")
+    fun setRegistreringshjemmelIdList(
+        @PathVariable("id") kvalitetsvurderingId: UUID,
+        @RequestBody input: RegistreringshjemlerInput
+    ): Kvalitetsvurdering {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logKvalitetsvurderingMethodDetails(
+            methodName = ::setRegistreringshjemmelIdList.name,
+            innloggetIdent = innloggetSaksbehandler,
+            kvalitetsvurderingId = kvalitetsvurderingId,
+            logger = logger
+        )
+
+        return kvalitetsvurderingService.setRegistreringshjemler(
+            kvalitetsvurderingId = kvalitetsvurderingId,
+            registreringshjemler = input.value.map { Registreringshjemmel.of(it) }.toSet(),
+            innloggetSaksbehandler = innloggetSaksbehandler
         )
     }
 }

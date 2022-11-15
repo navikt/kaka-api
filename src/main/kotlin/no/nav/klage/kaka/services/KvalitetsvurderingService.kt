@@ -7,6 +7,7 @@ import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -475,6 +476,17 @@ class KvalitetsvurderingService(
     ): Kvalitetsvurdering {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
         kvalitetsvurdering.betydeligAvvikText = input
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
+    }
+
+    fun setRegistreringshjemler(
+        kvalitetsvurderingId: UUID,
+        registreringshjemler: Set<Registreringshjemmel>,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
+        kvalitetsvurdering.registreringshjemler = registreringshjemler.toMutableSet()
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
     }
