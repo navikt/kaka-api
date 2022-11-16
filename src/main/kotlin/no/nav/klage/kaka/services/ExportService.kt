@@ -322,6 +322,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
                 vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
                 brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
+                kvalitetsvurderingRegistreringshjemmelIdList = saksdata.kvalitetsvurdering.registreringshjemler?.map { it.id },
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
@@ -389,6 +390,7 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 utredningenRadioValg = saksdata.kvalitetsvurdering.utredningenRadioValg?.name,
                 vedtaketRadioValg = saksdata.kvalitetsvurdering.vedtaketRadioValg?.name,
                 brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
+                kvalitetsvurderingRegistreringshjemmelIdList = saksdata.kvalitetsvurdering.registreringshjemler?.map { it.id },
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
@@ -509,6 +511,8 @@ class ExportService(private val saksdataRepository: SaksdataRepository) {
                 add(Field(fieldName = "Rådgivende lege er brukt, men saksbehandler har stilt feil spørsmål og får derfor feil svar", value = saksdata.kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal, type = BOOLEAN))
                 add(Field(fieldName = "Rådgivende lege har uttalt seg om tema utover trygdemedisin", value = saksdata.kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin, type = BOOLEAN))
                 add(Field(fieldName = "Rådgivende lege er brukt, men dokumentasjonen er mangelfull / ikke skriftliggjort", value = saksdata.kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon, type = BOOLEAN))
+
+                //TODO Kvalitetsvurderingshjemler
 
             //@formatter:on
             }

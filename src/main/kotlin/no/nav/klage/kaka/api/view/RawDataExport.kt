@@ -46,6 +46,7 @@ data class AnonymizedFinishedVurdering(
     val utredningenRadioValg: String?,
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
+    val kvalitetsvurderingRegistreringshjemmelIdList: List<String>?,
 
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
@@ -99,6 +100,7 @@ data class AnonymizedFinishedVurderingWithoutEnheter(
     val utredningenRadioValg: String?,
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
+    val kvalitetsvurderingRegistreringshjemmelIdList: List<String>?,
 
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
