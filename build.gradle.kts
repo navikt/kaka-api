@@ -10,9 +10,6 @@ val mockkVersion = "1.13.2"
 val apachePoiVersion = "5.2.3"
 val springDocVersion = "1.6.12"
 
-val githubUser: String by project
-val githubPassword: String by project
-
 plugins {
     val kotlinVersion = "1.7.21"
     id("org.springframework.boot") version "2.7.5"
@@ -27,13 +24,6 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://maven.pkg.github.com/navikt/simple-slack-poster")
-        credentials {
-            username = githubUser
-            password = githubPassword
-        }
-    }
     maven("https://jitpack.io")
 }
 
