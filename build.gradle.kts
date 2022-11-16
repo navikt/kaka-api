@@ -3,15 +3,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 val logstashVersion = "7.2"
 val problemSpringWebStartVersion = "0.27.0"
 val springSleuthVersion = "3.1.5"
-val tokenValidationVersion = "2.1.7"
+val tokenValidationVersion = "2.1.8"
 val archunitVersion = "1.0.0"
 val testContainersVersion = "1.17.5"
 val mockkVersion = "1.13.2"
 val apachePoiVersion = "5.2.3"
 val springDocVersion = "1.6.12"
-
-val githubUser: String by project
-val githubPassword: String by project
 
 plugins {
     val kotlinVersion = "1.7.21"
@@ -27,13 +24,6 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://maven.pkg.github.com/navikt/simple-slack-poster")
-        credentials {
-            username = githubUser
-            password = githubPassword
-        }
-    }
     maven("https://jitpack.io")
 }
 
