@@ -74,7 +74,7 @@ class SaksdataService(
         avsluttetAvSaksbehandler: LocalDateTime,
         source: Source
     ): Saksdata {
-        val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
+        val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingV1Id(kvalitetsvurderingId)
 
         if (utfall !in noKvalitetsvurderingNeeded) {
             kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)

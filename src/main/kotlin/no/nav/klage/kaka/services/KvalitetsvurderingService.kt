@@ -504,7 +504,7 @@ class KvalitetsvurderingService(
         }
         return kvalitetsvurdering.get()
             .also {
-                val saksdata = saksdataRepository.findOneByKvalitetsvurderingId(it.id)
+                val saksdata = saksdataRepository.findOneByKvalitetsvurderingV1Id(it.id)
                 if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
                     "Saksdata er allerede fullført"
                 )

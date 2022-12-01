@@ -175,7 +175,7 @@ class SaksdataRepositoryTest {
 
     @Test
     fun `find one gives null result when no matching saksdata exists`() {
-        val results = saksdataRepository.findOneByKvalitetsvurderingId(UUID.randomUUID())
+        val results = saksdataRepository.findOneByKvalitetsvurderingV1Id(UUID.randomUUID())
         assertThat(results).isNull()
     }
 
@@ -195,7 +195,7 @@ class SaksdataRepositoryTest {
 
         val kvalitetsvurderingId = saksdata.kvalitetsvurderingV1.id
 
-        val results = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
+        val results = saksdataRepository.findOneByKvalitetsvurderingV1Id(kvalitetsvurderingId)
         assertThat(results).isEqualTo(saksdata)
     }
 
