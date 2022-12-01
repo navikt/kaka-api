@@ -2,7 +2,7 @@ package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.SaksdataListView
-import no.nav.klage.kaka.api.view.toSaksdataSearchHitView
+import no.nav.klage.kaka.api.view.toSaksdataView
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -43,7 +43,7 @@ class SaksdataListController(
 
         return SaksdataListView(
             searchHits = saksdataService.search(saksbehandlerIdent, fullfoert, sidenDager)
-                .map { it.toSaksdataSearchHitView() }
+                .map { it.toSaksdataView() }
         )
     }
 
@@ -81,7 +81,7 @@ class SaksdataListController(
                 toDate = toDate,
                 mangelfullt = mangelfullt ?: emptyList(),
                 kommentarer = kommentarer ?: emptyList(),
-            ).map { it.toSaksdataSearchHitView() }
+            ).map { it.toSaksdataView() }
         )
     }
 
@@ -120,7 +120,7 @@ class SaksdataListController(
                 toDate = toDate,
                 mangelfullt = mangelfullt ?: emptyList(),
                 kommentarer = kommentarer ?: emptyList(),
-            ).map { it.toSaksdataSearchHitView() }
+            ).map { it.toSaksdataView() }
         )
     }
 
