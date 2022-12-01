@@ -16,7 +16,7 @@ internal class SaksdataTest {
     @Test
     fun `validation on empty saksdata gives correct number of errors`() {
         val saksdata = Saksdata(
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             utfoerendeSaksbehandler = "SAKSBEHANDLER",
             tilknyttetEnhet = "4295",
         )
@@ -29,7 +29,7 @@ internal class SaksdataTest {
     @Test
     fun `no validation of kvalitetsvurdering for TRUKKET`() {
         val saksdata = Saksdata(
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             utfoerendeSaksbehandler = "SAKSBEHANDLER",
             tilknyttetEnhet = "4295",
             mottattVedtaksinstans = LocalDate.now(),
@@ -49,7 +49,7 @@ internal class SaksdataTest {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             sakenGjelder = SAKEN_GJELDER,
         )
 
@@ -62,7 +62,7 @@ internal class SaksdataTest {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             sakenGjelder = SAKEN_GJELDER,
         )
 
@@ -79,7 +79,7 @@ internal class SaksdataTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             sakenGjelder = SAKEN_GJELDER,
         )
 
@@ -97,7 +97,7 @@ internal class SaksdataTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = "4000",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             sakenGjelder = SAKEN_GJELDER,
         )
 

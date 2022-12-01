@@ -1,14 +1,12 @@
 package no.nav.klage.kaka.repositories
 
 
-import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.RadioValg
-import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
@@ -49,7 +47,7 @@ class SaksdataRepositoryTest {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
 
         saksdataRepository.save(saksdata)
@@ -57,7 +55,7 @@ class SaksdataRepositoryTest {
         testEntityManager.flush()
         testEntityManager.clear()
 
-        val foundSaksdata = saksdataRepository.getById(saksdata.id)
+        val foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
         assertThat(foundSaksdata).isEqualTo(saksdata)
     }
 
@@ -66,7 +64,7 @@ class SaksdataRepositoryTest {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 klageforberedelsenRadioValg = RadioValg.BRA
             )
         )
@@ -76,10 +74,10 @@ class SaksdataRepositoryTest {
         testEntityManager.flush()
         testEntityManager.clear()
 
-        val newKvalitetsvurdering = Kvalitetsvurdering(
-            id = saksdata.kvalitetsvurdering.id
+        val newKvalitetsvurderingV1 = KvalitetsvurderingV1(
+            id = saksdata.kvalitetsvurderingV1.id
         )
-        saksdata.kvalitetsvurdering = newKvalitetsvurdering
+        saksdata.kvalitetsvurderingV1 = newKvalitetsvurderingV1
 
         saksdataRepository.save(saksdata)
 
@@ -87,7 +85,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
-        assertThat(foundSaksdata.kvalitetsvurdering.klageforberedelsenRadioValg).isNull()
+        assertThat(foundSaksdata.kvalitetsvurderingV1.klageforberedelsenRadioValg).isNull()
     }
 
     @Test
@@ -96,29 +94,29 @@ class SaksdataRepositoryTest {
         val saksdataFullfoertx = Saksdata(
             utfoerendeSaksbehandler = "someoneelse",
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
         val saksdataFullfoert1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             avsluttetAvSaksbehandler = LocalDateTime.now().minusDays(3),
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
         val saksdataFullfoert2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             avsluttetAvSaksbehandler = LocalDateTime.now().minusDays(2),
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
         val saksdataPaagaaende1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
         val saksdataPaagaaende2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
 
         saksdataRepository.saveAll(
@@ -152,7 +150,7 @@ class SaksdataRepositoryTest {
         val saksdata = Saksdata(
             utfoerendeSaksbehandler = "abc123",
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
 
         saksdataRepository.save(saksdata)
@@ -187,7 +185,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = "abc123",
             tilknyttetEnhet = "4295",
             ytelse = Ytelse.OMS_OMP,
-            kvalitetsvurdering = Kvalitetsvurdering()
+            kvalitetsvurderingV1 = KvalitetsvurderingV1()
         )
 
         saksdataRepository.save(saksdata)
@@ -195,7 +193,7 @@ class SaksdataRepositoryTest {
         testEntityManager.flush()
         testEntityManager.clear()
 
-        val kvalitetsvurderingId = saksdata.kvalitetsvurdering.id
+        val kvalitetsvurderingId = saksdata.kvalitetsvurderingV1.id
 
         val results = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
         assertThat(results).isEqualTo(saksdata)
@@ -207,34 +205,34 @@ class SaksdataRepositoryTest {
         val saksdataFullfoertx = Saksdata(
             utfoerendeSaksbehandler = "someoneelse",
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 12), LocalTime.NOON),
         )
         val saksdataFullfoert1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
         )
         val saksdataFullfoert2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
         )
         val saksdataPaagaaende1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
         )
         val saksdataPaagaaende2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
         )
 
@@ -273,7 +271,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
             registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
@@ -282,7 +280,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = "4111",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
             registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
@@ -291,7 +289,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
             registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
         )
@@ -299,7 +297,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
             registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
         )
@@ -335,7 +333,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 betydeligAvvikText = "et avvik"
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -371,7 +369,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 utredningenAvAndreAktuelleForholdISakenText = "text"
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -406,7 +404,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 brukIOpplaeringText = "text"
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -442,7 +440,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 utredningenRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -454,7 +452,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 klageforberedelsenRadioValg = RadioValg.MANGELFULLT,
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -466,7 +464,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = "1111",
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 klageforberedelsenRadioValg = RadioValg.MANGELFULLT,
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -504,7 +502,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 klageforberedelsenRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -540,7 +538,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 utredningenRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -576,7 +574,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 brukAvRaadgivendeLegeRadioValg = RadioValgRaadgivendeLege.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -612,7 +610,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(
                 vedtaketRadioValg = RadioValg.MANGELFULLT
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
@@ -648,7 +646,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
         )
@@ -656,7 +654,7 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = "abs",
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = "4111",
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
         )
@@ -664,14 +662,14 @@ class SaksdataRepositoryTest {
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
         )
         val saksdataPaagaaende2 = Saksdata(
             utfoerendeSaksbehandler = "zxc",
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurdering = Kvalitetsvurdering(),
+            kvalitetsvurderingV1 = KvalitetsvurderingV1(),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
         )
 

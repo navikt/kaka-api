@@ -57,7 +57,7 @@ class Saksdata(
     var tilknyttetEnhet: String,
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id")
-    var kvalitetsvurdering: Kvalitetsvurdering,
+    var kvalitetsvurderingV1: KvalitetsvurderingV1,
     @Column(name = "dato_saksdata_avsluttet_av_saksbehandler")
     var avsluttetAvSaksbehandler: LocalDateTime? = null,
     @Column(name = "source_id")
@@ -130,7 +130,7 @@ class Saksdata(
 
         if (utfall !in noKvalitetsvurderingNeeded) {
             val kvalitetsvurderingValidationErrors =
-                kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
+                kvalitetsvurderingV1.getInvalidProperties(ytelse = ytelse, type = sakstype)
 
             if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
                 sectionList.add(

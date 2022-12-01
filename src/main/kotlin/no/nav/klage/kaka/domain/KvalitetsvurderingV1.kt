@@ -1,9 +1,5 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.domain.kodeverk.RadioValg
-import no.nav.klage.kaka.domain.kodeverk.RadioValgConverter
-import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
-import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLegeConverter
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
@@ -14,13 +10,13 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-@Table(name = "kvalitetsvurdering", schema = "kaka")
+@Table(name = "kvalitetsvurdering_v1", schema = "kaka")
 @DynamicUpdate
-class Kvalitetsvurdering(
+class KvalitetsvurderingV1(
     @Id
     val id: UUID = UUID.randomUUID(),
     @Column(name = "klageforberedelsen_radio_valg")
-    @Convert(converter = RadioValgConverter::class)
+    @Enumerated(EnumType.STRING)
     var klageforberedelsenRadioValg: RadioValg? = null,
     @Column(name = "sakens_dokumenter")
     var sakensDokumenter: Boolean = false,
@@ -35,7 +31,7 @@ class Kvalitetsvurdering(
     @Column(name = "oversendelsesbrevets_innhold_ikke_i_samsvar_med_tema")
     var oversendelsesbrevetsInnholdIkkeISamsvarMedTema: Boolean = false,
     @Column(name = "utredningen_radio_valg")
-    @Convert(converter = RadioValgConverter::class)
+    @Enumerated(EnumType.STRING)
     var utredningenRadioValg: RadioValg? = null,
     @Column(name = "utredningen_av_medisinske_forhold")
     var utredningenAvMedisinskeForhold: Boolean = false,
@@ -66,7 +62,7 @@ class Kvalitetsvurdering(
     @Column(name = "veiledning_fra_nav_text")
     var veiledningFraNavText: String? = null,
     @Column(name = "bruk_av_raadgivende_lege_radio_valg")
-    @Convert(converter = RadioValgRaadgivendeLegeConverter::class)
+    @Enumerated(EnumType.STRING)
     var brukAvRaadgivendeLegeRadioValg: RadioValgRaadgivendeLege? = null,
     @Column(name = "raadgivende_lege_er_ikke_brukt")
     var raadgivendeLegeErIkkeBrukt: Boolean = false,
@@ -77,7 +73,7 @@ class Kvalitetsvurdering(
     @Column(name = "raadgivende_lege_er_brukt_mangelfull_dokumentasjon")
     var raadgivendeLegeErBruktMangelfullDokumentasjon: Boolean = false,
     @Column(name = "vedtaket_radio_valg")
-    @Convert(converter = RadioValgConverter::class)
+    @Enumerated(EnumType.STRING)
     var vedtaketRadioValg: RadioValg? = null,
     @Column(name = "det_er_ikke_brukt_riktig_hjemmel")
     var detErIkkeBruktRiktigHjemmel: Boolean = false,
@@ -112,7 +108,7 @@ class Kvalitetsvurdering(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Kvalitetsvurdering
+        other as KvalitetsvurderingV1
 
         if (id != other.id) return false
 
@@ -323,6 +319,17 @@ class Kvalitetsvurdering(
             field = variableName,
             reason = "Velg minst én."
         )
+    }
+
+    enum class RadioValg {
+        BRA,
+        MANGELFULLT
+    }
+
+    enum class RadioValgRaadgivendeLege {
+        IKKE_AKTUELT,
+        BRA,
+        MANGELFULLT
     }
 }
 

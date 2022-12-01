@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.node.BooleanNode
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.TextNode
-import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
+import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
+import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.setFieldOnObject
 import org.springframework.stereotype.Service
-import java.time.Instant.now
 import java.time.LocalDateTime
 import java.util.*
 import javax.transaction.Transactional
@@ -18,13 +19,14 @@ import javax.transaction.Transactional
 @Service
 @Transactional
 class KvalitetsvurderingV1Service(
-    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository
+    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
+    private val saksdataRepository: SaksdataRepository,
 ) {
 
     fun getKvalitetsvurdering(
         kvalitetsvurderingId: UUID,
         innloggetSaksbehandler: String
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
             throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
@@ -32,7 +34,7 @@ class KvalitetsvurderingV1Service(
         return kvalitetsvurdering.get()
     }
 
-    fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): Kvalitetsvurdering {
+    fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): KvalitetsvurderingV1 {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
 
         input.fields().forEach { (key, value) ->
@@ -44,18 +46,18 @@ class KvalitetsvurderingV1Service(
 
     private fun getKvalitetsvurderingAndVerifyNotFinalized(
         kvalitetsvurderingId: UUID
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
             throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
         }
         return kvalitetsvurdering.get()
-//            .also {
-//                val saksdata = saksdataRepository.findOneByKvalitetsvurderingId(it.id)
-//                if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
-//                    "Saksdata er allerede fullført"
-//                )
-//            }
+            .also {
+                val saksdata = saksdataRepository.findOneByKvalitetsvurderingId(it.id)
+                if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
+                    "Saksdata er allerede fullført"
+                )
+            }
     }
 
     private fun getValue(node: JsonNode): Any? {

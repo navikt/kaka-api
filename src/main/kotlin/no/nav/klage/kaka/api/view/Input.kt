@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.api.view
 
-import no.nav.klage.kaka.domain.kodeverk.RadioValg
-import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
 import java.time.LocalDate
 
 data class StringInput(

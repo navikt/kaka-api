@@ -1,8 +1,8 @@
 package no.nav.klage.kaka.repositories
 
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1.RadioValg.*
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.RadioValg
-import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kodeverk.Type
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -24,7 +24,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     ): List<Saksdata> {
 
         val query = """
-            SELECT DISTINCT s FROM Saksdata s JOIN FETCH s.kvalitetsvurdering k LEFT JOIN FETCH s.registreringshjemler h
+            SELECT DISTINCT s FROM Saksdata s JOIN FETCH s.kvalitetsvurderingV1 k LEFT JOIN FETCH s.registreringshjemler h
                 WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
                 AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
                 AND s.sakstype = :sakstype
@@ -77,28 +77,28 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     private fun getForberedelsenQuery(mangelfullt: List<String>) =
         if ("forberedelsen" in mangelfullt) {
             """
-                k.klageforberedelsenRadioValg = '${RadioValg.MANGELFULLT.id}'
+                k.klageforberedelsenRadioValg = '${MANGELFULLT.name}'
             """.trimIndent()
         } else null
 
     private fun getUtredningenQuery(mangelfullt: List<String>) =
         if ("utredningen" in mangelfullt) {
             """
-                k.utredningenRadioValg = '${RadioValg.MANGELFULLT.id}'
+                k.utredningenRadioValg = '${MANGELFULLT.name}'
             """.trimIndent()
         } else null
 
     private fun getVedtaketQuery(mangelfullt: List<String>) =
         if ("vedtaket" in mangelfullt) {
             """
-                k.vedtaketRadioValg = '${RadioValg.MANGELFULLT.id}'
+                k.vedtaketRadioValg = '${MANGELFULLT.name}'
             """.trimIndent()
         } else null
 
     private fun getROLQuery(mangelfullt: List<String>) =
         if ("rol" in mangelfullt) {
             """
-                k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.id}'
+                k.brukAvRaadgivendeLegeRadioValg = '${RadioValgRaadgivendeLege.MANGELFULLT.name}'
             """.trimIndent()
         } else null
 

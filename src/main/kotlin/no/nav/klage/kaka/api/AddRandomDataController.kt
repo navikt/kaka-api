@@ -1,9 +1,9 @@
 package no.nav.klage.kaka.api
 
-import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
+
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.RadioValg
-import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
@@ -53,14 +53,14 @@ class AddRandomDataController(
             mottattKlageinstans = mottattKA,
             avsluttetAvSaksbehandler = avsluttetAvSaksbehandler.atStartOfDay(),
             source = Source.values().random(),
-            kvalitetsvurdering = getRandomKvalitetsvurdering(),
+            kvalitetsvurderingV1 = getRandomKvalitetsvurdering(),
             created = mottattKA.atStartOfDay(),
             modified = avsluttetAvSaksbehandler.atStartOfDay()
         )
     }
 
-    private fun getRandomKvalitetsvurdering(): Kvalitetsvurdering {
-        return Kvalitetsvurdering(
+    private fun getRandomKvalitetsvurdering(): KvalitetsvurderingV1 {
+        return KvalitetsvurderingV1(
             klageforberedelsenRadioValg = RadioValg.values().random(),
             sakensDokumenter = Random.nextBoolean(),
             oversittetKlagefristIkkeKommentert = Random.nextBoolean(),

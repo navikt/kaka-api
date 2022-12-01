@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kaka.domain.kodeverk.RadioValg
-import no.nav.klage.kaka.domain.kodeverk.RadioValgRaadgivendeLege
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
@@ -9,11 +8,11 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
-internal class KvalitetsvurderingTest {
+internal class KvalitetsvurderingV1Test {
 
     @Test
     fun cleanup() {
-        val kvalitetsvurdering = Kvalitetsvurdering(
+        val kvalitetsvurderingV1 = KvalitetsvurderingV1(
             klageforberedelsenRadioValg = RadioValg.BRA,
             sakensDokumenter = true,
             konklusjonen = true,
@@ -27,53 +26,53 @@ internal class KvalitetsvurderingTest {
             rettsregelenErBenyttetFeil = false
         )
 
-        kvalitetsvurdering.cleanup()
+        kvalitetsvurderingV1.cleanup()
 
-        assertFalse(kvalitetsvurdering.sakensDokumenter)
-        assertFalse(kvalitetsvurdering.konklusjonen)
-        assertFalse(kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken)
-        assertNull(kvalitetsvurdering.utredningenAvAndreAktuelleForholdISakenText)
-        assertTrue(kvalitetsvurdering.arbeidsrettetBrukeroppfoelging)
-        assertEquals(kvalitetsvurdering.arbeidsrettetBrukeroppfoelgingText, "TEXT")
-        assertTrue(kvalitetsvurdering.detErFeilIKonkretRettsanvendelse)
-        assertFalse(kvalitetsvurdering.rettsregelenErBenyttetFeil)
+        assertFalse(kvalitetsvurderingV1.sakensDokumenter)
+        assertFalse(kvalitetsvurderingV1.konklusjonen)
+        assertFalse(kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISaken)
+        assertNull(kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISakenText)
+        assertTrue(kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelging)
+        assertEquals(kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelgingText, "TEXT")
+        assertTrue(kvalitetsvurderingV1.detErFeilIKonkretRettsanvendelse)
+        assertFalse(kvalitetsvurderingV1.rettsregelenErBenyttetFeil)
     }
 
     @Test
     fun `validation on empty kvalitetsvurdering for klage gives correct number of errors`() {
-        val kvalitetsvurdering = Kvalitetsvurdering()
-        val results = kvalitetsvurdering.getInvalidProperties(null, Type.KLAGE)
+        val kvalitetsvurderingV1 = KvalitetsvurderingV1()
+        val results = kvalitetsvurderingV1.getInvalidProperties(null, Type.KLAGE)
         assertThat(results).hasSize(3)
     }
 
     @Test
     fun `validation on empty kvalitetsvurdering for anke gives correct number of errors`() {
-        val kvalitetsvurdering = Kvalitetsvurdering()
-        val results = kvalitetsvurdering.getInvalidProperties(null, Type.ANKE)
+        val kvalitetsvurderingV1 = KvalitetsvurderingV1()
+        val results = kvalitetsvurderingV1.getInvalidProperties(null, Type.ANKE)
         assertThat(results).hasSize(2)
     }
 
     @Test
     fun `validation on partly filled kvalitetsvurdering gives correct number of errors`() {
-        val kvalitetsvurdering = Kvalitetsvurdering(
+        val kvalitetsvurderingV1 = KvalitetsvurderingV1(
             klageforberedelsenRadioValg = RadioValg.BRA,
             vedtaketRadioValg = RadioValg.MANGELFULLT
         )
-        val results = kvalitetsvurdering.getInvalidProperties(null, Type.KLAGE)
+        val results = kvalitetsvurderingV1.getInvalidProperties(null, Type.KLAGE)
         assertThat(results).hasSize(2)
     }
 
     @Test
     fun `validation on partly filled kvalitetsvurdering requiring raadgivende lege gives correct number of errors`() {
-        val kvalitetsvurdering = Kvalitetsvurdering(
+        val kvalitetsvurderingV1 = KvalitetsvurderingV1(
             klageforberedelsenRadioValg = RadioValg.BRA,
             vedtaketRadioValg = RadioValg.MANGELFULLT
         )
-        val results = kvalitetsvurdering.getInvalidProperties(Ytelse.GRU_GRU, Type.KLAGE)
+        val results = kvalitetsvurderingV1.getInvalidProperties(Ytelse.GRU_GRU, Type.KLAGE)
         assertThat(results).hasSize(3)
         assertThat(results).contains(
             InvalidProperty(
-                field = Kvalitetsvurdering::brukAvRaadgivendeLegeRadioValg.name,
+                field = KvalitetsvurderingV1::brukAvRaadgivendeLegeRadioValg.name,
                 reason = "Velg et alternativ."
             )
         )
@@ -81,16 +80,16 @@ internal class KvalitetsvurderingTest {
 
     @Test
     fun `validation on partly filled brukAvRaadgivendeLege gives correct number of errors`() {
-        val kvalitetsvurdering = Kvalitetsvurdering(
+        val kvalitetsvurderingV1 = KvalitetsvurderingV1(
             klageforberedelsenRadioValg = RadioValg.BRA,
             vedtaketRadioValg = RadioValg.MANGELFULLT,
             brukAvRaadgivendeLegeRadioValg = RadioValgRaadgivendeLege.MANGELFULLT
         )
-        val results = kvalitetsvurdering.getInvalidProperties(Ytelse.GRU_GRU, Type.KLAGE)
+        val results = kvalitetsvurderingV1.getInvalidProperties(Ytelse.GRU_GRU, Type.KLAGE)
         assertThat(results).hasSize(3)
         assertThat(results).contains(
             InvalidProperty(
-                field = Kvalitetsvurdering::brukAvRaadgivendeLegeRadioValg.name,
+                field = KvalitetsvurderingV1::brukAvRaadgivendeLegeRadioValg.name,
                 reason = "Velg minst én."
             )
         )

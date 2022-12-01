@@ -3,7 +3,7 @@ package no.nav.klage.kaka.services
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
-import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kodeverk.Role.*
 import no.nav.klage.kaka.domain.noKvalitetsvurderingNeeded
@@ -54,7 +54,7 @@ class SaksdataService(
             Saksdata(
                 utfoerendeSaksbehandler = innloggetSaksbehandler,
                 tilknyttetEnhet = enhet.navn,
-                kvalitetsvurdering = Kvalitetsvurdering()
+                kvalitetsvurderingV1 = KvalitetsvurderingV1()
             )
         )
     }
@@ -80,7 +80,7 @@ class SaksdataService(
             kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
         } else {
             kvalitetsvurderingRepository.save(
-                Kvalitetsvurdering(
+                KvalitetsvurderingV1(
                     id = kvalitetsvurderingId
                 )
             )
@@ -116,7 +116,7 @@ class SaksdataService(
                     avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                     utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                     tilknyttetEnhet = tilknyttetEnhet,
-                    kvalitetsvurdering = kvalitetsvurderingRepository.getReferenceById(kvalitetsvurderingId),
+                    kvalitetsvurderingV1 = kvalitetsvurderingRepository.getReferenceById(kvalitetsvurderingId),
                     source = source
                 )
             )
@@ -191,14 +191,14 @@ class SaksdataService(
         saksdata.validate()
         if (saksdata.sakstype == Type.ANKE) {
             saksdata.mottattVedtaksinstans = null
-            kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurdering.id)
+            kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingV1.id)
         }
         if (saksdata.hasKvalitetsvurdering()) {
-            kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurdering.id)
+            kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingV1.id)
         } else {
             kvalitetsvurderingRepository.save(
-                Kvalitetsvurdering(
-                    id = saksdata.kvalitetsvurdering.id
+                KvalitetsvurderingV1(
+                    id = saksdata.kvalitetsvurderingV1.id
                 )
             )
         }

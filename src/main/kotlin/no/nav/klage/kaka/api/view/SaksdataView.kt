@@ -48,9 +48,9 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         hjemmelIdList = registreringshjemler?.map { it.id } ?: emptyList(),
         utfoerendeSaksbehandler = utfoerendeSaksbehandler,
         tilknyttetEnhet = tilknyttetEnhet,
-        kvalitetsvurderingId = kvalitetsvurdering.id,
+        kvalitetsvurderingId = kvalitetsvurderingV1.id,
         kvalitetsvurderingReference = SaksdataView.KvalitetsvurderingReference(
-            id = kvalitetsvurdering.id,
+            id = kvalitetsvurderingV1.id,
             version = 1,
         ),
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
