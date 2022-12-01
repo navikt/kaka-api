@@ -1,0 +1,70 @@
+package no.nav.klage.kaka.services
+
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.BooleanNode
+import com.fasterxml.jackson.databind.node.IntNode
+import com.fasterxml.jackson.databind.node.NullNode
+import com.fasterxml.jackson.databind.node.TextNode
+import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
+import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
+import no.nav.klage.kaka.util.setFieldOnObject
+import org.springframework.stereotype.Service
+import java.time.Instant.now
+import java.time.LocalDateTime
+import java.util.*
+import javax.transaction.Transactional
+
+@Service
+@Transactional
+class KvalitetsvurderingV1Service(
+    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository
+) {
+
+    fun getKvalitetsvurdering(
+        kvalitetsvurderingId: UUID,
+        innloggetSaksbehandler: String
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
+        if (kvalitetsvurdering.isEmpty) {
+            throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
+        }
+        return kvalitetsvurdering.get()
+    }
+
+    fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): Kvalitetsvurdering {
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
+
+        input.fields().forEach { (key, value) ->
+            setFieldOnObject(obj = kvalitetsvurdering as Any, fieldToChange = key to getValue(value))
+        }
+        kvalitetsvurdering.modified = LocalDateTime.now()
+        return kvalitetsvurdering
+    }
+
+    private fun getKvalitetsvurderingAndVerifyNotFinalized(
+        kvalitetsvurderingId: UUID
+    ): Kvalitetsvurdering {
+        val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
+        if (kvalitetsvurdering.isEmpty) {
+            throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
+        }
+        return kvalitetsvurdering.get()
+//            .also {
+//                val saksdata = saksdataRepository.findOneByKvalitetsvurderingId(it.id)
+//                if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
+//                    "Saksdata er allerede fullført"
+//                )
+//            }
+    }
+
+    private fun getValue(node: JsonNode): Any? {
+        return when (node) {
+            is IntNode -> node.intValue()
+            is BooleanNode -> node.booleanValue()
+            is TextNode -> node.textValue()
+            is NullNode -> null
+            else -> error("not supported")
+        }
+    }
+}
