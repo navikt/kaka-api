@@ -5,6 +5,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
+data class SaksdataListView(
+    val searchHits: List<SaksdataView>
+)
 data class SaksdataView(
     val id: UUID,
     val sakenGjelder: String?,
@@ -18,11 +21,19 @@ data class SaksdataView(
     val utfoerendeSaksbehandler: String,
     val tilknyttetEnhet: String,
     val kvalitetsvurderingId: UUID,
+    val kvalitetsvurderingReference: KvalitetsvurderingReference,
     val avsluttetAvSaksbehandler: LocalDateTime?,
     val sourceId: String,
     val created: LocalDateTime,
     val modified: LocalDateTime
-)
+) {
+    data class KvalitetsvurderingReference(
+        val id: UUID,
+        val version: Int,
+    )
+}
+
+
 
 fun Saksdata.toSaksdataView(): SaksdataView {
     return SaksdataView(
@@ -38,6 +49,10 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         utfoerendeSaksbehandler = utfoerendeSaksbehandler,
         tilknyttetEnhet = tilknyttetEnhet,
         kvalitetsvurderingId = kvalitetsvurdering.id,
+        kvalitetsvurderingReference = SaksdataView.KvalitetsvurderingReference(
+            id = kvalitetsvurdering.id,
+            version = 1,
+        ),
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
         sourceId = source.id,
         created = created,
