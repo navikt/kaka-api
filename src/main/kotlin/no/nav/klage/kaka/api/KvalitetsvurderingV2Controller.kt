@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.*
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.KvalitetsvurderingV1Input
+import no.nav.klage.kaka.api.view.KvalitetsvurderingV2Input
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
-import no.nav.klage.kaka.services.KvalitetsvurderingV1Service
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kaka.services.KvalitetsvurderingV2Service
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@Tag(name = "kaka-api:kvalitetsvurdering-v1")
+@Tag(name = "kaka-api:kvalitetsvurdering-v2")
 @ProtectedWithClaims(issuer = ISSUER_AAD)
-@RequestMapping("/kvalitetsvurderinger/v1/{id}")
-class KvalitetsvurderingV1Controller(
-    private val kvalitetsvurderingV1Service: KvalitetsvurderingV1Service,
+@RequestMapping("/kvalitetsvurderinger/v2/{id}")
+class KvalitetsvurderingV2Controller(
+    private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
     private val tokenUtil: TokenUtil
 ) {
 
@@ -32,17 +32,17 @@ class KvalitetsvurderingV1Controller(
     @PatchMapping
     fun patchKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID,
-        @Schema(implementation = KvalitetsvurderingV1Input::class)
+        @Schema(implementation = KvalitetsvurderingV2Input::class)
         @RequestBody
         data: JsonNode
-    ): KvalitetsvurderingV1 {
-        return kvalitetsvurderingV1Service.patchKvalitetsvurdering(kvalitetsvurderingId, data)
+    ): KvalitetsvurderingV2 {
+        return kvalitetsvurderingV2Service.patchKvalitetsvurdering(kvalitetsvurderingId, data)
     }
 
     @GetMapping
     fun getKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID
-    ): KvalitetsvurderingV1 {
+    ): KvalitetsvurderingV2 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::getKvalitetsvurdering.name,
@@ -50,6 +50,6 @@ class KvalitetsvurderingV1Controller(
             kvalitetsvurderingId,
             logger
         )
-        return kvalitetsvurderingV1Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
     }
 }

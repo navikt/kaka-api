@@ -2,8 +2,8 @@ package no.nav.klage.kaka.services
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*

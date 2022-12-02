@@ -3,13 +3,13 @@ package no.nav.klage.kaka.services
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kodeverk.Role.*
 import no.nav.klage.kaka.domain.noKvalitetsvurderingNeeded
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
-import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
@@ -28,7 +28,7 @@ import java.util.*
 @Transactional
 class SaksdataService(
     private val saksdataRepository: SaksdataRepository,
-    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
+    private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
     private val kvalitetsvurderingService: KvalitetsvurderingService,
     private val azureGateway: AzureGateway,
     private val tokenUtil: TokenUtil,
@@ -79,7 +79,7 @@ class SaksdataService(
         if (utfall !in noKvalitetsvurderingNeeded) {
             kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
         } else {
-            kvalitetsvurderingRepository.save(
+            kvalitetsvurderingV1Repository.save(
                 KvalitetsvurderingV1(
                     id = kvalitetsvurderingId
                 )
@@ -116,7 +116,7 @@ class SaksdataService(
                     avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                     utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                     tilknyttetEnhet = tilknyttetEnhet,
-                    kvalitetsvurderingV1 = kvalitetsvurderingRepository.getReferenceById(kvalitetsvurderingId),
+                    kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(kvalitetsvurderingId),
                     source = source
                 )
             )
@@ -196,7 +196,7 @@ class SaksdataService(
         if (saksdata.hasKvalitetsvurdering()) {
             kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingV1.id)
         } else {
-            kvalitetsvurderingRepository.save(
+            kvalitetsvurderingV1Repository.save(
                 KvalitetsvurderingV1(
                     id = saksdata.kvalitetsvurderingV1.id
                 )

@@ -1,7 +1,7 @@
 package no.nav.klage.kaka.api
 
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
 
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.repositories.SaksdataRepository

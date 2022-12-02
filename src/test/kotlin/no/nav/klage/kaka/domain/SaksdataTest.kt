@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.domain
 
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_KVALITETSTILBAKEMELDINGER
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kodeverk.Utfall

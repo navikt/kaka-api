@@ -6,7 +6,7 @@ import no.nav.klage.kaka.api.view.RadioValgInput
 import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
 import no.nav.klage.kaka.api.view.StringInput
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger

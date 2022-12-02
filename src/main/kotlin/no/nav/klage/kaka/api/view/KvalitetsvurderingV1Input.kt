@@ -1,16 +1,17 @@
 package no.nav.klage.kaka.api.view
 
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 
 data class KvalitetsvurderingV1Input (
-    val klageforberedelsenRadioValg: KvalitetsvurderingV1.RadioValg?,
+    val klageforberedelsenRadioValg: RadioValg?,
     val sakensDokumenter: Boolean?,
     val oversittetKlagefristIkkeKommentert: Boolean?,
     val klagerensRelevanteAnfoerslerIkkeKommentert: Boolean?,
     val begrunnelseForHvorforAvslagOpprettholdes: Boolean?,
     val konklusjonen: Boolean?,
     val oversendelsesbrevetsInnholdIkkeISamsvarMedTema: Boolean?,
-    val utredningenRadioValg: KvalitetsvurderingV1.RadioValg?,
+    val utredningenRadioValg: RadioValg?,
     val utredningenAvMedisinskeForhold: Boolean?,
     val utredningenAvMedisinskeForholdText: String?,
     val utredningenAvInntektsforhold: Boolean?,
@@ -25,12 +26,12 @@ data class KvalitetsvurderingV1Input (
     val utredningenAvEoesProblematikkText: String?,
     val veiledningFraNav: Boolean?,
     val veiledningFraNavText: String?,
-    val brukAvRaadgivendeLegeRadioValg: KvalitetsvurderingV1.RadioValgRaadgivendeLege?,
+    val brukAvRaadgivendeLegeRadioValg: RadioValgRaadgivendeLege?,
     val raadgivendeLegeErIkkeBrukt: Boolean?,
     val raadgivendeLegeErBruktFeilSpoersmaal: Boolean?,
     val raadgivendeLegeHarUttaltSegUtoverTrygdemedisin: Boolean?,
     val raadgivendeLegeErBruktMangelfullDokumentasjon: Boolean?,
-    val vedtaketRadioValg: KvalitetsvurderingV1.RadioValg?,
+    val vedtaketRadioValg: RadioValg?,
     val detErIkkeBruktRiktigHjemmel: Boolean?,
     val innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet: Boolean?,
     val rettsregelenErBenyttetFeil: Boolean?,

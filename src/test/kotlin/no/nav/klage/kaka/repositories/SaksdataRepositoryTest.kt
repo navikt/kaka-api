@@ -1,8 +1,8 @@
 package no.nav.klage.kaka.repositories
 
 
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
@@ -40,7 +40,7 @@ class SaksdataRepositoryTest {
     lateinit var saksdataRepository: SaksdataRepository
 
     @Autowired
-    lateinit var kvalitetsvurderingRepository: KvalitetsvurderingRepository
+    lateinit var kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository
 
     @Test
     fun `add saksdata works`() {
@@ -161,7 +161,7 @@ class SaksdataRepositoryTest {
         var foundSaksdata = saksdataRepository.findById(saksdata.id)
         assertThat(foundSaksdata.get()).isEqualTo(saksdata)
 
-        assertThat(kvalitetsvurderingRepository.findAll()).hasSize(1)
+        assertThat(kvalitetsvurderingV1Repository.findAll()).hasSize(1)
 
         saksdataRepository.deleteById(saksdata.id)
 
@@ -170,7 +170,7 @@ class SaksdataRepositoryTest {
 
         foundSaksdata = saksdataRepository.findById(saksdata.id)
         assertThat(foundSaksdata).isEmpty
-        assertThat(kvalitetsvurderingRepository.findAll()).isEmpty()
+        assertThat(kvalitetsvurderingV1Repository.findAll()).isEmpty()
     }
 
     @Test

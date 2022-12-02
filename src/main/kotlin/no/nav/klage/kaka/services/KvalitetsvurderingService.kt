@@ -1,10 +1,10 @@
 package no.nav.klage.kaka.services
 
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
-import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,12 +14,12 @@ import java.util.*
 @Service
 @Transactional
 class KvalitetsvurderingService(
-    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
+    private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
     private val saksdataRepository: SaksdataRepository
 ) {
 
     fun createKvalitetsvurdering(): KvalitetsvurderingV1 {
-        return kvalitetsvurderingRepository.save(
+        return kvalitetsvurderingV1Repository.save(
             KvalitetsvurderingV1()
         )
     }
@@ -28,7 +28,7 @@ class KvalitetsvurderingService(
         kvalitetsvurderingId: UUID,
         innloggetSaksbehandler: String
     ): KvalitetsvurderingV1 {
-        val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
+        val kvalitetsvurdering = kvalitetsvurderingV1Repository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
             throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
         }
@@ -481,7 +481,7 @@ class KvalitetsvurderingService(
     fun cleanUpKvalitetsvurdering(
         kvalitetsvurderingId: UUID
     ) {
-        val kvalitetsvurdering = kvalitetsvurderingRepository.getReferenceById(kvalitetsvurderingId)
+        val kvalitetsvurdering = kvalitetsvurderingV1Repository.getReferenceById(kvalitetsvurderingId)
         kvalitetsvurdering.cleanup()
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
@@ -489,7 +489,7 @@ class KvalitetsvurderingService(
     fun removeFieldsUnusedInAnke(
         kvalitetsvurderingId: UUID
     ) {
-        val kvalitetsvurdering = kvalitetsvurderingRepository.getReferenceById(kvalitetsvurderingId)
+        val kvalitetsvurdering = kvalitetsvurderingV1Repository.getReferenceById(kvalitetsvurderingId)
         kvalitetsvurdering.removeFieldsUnusedInAnke()
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
@@ -498,7 +498,7 @@ class KvalitetsvurderingService(
     private fun getKvalitetsvurderingAndVerifyNotFinalized(
         kvalitetsvurderingId: UUID
     ): KvalitetsvurderingV1 {
-        val kvalitetsvurdering = kvalitetsvurderingRepository.findById(kvalitetsvurderingId)
+        val kvalitetsvurdering = kvalitetsvurderingV1Repository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
             throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
         }
