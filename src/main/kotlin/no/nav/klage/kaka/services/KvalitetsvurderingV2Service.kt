@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.*
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
+import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.setFieldOnObject
@@ -44,17 +45,15 @@ class KvalitetsvurderingV2Service(
     private fun getKvalitetsvurderingAndVerifyNotFinalized(
         kvalitetsvurderingId: UUID
     ): KvalitetsvurderingV2 {
-        val kvalitetsvurdering = kvalitetsvurderingV2Repository.findById(kvalitetsvurderingId)
-        if (kvalitetsvurdering.isEmpty) {
-            throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
-        }
-        return kvalitetsvurdering.get()
-//            .also {
-//                val saksdata = saksdataRepository.findOneByKvalitetsvurderingV1Id(it.id)
-//                if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
-//                    "Saksdata er allerede fullført"
-//                )
-//            }
+        val kvalitetsvurdering = kvalitetsvurderingV2Repository.getReferenceById(kvalitetsvurderingId)
+            .also {
+                val saksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(it.id)
+                if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
+                    "Saksdata er allerede fullført"
+                )
+            }
+
+        return kvalitetsvurdering
     }
 
     private fun getValue(node: JsonNode): Any? {

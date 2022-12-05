@@ -238,14 +238,40 @@ class SaksdataService(
         return saksdata
     }
 
-    fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
+    fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String, withVersion: Int? = 1): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(
             saksdataId = saksdataId,
             innloggetSaksbehandler = innloggetSaksbehandler,
             isReopen = true
         )
+
+        when (withVersion) {
+            1 -> {
+                if (saksdata.kvalitetsvurderingReference.version != 1) {
+                    kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1())
+                    saksdata.kvalitetsvurderingReference = KvalitetsvurderingReference(
+                        id = kvalitetsvurderingV1.id,
+                        version = 1
+                    )
+                }
+            }
+            2 -> {
+                if (saksdata.kvalitetsvurderingReference.version != 2) {
+                    kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2())
+                    saksdata.kvalitetsvurderingReference = KvalitetsvurderingReference(
+                        id = kvalitetsvurderingV2.id,
+                        version = 2
+                    )
+                }
+            }
+            else -> error("Invalid version")
+        }
         saksdata.avsluttetAvSaksbehandler = null
         saksdata.modified = LocalDateTime.now()
+
+        return saksdata
     }
 
     private fun getSaksdataAndVerifyAccess(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {

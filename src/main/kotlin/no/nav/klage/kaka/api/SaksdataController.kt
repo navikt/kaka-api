@@ -94,8 +94,9 @@ class SaksdataController(
 
     @PostMapping("/{id}/reopen")
     fun reopenSaksdata(
-        @PathVariable("id") saksdataId: UUID
-    ) {
+        @PathVariable("id") saksdataId: UUID,
+        @RequestParam version: Int?,
+    ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::reopenSaksdata.name,
@@ -103,7 +104,8 @@ class SaksdataController(
             UUID.randomUUID(),
             logger
         )
-        return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler)
+        
+        return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler, version).toSaksdataView()
     }
 
     @PutMapping("/{id}/sakengjelder")
