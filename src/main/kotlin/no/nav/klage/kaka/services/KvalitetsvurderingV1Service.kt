@@ -8,6 +8,7 @@ import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.setFieldOnObject
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
@@ -63,7 +64,7 @@ class KvalitetsvurderingV1Service(
             is BooleanNode -> node.booleanValue()
             is TextNode -> node.textValue()
             is NullNode -> null
-            is ArrayNode -> node.elements().asSequence().map { getValue(it) }.toSet()
+            is ArrayNode -> node.elements().asSequence().map { Registreringshjemmel.of(getValue(it).toString()) }.toSet()
             else -> error("not supported")
         }
     }
