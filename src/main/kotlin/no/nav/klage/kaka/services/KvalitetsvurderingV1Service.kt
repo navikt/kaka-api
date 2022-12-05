@@ -1,10 +1,7 @@
 package no.nav.klage.kaka.services
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.BooleanNode
-import com.fasterxml.jackson.databind.node.IntNode
-import com.fasterxml.jackson.databind.node.NullNode
-import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.databind.node.*
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
@@ -66,6 +63,7 @@ class KvalitetsvurderingV1Service(
             is BooleanNode -> node.booleanValue()
             is TextNode -> node.textValue()
             is NullNode -> null
+            is ArrayNode -> node.elements().asSequence().map { getValue(it) }.toSet()
             else -> error("not supported")
         }
     }
