@@ -29,6 +29,8 @@ class KvalitetsvurderingController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
+    //TODO: Kan fjernes etter hvert.
+
     @GetMapping
     fun getKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID

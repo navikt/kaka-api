@@ -2,7 +2,7 @@ package no.nav.klage.kaka.api.view
 
 import java.util.*
 
-data class AnonymizedFinishedVurdering(
+data class AnonymizedFinishedVurderingV1(
     /** unique and static id */
     val id: UUID,
     val tilknyttetEnhet: String,
@@ -57,7 +57,7 @@ data class AnonymizedFinishedVurdering(
     val modifiedDate: Date,
 )
 
-data class AnonymizedFinishedVurderingWithoutEnheter(
+data class AnonymizedFinishedVurderingWithoutEnheterV1(
     /** unique and static id */
     val id: UUID,
     val hjemmelIdList: List<String>,
@@ -110,7 +110,7 @@ data class AnonymizedFinishedVurderingWithoutEnheter(
     val modifiedDate: Date,
 )
 
-data class AnonymizedUnfinishedVurdering(
+data class AnonymizedUnfinishedVurderingV1(
     /** unique and static id */
     val id: UUID,
     val sakstypeId: String,
@@ -131,11 +131,11 @@ data class Date(
     val epochDay: Int
 )
 
-data class TotalResponse(
-    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurdering>,
-    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
+data class TotalResponseV1(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
+    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurderingV1>,
 )
 
-data class TotalResponseWithoutEnheter(
-    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheter>
+data class TotalResponseWithoutEnheterV1(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheterV1>
 )

@@ -2,13 +2,15 @@ package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.Saksbehandler
-import no.nav.klage.kaka.api.view.TotalResponse
+import no.nav.klage.kaka.api.view.TotalResponseV1
+import no.nav.klage.kaka.api.view.TotalResponseV2
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_LEDERSTATISTIKK
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KLAGE_LEDER
 import no.nav.klage.kaka.exceptions.MissingTilgangException
-import no.nav.klage.kaka.services.ExportService
+import no.nav.klage.kaka.services.ExportServiceV1
+import no.nav.klage.kaka.services.ExportServiceV2
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
@@ -28,7 +30,8 @@ import java.time.YearMonth
 @Tag(name = "kaka-api:kaka-leder")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 class KALederController(
-    private val exportService: ExportService,
+    private val exportServiceV1: ExportServiceV1,
+    private val exportServiceV2: ExportServiceV2,
     private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
     private val tokenUtil: TokenUtil
@@ -39,6 +42,7 @@ class KALederController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
+    //TODO: Antageligvis egen kontroller for v2?
     @GetMapping("/export/excel")
     fun getAsExcel(@RequestParam(required = false) year: Int?): ResponseEntity<ByteArray> {
         logger.debug("getAsExcel() called. Year param = $year")
@@ -46,7 +50,7 @@ class KALederController(
         validateIsKALeder()
 
         val fileAsBytes =
-            exportService.getAsExcel(
+            exportServiceV1.getAsExcel(
                 year = if (year != null) Year.of(year) else Year.now()
             )
 
@@ -67,7 +71,7 @@ class KALederController(
         @RequestParam(required = false) fromMonth: String?,
         @RequestParam(required = false) toMonth: String?,
         @RequestParam(required = false) saksbehandlere: List<String>?,
-    ): TotalResponse {
+    ): TotalResponseV1 {
         logger.debug(
             "getTotalForLeder() called. enhetsnummer param = $enhetsnummer, " +
                     "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
@@ -80,14 +84,14 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
-        return TotalResponse(
-            anonymizedFinishedVurderingList = exportService.getFinishedForLederAsRawData(
+        return TotalResponseV1(
+            anonymizedFinishedVurderingList = exportServiceV1.getFinishedForLederAsRawData(
                 enhet = enhet,
                 fromMonth = YearMonth.parse(fromMonth),
                 toMonth = YearMonth.parse(toMonth),
                 saksbehandlerIdentList = saksbehandlere,
             ),
-            anonymizedUnfinishedVurderingList = exportService.getUnfinishedForLederAsRawData(
+            anonymizedUnfinishedVurderingList = exportServiceV1.getUnfinishedForLederAsRawData(
                 enhet = enhet,
                 toMonth = YearMonth.parse(toMonth),
                 saksbehandlerIdentList = saksbehandlere,
@@ -95,6 +99,51 @@ class KALederController(
         )
     }
 
+    @GetMapping("/statistics/v1/enheter/{enhetsnummer}/manager")
+    fun getTotalForLederV1(
+        @PathVariable enhetsnummer: String,
+        @RequestParam(required = false) fromMonth: String?,
+        @RequestParam(required = false) toMonth: String?,
+        @RequestParam(required = false) saksbehandlere: List<String>?,
+    ): TotalResponseV1 {
+        return getTotalForLeder(enhetsnummer, fromMonth, toMonth, saksbehandlere)
+    }
+
+    @GetMapping("/statistics/v2/enheter/{enhetsnummer}/manager")
+    fun getTotalForLederV2(
+        @PathVariable enhetsnummer: String,
+        @RequestParam(required = false) fromMonth: String?,
+        @RequestParam(required = false) toMonth: String?,
+        @RequestParam(required = false) saksbehandlere: List<String>?,
+    ): TotalResponseV2 {
+        logger.debug(
+            "getTotalForLederV2() called. enhetsnummer param = $enhetsnummer, " +
+                    "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
+        )
+
+        validateIsKakaLeder()
+
+        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        if (enhet.navn != enhetsnummer) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
+        }
+
+        return TotalResponseV2(
+            anonymizedFinishedVurderingList = exportServiceV2.getFinishedForLederAsRawData(
+                enhet = enhet,
+                fromMonth = YearMonth.parse(fromMonth),
+                toMonth = YearMonth.parse(toMonth),
+                saksbehandlerIdentList = saksbehandlere,
+            ),
+            anonymizedUnfinishedVurderingList = exportServiceV2.getUnfinishedForLederAsRawData(
+                enhet = enhet,
+                toMonth = YearMonth.parse(toMonth),
+                saksbehandlerIdentList = saksbehandlere,
+            )
+        )
+    }
+
+    //Ingen versjonering
     @GetMapping("/enheter/{enhetsnummer}/saksbehandlere")
     fun getSaksbehandlereForEnhet(
         @PathVariable enhetsnummer: String,

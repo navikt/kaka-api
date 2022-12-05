@@ -16,7 +16,7 @@ import java.time.Year
 import java.util.*
 
 
-internal class ExportServiceTest {
+internal class ExportServiceV1Test {
 
     /* TODO fix
     @Test
@@ -59,7 +59,7 @@ internal class ExportServiceTest {
             )
         } returns getSaksdata(amount = 0)
 
-        val exportService = ExportService(
+        val exportServiceV1 = ExportServiceV1(
             saksdataRepository = saksdataRepository,
             kvalitetsvurderingV1Repository = kvalitetsvurderingV1Repository
         )
@@ -69,7 +69,7 @@ internal class ExportServiceTest {
         val fileLocation = path.substring(0, path.length - 1) + "testfile.xlsx"
 
         File(fileLocation).writeBytes(
-            exportService.getAsExcel(
+            exportServiceV1.getAsExcel(
                 year = Year.now()
             )
         )
