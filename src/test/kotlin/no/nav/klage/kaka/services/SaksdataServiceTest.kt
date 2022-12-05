@@ -2,7 +2,7 @@ package no.nav.klage.kaka.services
 
 import io.mockk.every
 import io.mockk.mockk
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.SaksdataRepository
@@ -21,14 +21,15 @@ internal class SaksdataServiceTest {
 
     val saksdataService =
         SaksdataService(
-            saksdataRepository,
-            mockk(),
-            kvalitetsvurderingService,
-            mockk(),
-            mockk(),
-            mockk(),
-            mockk(),
-            mockk()
+            saksdataRepository = saksdataRepository,
+            kvalitetsvurderingV1Repository = mockk(),
+            kvalitetsvurderingV2Repository = mockk(),
+            kvalitetsvurderingService = kvalitetsvurderingService,
+            azureGateway = mockk(),
+            tokenUtil = mockk(),
+            rolleMapper = mockk(),
+            pdlFacade = mockk(),
+            egenAnsattService = mockk()
         )
 
     @BeforeEach
@@ -37,7 +38,10 @@ internal class SaksdataServiceTest {
             Saksdata(
                 utfoerendeSaksbehandler = SAKSBEHANDLER_IDENT,
                 tilknyttetEnhet = "4295",
-                kvalitetsvurderingV1 = KvalitetsvurderingV1()
+                kvalitetsvurderingReference = KvalitetsvurderingReference(
+                    id = UUID.randomUUID(),
+                    version = 1,
+                ),
             )
         )
     }

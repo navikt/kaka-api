@@ -80,7 +80,10 @@ class SaksdataController(
             throw MissingTilgangException("User does not have access to create saksdata")
         }
 
-        return saksdataService.createSaksdata(innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.createSaksdata(
+            innloggetSaksbehandler = innloggetSaksbehandler,
+            kvalitsvurderingVersion = input?.kvalitsvurderingVersion
+        ).toSaksdataView()
     }
 
     private fun validateEnhetsnummer(enhetsnummer: String?) {

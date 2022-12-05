@@ -1,9 +1,10 @@
 package no.nav.klage.kaka.api
 
+import no.nav.klage.kaka.domain.KvalitetsvurderingReference
+import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
-
-import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
@@ -15,13 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
+import java.util.*
 import kotlin.random.Random
 
 @Profile("dev-gcp")
 @RestController
 @RequestMapping("mockdata")
 class AddRandomDataController(
-    private val saksdataRepository: SaksdataRepository
+    private val saksdataRepository: SaksdataRepository,
+    private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
 ) {
 
     @Unprotected
@@ -40,6 +43,8 @@ class AddRandomDataController(
         val potentialEndDate = mottattKA.plusDays((1..108).random().toLong())
         val avsluttetAvSaksbehandler = if (potentialEndDate > LocalDate.now()) LocalDate.now() else potentialEndDate
 
+        val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.save(getRandomKvalitetsvurdering())
+
         return Saksdata(
             sakstype = cohesiveTestData.type,
             utfoerendeSaksbehandler = cohesiveTestData.ident,
@@ -53,7 +58,13 @@ class AddRandomDataController(
             mottattKlageinstans = mottattKA,
             avsluttetAvSaksbehandler = avsluttetAvSaksbehandler.atStartOfDay(),
             source = Source.values().random(),
-            kvalitetsvurderingV1 = getRandomKvalitetsvurdering(),
+
+            //TODO v2
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV1.id,
+                version = 1,
+            ),
+
             created = mottattKA.atStartOfDay(),
             modified = avsluttetAvSaksbehandler.atStartOfDay()
         )

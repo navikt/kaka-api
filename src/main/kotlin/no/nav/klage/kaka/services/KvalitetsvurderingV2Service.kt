@@ -5,11 +5,9 @@ import com.fasterxml.jackson.databind.node.BooleanNode
 import com.fasterxml.jackson.databind.node.IntNode
 import com.fasterxml.jackson.databind.node.NullNode
 import com.fasterxml.jackson.databind.node.TextNode
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
-import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
-import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.setFieldOnObject
 import org.springframework.stereotype.Service
@@ -20,7 +18,7 @@ import javax.transaction.Transactional
 @Service
 @Transactional
 class KvalitetsvurderingV2Service(
-    private val kvalitetsvurderingV2Repository: KvalitetsvurderingV1Repository,
+    private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
     private val saksdataRepository: SaksdataRepository,
 ) {
 

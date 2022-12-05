@@ -17,7 +17,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
         fromDate: LocalDateTime
     ): List<Saksdata>
 
-    fun findOneByKvalitetsvurderingV1Id(kvalitetsvurderingId: UUID): Saksdata?
+    fun findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId: UUID): Saksdata?
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["kvalitetsvurderingV1", "registreringshjemler"])

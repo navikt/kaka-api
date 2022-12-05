@@ -1,7 +1,8 @@
 package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
@@ -504,7 +505,7 @@ class KvalitetsvurderingService(
         }
         return kvalitetsvurdering.get()
             .also {
-                val saksdata = saksdataRepository.findOneByKvalitetsvurderingV1Id(it.id)
+                val saksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(it.id)
                 if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
                     "Saksdata er allerede fullført"
                 )
