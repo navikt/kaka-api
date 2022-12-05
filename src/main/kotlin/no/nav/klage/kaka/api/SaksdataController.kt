@@ -95,7 +95,7 @@ class SaksdataController(
     @PostMapping("/{id}/reopen")
     fun reopenSaksdata(
         @PathVariable("id") saksdataId: UUID,
-        @RequestParam version: Int?,
+        @RequestParam(required = false) version: Int?,
     ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
@@ -104,7 +104,7 @@ class SaksdataController(
             UUID.randomUUID(),
             logger
         )
-        
+
         return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler, version).toSaksdataView()
     }
 
