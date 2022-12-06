@@ -17,14 +17,13 @@ internal class SaksdataServiceTest {
     private val OTHER_IDENT = "OTHER_IDENT"
 
     val saksdataRepository = mockk<SaksdataRepository>()
-    val kvalitetsvurderingService = mockk<KvalitetsvurderingService>()
 
     val saksdataService =
         SaksdataService(
             saksdataRepository = saksdataRepository,
             kvalitetsvurderingV1Repository = mockk(),
             kvalitetsvurderingV2Repository = mockk(),
-            kvalitetsvurderingService = kvalitetsvurderingService,
+            kvalitetsvurderingV1Service = mockk(),
             azureGateway = mockk(),
             tokenUtil = mockk(),
             rolleMapper = mockk(),
