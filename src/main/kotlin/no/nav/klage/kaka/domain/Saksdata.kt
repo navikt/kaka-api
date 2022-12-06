@@ -4,6 +4,7 @@ import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.domain.kodeverk.Role
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
+import no.nav.klage.kaka.exceptions.ValidationSection
 import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
@@ -105,46 +106,27 @@ class Saksdata(
         }
     }
 
-    fun validate() {
-//        val validationErrors = mutableListOf<InvalidProperty>()
-//
-//        validationErrors += validateCommonProperties()
-//
-//        if (sakstype == Type.KLAGE) {
-//            validationErrors += validateSpecificPropertiesForKlage()
-//        }
-//
-//        val sectionList = mutableListOf<ValidationSection>()
-//
-//        if (validationErrors.isNotEmpty()) {
-//            sectionList.add(
-//                ValidationSection(
-//                    section = "saksdata",
-//                    properties = validationErrors
-//                )
-//            )
-//        }
-//
-//        if (utfall !in noKvalitetsvurderingNeeded) {
-//            val kvalitetsvurderingValidationErrors =
-//                kvalitetsvurderingV1!!.getInvalidProperties(ytelse = ytelse, type = sakstype)
-//
-//            if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
-//                sectionList.add(
-//                    ValidationSection(
-//                        section = "kvalitetsvurdering",
-//                        properties = kvalitetsvurderingValidationErrors
-//                    )
-//                )
-//            }
-//        }
-//
-//        if (sectionList.isNotEmpty()) {
-//            throw SectionedValidationErrorWithDetailsException(
-//                title = "Validation error",
-//                sections = sectionList
-//            )
-//        }
+    fun validateAndGetErrors(): MutableList<ValidationSection> {
+        val validationErrors = mutableListOf<InvalidProperty>()
+
+        validationErrors += validateCommonProperties()
+
+        if (sakstype == Type.KLAGE) {
+            validationErrors += validateSpecificPropertiesForKlage()
+        }
+
+        val sectionList = mutableListOf<ValidationSection>()
+
+        if (validationErrors.isNotEmpty()) {
+            sectionList.add(
+                ValidationSection(
+                    section = "saksdata",
+                    properties = validationErrors
+                )
+            )
+        }
+
+        return sectionList
     }
 
     private fun validateCommonProperties(): List<InvalidProperty> {

@@ -142,7 +142,6 @@ class KALederController(
         )
     }
 
-    //Ingen versjonering
     @GetMapping("/enheter/{enhetsnummer}/saksbehandlere")
     fun getSaksbehandlereForEnhet(
         @PathVariable enhetsnummer: String,

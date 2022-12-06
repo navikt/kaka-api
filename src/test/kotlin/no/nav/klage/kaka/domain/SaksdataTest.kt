@@ -46,7 +46,7 @@ internal class SaksdataTest {
             utfall = Utfall.TRUKKET,
         )
 
-        saksdata.validate()
+        saksdata.validateAndGetErrors()
     }
 
     @Test

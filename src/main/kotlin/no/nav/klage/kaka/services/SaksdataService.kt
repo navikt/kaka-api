@@ -11,6 +11,8 @@ import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.domain.noKvalitetsvurderingNeeded
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
+import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
+import no.nav.klage.kaka.exceptions.ValidationSection
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
@@ -33,7 +35,7 @@ class SaksdataService(
     private val saksdataRepository: SaksdataRepository,
     private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
     private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
-    private val kvalitetsvurderingService: KvalitetsvurderingService,
+    private val kvalitetsvurderingV1Service: KvalitetsvurderingV1Service,
     private val azureGateway: AzureGateway,
     private val tokenUtil: TokenUtil,
     private val rolleMapper: RolleMapper,
@@ -103,15 +105,16 @@ class SaksdataService(
     ): Saksdata {
         val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId)
 
-        if (utfall !in noKvalitetsvurderingNeeded) {
-            kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
-        } else {
-            kvalitetsvurderingV1Repository.save(
-                KvalitetsvurderingV1(
-                    id = kvalitetsvurderingId
-                ),
-            )
-        }
+//        TODO
+//        if (utfall !in noKvalitetsvurderingNeeded) {
+//            kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+//        } else {
+//            kvalitetsvurderingV1Repository.save(
+//                KvalitetsvurderingV1(
+//                    id = kvalitetsvurderingId
+//                ),
+//            )
+//        }
 
         return if (existingSaksdata != null) {
             existingSaksdata.sakenGjelder = sakenGjelder
@@ -219,23 +222,67 @@ class SaksdataService(
 
     fun setAvsluttetAvSaksbehandler(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        saksdata.validate()
-        if (saksdata.kvalitetsvurderingReference.version == 2) {
-            error("v2 not supported")
-        }
-        if (saksdata.sakstype == Type.ANKE) {
-            saksdata.mottattVedtaksinstans = null
-            kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
-        }
-        if (saksdata.hasKvalitetsvurdering()) {
-            kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
-        } else {
-            error("There must be a kvalitetsvurdering")
+
+        validate(saksdata)
+
+        when (val version = saksdata.kvalitetsvurderingReference.version) {
+            1 -> {
+                if (saksdata.sakstype == Type.ANKE) {
+                    saksdata.mottattVedtaksinstans = null
+                    kvalitetsvurderingV1Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
+                }
+                if (saksdata.hasKvalitetsvurdering()) {
+                    kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
+                } else {
+                    error("There must be a kvalitetsvurdering")
+                }
+            }
+            2 -> {
+                if (saksdata.sakstype == Type.ANKE) {
+                    saksdata.mottattVedtaksinstans = null
+                }
+                //TODO
+            }
+            else -> error("Unknown version: $version")
         }
 
         saksdata.avsluttetAvSaksbehandler = LocalDateTime.now()
         saksdata.modified = LocalDateTime.now()
         return saksdata
+    }
+
+    private fun validate(saksdata: Saksdata) {
+        val sectionList = saksdata.validateAndGetErrors()
+
+        if (saksdata.utfall !in noKvalitetsvurderingNeeded) {
+            val kvalitetsvurderingValidationErrors = when (saksdata.kvalitetsvurderingReference.version) {
+                1 -> {
+                    val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+                    kvalitetsvurderingV1.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
+                }
+                2 -> {
+                    val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+                    kvalitetsvurderingV2.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
+                }
+                else -> error("unknown version: ${saksdata.kvalitetsvurderingReference.version}")
+            }
+
+            if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
+                sectionList.add(
+                    ValidationSection(
+                        section = "kvalitetsvurdering",
+                        properties = kvalitetsvurderingValidationErrors
+                    )
+                )
+            }
+        }
+
+        if (sectionList.isNotEmpty()) {
+            throw SectionedValidationErrorWithDetailsException(
+                title = "Validation error",
+                sections = sectionList
+            )
+        }
     }
 
     fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String, withVersion: Int? = 1): Saksdata {
