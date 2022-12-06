@@ -8,14 +8,14 @@ import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kaka.services.ExportServiceV2.Field.Type.*
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
-import java.io.ByteArrayOutputStream
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.YearMonth
 import java.time.temporal.ChronoField
 import java.util.*
 
@@ -31,7 +31,8 @@ class ExportServiceV2(
      * KA-ledere.
      */
 //    fun getAsExcel(year: Year): ByteArray {
-//        val saksdataList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+//        val saksdataList = saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+//            kvalitetsvurderingVersion = 2,
 //            fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
 //            toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
 //        )
@@ -130,14 +131,16 @@ class ExportServiceV2(
         val toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX)
 
         val saksdataList = if (saksbehandlerIdentList == null) {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
                 enhet = enhet.navn,
+                kvalitetsvurderingVersion = 2,
                 fromDateTime = fromDateTime,
                 toDateTime = toDateTime,
             )
         } else {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
+            saksdataRepository.findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
                 enhet = enhet.navn,
+                kvalitetsvurderingVersion = 2,
                 fromDateTime = fromDateTime,
                 toDateTime = toDateTime,
                 saksbehandlerIdentList = saksbehandlerIdentList,
@@ -158,13 +161,15 @@ class ExportServiceV2(
         validateNotCurrentMonth(toMonth)
 
         val saksdataList = if (saksbehandlerIdentList == null) {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+            saksdataRepository.findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
                 enhet = enhet.navn,
+                kvalitetsvurderingVersion = 2,
                 toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
             )
         } else {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
+            saksdataRepository.findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
                 enhet = enhet.navn,
+                kvalitetsvurderingVersion = 2,
                 toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
                 saksbehandlerIdentList = saksbehandlerIdentList,
             )
@@ -184,7 +189,8 @@ class ExportServiceV2(
      */
     fun getFinishedAsRawDataByDates(fromDate: LocalDate, toDate: LocalDate): List<AnonymizedFinishedVurderingV2> {
         val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                kvalitetsvurderingVersion = 2,
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
@@ -199,7 +205,8 @@ class ExportServiceV2(
         toDate: LocalDate
     ): List<AnonymizedFinishedVurderingWithoutEnheterV2> {
         val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                kvalitetsvurderingVersion = 2,
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
@@ -236,7 +243,8 @@ class ExportServiceV2(
         saksbehandler: String
     ): List<AnonymizedFinishedVurderingV2> {
         val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
+                kvalitetsvurderingVersion = 2,
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX),
                 saksbehandler = saksbehandler,
@@ -249,7 +257,8 @@ class ExportServiceV2(
      */
     fun getUnfinishedAsRawDataByToDate(toDate: LocalDate): List<AnonymizedUnfinishedVurderingV2> {
         val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+                kvalitetsvurderingVersion = 2,
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
         return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
@@ -263,7 +272,8 @@ class ExportServiceV2(
         saksbehandler: String
     ): List<AnonymizedUnfinishedVurderingV2> {
         val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
+                kvalitetsvurderingVersion = 2,
                 toDateTime = toDate.atTime(LocalTime.MAX),
                 saksbehandler = saksbehandler,
             )
@@ -289,8 +299,8 @@ class ExportServiceV2(
 
             val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
 
-            if (saksdata.kvalitetsvurderingReference.version == 2) {
-                error("Don't support v2 yet")
+            if (saksdata.kvalitetsvurderingReference.version == 1) {
+                error("This query only works for version 2 of kvalitetsvurderinger")
             }
 
             val kvalitetsvurderingV2 =
@@ -375,8 +385,8 @@ class ExportServiceV2(
 
             val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
 
-            if (saksdata.kvalitetsvurderingReference.version == 2) {
-                error("Don't support v2 yet")
+            if (saksdata.kvalitetsvurderingReference.version == 1) {
+                error("This query only works for version 2 of kvalitetsvurderinger")
             }
 
             val kvalitetsvurderingV2 =
@@ -504,9 +514,9 @@ class ExportServiceV2(
 //    private fun mapToFields(saksdataList: List<Saksdata>): List<List<Field>> {
 //        //@formatter:off
 //        return saksdataList.map { saksdata ->
-//            if (saksdata.kvalitetsvurderingReference.version == 2) {
-//                error("Don't support v2 yet")
-//            }
+        //    if (saksdata.kvalitetsvurderingReference.version == 1) {
+        //        error("This query only works for version 2 of kvalitetsvurderinger")
+        //    }
 //
 //            val kvalitetsvurderingV2 =
 //                kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)

@@ -42,7 +42,6 @@ class KALederController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    //TODO: Antageligvis egen kontroller for v2?
     @GetMapping("/export/excel")
     fun getAsExcel(@RequestParam(required = false) year: Int?): ResponseEntity<ByteArray> {
         logger.debug("getAsExcel() called. Year param = $year")

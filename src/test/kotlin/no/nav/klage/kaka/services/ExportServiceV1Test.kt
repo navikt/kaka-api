@@ -4,6 +4,7 @@ import io.mockk.every
 import io.mockk.mockk
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*
@@ -18,20 +19,24 @@ import java.util.*
 
 internal class ExportServiceV1Test {
 
-    /* TODO fix
     @Test
     fun generateExcelFileAsLeder() {
         val saksdataRepository = mockk<SaksdataRepository>()
         val kvalitetsvurderingV1Repository = mockk<KvalitetsvurderingV1Repository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                any(),
                 any(),
                 any()
             )
         } returns getSaksdata(amount = 10)
 
-        val exportService = ExportService(
+        every {
+            kvalitetsvurderingV1Repository.getReferenceById(any())
+        } returns KvalitetsvurderingV1()
+
+        val exportService = ExportServiceV1(
             saksdataRepository = saksdataRepository,
             kvalitetsvurderingV1Repository = kvalitetsvurderingV1Repository
         )
@@ -45,7 +50,7 @@ internal class ExportServiceV1Test {
                 year = Year.now()
             )
         )
-    }*/
+    }
 
     @Test
     fun `generate excel file with no data does not throw exception`() {
@@ -53,7 +58,8 @@ internal class ExportServiceV1Test {
         val kvalitetsvurderingV1Repository = mockk<KvalitetsvurderingV1Repository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                any(),
                 any(),
                 any()
             )

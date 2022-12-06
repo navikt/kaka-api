@@ -21,14 +21,16 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+    fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+        kvalitetsvurderingVersion: Int,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
     ): List<Saksdata>
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
+    fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
+        kvalitetsvurderingVersion: Int,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         saksbehandler: String,
@@ -36,8 +38,9 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
+    fun findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
         enhet: String,
+        kvalitetsvurderingVersion: Int,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         saksbehandlerIdentList: List<String>
@@ -45,34 +48,39 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+    fun findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
         enhet: String,
+        kvalitetsvurderingVersion: Int,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
     ): List<Saksdata>
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
+    fun findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
         enhet: String,
+        kvalitetsvurderingVersion: Int,
         toDateTime: LocalDateTime,
         saksbehandlerIdentList: List<String>
     ): List<Saksdata>
 
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+    fun findByTilknyttetEnhetAndKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
         enhet: String,
+        kvalitetsvurderingVersion: Int,
         toDateTime: LocalDateTime
     ): List<Saksdata>
 
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+    fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+        kvalitetsvurderingVersion: Int,
         toDateTime: LocalDateTime
     ): List<Saksdata>
 
     @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
+    fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
+        kvalitetsvurderingVersion: Int,
         toDateTime: LocalDateTime,
         saksbehandler: String,
     ): List<Saksdata>

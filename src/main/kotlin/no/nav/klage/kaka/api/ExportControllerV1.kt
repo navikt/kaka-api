@@ -13,6 +13,7 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
@@ -20,7 +21,8 @@ import java.time.LocalDate
 @RestController
 @Tag(name = "kaka-api:kaka-export")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
-class ExportController(
+@RequestMapping("/statistics", "/statistics/v1")
+class ExportControllerV1(
     private val exportServiceV1: ExportServiceV1,
     private val tokenUtil: TokenUtil,
     private val azureGateway: AzureGateway,
@@ -32,9 +34,7 @@ class ExportController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-
-    //TODO: Antageligvis egen kontroller for v2?
-    @GetMapping("/statistics/my")
+    @GetMapping("/my")
     fun getMyStats(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
@@ -56,7 +56,7 @@ class ExportController(
         )
     }
 
-    @GetMapping("/statistics/open")
+    @GetMapping("/open")
     fun getOpen(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
@@ -71,7 +71,7 @@ class ExportController(
         )
     }
 
-    @GetMapping("/statistics/total")
+    @GetMapping("/total")
     fun getTotal(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
@@ -89,7 +89,7 @@ class ExportController(
         )
     }
 
-    @GetMapping("/statistics/vedtaksinstansleder")
+    @GetMapping("/vedtaksinstansleder")
     fun getTotalForVedtaksinstansleder(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
