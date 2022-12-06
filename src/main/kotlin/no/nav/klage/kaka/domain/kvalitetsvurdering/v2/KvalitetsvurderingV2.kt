@@ -1,5 +1,7 @@
 package no.nav.klage.kaka.domain.kvalitetsvurdering.v2
 
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.raadgivendeLegeYtelser
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
@@ -104,9 +106,127 @@ class KvalitetsvurderingV2(
         return id.hashCode()
     }
 
-    //TODO
     fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
-        return emptyList()
+        val result = mutableListOf<InvalidProperty>()
+
+        result += getCommonInvalidProperties(ytelse)
+
+        if (type == Type.KLAGE) {
+            result += getSpecificInvalidPropertiesForKlage()
+        }
+
+        return result
+    }
+
+    private fun getCommonInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
+        val result = mutableListOf<InvalidProperty>()
+
+        if (utredningen == null) {
+            result.add(
+                createRadioValgValidationError(::utredningen.name)
+            )
+        } else if (utredningen == Radiovalg.MANGELFULLT) {
+            if (
+                !utredningenAvMedisinskeForhold &&
+                !utredningenAvInntektsforhold &&
+                !utredningenAvArbeidsaktivitet &&
+                !utredningenAvEoesUtenlandsproblematikk &&
+                !utredningenAvAndreAktuelleForholdISaken
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::utredningen.name)
+                )
+            }
+        }
+
+        if (vedtaket == null) {
+            result.add(
+                createRadioValgValidationError(::vedtaket.name)
+            )
+        } else if (vedtaket == Radiovalg.MANGELFULLT) {
+            if (
+                !vedtaketLovbestemmelsenTolketFeil &&
+                !vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert &&
+                !vedtaketFeilKonkretRettsanvendelse &&
+                !vedtaketIkkeKonkretIndividuellBegrunnelse &&
+                !vedtaketIkkeGodtNokFremFaktum &&
+                !vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum &&
+                !vedtaketMyeStandardtekst &&
+                !vedtakAutomatiskVedtak
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::vedtaketRadioValg.name)
+                )
+            }
+        }
+
+        if (ytelse in raadgivendeLegeYtelser) {
+            if (brukAvRaadgivendeLegeRadioValg == null) {
+                result.add(
+                    createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                )
+            } else if (brukAvRaadgivendeLegeRadioValg == KvalitetsvurderingV1.RadioValgRaadgivendeLege.MANGELFULLT) {
+                if (
+                    !raadgivendeLegeErIkkeBrukt &&
+                    !raadgivendeLegeErBruktFeilSpoersmaal &&
+                    !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
+                    !raadgivendeLegeErBruktMangelfullDokumentasjon
+                ) {
+                    result.add(
+                        createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                    )
+                }
+            }
+        }
+
+        return result
+    }
+
+    private fun getSpecificInvalidPropertiesForKlage(): List<InvalidProperty> {
+        val result = mutableListOf<InvalidProperty>()
+        if (klageforberedelsen == null) {
+            result.add(
+                createRadioValgValidationError(::klageforberedelsen.name)
+            )
+        } else if (klageforberedelsen == Radiovalg.MANGELFULLT) {
+            if (
+                !sakensDokumenter &&
+                !klageforberedelsenUnderinstansIkkeSendtAlleRelevanteSaksdokumenterTilParten &&
+                !klageforberedelsenOversittetKlagefristIkkeKommentert &&
+                !klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligImotegatt &&
+                !klageforberedelsenMangelfullBegrunnelseForHvorforVedtaketOpprettholdes &&
+                !klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema &&
+                !klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::klageforberedelsen.name)
+                )
+            }
+            if (sakensDokumenter &&
+                !sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert &&
+                !sakensDokumenterJournalfoerteDokumenterFeilNavn &&
+                !sakensDokumenterManglerFysiskSaksmappe
+            ) {
+                result.add(
+                    createMissingChecksValidationError(::sakensDokumenter.name)
+                )
+            }
+        }
+        return result
+    }
+
+    private fun createMissingChecksValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Velg minst én."
+        )
+    }
+
+    private fun createRadioValgValidationError(variableName: String): InvalidProperty {
+        return InvalidProperty(
+            field = variableName,
+            reason = "Velg et alternativ."
+        )
     }
 
     enum class Radiovalg {
