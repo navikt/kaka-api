@@ -5,7 +5,13 @@ import java.time.LocalDateTime
 import java.util.*
 
 data class KabalView(
-    val id: UUID
+    val id: UUID,
+    val kvalitetsvurderingId: UUID,
+    val kvalitetsvurderingVersion: Int,
+)
+
+data class KabalViewIdOnly(
+    val id: UUID,
 )
 
 data class KabalSaksdataInput(

@@ -21,6 +21,12 @@ class KvalitetsvurderingV2Service(
     private val saksdataRepository: SaksdataRepository,
 ) {
 
+    fun createKvalitetsvurdering(): KvalitetsvurderingV2 {
+        return kvalitetsvurderingV2Repository.save(
+            KvalitetsvurderingV2()
+        )
+    }
+
     fun getKvalitetsvurdering(
         kvalitetsvurderingId: UUID,
         innloggetSaksbehandler: String

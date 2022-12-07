@@ -102,20 +102,34 @@ class SaksdataService(
         tilknyttetEnhet: String,
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
-        source: Source
+        source: Source,
+        kvalitsvurderingVersion: Int,
     ): Saksdata {
         val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId)
 
-//        TODO
-//        if (utfall !in noKvalitetsvurderingNeeded) {
-//            kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
-//        } else {
-//            kvalitetsvurderingV1Repository.save(
-//                KvalitetsvurderingV1(
-//                    id = kvalitetsvurderingId
-//                ),
-//            )
-//        }
+        if (utfall !in noKvalitetsvurderingNeeded) {
+            when (kvalitsvurderingVersion) {
+                1 -> kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+                2 -> kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+            }
+        } else {
+            when (kvalitsvurderingVersion) {
+                1 -> {
+                    kvalitetsvurderingV1Repository.save(
+                        KvalitetsvurderingV1(
+                            id = kvalitetsvurderingId
+                        ),
+                    )
+                }
+                2 -> {
+                    kvalitetsvurderingV2Repository.save(
+                        KvalitetsvurderingV2(
+                            id = kvalitetsvurderingId
+                        ),
+                    )
+                }
+            }
+        }
 
         return if (existingSaksdata != null) {
             existingSaksdata.sakenGjelder = sakenGjelder
@@ -147,10 +161,9 @@ class SaksdataService(
                     avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                     utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                     tilknyttetEnhet = tilknyttetEnhet,
-                    //TODO
                     kvalitetsvurderingReference = KvalitetsvurderingReference(
-                        id = kvalitetsvurderingV1Repository.getReferenceById(kvalitetsvurderingId).id,
-                        version = 1,
+                        id = kvalitetsvurderingId,
+                        version = kvalitsvurderingVersion,
                     ),
                     source = source
                 )
