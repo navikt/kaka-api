@@ -195,7 +195,7 @@ class KvalitetsvurderingV1(
         }
     }
 
-    fun removeFieldsUnusedInAnke() {
+    fun resetFieldsUnusedInAnke() {
         klageforberedelsenRadioValg = null
         sakensDokumenter = false
         oversittetKlagefristIkkeKommentert = false

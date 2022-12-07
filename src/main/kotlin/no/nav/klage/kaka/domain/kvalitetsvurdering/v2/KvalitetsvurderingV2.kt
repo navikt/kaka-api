@@ -105,6 +105,87 @@ class KvalitetsvurderingV2(
         return id.hashCode()
     }
 
+    fun resetFieldsUnusedInAnke() {
+        klageforberedelsen = null
+        sakensDokumenter = false
+        klageforberedelsenUnderinstansIkkeSendtAlleRelevanteSaksdokumenterTilParten = false
+        klageforberedelsenOversittetKlagefristIkkeKommentert = false
+        klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligImotegatt = false
+        klageforberedelsenMangelfullBegrunnelseForHvorforVedtaketOpprettholdes = false
+        klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = false
+        klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = false
+
+        sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = false
+        sakensDokumenterJournalfoerteDokumenterFeilNavn = false
+        sakensDokumenterManglerFysiskSaksmappe = false
+    }
+
+    fun cleanup() {
+        if (klageforberedelsen == Radiovalg.BRA) {
+            sakensDokumenter = false
+            klageforberedelsenUnderinstansIkkeSendtAlleRelevanteSaksdokumenterTilParten = false
+            klageforberedelsenOversittetKlagefristIkkeKommentert = false
+            klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligImotegatt = false
+            klageforberedelsenMangelfullBegrunnelseForHvorforVedtaketOpprettholdes = false
+            klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = false
+            klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = false
+            sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = false
+            sakensDokumenterJournalfoerteDokumenterFeilNavn = false
+            sakensDokumenterManglerFysiskSaksmappe = false
+        } else {
+            if (!sakensDokumenter) {
+                sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = false
+                sakensDokumenterJournalfoerteDokumenterFeilNavn = false
+                sakensDokumenterManglerFysiskSaksmappe = false
+            }
+        }
+
+        if (utredningen == Radiovalg.BRA) {
+            utredningenAvMedisinskeForhold = false
+            utredningenAvInntektsforhold = false
+            utredningenAvArbeidsaktivitet = false
+            utredningenAvEoesUtenlandsproblematikk = false
+            utredningenAvAndreAktuelleForholdISaken = false
+        }
+
+        if (vedtaket == Radiovalg.BRA) {
+            vedtaketLovbestemmelsenTolketFeil = false
+            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = false
+            vedtaketFeilKonkretRettsanvendelse = false
+            vedtaketIkkeKonkretIndividuellBegrunnelse = false
+            vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = false
+            vedtaketDetErLagtTilGrunnFeilFaktum = false
+            vedtaketSpraakOgFormidlingErIkkeTydelig = false
+
+            vedtaketLovbestemmelsenTolketFeilHjemlerList = null
+            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = null
+            vedtaketFeilKonkretRettsanvendelseHjemlerList = null
+        } else {
+            if (!vedtaketLovbestemmelsenTolketFeil) {
+                vedtaketLovbestemmelsenTolketFeilHjemlerList = null
+            }
+            if (!vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert) {
+                vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = null
+            }
+            if (!vedtaketFeilKonkretRettsanvendelse) {
+                vedtaketFeilKonkretRettsanvendelseHjemlerList = null
+            }
+
+            if (!vedtaketIkkeKonkretIndividuellBegrunnelse) {
+                vedtaketIkkeGodtNokFremFaktum = false
+                vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = false
+                vedtaketMyeStandardtekst = false
+            }
+        }
+
+        if (brukAvRaadgivendeLege != RadiovalgRaadgivendeLege.MANGELFULLT) {
+            raadgivendeLegeIkkebrukt = false
+            raadgivendeLegeMangelfullBrukAvRaadgivendeLege = false
+            raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = false
+            raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort = false
+        }
+    }
+
     fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 

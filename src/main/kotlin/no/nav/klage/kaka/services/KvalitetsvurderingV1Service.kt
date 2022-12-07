@@ -54,7 +54,7 @@ class KvalitetsvurderingV1Service(
         kvalitetsvurderingId: UUID
     ) {
         val kvalitetsvurdering = kvalitetsvurderingV1Repository.getReferenceById(kvalitetsvurderingId)
-        kvalitetsvurdering.removeFieldsUnusedInAnke()
+        kvalitetsvurdering.resetFieldsUnusedInAnke()
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
 

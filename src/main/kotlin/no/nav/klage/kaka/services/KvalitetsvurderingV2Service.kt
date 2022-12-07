@@ -42,6 +42,22 @@ class KvalitetsvurderingV2Service(
         return kvalitetsvurdering
     }
 
+    fun removeFieldsUnusedInAnke(
+        kvalitetsvurderingId: UUID
+    ) {
+        val kvalitetsvurdering = kvalitetsvurderingV2Repository.getReferenceById(kvalitetsvurderingId)
+        kvalitetsvurdering.resetFieldsUnusedInAnke()
+        kvalitetsvurdering.modified = LocalDateTime.now()
+    }
+
+    fun cleanUpKvalitetsvurdering(
+        kvalitetsvurderingId: UUID
+    ) {
+        val kvalitetsvurdering = kvalitetsvurderingV2Repository.getReferenceById(kvalitetsvurderingId)
+        kvalitetsvurdering.cleanup()
+        kvalitetsvurdering.modified = LocalDateTime.now()
+    }
+
     private fun getKvalitetsvurderingAndVerifyNotFinalized(
         kvalitetsvurderingId: UUID
     ): KvalitetsvurderingV2 {

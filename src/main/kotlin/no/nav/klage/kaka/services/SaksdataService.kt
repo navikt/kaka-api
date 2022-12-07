@@ -36,6 +36,7 @@ class SaksdataService(
     private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
     private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
     private val kvalitetsvurderingV1Service: KvalitetsvurderingV1Service,
+    private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
     private val azureGateway: AzureGateway,
     private val tokenUtil: TokenUtil,
     private val rolleMapper: RolleMapper,
@@ -240,8 +241,13 @@ class SaksdataService(
             2 -> {
                 if (saksdata.sakstype == Type.ANKE) {
                     saksdata.mottattVedtaksinstans = null
+                    kvalitetsvurderingV2Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
                 }
-                //TODO
+                if (saksdata.hasKvalitetsvurdering()) {
+                    kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
+                } else {
+                    error("There must be a kvalitetsvurdering")
+                }
             }
             else -> error("Unknown version: $version")
         }

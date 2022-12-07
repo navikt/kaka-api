@@ -24,6 +24,7 @@ internal class SaksdataServiceTest {
             kvalitetsvurderingV1Repository = mockk(),
             kvalitetsvurderingV2Repository = mockk(),
             kvalitetsvurderingV1Service = mockk(),
+            kvalitetsvurderingV2Service = mockk(),
             azureGateway = mockk(),
             tokenUtil = mockk(),
             rolleMapper = mockk(),
