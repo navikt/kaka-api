@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.domain.kvalitetsvurdering.v2
 
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.raadgivendeLegeYtelser
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
@@ -149,31 +148,60 @@ class KvalitetsvurderingV2(
                 !vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert &&
                 !vedtaketFeilKonkretRettsanvendelse &&
                 !vedtaketIkkeKonkretIndividuellBegrunnelse &&
-                !vedtaketIkkeGodtNokFremFaktum &&
-                !vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum &&
-                !vedtaketMyeStandardtekst &&
-                !vedtakAutomatiskVedtak
+                !vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet &&
+                !vedtaketDetErLagtTilGrunnFeilFaktum &&
+                !vedtaketSpraakOgFormidlingErIkkeTydelig
             ) {
                 result.add(
-                    createMissingChecksValidationError(::vedtaketRadioValg.name)
+                    createMissingChecksValidationError(::vedtaket.name)
                 )
+            }
+
+            if (vedtaketLovbestemmelsenTolketFeil && vedtaketLovbestemmelsenTolketFeilHjemlerList.isNullOrEmpty()) {
+                result.add(
+                    createMissingChecksValidationError(::vedtaketLovbestemmelsenTolketFeil.name)
+                )
+            }
+
+            if (vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert && vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
+                result.add(
+                    createMissingChecksValidationError(::vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert.name)
+                )
+            }
+
+            if (vedtaketFeilKonkretRettsanvendelse && vedtaketFeilKonkretRettsanvendelseHjemlerList.isNullOrEmpty()) {
+                result.add(
+                    createMissingChecksValidationError(::vedtaketFeilKonkretRettsanvendelse.name)
+                )
+            }
+
+            if (vedtaketIkkeKonkretIndividuellBegrunnelse) {
+                if (
+                    !vedtaketIkkeGodtNokFremFaktum &&
+                    !vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum &&
+                    !vedtaketMyeStandardtekst
+                ) {
+                    result.add(
+                        createMissingChecksValidationError(::vedtaketIkkeKonkretIndividuellBegrunnelse.name)
+                    )
+                }
             }
         }
 
         if (ytelse in raadgivendeLegeYtelser) {
-            if (brukAvRaadgivendeLegeRadioValg == null) {
+            if (brukAvRaadgivendeLege == null) {
                 result.add(
-                    createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                    createRadioValgValidationError(::brukAvRaadgivendeLege.name)
                 )
-            } else if (brukAvRaadgivendeLegeRadioValg == KvalitetsvurderingV1.RadioValgRaadgivendeLege.MANGELFULLT) {
+            } else if (brukAvRaadgivendeLege == RadiovalgRaadgivendeLege.MANGELFULLT) {
                 if (
-                    !raadgivendeLegeErIkkeBrukt &&
-                    !raadgivendeLegeErBruktFeilSpoersmaal &&
-                    !raadgivendeLegeHarUttaltSegUtoverTrygdemedisin &&
-                    !raadgivendeLegeErBruktMangelfullDokumentasjon
+                    !raadgivendeLegeIkkebrukt &&
+                    !raadgivendeLegeMangelfullBrukAvRaadgivendeLege &&
+                    !raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin &&
+                    !raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort
                 ) {
                     result.add(
-                        createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                        createMissingChecksValidationError(::brukAvRaadgivendeLege.name)
                     )
                 }
             }
