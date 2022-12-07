@@ -240,19 +240,19 @@ class KvalitetsvurderingV2(
 
             if (vedtaketLovbestemmelsenTolketFeil && vedtaketLovbestemmelsenTolketFeilHjemlerList.isNullOrEmpty()) {
                 result.add(
-                    createMissingChecksValidationError(::vedtaketLovbestemmelsenTolketFeil.name)
+                    createMissingChecksValidationError(::vedtaketLovbestemmelsenTolketFeilHjemlerList.name)
                 )
             }
 
             if (vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert && vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
                 result.add(
-                    createMissingChecksValidationError(::vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert.name)
+                    createMissingChecksValidationError(::vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.name)
                 )
             }
 
             if (vedtaketFeilKonkretRettsanvendelse && vedtaketFeilKonkretRettsanvendelseHjemlerList.isNullOrEmpty()) {
                 result.add(
-                    createMissingChecksValidationError(::vedtaketFeilKonkretRettsanvendelse.name)
+                    createMissingChecksValidationError(::vedtaketFeilKonkretRettsanvendelseHjemlerList.name)
                 )
             }
 
