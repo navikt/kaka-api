@@ -82,7 +82,6 @@ class SaksdataController(
 
         return saksdataService.createSaksdata(
             innloggetSaksbehandler = innloggetSaksbehandler,
-            kvalitsvurderingVersion = input?.kvalitsvurderingVersion
         ).toSaksdataView()
     }
 
@@ -95,7 +94,6 @@ class SaksdataController(
     @PostMapping("/{id}/reopen")
     fun reopenSaksdata(
         @PathVariable("id") saksdataId: UUID,
-        @RequestParam(required = false) version: Int?,
     ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
@@ -105,7 +103,7 @@ class SaksdataController(
             logger
         )
 
-        return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler, version).toSaksdataView()
+        return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/sakengjelder")

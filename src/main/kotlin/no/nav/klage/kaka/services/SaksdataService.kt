@@ -22,6 +22,7 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -42,6 +43,8 @@ class SaksdataService(
     private val rolleMapper: RolleMapper,
     private val pdlFacade: PdlFacade,
     private val egenAnsattService: EgenAnsattService,
+    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
+    private val kakaVersion2Date: LocalDate,
 ) {
 
     companion object {
@@ -50,16 +53,15 @@ class SaksdataService(
         private val secureLogger = getSecureLogger()
     }
 
-
     fun getSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         return getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
     }
 
-    fun createSaksdata(innloggetSaksbehandler: String, kvalitsvurderingVersion: Int? = 1): Saksdata {
+    fun createSaksdata(innloggetSaksbehandler: String): Saksdata {
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
         return saksdataRepository.save(
-            when (kvalitsvurderingVersion) {
+            when (getKakaVersion()) {
                 1 -> {
                     val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1())
                     Saksdata(
@@ -87,6 +89,15 @@ class SaksdataService(
                 else -> error("Unknown kvalitetsvurdering version")
             }
         )
+    }
+
+    private fun getKakaVersion(): Int {
+        val kvalitetsvurderingVersion = if (LocalDate.now() >= kakaVersion2Date) {
+            2
+        } else {
+            1
+        }
+        return kvalitetsvurderingVersion
     }
 
     fun handleIncomingCompleteSaksdata(
@@ -304,14 +315,14 @@ class SaksdataService(
         }
     }
 
-    fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String, withVersion: Int? = 1): Saksdata {
+    fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(
             saksdataId = saksdataId,
             innloggetSaksbehandler = innloggetSaksbehandler,
             isReopen = true
         )
 
-        when (withVersion) {
+        when (getKakaVersion()) {
             1 -> {
                 if (saksdata.kvalitetsvurderingReference.version != 1) {
                     kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)

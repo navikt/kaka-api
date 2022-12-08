@@ -59,4 +59,4 @@ fun Saksdata.toSaksdataView(): SaksdataView {
     )
 }
 
-data class SaksdataInput(val tilknyttetEnhet: String? = null, val kvalitsvurderingVersion: Int? = null)
+data class SaksdataInput(val tilknyttetEnhet: String? = null)
