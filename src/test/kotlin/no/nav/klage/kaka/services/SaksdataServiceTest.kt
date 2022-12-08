@@ -29,7 +29,8 @@ internal class SaksdataServiceTest {
             tokenUtil = mockk(),
             rolleMapper = mockk(),
             pdlFacade = mockk(),
-            egenAnsattService = mockk()
+            egenAnsattService = mockk(),
+            kakaVersion2Date = mockk(),
         )
 
     @BeforeEach
