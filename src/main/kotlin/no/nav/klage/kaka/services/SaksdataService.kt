@@ -121,7 +121,7 @@ class SaksdataService(
         if (utfall !in noKvalitetsvurderingNeeded) {
             when (kvalitsvurderingVersion) {
                 1 -> kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
-                2 -> kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+                2 -> kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
             }
         } else {
             when (kvalitsvurderingVersion) {
