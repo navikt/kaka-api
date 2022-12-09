@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.services
 
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
@@ -446,6 +447,7 @@ class SaksdataService(
     }
 
     @Scheduled(cron = "\${MIGRATE_CRON}", zone = "Europe/Oslo")
+    @SchedulerLock(name = "migrateKvalitetsvurderingerFromV1ToV2")
     fun migrateKvalitetsvurderingerFromV1ToV2() {
         val candidates = saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
             kvalitetsvurderingVersion = 1
