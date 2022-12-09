@@ -13,3 +13,4 @@ EREG_URL: https://api-gw-q1.oera.no/ereg-services/api
 NORG2_BASE_URL: https://norg2.dev-fss-pub.nais.io/norg2/api/v1
 
 KAKA_VERSION_2_DATE: 2022-12-06
+MIGRATE_CRON: 0 15 11 9 DEC ? 2022
