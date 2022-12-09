@@ -185,8 +185,8 @@ class KvalitetsvurderingV1(
 
         if (vedtaketRadioValg == RadioValg.BRA) {
             detErIkkeBruktRiktigHjemmel = false
-            innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = false
             rettsregelenErBenyttetFeil = false
+            innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = false
             vurderingAvFaktumErMangelfull = false
             detErFeilIKonkretRettsanvendelse = false
             begrunnelsenErIkkeKonkretOgIndividuell = false
@@ -269,8 +269,8 @@ class KvalitetsvurderingV1(
         } else if (vedtaketRadioValg == RadioValg.MANGELFULLT) {
             if (
                 !detErIkkeBruktRiktigHjemmel &&
-                !innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet &&
                 !rettsregelenErBenyttetFeil &&
+                !innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet &&
                 !vurderingAvFaktumErMangelfull &&
                 !detErFeilIKonkretRettsanvendelse &&
                 !begrunnelsenErIkkeKonkretOgIndividuell &&

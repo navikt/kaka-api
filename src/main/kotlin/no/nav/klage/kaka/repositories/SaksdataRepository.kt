@@ -21,6 +21,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
 
     fun findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId: UUID): Saksdata?
 
+    //TODO: Performance improvement
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
     fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(

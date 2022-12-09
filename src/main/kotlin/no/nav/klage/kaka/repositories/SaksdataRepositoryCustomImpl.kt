@@ -15,6 +15,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     @PersistenceContext
     lateinit var entityManager: EntityManager
 
+    //TODO: Fix for v2
     override fun findForVedtaksinstansleder(
         vedtaksinstansEnhet: String,
         fromDateTime: LocalDateTime,

@@ -42,6 +42,7 @@ class KALederController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
+    //TODO: Split to v1 and v2
     @GetMapping("/export/excel")
     fun getAsExcel(@RequestParam(required = false) year: Int?): ResponseEntity<ByteArray> {
         logger.debug("getAsExcel() called. Year param = $year")
@@ -64,6 +65,7 @@ class KALederController(
         )
     }
 
+    //TODO: Split to v1 and v2
     @GetMapping("/statistics/enheter/{enhetsnummer}/manager")
     fun getTotalForLeder(
         @PathVariable enhetsnummer: String,

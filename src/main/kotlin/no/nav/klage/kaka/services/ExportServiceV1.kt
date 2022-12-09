@@ -369,10 +369,6 @@ class ExportServiceV1(
 
             val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
 
-            if (saksdata.kvalitetsvurderingReference.version == 2) {
-                error("Don't support v2 yet")
-            }
-
             val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
 
             AnonymizedFinishedVurderingWithoutEnheterV1(
@@ -443,10 +439,6 @@ class ExportServiceV1(
     }
 
     private fun getCreatedDate(saksdata: Saksdata): Date {
-        if (saksdata.kvalitetsvurderingReference.version == 2) {
-            error("Don't support v2 yet")
-        }
-
         val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
         return if (saksdata.created.isBefore(kvalitetsvurderingV1.created)) {
             saksdata.created.toDate()
@@ -456,10 +448,6 @@ class ExportServiceV1(
     }
 
     private fun getModifiedDate(saksdata: Saksdata): Date {
-        if (saksdata.kvalitetsvurderingReference.version == 2) {
-            error("Don't support v2 yet")
-        }
-
         val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
         return if (saksdata.modified.isAfter(kvalitetsvurderingV1.modified)) {
             saksdata.modified.toDate()
@@ -486,10 +474,6 @@ class ExportServiceV1(
     private fun mapToFields(saksdataList: List<Saksdata>): List<List<Field>> {
         //@formatter:off
         return saksdataList.map { saksdata ->
-            if (saksdata.kvalitetsvurderingReference.version == 2) {
-                error("This query only works for version 1 of kvalitetsvurderinger")
-            }
-
             val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
             buildList {
                 //Saksdata

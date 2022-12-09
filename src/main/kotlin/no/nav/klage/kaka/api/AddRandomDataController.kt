@@ -4,12 +4,15 @@ import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
 import no.nav.security.token.support.core.api.Unprotected
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,6 +28,9 @@ import kotlin.random.Random
 class AddRandomDataController(
     private val saksdataRepository: SaksdataRepository,
     private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
+    private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
+    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
+    private val kakaVersion2Date: LocalDate,
 ) {
 
     @Unprotected
@@ -35,6 +41,15 @@ class AddRandomDataController(
         }
     }
 
+    private fun getKakaVersion(): Int {
+        val kvalitetsvurderingVersion = if (LocalDate.now() >= kakaVersion2Date) {
+            2
+        } else {
+            1
+        }
+        return kvalitetsvurderingVersion
+    }
+
     private fun getRandomSaksdata(): Saksdata {
         val cohesiveTestData = getCohesiveTestData()
 
@@ -43,7 +58,16 @@ class AddRandomDataController(
         val potentialEndDate = mottattKA.plusDays((1..108).random().toLong())
         val avsluttetAvSaksbehandler = if (potentialEndDate > LocalDate.now()) LocalDate.now() else potentialEndDate
 
-        val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.save(getRandomKvalitetsvurdering())
+        val kakaVersion = getKakaVersion()
+        val kvalitetsvurderingId = when (kakaVersion) {
+            1 -> {
+                kvalitetsvurderingV1Repository.save(getRandomKvalitetsvurderingV1()).id
+            }
+            2 -> {
+                kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2()).id
+            } else -> error("Wrong version")
+
+        }
 
         return Saksdata(
             sakstype = cohesiveTestData.type,
@@ -59,10 +83,9 @@ class AddRandomDataController(
             avsluttetAvSaksbehandler = avsluttetAvSaksbehandler.atStartOfDay(),
             source = Source.values().random(),
 
-            //TODO v2
             kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1.id,
-                version = 1,
+                id = kvalitetsvurderingId,
+                version = kakaVersion,
             ),
 
             created = mottattKA.atStartOfDay(),
@@ -70,7 +93,7 @@ class AddRandomDataController(
         )
     }
 
-    private fun getRandomKvalitetsvurdering(): KvalitetsvurderingV1 {
+    private fun getRandomKvalitetsvurderingV1(): KvalitetsvurderingV1 {
         return KvalitetsvurderingV1(
             klageforberedelsenRadioValg = RadioValg.values().random(),
             sakensDokumenter = Random.nextBoolean(),
@@ -112,6 +135,49 @@ class AddRandomDataController(
             brukIOpplaeringText = null,
             betydeligAvvik = Random.nextBoolean(),
             betydeligAvvikText = null,
+        )
+    }
+
+    private fun getRandomKvalitetsvurderingV2(): KvalitetsvurderingV2 {
+        return KvalitetsvurderingV2(            
+            sakensDokumenter = Random.nextBoolean(),
+            sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = Random.nextBoolean(),
+            sakensDokumenterJournalfoerteDokumenterFeilNavn = Random.nextBoolean(),
+            sakensDokumenterManglerFysiskSaksmappe = Random.nextBoolean(),
+            klageforberedelsen = KvalitetsvurderingV2.Radiovalg.values().random(),
+            klageforberedelsenUnderinstansIkkeSendtAlleRelevanteSaksdokumenterTilParten = Random.nextBoolean(),
+            klageforberedelsenOversittetKlagefristIkkeKommentert = Random.nextBoolean(),
+            klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligImotegatt = Random.nextBoolean(),
+            klageforberedelsenMangelfullBegrunnelseForHvorforVedtaketOpprettholdes = Random.nextBoolean(),
+            klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = Random.nextBoolean(),
+            klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = Random.nextBoolean(),
+            utredningen = KvalitetsvurderingV2.Radiovalg.values().random(),
+            utredningenAvMedisinskeForhold = Random.nextBoolean(),
+            utredningenAvInntektsforhold = Random.nextBoolean(),
+            utredningenAvArbeidsaktivitet = Random.nextBoolean(),
+            utredningenAvEoesUtenlandsproblematikk = Random.nextBoolean(),
+            utredningenAvAndreAktuelleForholdISaken = Random.nextBoolean(),
+            vedtaketLovbestemmelsenTolketFeil = Random.nextBoolean(),
+            vedtaketLovbestemmelsenTolketFeilHjemlerList = setOf(),
+            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = Random.nextBoolean(),
+            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = setOf(),
+            vedtaketFeilKonkretRettsanvendelse = Random.nextBoolean(),
+            vedtaketFeilKonkretRettsanvendelseHjemlerList = setOf(),
+            vedtaketIkkeKonkretIndividuellBegrunnelse = Random.nextBoolean(),
+            vedtaketIkkeGodtNokFremFaktum = Random.nextBoolean(),
+            vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = Random.nextBoolean(),
+            vedtaketMyeStandardtekst = Random.nextBoolean(),
+            vedtakAutomatiskVedtak = Random.nextBoolean(),
+            vedtaket = KvalitetsvurderingV2.Radiovalg.values().random(),
+            vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = Random.nextBoolean(),
+            vedtaketDetErLagtTilGrunnFeilFaktum = Random.nextBoolean(),
+            vedtaketSpraakOgFormidlingErIkkeTydelig = Random.nextBoolean(),
+            raadgivendeLegeIkkebrukt = Random.nextBoolean(),
+            raadgivendeLegeMangelfullBrukAvRaadgivendeLege = Random.nextBoolean(),
+            raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = Random.nextBoolean(),
+            raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort = Random.nextBoolean(),
+            brukAvRaadgivendeLege = KvalitetsvurderingV2.RadiovalgRaadgivendeLege.values().random(),
+            annetFritekst = null,
         )
     }
 
