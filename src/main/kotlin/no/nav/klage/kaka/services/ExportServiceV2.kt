@@ -8,6 +8,7 @@ import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
@@ -223,15 +224,15 @@ class ExportServiceV2(
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV2> {
-        val saksdataList =
-            saksdataRepository.findForVedtaksinstansleder(
+        val resultList =
+            saksdataRepository.findForVedtaksinstanslederV2(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX),
                 vedtaksinstansEnhet = vedtaksinstansEnhet.navn,
                 mangelfullt = mangelfullt,
                 kommentarer = kommentarer,
             )
-        return privateGetFinishedAsRawDataWithoutEnheter(saksdataList = saksdataList)
+        return privateGetFinishedAsRawDataWithoutEnheterWithVersion2(resultList = resultList)
     }
 
     /**
@@ -391,6 +392,87 @@ class ExportServiceV2(
 
             val kvalitetsvurderingV2 =
                 kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+
+            AnonymizedFinishedVurderingWithoutEnheterV2(
+                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
+                hjemmelIdList = saksdata.registreringshjemler!!.map { it.id },
+                avsluttetAvSaksbehandler = avsluttetAvSaksbehandlerDate,
+                ytelseId = saksdata.ytelse!!.id,
+                utfallId = saksdata.utfall!!.id,
+                sakstypeId = saksdata.sakstype.id,
+                mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
+                mottattKlageinstans = mottattKlageinstansDate,
+
+                sakensDokumenter = kvalitetsvurderingV2.sakensDokumenter,
+                sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = kvalitetsvurderingV2.sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert,
+                sakensDokumenterJournalfoerteDokumenterFeilNavn = kvalitetsvurderingV2.sakensDokumenterJournalfoerteDokumenterFeilNavn,
+                sakensDokumenterManglerFysiskSaksmappe = kvalitetsvurderingV2.sakensDokumenterManglerFysiskSaksmappe,
+                klageforberedelsen = kvalitetsvurderingV2.klageforberedelsen?.name,
+                klageforberedelsenUnderinstansIkkeSendtAlleRelevanteSaksdokumenterTilParten = kvalitetsvurderingV2.klageforberedelsenUnderinstansIkkeSendtAlleRelevanteSaksdokumenterTilParten,
+                klageforberedelsenOversittetKlagefristIkkeKommentert = kvalitetsvurderingV2.klageforberedelsenOversittetKlagefristIkkeKommentert,
+                klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligImotegatt = kvalitetsvurderingV2.klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligImotegatt,
+                klageforberedelsenMangelfullBegrunnelseForHvorforVedtaketOpprettholdes = kvalitetsvurderingV2.klageforberedelsenMangelfullBegrunnelseForHvorforVedtaketOpprettholdes,
+                klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema,
+                klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker,
+                utredningen = kvalitetsvurderingV2.utredningen?.name,
+                utredningenAvMedisinskeForhold = kvalitetsvurderingV2.utredningenAvMedisinskeForhold,
+                utredningenAvInntektsforhold = kvalitetsvurderingV2.utredningenAvInntektsforhold,
+                utredningenAvArbeidsaktivitet = kvalitetsvurderingV2.utredningenAvArbeidsaktivitet,
+                utredningenAvEoesUtenlandsproblematikk = kvalitetsvurderingV2.utredningenAvEoesUtenlandsproblematikk,
+                utredningenAvAndreAktuelleForholdISaken = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISaken,
+                vedtaketLovbestemmelsenTolketFeil = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeil,
+                vedtaketLovbestemmelsenTolketFeilHjemlerList = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id },
+                vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
+                vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id },
+                vedtaketFeilKonkretRettsanvendelse = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelse,
+                vedtaketFeilKonkretRettsanvendelseHjemlerList = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id },
+                vedtaketIkkeKonkretIndividuellBegrunnelse = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelse,
+                vedtaketIkkeGodtNokFremFaktum = kvalitetsvurderingV2.vedtaketIkkeGodtNokFremFaktum,
+                vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = kvalitetsvurderingV2.vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum,
+                vedtaketMyeStandardtekst = kvalitetsvurderingV2.vedtaketMyeStandardtekst,
+                vedtakAutomatiskVedtak = kvalitetsvurderingV2.vedtakAutomatiskVedtak,
+                vedtaket = kvalitetsvurderingV2.vedtaket?.name,
+                vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = kvalitetsvurderingV2.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                vedtaketDetErLagtTilGrunnFeilFaktum = kvalitetsvurderingV2.vedtaketDetErLagtTilGrunnFeilFaktum,
+                vedtaketSpraakOgFormidlingErIkkeTydelig = kvalitetsvurderingV2.vedtaketSpraakOgFormidlingErIkkeTydelig,
+                raadgivendeLegeIkkebrukt = kvalitetsvurderingV2.raadgivendeLegeIkkebrukt,
+                raadgivendeLegeMangelfullBrukAvRaadgivendeLege = kvalitetsvurderingV2.raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
+                raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = kvalitetsvurderingV2.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
+                raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort = kvalitetsvurderingV2.raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort,
+                brukAvRaadgivendeLege = kvalitetsvurderingV2.brukAvRaadgivendeLege?.name,
+                annetFritekst = kvalitetsvurderingV2.annetFritekst,
+
+                kaBehandlingstidDays = kaBehandlingstidDays,
+                vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
+                totalBehandlingstidDays = totalBehandlingstidDays,
+                createdDate = getCreatedDate(saksdata),
+                modifiedDate = getModifiedDate(saksdata),
+            )
+        }
+    }
+
+    /**
+     * Return all 'finished' saksdata (anonymized (no fnr, navIdent or enheter)) based on given dates.
+     */
+    private fun privateGetFinishedAsRawDataWithoutEnheterWithVersion2(
+        resultList: List<SaksdataRepositoryCustomImpl.ResultV2>,
+    ): List<AnonymizedFinishedVurderingWithoutEnheterV2> {
+
+        return resultList.map { result ->
+            val (saksdata, kvalitetsvurderingV2) = result
+            val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
+            val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
+
+            val mottattForrigeInstans = getMottattForrigeInstans(saksdata)
+
+            val kaBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+            val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
+
+            val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
+
+            if (saksdata.kvalitetsvurderingReference.version == 1) {
+                error("This query only works for version 2 of kvalitetsvurderinger")
+            }
 
             AnonymizedFinishedVurderingWithoutEnheterV2(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),

@@ -7,6 +7,7 @@ import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.junit.jupiter.api.Test
@@ -25,12 +26,11 @@ internal class ExportServiceV1Test {
         val kvalitetsvurderingV1Repository = mockk<KvalitetsvurderingV1Repository>()
 
         every {
-            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
                 any(),
                 any(),
-                any()
             )
-        } returns getSaksdata(amount = 10)
+        } returns getResultList(amount = 10)
 
         every {
             kvalitetsvurderingV1Repository.getReferenceById(any())
@@ -58,12 +58,11 @@ internal class ExportServiceV1Test {
         val kvalitetsvurderingV1Repository = mockk<KvalitetsvurderingV1Repository>()
 
         every {
-            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
                 any(),
                 any(),
-                any()
             )
-        } returns getSaksdata(amount = 0)
+        } returns getResultList(amount = 0)
 
         val exportServiceV1 = ExportServiceV1(
             saksdataRepository = saksdataRepository,
@@ -102,6 +101,36 @@ internal class ExportServiceV1Test {
                             id = UUID.randomUUID(),
                             version = 1,
                         ),
+                    )
+                )
+            }
+        }
+    }
+
+    private fun getResultList(amount: Int = 1): List<SaksdataRepositoryCustomImpl.ResultV1> {
+        return buildList {
+            repeat(amount) {
+                add(
+                    SaksdataRepositoryCustomImpl.ResultV1(
+                        saksdata = Saksdata(
+                            sakstype = Type.KLAGE,
+                            utfoerendeSaksbehandler = "someoneelse",
+                            tilknyttetEnhet = Enhet.E4295.navn,
+                            ytelse = Ytelse.OMS_OMP,
+                            vedtaksinstansEnhet = Enhet.E0001.navn,
+                            utfall = Utfall.STADFESTELSE,
+                            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4, Registreringshjemmel.FTRL_9_11),
+                            sakenGjelder = "12345678910",
+                            mottattVedtaksinstans = LocalDate.now(),
+                            mottattKlageinstans = LocalDate.now().minusDays(1),
+                            avsluttetAvSaksbehandler = LocalDateTime.now(),
+                            source = Source.KAKA,
+                            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                                id = UUID.randomUUID(),
+                                version = 1,
+                            ),
+                        ),
+                        kvalitetsvurdering = KvalitetsvurderingV1()
                     )
                 )
             }

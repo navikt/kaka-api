@@ -411,7 +411,7 @@ class SaksdataService(
         val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
         val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
 
-        return saksdataRepository.findForVedtaksinstansleder(
+        return saksdataRepository.findForVedtaksinstanslederV1(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),
@@ -419,13 +419,13 @@ class SaksdataService(
             kommentarer = kommentarer,
         ).filter {
             verifiserTilgangTilPersonForSaksbehandler(
-                fnr = it.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
                 ident = saksbehandlerIdent,
                 kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
                 kanBehandleFortrolig = kanBehandleFortrolig,
                 kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
             )
-        }
+        }.map { it.saksdata }
     }
 
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {

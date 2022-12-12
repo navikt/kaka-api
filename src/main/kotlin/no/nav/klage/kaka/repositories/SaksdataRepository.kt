@@ -21,7 +21,7 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
 
     fun findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId: UUID): Saksdata?
 
-    //TODO: Performance improvement
+    //TODO: Disse brukes nå kun i exportServiceV2. De er feil der. Lag custom queries, og tilhørende tester.
     /** Dates are inclusive */
     @EntityGraph(attributePaths = ["registreringshjemler"])
     fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
