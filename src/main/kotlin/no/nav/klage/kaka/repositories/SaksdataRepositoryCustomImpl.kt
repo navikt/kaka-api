@@ -34,8 +34,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         return entityManager.createQuery(
             """
             SELECT s, k
-            FROM Saksdata s, KvalitetsvurderingV1 k
-             JOIN s.kvalitetsvurderingReference.id on k.id
+            FROM Saksdata s
+             JOIN KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id
             WHERE s.kvalitetsvurderingReference.version = 1
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             ORDER BY s.created
@@ -54,8 +54,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         return entityManager.createQuery(
             """
             SELECT s, k
-            FROM Saksdata s, KvalitetsvurderingV2 k
-             JOIN s.kvalitetsvurderingReference.id on k.id
+            FROM Saksdata s
+             JOIN KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id
             WHERE s.kvalitetsvurderingReference.version = 2
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             ORDER BY s.created
@@ -76,7 +76,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     ): List<Saksdata> {
 
         val query = """
-            SELECT DISTINCT s FROM Saksdata s JOIN FETCH s.kvalitetsvurderingV1 k LEFT JOIN FETCH s.registreringshjemler h
+            SELECT DISTINCT s FROM Saksdata s JOIN KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id LEFT JOIN FETCH s.registreringshjemler h
                 WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
                 AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
                 AND s.sakstype = :sakstype

@@ -3,8 +3,10 @@ package no.nav.klage.kaka.repositories
 
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
 import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,7 +16,10 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.Month
 import java.util.*
 
 @ActiveProfiles("local")
@@ -58,36 +63,6 @@ class SaksdataRepositoryTest {
         assertThat(foundSaksdata).isEqualTo(saksdata)
     }
 
-    //TODO migrate v1/v2
-//    @Test
-//    fun `recreate kvalitetsvurdering`() {
-//        val saksdata = Saksdata(
-//            utfoerendeSaksbehandler = "abc123",
-//            tilknyttetEnhet = "4295",
-//            kvalitetsvurderingReference = KvalitetsvurderingReference(
-//                id = UUID.randomUUID(),
-//                version = 1,
-//            )
-//        )
-//
-//        saksdataRepository.save(saksdata)
-//
-//        testEntityManager.flush()
-//        testEntityManager.clear()
-//
-//        val newKvalitetsvurderingV1 = KvalitetsvurderingV1(
-//            id = saksdata.kvalitetsvurderingV1.id
-//        )
-//        saksdata.kvalitetsvurderingV1 = newKvalitetsvurderingV1
-//
-//        saksdataRepository.save(saksdata)
-//
-//        testEntityManager.flush()
-//        testEntityManager.clear()
-//
-//        val foundSaksdata = saksdataRepository.getReferenceById(saksdata.id)
-//        assertThat(foundSaksdata.kvalitetsvurderingV1.klageforberedelsenRadioValg).isNull()
-//    }
 
     @Test
     fun `fullførte og pågående`() {
@@ -190,161 +165,163 @@ class SaksdataRepositoryTest {
         assertThat(results).isEqualTo(saksdata)
     }
 
-    /* TODO fix
-@Test
-fun `stats for finished and unfinished based on dates works`() {
-    val utfoerendeSaksbehandler = "abc123"
-    val saksdataFullfoertx = Saksdata(
-        utfoerendeSaksbehandler = "someoneelse",
-        tilknyttetEnhet = "4295",
-        kvalitetsvurderingReference = KvalitetsvurderingReference(
-            id = UUID.randomUUID(),
-            version = 1,
-        ),
-        created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.NOON),
-        avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 12), LocalTime.NOON),
-    )
-    val saksdataFullfoert1 = Saksdata(
-        utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-        tilknyttetEnhet = "4295",
-        kvalitetsvurderingReference = KvalitetsvurderingReference(
-            id = UUID.randomUUID(),
-            version = 1,
-        ),
-        created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-        avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
-    )
-    val saksdataFullfoert2 = Saksdata(
-        utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-        tilknyttetEnhet = "4295",
-        kvalitetsvurderingReference = KvalitetsvurderingReference(
-            id = UUID.randomUUID(),
-            version = 1,
-        ),
-        created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-        avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
-    )
-    val saksdataPaagaaende1 = Saksdata(
-        utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-        tilknyttetEnhet = "4295",
-        kvalitetsvurderingReference = KvalitetsvurderingReference(
-            id = UUID.randomUUID(),
-            version = 1,
-        ),
-        created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
-    )
-    val saksdataPaagaaende2 = Saksdata(
-        utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-        tilknyttetEnhet = "4295",
-        kvalitetsvurderingReference = KvalitetsvurderingReference(
-            id = UUID.randomUUID(),
-            version = 1,
-        ),
-        created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
-    )
-
-    saksdataRepository.saveAll(
-        mutableListOf(
-            saksdataFullfoertx,
-            saksdataFullfoert1,
-            saksdataFullfoert2,
-            saksdataPaagaaende1,
-            saksdataPaagaaende2
+    @Test
+    fun `stats for finished and unfinished based on dates works kvalitetsvurderingV1`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val saksdataFullfoertx = Saksdata(
+            utfoerendeSaksbehandler = "someoneelse",
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = UUID.randomUUID(),
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 12), LocalTime.NOON),
         )
-    )
-
-    testEntityManager.flush()
-    testEntityManager.clear()
-
-    val finished =
-        saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-            fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
-            toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+        val saksdataFullfoert1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = UUID.randomUUID(),
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
         )
-    assertThat(finished).hasSize(2)
-
-    val unfinished =
-        saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-            toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+        val saksdataFullfoert2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = UUID.randomUUID(),
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
         )
-    assertThat(unfinished).hasSize(1)
-}
+        val saksdataPaagaaende1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = UUID.randomUUID(),
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+        )
+        val saksdataPaagaaende2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = UUID.randomUUID(),
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertx,
+                saksdataFullfoert1,
+                saksdataFullfoert2,
+                saksdataPaagaaende1,
+                saksdataPaagaaende2
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val finished =
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                kvalitetsvurderingVersion = 1,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+            )
+        assertThat(finished).hasSize(2)
+
+        val unfinished =
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
+                kvalitetsvurderingVersion = 1,
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+            )
+        assertThat(unfinished).hasSize(1)
+    }
 
 
-@Test
-fun `saksdata for leder in foerste instans`() {
-val utfoerendeSaksbehandler = "abc123"
-val vedtaksinstansEnhet = "4020"
-val saksdataFullfoertInSamevedtaksinstans = Saksdata(
-    utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-    tilknyttetEnhet = "4295",
-    vedtaksinstansEnhet = vedtaksinstansEnhet,
-    kvalitetsvurderingReference = KvalitetsvurderingReference(
-        id = UUID.randomUUID(),
-        version = 1,
-    ),
-    created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-    avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
-    registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
-)
-val saksdataFullfoertOtherVedtaksinstans = Saksdata(
-    utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-    tilknyttetEnhet = "4295",
-    vedtaksinstansEnhet = "4111",
-    kvalitetsvurderingReference = KvalitetsvurderingReference(
-        id = UUID.randomUUID(),
-        version = 1,
-    ),
-    created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-    avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
-    registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
-)
-val saksdataPaagaaende1 = Saksdata(
-    utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-    tilknyttetEnhet = "4295",
-    vedtaksinstansEnhet = vedtaksinstansEnhet,
-    kvalitetsvurderingReference = KvalitetsvurderingReference(
-        id = UUID.randomUUID(),
-        version = 1,
-    ),
-    created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
-    registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
-)
-val saksdataPaagaaende2 = Saksdata(
-    utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-    tilknyttetEnhet = "4295",
-    vedtaksinstansEnhet = vedtaksinstansEnhet,
-    kvalitetsvurderingReference = KvalitetsvurderingReference(
-        id = UUID.randomUUID(),
-        version = 1,
-    ),
-    created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
-    registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
-)
+    @Test
+    fun `saksdata for leder in foerste instans`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val vedtaksinstansEnhet = "4020"
+        val saksdataFullfoertInSamevedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1()).id,
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
+        )
+        val saksdataFullfoertOtherVedtaksinstans = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = "4111",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1()).id,
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
+        )
+        val saksdataPaagaaende1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1()).id,
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
+        )
+        val saksdataPaagaaende2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = vedtaksinstansEnhet,
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1()).id,
+                version = 1,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4),
+        )
 
-saksdataRepository.saveAll(
-    mutableListOf(
-        saksdataFullfoertInSamevedtaksinstans,
-        saksdataFullfoertOtherVedtaksinstans,
-        saksdataPaagaaende1,
-        saksdataPaagaaende2
-    )
-)
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertInSamevedtaksinstans,
+                saksdataFullfoertOtherVedtaksinstans,
+                saksdataPaagaaende1,
+                saksdataPaagaaende2
+            )
+        )
 
-testEntityManager.flush()
-testEntityManager.clear()
+        testEntityManager.flush()
+        testEntityManager.clear()
 
-val saksdata =
-    saksdataRepository.findForVedtaksinstansleder(
-        vedtaksinstansEnhet = vedtaksinstansEnhet,
-        fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
-        toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
-        mangelfullt = emptyList(),
-        kommentarer = emptyList(),
-    )
-assertThat(saksdata).hasSize(1)
-}
+        val saksdata =
+            saksdataRepository.findForVedtaksinstansleder(
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
+                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
+                mangelfullt = emptyList(),
+                kommentarer = emptyList(),
+            )
+        assertThat(saksdata).hasSize(1)
+    }
 
+     /* TODO fix
 
 
 @Test
@@ -724,7 +701,6 @@ val saksdataPaagaaende =
 assertThat(saksdataPaagaaende).hasSize(1)
 assertThat(saksdataPaagaaende.first()).isEqualTo(saksdataPaagaaende1)
 }
-
 */
 
 }
