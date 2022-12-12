@@ -356,7 +356,8 @@ class ExportServiceV1(
     ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
         
         return resultList.map { result ->
-            val (saksdata, kvalitetsvurdering) = result
+            val saksdata = result.saksdata
+            val kvalitetsvurdering = result.kvalitetsvurdering
 
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()

@@ -35,16 +35,17 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             """
             SELECT s, k
             FROM Saksdata s
-             JOIN KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id
+             JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id
             WHERE s.kvalitetsvurderingReference.version = 1
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             ORDER BY s.created
         """,
-            ResultV1::class.java
+            Array::class.java
         )
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
     }
 
     fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
@@ -60,11 +61,12 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             ORDER BY s.created
         """,
-            ResultV2::class.java
+            Array::class.java
         )
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
+            .map { ResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
     }
 
     override fun findForVedtaksinstansleder(
@@ -76,7 +78,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     ): List<Saksdata> {
 
         val query = """
-            SELECT DISTINCT s FROM Saksdata s JOIN KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id LEFT JOIN FETCH s.registreringshjemler h
+            SELECT DISTINCT s FROM Saksdata s JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id LEFT JOIN FETCH s.registreringshjemler h
                 WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
                 AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
                 AND s.sakstype = :sakstype
