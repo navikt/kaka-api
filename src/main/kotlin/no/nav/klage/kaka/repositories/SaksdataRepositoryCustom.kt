@@ -12,4 +12,9 @@ interface SaksdataRepositoryCustom {
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): List<Saksdata>
+
+    fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime
+    ): List<SaksdataRepositoryCustomImpl.ResultV1>
 }

@@ -47,7 +47,6 @@ internal class SaksdataServiceTest {
         )
     }
 
-
     @Test
     fun `throws exception if not allowed to delete`() {
         assertThrows<MissingTilgangException> {

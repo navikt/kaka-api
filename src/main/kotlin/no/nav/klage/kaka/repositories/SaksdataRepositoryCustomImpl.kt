@@ -1,8 +1,10 @@
 package no.nav.klage.kaka.repositories
 
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg.*
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg.MANGELFULLT
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kodeverk.Type
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -15,7 +17,56 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     @PersistenceContext
     lateinit var entityManager: EntityManager
 
-    //TODO: Fix for v2
+    data class ResultV1(
+        val saksdata: Saksdata,
+        val kvalitetsvurdering: KvalitetsvurderingV1,
+    )
+
+    data class ResultV2(
+        val saksdata: Saksdata,
+        val kvalitetsvurdering: KvalitetsvurderingV2,
+    )
+
+    override fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime
+    ): List<ResultV1> {
+        return entityManager.createQuery(
+            """
+            SELECT s, k
+            FROM Saksdata s, KvalitetsvurderingV1 k
+             JOIN s.kvalitetsvurderingReference.id on k.id
+            WHERE s.kvalitetsvurderingReference.version = 1
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            ORDER BY s.created
+        """,
+            ResultV1::class.java
+        )
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .resultList
+    }
+
+    fun findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime
+    ): List<ResultV2> {
+        return entityManager.createQuery(
+            """
+            SELECT s, k
+            FROM Saksdata s, KvalitetsvurderingV2 k
+             JOIN s.kvalitetsvurderingReference.id on k.id
+            WHERE s.kvalitetsvurderingReference.version = 2
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            ORDER BY s.created
+        """,
+            ResultV2::class.java
+        )
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .resultList
+    }
+
     override fun findForVedtaksinstansleder(
         vedtaksinstansEnhet: String,
         fromDateTime: LocalDateTime,

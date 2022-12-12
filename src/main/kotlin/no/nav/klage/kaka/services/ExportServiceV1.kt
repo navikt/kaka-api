@@ -8,6 +8,7 @@ import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
 import no.nav.klage.kaka.services.ExportServiceV1.Field.Type.*
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
@@ -199,13 +200,12 @@ class ExportServiceV1(
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
     fun getFinishedAsRawDataByDatesWithoutEnheter(fromDate: LocalDate, toDate: LocalDate): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
-        val saksdataList =
-            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-                kvalitetsvurderingVersion = 1,
+        val resultList =
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
-        return privateGetFinishedAsRawDataWithoutEnheter(saksdataList = saksdataList)
+        return privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = resultList)
     }
 
     /**
@@ -342,6 +342,76 @@ class ExportServiceV1(
                 utredningenRadioValg = kvalitetsvurderingV1.utredningenRadioValg?.name,
                 vedtaketRadioValg = kvalitetsvurderingV1.vedtaketRadioValg?.name,
                 brukAvRaadgivendeLegeRadioValg = kvalitetsvurderingV1.brukAvRaadgivendeLegeRadioValg?.name,
+                kaBehandlingstidDays = kaBehandlingstidDays,
+                vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
+                totalBehandlingstidDays = totalBehandlingstidDays,
+                createdDate = getCreatedDate(saksdata),
+                modifiedDate = getModifiedDate(saksdata),
+            )
+        }
+    }
+
+    private fun privateGetFinishedAsRawDataWithoutEnheterWithResultV1(
+        resultList: List<SaksdataRepositoryCustomImpl.ResultV1>,
+    ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
+        
+        return resultList.map { result ->
+            val (saksdata, kvalitetsvurdering) = result
+
+            val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
+            val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
+
+            val mottattForrigeInstans = getMottattForrigeInstans(saksdata)
+
+            val kaBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattKlageinstansDate.epochDay
+            val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
+
+            val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
+
+            if (saksdata.kvalitetsvurderingReference.version == 2) {
+                error("Don't support v2 yet")
+            }
+
+            AnonymizedFinishedVurderingWithoutEnheterV1(
+                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
+                hjemmelIdList = saksdata.registreringshjemler!!.map { it.id },
+                avsluttetAvSaksbehandler = avsluttetAvSaksbehandlerDate,
+                ytelseId = saksdata.ytelse!!.id,
+                utfallId = saksdata.utfall!!.id,
+                sakstypeId = saksdata.sakstype.id,
+                mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
+                mottattKlageinstans = mottattKlageinstansDate,
+                arbeidsrettetBrukeroppfoelging = kvalitetsvurdering.arbeidsrettetBrukeroppfoelging,
+                begrunnelseForHvorforAvslagOpprettholdes = kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes,
+                begrunnelsenErIkkeKonkretOgIndividuell = kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell,
+                betydeligAvvik = kvalitetsvurdering.betydeligAvvik,
+                brukIOpplaering = kvalitetsvurdering.brukIOpplaering,
+                detErFeilIKonkretRettsanvendelse = kvalitetsvurdering.detErFeilIKonkretRettsanvendelse,
+                detErIkkeBruktRiktigHjemmel = kvalitetsvurdering.detErIkkeBruktRiktigHjemmel,
+                innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = kvalitetsvurdering.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                klagerensRelevanteAnfoerslerIkkeKommentert = kvalitetsvurdering.klagerensRelevanteAnfoerslerIkkeKommentert,
+                konklusjonen = kvalitetsvurdering.konklusjonen,
+                nyeOpplysningerMottatt = kvalitetsvurdering.nyeOpplysningerMottatt,
+                oversendelsesbrevetsInnholdIkkeISamsvarMedTema = kvalitetsvurdering.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
+                oversittetKlagefristIkkeKommentert = kvalitetsvurdering.oversittetKlagefristIkkeKommentert,
+                raadgivendeLegeErBruktFeilSpoersmaal = kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal,
+                raadgivendeLegeErBruktMangelfullDokumentasjon = kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon,
+                raadgivendeLegeErIkkeBrukt = kvalitetsvurdering.raadgivendeLegeErIkkeBrukt,
+                raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
+                rettsregelenErBenyttetFeil = kvalitetsvurdering.rettsregelenErBenyttetFeil,
+                sakensDokumenter = kvalitetsvurdering.sakensDokumenter,
+                spraaketErIkkeTydelig = kvalitetsvurdering.spraaketErIkkeTydelig,
+                utredningenAvAndreAktuelleForholdISaken = kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvArbeid = kvalitetsvurdering.utredningenAvArbeid,
+                utredningenAvEoesProblematikk = kvalitetsvurdering.utredningenAvEoesProblematikk,
+                utredningenAvInntektsforhold = kvalitetsvurdering.utredningenAvInntektsforhold,
+                utredningenAvMedisinskeForhold = kvalitetsvurdering.utredningenAvMedisinskeForhold,
+                veiledningFraNav = kvalitetsvurdering.veiledningFraNav,
+                vurderingAvFaktumErMangelfull = kvalitetsvurdering.vurderingAvFaktumErMangelfull,
+                klageforberedelsenRadioValg = kvalitetsvurdering.klageforberedelsenRadioValg?.name,
+                utredningenRadioValg = kvalitetsvurdering.utredningenRadioValg?.name,
+                vedtaketRadioValg = kvalitetsvurdering.vedtaketRadioValg?.name,
+                brukAvRaadgivendeLegeRadioValg = kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
