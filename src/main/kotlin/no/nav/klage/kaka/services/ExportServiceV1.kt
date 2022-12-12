@@ -5,6 +5,7 @@ import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV1
 import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurderingV1
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
@@ -368,10 +369,6 @@ class ExportServiceV1(
 
             val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
 
-            if (saksdata.kvalitetsvurderingReference.version == 2) {
-                error("Don't support v2 yet")
-            }
-
             AnonymizedFinishedVurderingWithoutEnheterV1(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
                 hjemmelIdList = saksdata.registreringshjemler!!.map { it.id },
@@ -509,21 +506,19 @@ class ExportServiceV1(
     }
 
     private fun getCreatedDate(saksdata: Saksdata): Date {
-        val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
-        return if (saksdata.created.isBefore(kvalitetsvurderingV1.created)) {
-            saksdata.created.toDate()
-        } else {
-            kvalitetsvurderingV1.created.toDate()
-        }
+//        return if (saksdata.created.isBefore(kvalitetsvurdering.created)) {
+            return saksdata.created.toDate()
+//        } else {
+//            kvalitetsvurdering.created.toDate()
+//        }
     }
 
     private fun getModifiedDate(saksdata: Saksdata): Date {
-        val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
-        return if (saksdata.modified.isAfter(kvalitetsvurderingV1.modified)) {
-            saksdata.modified.toDate()
-        } else {
-            kvalitetsvurderingV1.modified.toDate()
-        }
+//        return if (saksdata.modified.isAfter(kvalitetsvurdering.modified)) {
+            return saksdata.modified.toDate()
+//        } else {
+//            kvalitetsvurdering.modified.toDate()
+//        }
     }
 
     /**
