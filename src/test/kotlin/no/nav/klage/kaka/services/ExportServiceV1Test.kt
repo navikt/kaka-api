@@ -23,7 +23,6 @@ internal class ExportServiceV1Test {
     @Test
     fun generateExcelFileAsLeder() {
         val saksdataRepository = mockk<SaksdataRepository>()
-        val kvalitetsvurderingV1Repository = mockk<KvalitetsvurderingV1Repository>()
 
         every {
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
@@ -32,13 +31,8 @@ internal class ExportServiceV1Test {
             )
         } returns getResultList(amount = 10)
 
-        every {
-            kvalitetsvurderingV1Repository.getReferenceById(any())
-        } returns KvalitetsvurderingV1()
-
         val exportService = ExportServiceV1(
             saksdataRepository = saksdataRepository,
-            kvalitetsvurderingV1Repository = kvalitetsvurderingV1Repository
         )
 
         val currDir = File(".")
@@ -55,7 +49,6 @@ internal class ExportServiceV1Test {
     @Test
     fun `generate excel file with no data does not throw exception`() {
         val saksdataRepository = mockk<SaksdataRepository>()
-        val kvalitetsvurderingV1Repository = mockk<KvalitetsvurderingV1Repository>()
 
         every {
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
@@ -66,7 +59,6 @@ internal class ExportServiceV1Test {
 
         val exportServiceV1 = ExportServiceV1(
             saksdataRepository = saksdataRepository,
-            kvalitetsvurderingV1Repository = kvalitetsvurderingV1Repository
         )
 
         val currDir = File(".")
@@ -78,33 +70,6 @@ internal class ExportServiceV1Test {
                 year = Year.now()
             )
         )
-    }
-
-    private fun getSaksdata(amount: Int = 1): List<Saksdata> {
-        return buildList {
-            repeat(amount) {
-                add(
-                    Saksdata(
-                        sakstype = Type.KLAGE,
-                        utfoerendeSaksbehandler = "someoneelse",
-                        tilknyttetEnhet = Enhet.E4295.navn,
-                        ytelse = Ytelse.OMS_OMP,
-                        vedtaksinstansEnhet = Enhet.E0001.navn,
-                        utfall = Utfall.STADFESTELSE,
-                        registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4, Registreringshjemmel.FTRL_9_11),
-                        sakenGjelder = "12345678910",
-                        mottattVedtaksinstans = LocalDate.now(),
-                        mottattKlageinstans = LocalDate.now().minusDays(1),
-                        avsluttetAvSaksbehandler = LocalDateTime.now(),
-                        source = Source.KAKA,
-                        kvalitetsvurderingReference = KvalitetsvurderingReference(
-                            id = UUID.randomUUID(),
-                            version = 1,
-                        ),
-                    )
-                )
-            }
-        }
     }
 
     private fun getResultList(amount: Int = 1): List<SaksdataRepositoryCustomImpl.ResultV1> {
