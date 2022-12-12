@@ -5,7 +5,6 @@ import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV1
 import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurderingV1
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
@@ -33,11 +32,12 @@ class ExportServiceV1(
      * KA-ledere.
      */
     fun getAsExcel(year: Year): ByteArray {
-        val saksdataList = saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-            kvalitetsvurderingVersion = 1,
-            fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
-            toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
-        )
+        val saksdataList =
+            saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+                kvalitetsvurderingVersion = 1,
+                fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
+                toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
+            )
 
         val saksdataFields = mapToFields(saksdataList)
 
@@ -98,10 +98,12 @@ class ExportServiceV1(
                             }
                             cell.cellStyle = cellStyleDate
                         }
+
                         BOOLEAN -> {
                             cell.setCellValue(column.value as Boolean)
                             cell.cellStyle = cellStyleRegular
                         }
+
                         else -> {
                             cell.setCellValue(column.value?.toString() ?: "")
                             cell.cellStyle = cellStyleRegular
@@ -200,7 +202,10 @@ class ExportServiceV1(
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
-    fun getFinishedAsRawDataByDatesWithoutEnheter(fromDate: LocalDate, toDate: LocalDate): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
+    fun getFinishedAsRawDataByDatesWithoutEnheter(
+        fromDate: LocalDate,
+        toDate: LocalDate
+    ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
         val resultList =
             saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
                 fromDateTime = fromDate.atStartOfDay(),
@@ -298,8 +303,9 @@ class ExportServiceV1(
             if (saksdata.kvalitetsvurderingReference.version == 2) {
                 error("This query only works for version 1 of kvalitetsvurderinger")
             }
-            
-            val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+
+            val kvalitetsvurderingV1 =
+                kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
 
             AnonymizedFinishedVurderingV1(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -346,8 +352,8 @@ class ExportServiceV1(
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
+                createdDate = kvalitetsvurderingV1.created.toDate(),
+                modifiedDate = kvalitetsvurderingV1.modified.toDate(),
             )
         }
     }
@@ -355,7 +361,7 @@ class ExportServiceV1(
     private fun privateGetFinishedAsRawDataWithoutEnheterWithResultV1(
         resultList: List<SaksdataRepositoryCustomImpl.ResultV1>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
-        
+
         return resultList.map { result ->
             val (saksdata, kvalitetsvurdering) = result
 
@@ -412,8 +418,8 @@ class ExportServiceV1(
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
+                createdDate = kvalitetsvurdering.created.toDate(),
+                modifiedDate = kvalitetsvurdering.modified.toDate(),
             )
         }
     }
@@ -436,7 +442,8 @@ class ExportServiceV1(
 
             val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
 
-            val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+            val kvalitetsvurderingV1 =
+                kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
 
             AnonymizedFinishedVurderingWithoutEnheterV1(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -481,8 +488,8 @@ class ExportServiceV1(
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
+                createdDate = kvalitetsvurderingV1.created.toDate(),
+                modifiedDate = kvalitetsvurderingV1.modified.toDate(),
             )
         }
     }
@@ -505,22 +512,6 @@ class ExportServiceV1(
         return mottattForrigeInstans
     }
 
-    private fun getCreatedDate(saksdata: Saksdata): Date {
-//        return if (saksdata.created.isBefore(kvalitetsvurdering.created)) {
-            return saksdata.created.toDate()
-//        } else {
-//            kvalitetsvurdering.created.toDate()
-//        }
-    }
-
-    private fun getModifiedDate(saksdata: Saksdata): Date {
-//        return if (saksdata.modified.isAfter(kvalitetsvurdering.modified)) {
-            return saksdata.modified.toDate()
-//        } else {
-//            kvalitetsvurdering.modified.toDate()
-//        }
-    }
-
     /**
      * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
      */
@@ -530,8 +521,8 @@ class ExportServiceV1(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
                 tilknyttetEnhet = saksdata.tilknyttetEnhet,
                 sakstypeId = saksdata.sakstype.id,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
+                createdDate = saksdata.created.toDate(),
+                modifiedDate = saksdata.modified.toDate(),
             )
         }
     }

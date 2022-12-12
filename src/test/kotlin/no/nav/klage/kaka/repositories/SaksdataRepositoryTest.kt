@@ -280,7 +280,6 @@ class SaksdataRepositoryTest {
         assertThat(saksdata).hasSize(1)
     }
 
-
     @Test
     fun `saksdata for leder in foerste instans`() {
         val utfoerendeSaksbehandler = "abc123"
