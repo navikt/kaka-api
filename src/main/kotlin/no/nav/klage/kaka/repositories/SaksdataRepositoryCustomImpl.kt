@@ -36,6 +36,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             SELECT s, k
             FROM Saksdata s
              JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id
+             JOIN FETCH s.registreringshjemler h
             WHERE s.kvalitetsvurderingReference.version = 1
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             ORDER BY s.created
