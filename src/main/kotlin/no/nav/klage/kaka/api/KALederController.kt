@@ -65,8 +65,7 @@ class KALederController(
         )
     }
 
-    //TODO: Split to v1 and v2
-    @GetMapping("/statistics/enheter/{enhetsnummer}/manager", "/statistics/v1/enheter/{enhetsnummer}/manager")
+    @GetMapping("/statistics/enheter/{enhetsnummer}/manager")
     fun getTotalForLeder(
         @PathVariable enhetsnummer: String,
         @RequestParam(required = false) fromMonth: String?,
