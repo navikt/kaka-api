@@ -6,6 +6,7 @@ import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.Radio
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kodeverk.Type
+import org.hibernate.jpa.QueryHints
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import javax.persistence.EntityManager
@@ -79,20 +80,20 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     ): List<ResultV1> {
         return entityManager.createQuery(
             """
-            SELECT s, k
+            SELECT DISTINCT s, k
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler h
             WHERE s.kvalitetsvurderingReference.version = 1
             AND s.utfoerendeSaksbehandler = :saksbehandler
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
-            ORDER BY s.created
         """,
             Array::class.java
         )
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("saksbehandler", saksbehandler)
+            .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
             .resultList
             .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
     }
