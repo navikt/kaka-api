@@ -6,7 +6,6 @@ import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.Radio
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kodeverk.Type
-import org.hibernate.jpa.QueryHints
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 import javax.persistence.EntityManager
@@ -48,7 +47,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
@@ -78,9 +77,9 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         toDateTime: LocalDateTime,
         saksbehandler: String,
     ): List<ResultV1> {
-        return entityManager.createQuery(
+        val resultList = entityManager.createQuery(
             """
-            SELECT DISTINCT s, k
+            SELECT s, k
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler h
@@ -93,9 +92,9 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("saksbehandler", saksbehandler)
-            .setHint(QueryHints.HINT_PASS_DISTINCT_THROUGH, false)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+        return resultList
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
@@ -120,7 +119,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
@@ -148,7 +147,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("toDateTime", toDateTime)
             .setParameter("saksbehandlerIdentList", saksbehandlerIdentList)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
@@ -172,7 +171,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("enhet", enhet)
             .setParameter("toDateTime", toDateTime)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
@@ -199,7 +198,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("toDateTime", toDateTime)
             .setParameter("saksbehandlerIdentList", saksbehandlerIdentList)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
@@ -220,7 +219,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         )
             .setParameter("toDateTime", toDateTime)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreatedV1(
@@ -244,7 +243,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("toDateTime", toDateTime)
             .setParameter("saksbehandler", saksbehandler)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findForVedtaksinstanslederV1(
@@ -256,7 +255,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     ): List<ResultV1> {
 
         val query = """
-            SELECT DISTINCT s, k 
+            SELECT s, k 
             FROM Saksdata s 
               LEFT JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id 
               LEFT JOIN FETCH s.registreringshjemler h
@@ -275,7 +274,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
             .resultList
-            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
     override fun findForVedtaksinstanslederV2(
