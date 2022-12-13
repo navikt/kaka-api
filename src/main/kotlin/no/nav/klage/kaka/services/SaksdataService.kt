@@ -261,8 +261,6 @@ class SaksdataService(
                 }
                 if (saksdata.hasKvalitetsvurdering()) {
                     kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
-                } else {
-                    error("There must be a kvalitetsvurdering")
                 }
             }
             2 -> {
@@ -272,8 +270,6 @@ class SaksdataService(
                 }
                 if (saksdata.hasKvalitetsvurdering()) {
                     kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
-                } else {
-                    error("There must be a kvalitetsvurdering")
                 }
             }
             else -> error("Unknown version: $version")
