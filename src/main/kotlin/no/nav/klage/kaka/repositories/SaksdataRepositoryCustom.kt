@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.repositories
 
-import no.nav.klage.kaka.domain.Saksdata
 import java.time.LocalDateTime
 
 interface SaksdataRepositoryCustom {

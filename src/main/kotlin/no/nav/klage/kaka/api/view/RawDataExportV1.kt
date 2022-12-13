@@ -110,7 +110,7 @@ data class AnonymizedFinishedVurderingWithoutEnheterV1(
     val modifiedDate: Date,
 )
 
-data class AnonymizedUnfinishedVurderingV1(
+data class AnonymizedUnfinishedVurdering(
     /** unique and static id */
     val id: UUID,
     val sakstypeId: String,
@@ -133,7 +133,7 @@ data class Date(
 
 data class TotalResponseV1(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
-    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurderingV1>,
+    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
 )
 
 data class TotalResponseWithoutEnheterV1(

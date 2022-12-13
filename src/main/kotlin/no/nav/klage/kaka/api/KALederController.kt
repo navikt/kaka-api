@@ -43,7 +43,7 @@ class KALederController(
     }
 
     //TODO: Split to v1 and v2
-    @GetMapping("/export/excel")
+    @GetMapping("/export/excel", "/export/v1/excel")
     fun getAsExcel(@RequestParam(required = false) year: Int?): ResponseEntity<ByteArray> {
         logger.debug("getAsExcel() called. Year param = $year")
 
@@ -66,7 +66,7 @@ class KALederController(
     }
 
     //TODO: Split to v1 and v2
-    @GetMapping("/statistics/enheter/{enhetsnummer}/manager")
+    @GetMapping("/statistics/enheter/{enhetsnummer}/manager", "/statistics/v1/enheter/{enhetsnummer}/manager")
     fun getTotalForLeder(
         @PathVariable enhetsnummer: String,
         @RequestParam(required = false) fromMonth: String?,

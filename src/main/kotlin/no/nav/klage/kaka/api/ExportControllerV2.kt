@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@Tag(name = "kaka-api:kaka-export")
+@Tag(name = "kaka-api:kaka-export-v2")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 @RequestMapping("/statistics/v2")
 class ExportControllerV2(

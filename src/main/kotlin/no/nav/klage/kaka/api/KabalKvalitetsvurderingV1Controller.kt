@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@Tag(name = "kaka-api:kabal-kvalitet")
+@Tag(name = "kaka-api:kabal-kvalitet-v1")
 @ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kabal")
 class KabalKvalitetsvurderingV1Controller(
@@ -50,6 +50,16 @@ class KabalKvalitetsvurderingV1Controller(
                 kvalitetsvurderingVersion = 1,
             )
         }
+    }
+
+    @DeleteMapping("/kvalitetsvurdering","/kvalitetsvurderinger/v1/{id}")
+    fun deleteKvalitetsvurdering(
+        @PathVariable("id") kvalitetsvurderingId: UUID,
+    ) {
+        val callingApplication = verifyAndGetCallingApplication()
+        logger.debug("Delete kvalitetsvurdering is requested by $callingApplication")
+        kvalitetsvurderingV1Service.deleteKvalitetsvurdering(kvalitetsvurderingId)
+        logger.debug("Successfully deleted kvalitetsvurdering $kvalitetsvurderingId")
     }
 
     @GetMapping("/kvalitetsvurdering/{id}/validationerrors", "/kvalitetsvurderinger/v1/{id}/validationerrors")

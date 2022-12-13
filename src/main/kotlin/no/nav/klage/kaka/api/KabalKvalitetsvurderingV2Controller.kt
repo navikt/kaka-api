@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@Tag(name = "kaka-api:kabal-kvalitet")
+@Tag(name = "kaka-api:kabal-kvalitet-v2")
 @ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kabal")
 class KabalKvalitetsvurderingV2Controller(

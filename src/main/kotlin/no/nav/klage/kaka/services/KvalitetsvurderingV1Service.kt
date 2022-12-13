@@ -90,4 +90,8 @@ class KvalitetsvurderingV1Service(
             else -> error("not supported")
         }
     }
+
+    fun deleteKvalitetsvurdering(id: UUID) {
+        kvalitetsvurderingV1Repository.deleteById(id)
+    }
 }

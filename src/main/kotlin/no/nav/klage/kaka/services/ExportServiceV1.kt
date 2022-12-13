@@ -2,7 +2,7 @@ package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingV1
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV1
-import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurderingV1
+import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurdering
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -154,7 +154,7 @@ class ExportServiceV1(
         enhet: Enhet,
         toMonth: YearMonth,
         saksbehandlerIdentList: List<String>?
-    ): List<AnonymizedUnfinishedVurderingV1> {
+    ): List<AnonymizedUnfinishedVurdering> {
         validateNotCurrentMonth(toMonth)
 
         val resultList = if (saksbehandlerIdentList == null) {
@@ -247,7 +247,7 @@ class ExportServiceV1(
     /**
      * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
      */
-    fun getUnfinishedAsRawDataByToDate(toDate: LocalDate): List<AnonymizedUnfinishedVurderingV1> {
+    fun getUnfinishedAsRawDataByToDate(toDate: LocalDate): List<AnonymizedUnfinishedVurdering> {
         val resultList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
                 toDateTime = toDate.atTime(LocalTime.MAX)
@@ -261,7 +261,7 @@ class ExportServiceV1(
     fun getUnfinishedAsRawDataByToDateAndSaksbehandler(
         toDate: LocalDate,
         saksbehandler: String
-    ): List<AnonymizedUnfinishedVurderingV1> {
+    ): List<AnonymizedUnfinishedVurdering> {
         val resultList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreatedV1(
                 toDateTime = toDate.atTime(LocalTime.MAX),
@@ -437,9 +437,9 @@ class ExportServiceV1(
     /**
      * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
      */
-    private fun privateGetUnfinishedAsRawData(saksdataList: List<Saksdata>): List<AnonymizedUnfinishedVurderingV1> {
+    private fun privateGetUnfinishedAsRawData(saksdataList: List<Saksdata>): List<AnonymizedUnfinishedVurdering> {
         return saksdataList.map { saksdata ->
-            AnonymizedUnfinishedVurderingV1(
+            AnonymizedUnfinishedVurdering(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
                 tilknyttetEnhet = saksdata.tilknyttetEnhet,
                 sakstypeId = saksdata.sakstype.id,

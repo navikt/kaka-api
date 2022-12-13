@@ -21,6 +21,7 @@ data class SaksdataView(
     val hjemmelIdList: List<String>,
     val utfoerendeSaksbehandler: String,
     val tilknyttetEnhet: String,
+    //Fjern når ikke lenger i bruk i klient
     val kvalitetsvurderingId: UUID,
     val kvalitetsvurderingReference: KvalitetsvurderingReference,
     val avsluttetAvSaksbehandler: LocalDateTime?,

@@ -279,8 +279,8 @@ class SaksdataService(
             else -> error("Unknown version: $version")
         }
 
-        saksdata.avsluttetAvSaksbehandler = LocalDateTime.now()
-        saksdata.modified = LocalDateTime.now()
+        saksdata.avsluttetAvSaksbehandler = now()
+        saksdata.modified = now()
         return saksdata
     }
 
@@ -446,6 +446,7 @@ class SaksdataService(
         saksdataRepository.deleteById(saksdataId)
     }
 
+    //TODO: Delete after run
     @Scheduled(cron = "\${MIGRATE_CRON}", zone = "Europe/Oslo")
     @SchedulerLock(name = "migrateKvalitetsvurderingerFromV1ToV2")
     fun migrateKvalitetsvurderingerFromV1ToV2() {

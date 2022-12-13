@@ -27,6 +27,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         val kvalitetsvurdering: KvalitetsvurderingV2,
     )
 
+    //Generalize, return resultList
     override fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
