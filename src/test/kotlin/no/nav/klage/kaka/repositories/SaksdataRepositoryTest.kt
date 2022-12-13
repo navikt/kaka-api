@@ -687,7 +687,7 @@ class SaksdataRepositoryTest {
             kvalitetsvurderingReference = KvalitetsvurderingReference(
                 id = kvalitetsvurderingV1Repository.save(
                     KvalitetsvurderingV1(
-                        vedtaketRadioValg =  RadioValg.MANGELFULLT,
+                        vedtaketRadioValg = RadioValg.MANGELFULLT,
                     )
                 ).id,
                 version = 1,
@@ -730,6 +730,11 @@ class SaksdataRepositoryTest {
                     KvalitetsvurderingV1()
                 ).id,
                 version = 1,
+            ),
+            registreringshjemler = setOf(
+                Registreringshjemmel.AFP_62_OFFENTLIG,
+                Registreringshjemmel.AFP_62_PRIVAT,
+                Registreringshjemmel.ARBML_12
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
@@ -868,7 +873,9 @@ class SaksdataRepositoryTest {
 
         val results =
             saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
-                enhet = tilknyttetEnhet1, fromDateTime = avsluttetAvSaksbehandler1.minusMonths(1), toDateTime = avsluttetAvSaksbehandler1.plusMonths(1)
+                enhet = tilknyttetEnhet1,
+                fromDateTime = avsluttetAvSaksbehandler1.minusMonths(1),
+                toDateTime = avsluttetAvSaksbehandler1.plusMonths(1)
 
             )
         assertThat(results).hasSize(1)
@@ -963,7 +970,9 @@ class SaksdataRepositoryTest {
 
             )
         assertThat(results).hasSize(2)
-        assertThat(results.first().saksdata).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1)
+        assertThat(results.first().saksdata).isEqualTo(
+            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1
+        )
     }
 
     @Test
@@ -1032,7 +1041,7 @@ class SaksdataRepositoryTest {
                 enhet = tilknyttetEnhet1,
                 toDateTime = created1.plusMonths(1),
 
-            )
+                )
         assertThat(results).hasSize(1)
         assertThat(results.first().saksdata).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1)
     }
@@ -1132,9 +1141,11 @@ class SaksdataRepositoryTest {
                 enhet = tilknyttetEnhet1,
                 toDateTime = created1.plusMonths(1),
                 saksbehandlerIdentList = listOf(utfoerendeSaksbehandler1),
-                )
+            )
         assertThat(results).hasSize(1)
-        assertThat(results.first().saksdata).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1)
+        assertThat(results.first().saksdata).isEqualTo(
+            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1
+        )
     }
 }
 
