@@ -80,7 +80,9 @@ class SaksdataController(
             throw MissingTilgangException("User does not have access to create saksdata")
         }
 
-        return saksdataService.createSaksdata(innloggetSaksbehandler).toSaksdataView()
+        return saksdataService.createSaksdata(
+            innloggetSaksbehandler = innloggetSaksbehandler,
+        ).toSaksdataView()
     }
 
     private fun validateEnhetsnummer(enhetsnummer: String?) {
@@ -91,8 +93,8 @@ class SaksdataController(
 
     @PostMapping("/{id}/reopen")
     fun reopenSaksdata(
-        @PathVariable("id") saksdataId: UUID
-    ) {
+        @PathVariable("id") saksdataId: UUID,
+    ): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::reopenSaksdata.name,
@@ -100,7 +102,8 @@ class SaksdataController(
             UUID.randomUUID(),
             logger
         )
-        return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler)
+
+        return saksdataService.reopenSaksdata(saksdataId, innloggetSaksbehandler).toSaksdataView()
     }
 
     @PutMapping("/{id}/sakengjelder")

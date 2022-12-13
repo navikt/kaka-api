@@ -6,7 +6,7 @@ import no.nav.klage.kaka.api.view.RadioValgInput
 import no.nav.klage.kaka.api.view.RadioValgRaadgivendeLegeInput
 import no.nav.klage.kaka.api.view.StringInput
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
-import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.services.KvalitetsvurderingService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
@@ -29,10 +29,12 @@ class KvalitetsvurderingController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
+    //TODO: Kan fjernes etter hvert.
+
     @GetMapping
     fun getKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::getKvalitetsvurdering.name,
@@ -47,7 +49,7 @@ class KvalitetsvurderingController(
     fun setKlageforberedelsenRadioValg(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setKlageforberedelsenRadioValg.name,
@@ -67,7 +69,7 @@ class KvalitetsvurderingController(
     fun setSakensDokumenter(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setSakensDokumenter.name,
@@ -83,7 +85,7 @@ class KvalitetsvurderingController(
     fun setOversittetKlagefristIkkeKommentert(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setOversittetKlagefristIkkeKommentert.name,
@@ -103,7 +105,7 @@ class KvalitetsvurderingController(
     fun setKlagerensRelevanteAnfoerslerIkkeKommentert(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setKlagerensRelevanteAnfoerslerIkkeKommentert.name,
@@ -123,7 +125,7 @@ class KvalitetsvurderingController(
     fun setBegrunnelseForHvorforAvslagOpprettholdes(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setBegrunnelseForHvorforAvslagOpprettholdes.name,
@@ -143,7 +145,7 @@ class KvalitetsvurderingController(
     fun setKonklusjonen(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setKonklusjonen.name,
@@ -159,7 +161,7 @@ class KvalitetsvurderingController(
     fun setOversendelsesbrevetsInnholdIkkeISamsvarMedTema(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setOversendelsesbrevetsInnholdIkkeISamsvarMedTema.name,
@@ -179,7 +181,7 @@ class KvalitetsvurderingController(
     fun setUtredningenRadioValg(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenRadioValg.name,
@@ -199,7 +201,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvMedisinskeForhold(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvMedisinskeForhold.name,
@@ -219,7 +221,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvMedisinskeForholdText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvMedisinskeForholdText.name,
@@ -239,7 +241,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvInntektsforhold(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvInntektsforhold.name,
@@ -259,7 +261,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvInntektsforholdText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvInntektsforholdText.name,
@@ -279,7 +281,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvArbeid(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvArbeid.name,
@@ -299,7 +301,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvArbeidText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvArbeidText.name,
@@ -319,7 +321,7 @@ class KvalitetsvurderingController(
     fun setArbeidsrettetBrukeroppfoelging(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setArbeidsrettetBrukeroppfoelging.name,
@@ -339,7 +341,7 @@ class KvalitetsvurderingController(
     fun setArbeidsrettetBrukeroppfoelgingText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setArbeidsrettetBrukeroppfoelgingText.name,
@@ -359,7 +361,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvAndreAktuelleForholdISaken(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvAndreAktuelleForholdISaken.name,
@@ -379,7 +381,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvAndreAktuelleForholdISakenText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvAndreAktuelleForholdISakenText.name,
@@ -399,7 +401,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvEoesProblematikk(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvEoesProblematikk.name,
@@ -419,7 +421,7 @@ class KvalitetsvurderingController(
     fun setUtredningenAvEoesProblematikkText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setUtredningenAvEoesProblematikkText.name,
@@ -439,7 +441,7 @@ class KvalitetsvurderingController(
     fun setVeiledningFraNav(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setVeiledningFraNav.name,
@@ -455,7 +457,7 @@ class KvalitetsvurderingController(
     fun setVeiledningFraNavText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setVeiledningFraNavText.name,
@@ -475,7 +477,7 @@ class KvalitetsvurderingController(
     fun setBrukAvRaadgivendeLegeRadioValg(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgRaadgivendeLegeInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setBrukAvRaadgivendeLegeRadioValg.name,
@@ -495,7 +497,7 @@ class KvalitetsvurderingController(
     fun setRaadgivendeLegeErIkkeBrukt(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeErIkkeBrukt.name,
@@ -515,7 +517,7 @@ class KvalitetsvurderingController(
     fun setRaadgivendeLegeErBruktFeilSpoersmaal(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeErBruktFeilSpoersmaal.name,
@@ -535,7 +537,7 @@ class KvalitetsvurderingController(
     fun setRaadgivendeLegeHarUttaltSegUtoverTrygdemedisin(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeHarUttaltSegUtoverTrygdemedisin.name,
@@ -555,7 +557,7 @@ class KvalitetsvurderingController(
     fun setRaadgivendeLegeErBruktMangelfullDokumentasjon(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setRaadgivendeLegeErBruktMangelfullDokumentasjon.name,
@@ -575,7 +577,7 @@ class KvalitetsvurderingController(
     fun setVedtaketRadioValg(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: RadioValgInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setVedtaketRadioValg.name,
@@ -591,7 +593,7 @@ class KvalitetsvurderingController(
     fun setDetErIkkeBruktRiktigHjemmel(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setDetErIkkeBruktRiktigHjemmel.name,
@@ -611,7 +613,7 @@ class KvalitetsvurderingController(
     fun setInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet.name,
@@ -631,7 +633,7 @@ class KvalitetsvurderingController(
     fun setRettsregelenErBenyttetFeil(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setRettsregelenErBenyttetFeil.name,
@@ -651,7 +653,7 @@ class KvalitetsvurderingController(
     fun setVurderingAvFaktumErMangelfull(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setVurderingAvFaktumErMangelfull.name,
@@ -671,7 +673,7 @@ class KvalitetsvurderingController(
     fun setDetErFeilIKonkretRettsanvendelse(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setDetErFeilIKonkretRettsanvendelse.name,
@@ -691,7 +693,7 @@ class KvalitetsvurderingController(
     fun setBegrunnelsenErIkkeKonkretOgIndividuell(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setBegrunnelsenErIkkeKonkretOgIndividuell.name,
@@ -711,7 +713,7 @@ class KvalitetsvurderingController(
     fun setSpraaketErIkkeTydelig(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setSpraaketErIkkeTydelig.name,
@@ -731,7 +733,7 @@ class KvalitetsvurderingController(
     fun setNyeOpplysningerMottatt(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setNyeOpplysningerMottatt.name,
@@ -751,7 +753,7 @@ class KvalitetsvurderingController(
     fun setBrukIOpplaering(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setBrukIOpplaering.name,
@@ -767,7 +769,7 @@ class KvalitetsvurderingController(
     fun setBrukIOpplaeringText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setBrukIOpplaeringText.name,
@@ -787,7 +789,7 @@ class KvalitetsvurderingController(
     fun setBetydeligAvvik(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: BooleanInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setBetydeligAvvik.name,
@@ -803,7 +805,7 @@ class KvalitetsvurderingController(
     fun setBetydeligAvvikText(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestBody input: StringInput
-    ): Kvalitetsvurdering {
+    ): KvalitetsvurderingV1 {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::setBetydeligAvvikText.name,

@@ -1,15 +1,21 @@
 package no.nav.klage.kaka.services
 
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
-import no.nav.klage.kaka.domain.Kvalitetsvurdering
+import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kodeverk.Role.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.domain.noKvalitetsvurderingNeeded
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
-import no.nav.klage.kaka.repositories.KvalitetsvurderingRepository
+import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
+import no.nav.klage.kaka.exceptions.ValidationSection
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
@@ -17,10 +23,13 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 import java.time.LocalTime
 import java.util.*
 
@@ -28,13 +37,17 @@ import java.util.*
 @Transactional
 class SaksdataService(
     private val saksdataRepository: SaksdataRepository,
-    private val kvalitetsvurderingRepository: KvalitetsvurderingRepository,
-    private val kvalitetsvurderingService: KvalitetsvurderingService,
+    private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
+    private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
+    private val kvalitetsvurderingV1Service: KvalitetsvurderingV1Service,
+    private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
     private val azureGateway: AzureGateway,
     private val tokenUtil: TokenUtil,
     private val rolleMapper: RolleMapper,
     private val pdlFacade: PdlFacade,
     private val egenAnsattService: EgenAnsattService,
+    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
+    private val kakaVersion2Date: LocalDate,
 ) {
 
     companion object {
@@ -43,20 +56,51 @@ class SaksdataService(
         private val secureLogger = getSecureLogger()
     }
 
-
     fun getSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         return getSaksdataAndVerifyAccess(saksdataId, innloggetSaksbehandler)
     }
 
     fun createSaksdata(innloggetSaksbehandler: String): Saksdata {
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+
         return saksdataRepository.save(
-            Saksdata(
-                utfoerendeSaksbehandler = innloggetSaksbehandler,
-                tilknyttetEnhet = enhet.navn,
-                kvalitetsvurdering = Kvalitetsvurdering()
-            )
+            when (getKakaVersion()) {
+                1 -> {
+                    val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1())
+                    Saksdata(
+                        utfoerendeSaksbehandler = innloggetSaksbehandler,
+                        tilknyttetEnhet = enhet.navn,
+                        kvalitetsvurderingReference = KvalitetsvurderingReference(
+                            id = kvalitetsvurderingV1.id,
+                            version = 1,
+                        ),
+                    )
+                }
+
+                2 -> {
+                    val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2())
+                    Saksdata(
+                        utfoerendeSaksbehandler = innloggetSaksbehandler,
+                        tilknyttetEnhet = enhet.navn,
+                        kvalitetsvurderingReference = KvalitetsvurderingReference(
+                            id = kvalitetsvurderingV2.id,
+                            version = 2,
+                        ),
+                    )
+                }
+
+                else -> error("Unknown kvalitetsvurdering version")
+            }
         )
+    }
+
+    private fun getKakaVersion(): Int {
+        val kvalitetsvurderingVersion = if (LocalDate.now() >= kakaVersion2Date) {
+            2
+        } else {
+            1
+        }
+        return kvalitetsvurderingVersion
     }
 
     fun handleIncomingCompleteSaksdata(
@@ -72,18 +116,33 @@ class SaksdataService(
         tilknyttetEnhet: String,
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
-        source: Source
+        source: Source,
+        kvalitsvurderingVersion: Int,
     ): Saksdata {
-        val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingId(kvalitetsvurderingId)
+        val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId)
 
         if (utfall !in noKvalitetsvurderingNeeded) {
-            kvalitetsvurderingService.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+            when (kvalitsvurderingVersion) {
+                1 -> kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+                2 -> kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+            }
         } else {
-            kvalitetsvurderingRepository.save(
-                Kvalitetsvurdering(
-                    id = kvalitetsvurderingId
-                )
-            )
+            when (kvalitsvurderingVersion) {
+                1 -> {
+                    kvalitetsvurderingV1Repository.save(
+                        KvalitetsvurderingV1(
+                            id = kvalitetsvurderingId
+                        ),
+                    )
+                }
+                2 -> {
+                    kvalitetsvurderingV2Repository.save(
+                        KvalitetsvurderingV2(
+                            id = kvalitetsvurderingId
+                        ),
+                    )
+                }
+            }
         }
 
         return if (existingSaksdata != null) {
@@ -116,7 +175,10 @@ class SaksdataService(
                     avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
                     utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                     tilknyttetEnhet = tilknyttetEnhet,
-                    kvalitetsvurdering = kvalitetsvurderingRepository.getReferenceById(kvalitetsvurderingId),
+                    kvalitetsvurderingReference = KvalitetsvurderingReference(
+                        id = kvalitetsvurderingId,
+                        version = kvalitsvurderingVersion,
+                    ),
                     source = source
                 )
             )
@@ -188,34 +250,108 @@ class SaksdataService(
 
     fun setAvsluttetAvSaksbehandler(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
-        saksdata.validate()
-        if (saksdata.sakstype == Type.ANKE) {
-            saksdata.mottattVedtaksinstans = null
-            kvalitetsvurderingService.removeFieldsUnusedInAnke(saksdata.kvalitetsvurdering.id)
-        }
-        if (saksdata.hasKvalitetsvurdering()) {
-            kvalitetsvurderingService.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurdering.id)
-        } else {
-            kvalitetsvurderingRepository.save(
-                Kvalitetsvurdering(
-                    id = saksdata.kvalitetsvurdering.id
-                )
-            )
+
+        validate(saksdata)
+
+        when (val version = saksdata.kvalitetsvurderingReference.version) {
+            1 -> {
+                if (saksdata.sakstype == Type.ANKE) {
+                    saksdata.mottattVedtaksinstans = null
+                    kvalitetsvurderingV1Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
+                }
+                if (saksdata.hasKvalitetsvurdering()) {
+                    kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
+                } else {
+                    error("There must be a kvalitetsvurdering")
+                }
+            }
+            2 -> {
+                if (saksdata.sakstype == Type.ANKE) {
+                    saksdata.mottattVedtaksinstans = null
+                    kvalitetsvurderingV2Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
+                }
+                if (saksdata.hasKvalitetsvurdering()) {
+                    kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
+                } else {
+                    error("There must be a kvalitetsvurdering")
+                }
+            }
+            else -> error("Unknown version: $version")
         }
 
-        saksdata.avsluttetAvSaksbehandler = LocalDateTime.now()
-        saksdata.modified = LocalDateTime.now()
+        saksdata.avsluttetAvSaksbehandler = now()
+        saksdata.modified = now()
         return saksdata
     }
 
-    fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
+    private fun validate(saksdata: Saksdata) {
+        val sectionList = saksdata.validateAndGetErrors()
+
+        if (saksdata.utfall !in noKvalitetsvurderingNeeded) {
+            val kvalitetsvurderingValidationErrors = when (saksdata.kvalitetsvurderingReference.version) {
+                1 -> {
+                    val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+                    kvalitetsvurderingV1.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
+                }
+                2 -> {
+                    val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+                    kvalitetsvurderingV2.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
+                }
+                else -> error("unknown version: ${saksdata.kvalitetsvurderingReference.version}")
+            }
+
+            if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
+                sectionList.add(
+                    ValidationSection(
+                        section = "kvalitetsvurdering",
+                        properties = kvalitetsvurderingValidationErrors
+                    )
+                )
+            }
+        }
+
+        if (sectionList.isNotEmpty()) {
+            throw SectionedValidationErrorWithDetailsException(
+                title = "Validation error",
+                sections = sectionList
+            )
+        }
+    }
+
+    fun reopenSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(
             saksdataId = saksdataId,
             innloggetSaksbehandler = innloggetSaksbehandler,
             isReopen = true
         )
+
+        when (getKakaVersion()) {
+            1 -> {
+                if (saksdata.kvalitetsvurderingReference.version != 1) {
+                    kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1())
+                    saksdata.kvalitetsvurderingReference = KvalitetsvurderingReference(
+                        id = kvalitetsvurderingV1.id,
+                        version = 1
+                    )
+                }
+            }
+            2 -> {
+                if (saksdata.kvalitetsvurderingReference.version != 2) {
+                    kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2())
+                    saksdata.kvalitetsvurderingReference = KvalitetsvurderingReference(
+                        id = kvalitetsvurderingV2.id,
+                        version = 2
+                    )
+                }
+            }
+            else -> error("Invalid version")
+        }
         saksdata.avsluttetAvSaksbehandler = null
         saksdata.modified = LocalDateTime.now()
+
+        return saksdata
     }
 
     private fun getSaksdataAndVerifyAccess(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
@@ -275,7 +411,7 @@ class SaksdataService(
         val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
         val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
 
-        return saksdataRepository.findForVedtaksinstansleder(
+        return saksdataRepository.findForVedtaksinstanslederV1(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),
@@ -283,18 +419,57 @@ class SaksdataService(
             kommentarer = kommentarer,
         ).filter {
             verifiserTilgangTilPersonForSaksbehandler(
-                fnr = it.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
                 ident = saksbehandlerIdent,
                 kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
                 kanBehandleFortrolig = kanBehandleFortrolig,
                 kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
             )
-        }
+        }.map { it.saksdata }
     }
 
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
-        getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+
+        when (saksdata.kvalitetsvurderingReference.version) {
+            1 -> {
+                kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+            }
+            2 -> {
+                kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+            }
+            else -> {
+                error("Unknown version ${saksdata.kvalitetsvurderingReference.version}")
+            }
+        }
+
         saksdataRepository.deleteById(saksdataId)
+    }
+
+    //TODO: Delete after run
+    @Scheduled(cron = "\${MIGRATE_CRON}", zone = "Europe/Oslo")
+    @SchedulerLock(name = "migrateKvalitetsvurderingerFromV1ToV2")
+    fun migrateKvalitetsvurderingerFromV1ToV2() {
+        val candidates = saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
+            kvalitetsvurderingVersion = 1
+        )
+
+        logger.debug("Migrating kvalitetsvurdering from v1 to v2.")
+        logger.debug("Number of candidates: ${candidates.size}")
+
+        candidates.forEach {
+            logger.debug("Migrating saksdata ${it.id}, kvalitetsvurdering ${it.kvalitetsvurderingReference.id}")
+            kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2(it.kvalitetsvurderingReference.id))
+            it.kvalitetsvurderingReference.version = 2
+            kvalitetsvurderingV1Repository.deleteById(it.kvalitetsvurderingReference.id)
+            it.modified = now()
+        }
+
+        val candidatesAfterMigration = saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
+            kvalitetsvurderingVersion = 1
+        )
+
+        logger.debug("Number of candidates after migration: ${candidatesAfterMigration.size}")
     }
 
     private fun verifiserTilgangTilPersonForSaksbehandler(

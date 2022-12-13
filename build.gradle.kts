@@ -9,6 +9,7 @@ val testContainersVersion = "1.17.6"
 val mockkVersion = "1.13.3"
 val apachePoiVersion = "5.2.3"
 val springDocVersion = "1.6.13"
+val shedlockVersion = "4.42.0"
 
 plugins {
     val kotlinVersion = "1.7.22"
@@ -53,6 +54,8 @@ dependencies {
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
     implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
+    implementation("net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion")
+    implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
 
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")

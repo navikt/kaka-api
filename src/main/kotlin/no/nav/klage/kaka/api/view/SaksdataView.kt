@@ -8,6 +8,7 @@ import java.util.*
 data class SaksdataListView(
     val searchHits: List<SaksdataView>
 )
+
 data class SaksdataView(
     val id: UUID,
     val sakenGjelder: String?,
@@ -20,6 +21,7 @@ data class SaksdataView(
     val hjemmelIdList: List<String>,
     val utfoerendeSaksbehandler: String,
     val tilknyttetEnhet: String,
+    //Fjern når ikke lenger i bruk i klient
     val kvalitetsvurderingId: UUID,
     val kvalitetsvurderingReference: KvalitetsvurderingReference,
     val avsluttetAvSaksbehandler: LocalDateTime?,
@@ -32,8 +34,6 @@ data class SaksdataView(
         val version: Int,
     )
 }
-
-
 
 fun Saksdata.toSaksdataView(): SaksdataView {
     return SaksdataView(
@@ -48,10 +48,10 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         hjemmelIdList = registreringshjemler?.map { it.id } ?: emptyList(),
         utfoerendeSaksbehandler = utfoerendeSaksbehandler,
         tilknyttetEnhet = tilknyttetEnhet,
-        kvalitetsvurderingId = kvalitetsvurdering.id,
+        kvalitetsvurderingId = kvalitetsvurderingReference.id,
         kvalitetsvurderingReference = SaksdataView.KvalitetsvurderingReference(
-            id = kvalitetsvurdering.id,
-            version = 1,
+            id = kvalitetsvurderingReference.id,
+            version = kvalitetsvurderingReference.version
         ),
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
         sourceId = source.id,

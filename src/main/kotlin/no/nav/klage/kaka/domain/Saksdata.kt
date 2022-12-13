@@ -4,7 +4,6 @@ import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.domain.kodeverk.Role
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
-import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kaka.exceptions.ValidationSection
 import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
@@ -55,14 +54,13 @@ class Saksdata(
     var utfoerendeSaksbehandler: String,
     @Column(name = "tilknyttet_enhet")
     var tilknyttetEnhet: String,
-    @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "kvalitetsvurdering_id", referencedColumnName = "id")
-    var kvalitetsvurdering: Kvalitetsvurdering,
     @Column(name = "dato_saksdata_avsluttet_av_saksbehandler")
     var avsluttetAvSaksbehandler: LocalDateTime? = null,
     @Column(name = "source_id")
     @Convert(converter = SourceConverter::class)
     var source: Source = Source.KAKA,
+    @Embedded
+    var kvalitetsvurderingReference: KvalitetsvurderingReference,
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
@@ -108,7 +106,7 @@ class Saksdata(
         }
     }
 
-    fun validate() {
+    fun validateAndGetErrors(): MutableList<ValidationSection> {
         val validationErrors = mutableListOf<InvalidProperty>()
 
         validationErrors += validateCommonProperties()
@@ -128,26 +126,7 @@ class Saksdata(
             )
         }
 
-        if (utfall !in noKvalitetsvurderingNeeded) {
-            val kvalitetsvurderingValidationErrors =
-                kvalitetsvurdering.getInvalidProperties(ytelse = ytelse, type = sakstype)
-
-            if (kvalitetsvurderingValidationErrors.isNotEmpty()) {
-                sectionList.add(
-                    ValidationSection(
-                        section = "kvalitetsvurdering",
-                        properties = kvalitetsvurderingValidationErrors
-                    )
-                )
-            }
-        }
-
-        if (sectionList.isNotEmpty()) {
-            throw SectionedValidationErrorWithDetailsException(
-                title = "Validation error",
-                sections = sectionList
-            )
-        }
+        return sectionList
     }
 
     private fun validateCommonProperties(): List<InvalidProperty> {

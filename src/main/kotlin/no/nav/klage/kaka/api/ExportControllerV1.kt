@@ -1,27 +1,29 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.TotalResponse
-import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheter
+import no.nav.klage.kaka.api.view.TotalResponseV1
+import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheterV1
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
-import no.nav.klage.kaka.services.ExportService
+import no.nav.klage.kaka.services.ExportServiceV1
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 
 @RestController
-@Tag(name = "kaka-api:kaka-export")
+@Tag(name = "kaka-api:kaka-export-v1")
 @ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
-class ExportController(
-    private val exportService: ExportService,
+@RequestMapping("/statistics", "/statistics/v1")
+class ExportControllerV1(
+    private val exportServiceV1: ExportServiceV1,
     private val tokenUtil: TokenUtil,
     private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
@@ -32,68 +34,68 @@ class ExportController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @GetMapping("/statistics/my")
+    @GetMapping("/my")
     fun getMyStats(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
-    ): TotalResponse {
+    ): TotalResponseV1 {
         logger.debug("getMyStats() called. FromDate = $fromDate, toDate = $toDate")
 
         val innloggetSaksbehandler = tokenUtil.getIdent()
 
-        return TotalResponse(
-            anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDatesAndSaksbehandler(
+        return TotalResponseV1(
+            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesAndSaksbehandler(
                 fromDate = fromDate,
                 toDate = toDate,
                 saksbehandler = innloggetSaksbehandler,
             ),
-            anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByToDateAndSaksbehandler(
+            anonymizedUnfinishedVurderingList = exportServiceV1.getUnfinishedAsRawDataByToDateAndSaksbehandler(
                 toDate = toDate,
                 saksbehandler = innloggetSaksbehandler,
             )
         )
     }
 
-    @GetMapping("/statistics/open")
+    @GetMapping("/open")
     fun getOpen(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
-    ): TotalResponseWithoutEnheter {
+    ): TotalResponseWithoutEnheterV1 {
         logger.debug("getOpen() called. fromDate = $fromDate, toDate = $toDate")
 
-        return TotalResponseWithoutEnheter(
-            anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDatesWithoutEnheter(
+        return TotalResponseWithoutEnheterV1(
+            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesWithoutEnheter(
                 fromDate = fromDate,
                 toDate = toDate
             )
         )
     }
 
-    @GetMapping("/statistics/total")
+    @GetMapping("/total")
     fun getTotal(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
-    ): TotalResponse {
+    ): TotalResponseV1 {
         logger.debug("getTotal() called. FromDate = $fromDate, toDate = $toDate")
 
-        return TotalResponse(
-            anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDates(
+        return TotalResponseV1(
+            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDates(
                 fromDate = fromDate,
                 toDate = toDate
             ),
-            anonymizedUnfinishedVurderingList = exportService.getUnfinishedAsRawDataByToDate(
+            anonymizedUnfinishedVurderingList = exportServiceV1.getUnfinishedAsRawDataByToDate(
                 toDate = toDate
             )
         )
     }
 
-    @GetMapping("/statistics/vedtaksinstansleder")
+    @GetMapping("/vedtaksinstansleder")
     fun getTotalForVedtaksinstansleder(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
         @RequestParam(required = false) mangelfullt: List<String>?,
         @RequestParam(required = false) kommentarer: List<String>?,
-    ): TotalResponseWithoutEnheter {
+    ): TotalResponseWithoutEnheterV1 {
         logger.debug(
             "getTotalForVedtaksinstansleder() called. FromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
             fromDate,
@@ -109,8 +111,8 @@ class ExportController(
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
-        return TotalResponseWithoutEnheter(
-            anonymizedFinishedVurderingList = exportService.getFinishedAsRawDataByDatesForVedtaksinstansleder(
+        return TotalResponseWithoutEnheterV1(
+            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesForVedtaksinstansleder(
                 fromDate = fromDate,
                 toDate = toDate,
                 vedtaksinstansEnhet = enhet,

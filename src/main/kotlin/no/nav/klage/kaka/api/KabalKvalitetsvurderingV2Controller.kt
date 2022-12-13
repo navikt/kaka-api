@@ -3,10 +3,11 @@ package no.nav.klage.kaka.api
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.KabalSaksdataInput
 import no.nav.klage.kaka.api.view.KabalView
+import no.nav.klage.kaka.api.view.KabalViewIdOnly
 import no.nav.klage.kaka.api.view.ValidationErrors
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.exceptions.MissingTilgangException
-import no.nav.klage.kaka.services.KvalitetsvurderingService
+import no.nav.klage.kaka.services.KvalitetsvurderingV2Service
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
@@ -21,11 +22,11 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@Tag(name = "kaka-api:kabal-kvalitet")
+@Tag(name = "kaka-api:kabal-kvalitet-v2")
 @ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kabal")
-class KabalKvalitetsvurderingController(
-    private val kvalitetsvurderingService: KvalitetsvurderingService,
+class KabalKvalitetsvurderingV2Controller(
+    private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
     private val saksdataService: SaksdataService,
     private val tokenUtil: TokenUtil,
     @Value("\${kabalApiName}")
@@ -37,14 +38,21 @@ class KabalKvalitetsvurderingController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @PostMapping("/kvalitetsvurdering")
+    @PostMapping("/kvalitetsvurderinger/v2")
     fun createKvalitetsvurdering(): KabalView {
         val callingApplication = verifyAndGetCallingApplication()
         logger.debug("New kvalitetsvurdering is requested by $callingApplication")
-        return KabalView(kvalitetsvurderingService.createKvalitetsvurdering().id)
+
+        return with(kvalitetsvurderingV2Service.createKvalitetsvurdering()) {
+            KabalView(
+                id = this.id,
+                kvalitetsvurderingId = this.id,
+                kvalitetsvurderingVersion = 2,
+            )
+        }
     }
 
-    @GetMapping("/kvalitetsvurdering/{id}/validationerrors")
+    @GetMapping("/kvalitetsvurderinger/v2/{id}/validationerrors")
     fun getValidationErrors(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestParam temaId: String?,
@@ -52,8 +60,9 @@ class KabalKvalitetsvurderingController(
         @RequestParam typeId: String?
     ): ValidationErrors {
         val innloggetSaksbehandler = tokenUtil.getIdent()
+
         val kvalitetsvurdering =
-            kvalitetsvurderingService.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+            kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
         val ytelseToUse = ytelseId?.let { Ytelse.of(it) } ?: Ytelse.OMS_OMP
         val typeToUse = typeId?.let { Type.of(it) } ?: Type.KLAGE
 
@@ -65,13 +74,13 @@ class KabalKvalitetsvurderingController(
         })
     }
 
-    @PostMapping("/saksdata")
+    @PostMapping("/saksdata/v2")
     fun createAndFinalizeSaksdata(
         @RequestBody input: KabalSaksdataInput
-    ): KabalView {
+    ): KabalViewIdOnly {
         val callingApplication = verifyAndGetCallingApplication()
         logger.debug("Fullfør kvalitetsvurdering is requested by $callingApplication")
-        return KabalView(
+        return KabalViewIdOnly(
             saksdataService.handleIncomingCompleteSaksdata(
                 sakenGjelder = input.sakenGjelder,
                 sakstype = Type.of(input.sakstype),
@@ -86,6 +95,7 @@ class KabalKvalitetsvurderingController(
                 utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
                 tilknyttetEnhet = input.tilknyttetEnhet,
                 source = Source.KABAL,
+                kvalitsvurderingVersion = 2,
             ).id
         )
     }
