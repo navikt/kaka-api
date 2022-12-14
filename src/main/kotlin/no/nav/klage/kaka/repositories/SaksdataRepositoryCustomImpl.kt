@@ -11,6 +11,11 @@ import java.time.LocalDateTime
 import javax.persistence.EntityManager
 import javax.persistence.PersistenceContext
 
+/**
+ * TODO Check queries again when we upgrade to Spring Boot 3 and Hibernate 6
+ * Might not need "distinct", or we can use a resultsTransformer directly.
+ * https://thorben-janssen.com/hibernate-resulttransformer/
+ */
 @Repository
 class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
 
