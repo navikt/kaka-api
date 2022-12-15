@@ -33,6 +33,7 @@ class KvalitetsvurderingV2(
     var klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn: Boolean = false,
     var klageforberedelsenSakensDokumenterManglerFysiskSaksmappe: Boolean = false,
 
+    @Enumerated(EnumType.STRING)
     var utredningen: Radiovalg? = null,
     var utredningenAvMedisinskeForhold: Boolean = false,
     var utredningenAvInntektsforhold: Boolean = false,
