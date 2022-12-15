@@ -239,7 +239,7 @@ class KvalitetsvurderingV2(
                 !utredningenAvAndreAktuelleForholdISaken
             ) {
                 result.add(
-                    createMissingChecksValidationError(::utredningen.name)
+                    createMissingChecksValidationError(::utredningen.name + "Group")
                 )
             }
         }
@@ -259,7 +259,7 @@ class KvalitetsvurderingV2(
                 !vedtaketSpraakOgFormidlingErIkkeTydelig
             ) {
                 result.add(
-                    createMissingChecksValidationError(::vedtaket.name)
+                    createMissingChecksValidationError(::vedtaket.name + "Group")
                 )
             }
 
@@ -301,7 +301,7 @@ class KvalitetsvurderingV2(
                     !raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert
                 ) {
                     result.add(
-                        createMissingChecksValidationError(::brukAvRaadgivendeLege.name)
+                        createMissingChecksValidationError(::brukAvRaadgivendeLege.name + "Group")
                     )
                 }
             }
@@ -326,7 +326,7 @@ class KvalitetsvurderingV2(
                 !klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker
             ) {
                 result.add(
-                    createMissingChecksValidationError(::klageforberedelsen.name)
+                    createMissingChecksValidationError(::klageforberedelsen.name + "Group")
                 )
             }
         }
