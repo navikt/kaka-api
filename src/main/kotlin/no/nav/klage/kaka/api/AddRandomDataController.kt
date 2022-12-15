@@ -191,7 +191,7 @@ class AddRandomDataController(
             enhet = ytelseTilKlageenheter[ytelse]!!.random().navn,
             ytelse = ytelse,
             vedtaksEnhet = ytelseTilVedtaksenheter[ytelse]!!.random().navn,
-            hjemler = setOf(ytelseTilRegistreringshjemler[ytelse]!!.random())
+            hjemler = setOf(ytelseTilRegistreringshjemler[ytelse]!!.random(), ytelseTilRegistreringshjemler[ytelse]!!.random())
         )
     }
 
