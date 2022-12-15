@@ -94,7 +94,9 @@ class KvalitetsvurderingV2(
     var vedtaketFeilKonkretRettsanvendelseHjemlerList: Set<Registreringshjemmel>? = null,
 
     var vedtaketIkkeKonkretIndividuellBegrunnelse: Boolean = false,
+    @Column(name = "vedtaket_ikke_konkret_individuell_begrunnelse_faktum")
     var vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum: Boolean = false,
+    @Column(name = "vedtaket_ikke_konkret_individuell_begrunnelse_rettsregel")
     var vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum: Boolean = false,
     var vedtaketIkkeKonkretIndividuellBegrunnelseMyeStandardtekst: Boolean = false,
 
@@ -178,6 +180,7 @@ class KvalitetsvurderingV2(
             vedtaketLovbestemmelsenTolketFeilHjemlerList = null
             vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = null
             vedtaketFeilKonkretRettsanvendelseHjemlerList = null
+            vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList = null
         } else {
             if (!vedtaketLovbestemmelsenTolketFeil) {
                 vedtaketLovbestemmelsenTolketFeilHjemlerList = null

@@ -29,6 +29,13 @@ ALTER TABLE kaka.kvalitetsvurdering_v2
 ALTER TABLE kaka.kvalitetsvurdering_v2
     RENAME COLUMN vedtaket_mye_standardtekst to vedtaket_ikke_konkret_individuell_begrunnelse_mye_standardtekst;
 
+--New name
+ALTER TABLE kaka.kvalitetsvurdering_v2
+    RENAME COLUMN raadgivende_lege_begrunnelse_mangelfull_eller_ikke_skriftliggjo to raadgivende_lege_begrunnelse_mangelfull_eller_ikke_dokumentert;
+
+ALTER TABLE kaka.kvalitetsvurdering_v2
+    RENAME COLUMN vedtak_automatisk_vedtak to vedtaket_automatisk_vedtak;
+
 
 create table kaka.registreringshjemmel_kvalitetsvurdering_v2_vedtaket_innholdet_i
 (

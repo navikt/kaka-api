@@ -478,7 +478,7 @@ class SaksdataService(
 
         candidates.forEach {
             logger.debug("Migrating saksdata ${it.id}, kvalitetsvurdering ${it.kvalitetsvurderingReference.id}")
-            kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2(it.kvalitetsvurderingReference.id))
+            kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2(id = it.kvalitetsvurderingReference.id))
             it.kvalitetsvurderingReference.version = 2
             kvalitetsvurderingV1Repository.deleteById(it.kvalitetsvurderingReference.id)
             it.modified = now()
