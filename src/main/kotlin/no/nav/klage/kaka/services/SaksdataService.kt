@@ -261,6 +261,12 @@ class SaksdataService(
                 }
                 if (saksdata.hasKvalitetsvurdering()) {
                     kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
+                } else {
+                    kvalitetsvurderingV1Repository.save(
+                        KvalitetsvurderingV1(
+                            id = saksdata.kvalitetsvurderingReference.id
+                        )
+                    )
                 }
             }
             2 -> {
@@ -270,6 +276,12 @@ class SaksdataService(
                 }
                 if (saksdata.hasKvalitetsvurdering()) {
                     kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
+                }  else {
+                    kvalitetsvurderingV2Repository.save(
+                        KvalitetsvurderingV2(
+                            id = saksdata.kvalitetsvurderingReference.id
+                        )
+                    )
                 }
             }
             else -> error("Unknown version: $version")
