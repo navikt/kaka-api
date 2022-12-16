@@ -135,6 +135,7 @@ class SaksdataService(
                         ),
                     )
                 }
+
                 2 -> {
                     kvalitetsvurderingV2Repository.save(
                         KvalitetsvurderingV2(
@@ -269,6 +270,7 @@ class SaksdataService(
                     )
                 }
             }
+
             2 -> {
                 if (saksdata.sakstype == Type.ANKE) {
                     saksdata.mottattVedtaksinstans = null
@@ -276,7 +278,7 @@ class SaksdataService(
                 }
                 if (saksdata.hasKvalitetsvurdering()) {
                     kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
-                }  else {
+                } else {
                     kvalitetsvurderingV2Repository.save(
                         KvalitetsvurderingV2(
                             id = saksdata.kvalitetsvurderingReference.id
@@ -284,6 +286,7 @@ class SaksdataService(
                     )
                 }
             }
+
             else -> error("Unknown version: $version")
         }
 
@@ -298,13 +301,17 @@ class SaksdataService(
         if (saksdata.utfall !in noKvalitetsvurderingNeeded) {
             val kvalitetsvurderingValidationErrors = when (saksdata.kvalitetsvurderingReference.version) {
                 1 -> {
-                    val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+                    val kvalitetsvurderingV1 =
+                        kvalitetsvurderingV1Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
                     kvalitetsvurderingV1.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
                 }
+
                 2 -> {
-                    val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+                    val kvalitetsvurderingV2 =
+                        kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
                     kvalitetsvurderingV2.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
                 }
+
                 else -> error("unknown version: ${saksdata.kvalitetsvurderingReference.version}")
             }
 
@@ -344,6 +351,7 @@ class SaksdataService(
                     )
                 }
             }
+
             2 -> {
                 if (saksdata.kvalitetsvurderingReference.version != 2) {
                     kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
@@ -354,6 +362,7 @@ class SaksdataService(
                     )
                 }
             }
+
             else -> error("Invalid version")
         }
         saksdata.avsluttetAvSaksbehandler = null
@@ -443,9 +452,11 @@ class SaksdataService(
             1 -> {
                 kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
             }
+
             2 -> {
                 kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
             }
+
             else -> {
                 error("Unknown version ${saksdata.kvalitetsvurderingReference.version}")
             }
@@ -473,9 +484,10 @@ class SaksdataService(
             it.modified = now()
         }
 
-        val candidatesAfterMigration = saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
-            kvalitetsvurderingVersion = 1
-        )
+        val candidatesAfterMigration =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
+                kvalitetsvurderingVersion = 1
+            )
 
         logger.debug("Number of candidates after migration: ${candidatesAfterMigration.size}")
     }
