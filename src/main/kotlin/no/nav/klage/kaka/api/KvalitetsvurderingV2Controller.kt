@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.node.*
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.KvalitetsvurderingV2Input
+import no.nav.klage.kaka.api.view.KvalitetsvurderingV2View
+import no.nav.klage.kaka.api.view.toKvalitetsvurderingV2View
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.services.KvalitetsvurderingV2Service
@@ -35,14 +37,14 @@ class KvalitetsvurderingV2Controller(
         @Schema(implementation = KvalitetsvurderingV2Input::class)
         @RequestBody
         data: JsonNode
-    ): KvalitetsvurderingV2 {
-        return kvalitetsvurderingV2Service.patchKvalitetsvurdering(kvalitetsvurderingId, data)
+    ): KvalitetsvurderingV2View {
+        return kvalitetsvurderingV2Service.patchKvalitetsvurdering(kvalitetsvurderingId, data).toKvalitetsvurderingV2View()
     }
 
     @GetMapping
     fun getKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID
-    ): KvalitetsvurderingV2 {
+    ): KvalitetsvurderingV2View {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
             ::getKvalitetsvurdering.name,
@@ -50,6 +52,6 @@ class KvalitetsvurderingV2Controller(
             kvalitetsvurderingId,
             logger
         )
-        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler).toKvalitetsvurderingV2View()
     }
 }

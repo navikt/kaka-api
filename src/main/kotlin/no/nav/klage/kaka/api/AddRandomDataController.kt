@@ -64,7 +64,7 @@ class AddRandomDataController(
                 kvalitetsvurderingV1Repository.save(getRandomKvalitetsvurderingV1()).id
             }
             2 -> {
-                kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2()).id
+                kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2(cohesiveTestData.hjemler)).id
             } else -> error("Wrong version")
 
         }
@@ -138,17 +138,16 @@ class AddRandomDataController(
         )
     }
 
-    private fun getRandomKvalitetsvurderingV2(): KvalitetsvurderingV2 {
-        return KvalitetsvurderingV2(            
-            sakensDokumenter = Random.nextBoolean(),
-            sakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = Random.nextBoolean(),
-            sakensDokumenterJournalfoerteDokumenterFeilNavn = Random.nextBoolean(),
-            sakensDokumenterManglerFysiskSaksmappe = Random.nextBoolean(),
+    private fun getRandomKvalitetsvurderingV2(hjemler: Set<Registreringshjemmel>): KvalitetsvurderingV2 {
+        return KvalitetsvurderingV2(
+            klageforberedelsenSakensDokumenter = Random.nextBoolean(),
+            klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = Random.nextBoolean(),
+            klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn = Random.nextBoolean(),
+            klageforberedelsenSakensDokumenterManglerFysiskSaksmappe = Random.nextBoolean(),
             klageforberedelsen = KvalitetsvurderingV2.Radiovalg.values().random(),
-            klageforberedelsenUnderinstansIkkeSendtAlleRelevanteSaksdokumenterTilParten = Random.nextBoolean(),
             klageforberedelsenOversittetKlagefristIkkeKommentert = Random.nextBoolean(),
-            klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligImotegatt = Random.nextBoolean(),
-            klageforberedelsenMangelfullBegrunnelseForHvorforVedtaketOpprettholdes = Random.nextBoolean(),
+            klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt = Random.nextBoolean(),
+            klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar = Random.nextBoolean(),
             klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = Random.nextBoolean(),
             klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = Random.nextBoolean(),
             utredningen = KvalitetsvurderingV2.Radiovalg.values().random(),
@@ -158,24 +157,25 @@ class AddRandomDataController(
             utredningenAvEoesUtenlandsproblematikk = Random.nextBoolean(),
             utredningenAvAndreAktuelleForholdISaken = Random.nextBoolean(),
             vedtaketLovbestemmelsenTolketFeil = Random.nextBoolean(),
-            vedtaketLovbestemmelsenTolketFeilHjemlerList = setOf(),
+            vedtaketLovbestemmelsenTolketFeilHjemlerList = setOf(hjemler.random()),
             vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = Random.nextBoolean(),
-            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = setOf(),
+            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = setOf(hjemler.random()),
             vedtaketFeilKonkretRettsanvendelse = Random.nextBoolean(),
-            vedtaketFeilKonkretRettsanvendelseHjemlerList = setOf(),
+            vedtaketFeilKonkretRettsanvendelseHjemlerList = setOf(hjemler.random()),
             vedtaketIkkeKonkretIndividuellBegrunnelse = Random.nextBoolean(),
-            vedtaketIkkeGodtNokFremFaktum = Random.nextBoolean(),
-            vedtaketIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = Random.nextBoolean(),
-            vedtaketMyeStandardtekst = Random.nextBoolean(),
-            vedtakAutomatiskVedtak = Random.nextBoolean(),
+            vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum = Random.nextBoolean(),
+            vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = Random.nextBoolean(),
+            vedtaketIkkeKonkretIndividuellBegrunnelseMyeStandardtekst = Random.nextBoolean(),
+            vedtaketAutomatiskVedtak = Random.nextBoolean(),
             vedtaket = KvalitetsvurderingV2.Radiovalg.values().random(),
             vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = Random.nextBoolean(),
+            vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList = setOf(hjemler.random()),
             vedtaketDetErLagtTilGrunnFeilFaktum = Random.nextBoolean(),
             vedtaketSpraakOgFormidlingErIkkeTydelig = Random.nextBoolean(),
             raadgivendeLegeIkkebrukt = Random.nextBoolean(),
             raadgivendeLegeMangelfullBrukAvRaadgivendeLege = Random.nextBoolean(),
             raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = Random.nextBoolean(),
-            raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort = Random.nextBoolean(),
+            raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = Random.nextBoolean(),
             brukAvRaadgivendeLege = KvalitetsvurderingV2.RadiovalgRaadgivendeLege.values().random(),
             annetFritekst = null,
         )
@@ -191,7 +191,7 @@ class AddRandomDataController(
             enhet = ytelseTilKlageenheter[ytelse]!!.random().navn,
             ytelse = ytelse,
             vedtaksEnhet = ytelseTilVedtaksenheter[ytelse]!!.random().navn,
-            hjemler = setOf(ytelseTilRegistreringshjemler[ytelse]!!.random())
+            hjemler = setOf(ytelseTilRegistreringshjemler[ytelse]!!.random(), ytelseTilRegistreringshjemler[ytelse]!!.random())
         )
     }
 
