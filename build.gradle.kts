@@ -9,7 +9,7 @@ val testContainersVersion = "1.17.6"
 val mockkVersion = "1.13.3"
 val apachePoiVersion = "5.2.3"
 val springDocVersion = "1.6.14"
-val shedlockVersion = "4.42.0"
+val shedlockVersion = "5.0.1"
 
 plugins {
     val kotlinVersion = "1.7.22"
