@@ -9,14 +9,14 @@ import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
+import no.nav.klage.kaka.services.ExportServiceV2.Field.Type.*
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import org.springframework.stereotype.Service
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.YearMonth
+import java.io.ByteArrayOutputStream
+import java.time.*
 import java.time.temporal.ChronoField
 import java.util.*
 
@@ -31,91 +31,90 @@ class ExportServiceV2(
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)). For now, only used by
      * KA-ledere.
      */
-//    fun getAsExcel(year: Year): ByteArray {
-//        val saksdataList = saksdataRepository.findByKvalitetsvurderingReferenceVersionAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
-//            kvalitetsvurderingVersion = 2,
-//            fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
-//            toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
-//        )
-//
-//        val saksdataFields = mapToFields(saksdataList)
-//
-//        val workbook = XSSFWorkbook()
-//
-//        val sheet = workbook.createSheet("Uttrekk år $year")
-//
-//        if (saksdataFields.isNotEmpty()) {
-//
-//            //TODO: Can be calculated based on column header.
-//            repeat(saksdataFields.first().size) {
-//                sheet.setColumnWidth(it, 6000)
-//            }
-//
-//            val header = sheet.createRow(0)
-//            val headerStyle = workbook.createCellStyle()
-//
-//            val headerFont = workbook.createFont()
-//            headerFont.fontName = "Arial"
-//
-//            headerFont.bold = true
-//            headerStyle.setFont(headerFont)
-//
-//            var headerCounter = 0
-//
-//            saksdataFields.first().forEach { headerColumns ->
-//                val headerCell = header.createCell(headerCounter++)
-//                headerCell.setCellValue(headerColumns.fieldName)
-//                headerCell.cellStyle = headerStyle
-//            }
-//
-//            //Cells
-//            val createHelper = workbook.creationHelper
-//            var rowCounter = 1
-//
-//            val cellFont = workbook.createFont()
-//            cellFont.fontName = "Arial"
-//
-//            val cellStyleDate = workbook.createCellStyle()
-//            cellStyleDate.setFont(cellFont)
-//            cellStyleDate.dataFormat = createHelper.createDataFormat().getFormat("yyyy-mm-dd")
-//
-//            val cellStyleRegular = workbook.createCellStyle()
-//            cellStyleRegular.setFont(cellFont)
-//            cellStyleRegular.wrapText = true
-//
-//            saksdataFields.forEach { saksdataRow ->
-//                val row = sheet.createRow(rowCounter++)
-//
-//                var columnCounter = 0
-//
-//                saksdataRow.forEach { column ->
-//                    val cell = row.createCell(columnCounter++)
-//                    when (column.type) {
-//                        DATE -> {
-//                            if (column.value != null) {
-//                                cell.setCellValue((column.value as LocalDate))
-//                            }
-//                            cell.cellStyle = cellStyleDate
-//                        }
-//
-//                        BOOLEAN -> {
-//                            cell.setCellValue(column.value as Boolean)
-//                            cell.cellStyle = cellStyleRegular
-//                        }
-//
-//                        else -> {
-//                            cell.setCellValue(column.value?.toString() ?: "")
-//                            cell.cellStyle = cellStyleRegular
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        val baos = ByteArrayOutputStream()
-//        workbook.write(baos)
-//        return baos.toByteArray()
-//    }
+    fun getAsExcel(year: Year): ByteArray {
+        val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+            fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
+            toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
+        )
+
+        val saksdataFields = mapToFields(resultList)
+
+        val workbook = XSSFWorkbook()
+
+        val sheet = workbook.createSheet("Uttrekk år $year")
+
+        if (saksdataFields.isNotEmpty()) {
+
+            //TODO: Can be calculated based on column header.
+            repeat(saksdataFields.first().size) {
+                sheet.setColumnWidth(it, 6000)
+            }
+
+            val header = sheet.createRow(0)
+            val headerStyle = workbook.createCellStyle()
+
+            val headerFont = workbook.createFont()
+            headerFont.fontName = "Arial"
+
+            headerFont.bold = true
+            headerStyle.setFont(headerFont)
+
+            var headerCounter = 0
+
+            saksdataFields.first().forEach { headerColumns ->
+                val headerCell = header.createCell(headerCounter++)
+                headerCell.setCellValue(headerColumns.fieldName)
+                headerCell.cellStyle = headerStyle
+            }
+
+            //Cells
+            val createHelper = workbook.creationHelper
+            var rowCounter = 1
+
+            val cellFont = workbook.createFont()
+            cellFont.fontName = "Arial"
+
+            val cellStyleDate = workbook.createCellStyle()
+            cellStyleDate.setFont(cellFont)
+            cellStyleDate.dataFormat = createHelper.createDataFormat().getFormat("yyyy-mm-dd")
+
+            val cellStyleRegular = workbook.createCellStyle()
+            cellStyleRegular.setFont(cellFont)
+            cellStyleRegular.wrapText = true
+
+            saksdataFields.forEach { saksdataRow ->
+                val row = sheet.createRow(rowCounter++)
+
+                var columnCounter = 0
+
+                saksdataRow.forEach { column ->
+                    val cell = row.createCell(columnCounter++)
+                    when (column.type) {
+                        DATE -> {
+                            if (column.value != null) {
+                                cell.setCellValue((column.value as LocalDate))
+                            }
+                            cell.cellStyle = cellStyleDate
+                        }
+
+                        BOOLEAN -> {
+                            cell.setCellValue(column.value as Boolean)
+                            cell.cellStyle = cellStyleRegular
+                        }
+
+                        else -> {
+                            cell.setCellValue(column.value?.toString() ?: "")
+                            cell.cellStyle = cellStyleRegular
+                        }
+                    }
+                }
+            }
+        }
+
+        val baos = ByteArrayOutputStream()
+        workbook.write(baos)
+        return baos.toByteArray()
+    }
 
     /**
      * Return all 'finished' saksdata for ledere based on given months and saksbehandlere. Cannot not be current month.
@@ -593,301 +592,313 @@ class ExportServiceV2(
         }
     }
 
-//    private fun mapToFields(saksdataList: List<Saksdata>): List<List<Field>> {
-//        //@formatter:off
-//        return saksdataList.map { saksdata ->
-        //    if (saksdata.kvalitetsvurderingReference.version == 1) {
-        //        error("This query only works for version 2 of kvalitetsvurderinger")
-        //    }
-//
-//            val kvalitetsvurderingV2 =
-//                kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
-//            buildList {
-//                //Saksdata
-//                add(Field(fieldName = "Tilknyttet enhet", value = saksdata.tilknyttetEnhet, type = STRING))
-//                add(Field(fieldName = "Sakstype", value = saksdata.sakstype.navn, type = STRING))
-//                add(Field(fieldName = "Ytelse", value = saksdata.ytelse!!.navn, type = STRING))
-//                add(Field(fieldName = "Mottatt vedtaksinstans", value = saksdata.mottattVedtaksinstans, type = DATE))
-//                add(Field(fieldName = "Mottatt klageinstans", value = saksdata.mottattKlageinstans, type = DATE))
-//                add(
-//                    Field(
-//                        fieldName = "Ferdigstilt",
-//                        value = saksdata.avsluttetAvSaksbehandler?.toLocalDate(),
-//                        type = DATE
-//                    )
-//                )
-//                add(Field(fieldName = "Fra vedtaksenhet", value = saksdata.vedtaksinstansEnhet, type = STRING))
-//                add(Field(fieldName = "Utfall/Resultat", value = saksdata.utfall!!.navn, type = STRING))
-//                add(
-//                    Field(
-//                        fieldName = "Hjemmel",
-//                        value = saksdata.registreringshjemler.toHjemlerString(),
-//                        type = STRING
-//                    )
-//                )
-//
-//                //Klageforberedelsen
-//                add(
-//                    Field(
-//                        fieldName = "Klageforberedelsen",
-//                        value = kvalitetsvurderingV2.klageforberedelsenRadioValg,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Sakens dokumenter",
-//                        value = kvalitetsvurderingV2.sakensDokumenter,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Oversittet klagefrist er ikke kommentert",
-//                        value = kvalitetsvurderingV2.oversittetKlagefristIkkeKommentert,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Klagerens relevante anførseler er ikke tilstrekkelig kommentert/imøtegått",
-//                        value = kvalitetsvurderingV2.klagerensRelevanteAnfoerslerIkkeKommentert,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Begrunnelse for hvorfor avslag opprettholdes / klager ikke oppfyller vilkår",
-//                        value = kvalitetsvurderingV2.begrunnelseForHvorforAvslagOpprettholdes,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(Field(fieldName = "Konklusjonen", value = kvalitetsvurderingV2.konklusjonen, type = BOOLEAN))
-//                add(
-//                    Field(
-//                        fieldName = "Oversendelsesbrevets innhold er ikke i samsvar med sakens tema",
-//                        value = kvalitetsvurderingV2.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
-//                        type = BOOLEAN
-//                    )
-//                )
-//
-//                //Utredningen
-//                add(Field(fieldName = "Utredningen", value = kvalitetsvurderingV2.utredningenRadioValg, type = STRING))
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av medisinske forhold",
-//                        value = kvalitetsvurderingV2.utredningenAvMedisinskeForhold,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av medisinske forhold stikkord",
-//                        value = kvalitetsvurderingV2.utredningenAvMedisinskeForholdText,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av inntektsforhold",
-//                        value = kvalitetsvurderingV2.utredningenAvInntektsforhold,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av inntektsforhold stikkord",
-//                        value = kvalitetsvurderingV2.utredningenAvInntektsforholdText,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av arbeid",
-//                        value = kvalitetsvurderingV2.utredningenAvArbeid,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av arbeid stikkord",
-//                        value = kvalitetsvurderingV2.utredningenAvArbeidText,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Arbeidsrettet brukeroppfølging",
-//                        value = kvalitetsvurderingV2.arbeidsrettetBrukeroppfoelging,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Arbeidsrettet brukeroppfølging stikkord",
-//                        value = kvalitetsvurderingV2.arbeidsrettetBrukeroppfoelgingText,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av andre aktuelle forhold i saken",
-//                        value = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISaken,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av andre aktuelle forhold i saken stikkord",
-//                        value = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISakenText,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av EØS / utenlandsproblematikk",
-//                        value = kvalitetsvurderingV2.utredningenAvEoesProblematikk,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Utredningen av EØS / utenlandsproblematikk stikkord",
-//                        value = kvalitetsvurderingV2.utredningenAvEoesProblematikkText,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Veiledning fra NAV",
-//                        value = kvalitetsvurderingV2.veiledningFraNav,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Veiledning fra NAV stikkord",
-//                        value = kvalitetsvurderingV2.veiledningFraNavText,
-//                        type = STRING
-//                    )
-//                )
-//
-//                //Vedtaket
-//                add(Field(fieldName = "Vedtaket", value = kvalitetsvurderingV2.vedtaketRadioValg, type = STRING))
-//                add(
-//                    Field(
-//                        fieldName = "Det er ikke brukt riktig hjemmel(er)",
-//                        value = kvalitetsvurderingV2.detErIkkeBruktRiktigHjemmel,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Innholdet i rettsreglene er ikke tilstrekkelig beskrevet",
-//                        value = kvalitetsvurderingV2.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Rettsregelen er benyttet eller tolket feil",
-//                        value = kvalitetsvurderingV2.rettsregelenErBenyttetFeil,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Vurdering av faktum / bevisvurdering er mangelfull",
-//                        value = kvalitetsvurderingV2.vurderingAvFaktumErMangelfull,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Det er feil i den konkrete rettsanvendelsen",
-//                        value = kvalitetsvurderingV2.detErFeilIKonkretRettsanvendelse,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Begrunnelsen er ikke konkret og individuell",
-//                        value = kvalitetsvurderingV2.begrunnelsenErIkkeKonkretOgIndividuell,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Språket/Formidlingen er ikke tydelig",
-//                        value = kvalitetsvurderingV2.spraaketErIkkeTydelig,
-//                        type = BOOLEAN
-//                    )
-//                )
-//
-//                //Annet
-//                add(
-//                    Field(
-//                        fieldName = "Nye opplysninger mottatt etter oversendelse til klageinstansen",
-//                        value = kvalitetsvurderingV2.nyeOpplysningerMottatt,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Bruk gjerne vedtaket som eksempel i opplæring",
-//                        value = kvalitetsvurderingV2.brukIOpplaering,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Bruk gjerne vedtaket som eksempel i opplæring stikkord",
-//                        value = kvalitetsvurderingV2.brukIOpplaeringText,
-//                        type = STRING
-//                    )
-//                )
-//
-//                //ROL
-//                add(
-//                    Field(
-//                        fieldName = "Bruk av rådgivende lege",
-//                        value = kvalitetsvurderingV2.brukAvRaadgivendeLegeRadioValg,
-//                        type = STRING
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Rådgivende lege er ikke brukt",
-//                        value = kvalitetsvurderingV2.raadgivendeLegeErIkkeBrukt,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Rådgivende lege er brukt, men saksbehandler har stilt feil spørsmål og får derfor feil svar",
-//                        value = kvalitetsvurderingV2.raadgivendeLegeErBruktFeilSpoersmaal,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Rådgivende lege har uttalt seg om tema utover trygdemedisin",
-//                        value = kvalitetsvurderingV2.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
-//                        type = BOOLEAN
-//                    )
-//                )
-//                add(
-//                    Field(
-//                        fieldName = "Rådgivende lege er brukt, men dokumentasjonen er mangelfull / ikke skriftliggjort",
-//                        value = kvalitetsvurderingV2.raadgivendeLegeErBruktMangelfullDokumentasjon,
-//                        type = BOOLEAN
-//                    )
-//                )
-//
-//                //@formatter:on
-//            }
-//        }
-//    }
+    private fun mapToFields(saksdataList: List<SaksdataRepositoryCustomImpl.ResultV2>): List<List<Field>> {
+        //@formatter:off
+        return saksdataList.map { result ->
+            val (saksdata, kvalitetsvurderingV2) = result
+            if (saksdata.kvalitetsvurderingReference.version == 1) {
+                error("This query only works for version 2 of kvalitetsvurderinger")
+            }
+
+            buildList {
+                //Saksdata
+                add(Field(fieldName = "Tilknyttet enhet", value = saksdata.tilknyttetEnhet, type = STRING))
+                add(Field(fieldName = "Sakstype", value = saksdata.sakstype.navn, type = STRING))
+                add(Field(fieldName = "Ytelse", value = saksdata.ytelse!!.navn, type = STRING))
+                add(Field(fieldName = "Mottatt vedtaksinstans", value = saksdata.mottattVedtaksinstans, type = DATE))
+                add(Field(fieldName = "Mottatt klageinstans", value = saksdata.mottattKlageinstans, type = DATE))
+                add(
+                    Field(
+                        fieldName = "Ferdigstilt",
+                        value = saksdata.avsluttetAvSaksbehandler?.toLocalDate(),
+                        type = DATE
+                    )
+                )
+                add(Field(fieldName = "Fra vedtaksenhet", value = saksdata.vedtaksinstansEnhet, type = STRING))
+                add(Field(fieldName = "Utfall/Resultat", value = saksdata.utfall!!.navn, type = STRING))
+                add(
+                    Field(
+                        fieldName = "Hjemmel",
+                        value = saksdata.registreringshjemler.toHjemlerString(),
+                        type = STRING
+                    )
+                )
+
+                //Klageforberedelsen
+                add(
+                    Field(
+                        fieldName = "Klageforberedelsen",
+                        value = kvalitetsvurderingV2.klageforberedelsen,
+                        type = STRING
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Sakens dokumenter",
+                        value = kvalitetsvurderingV2.klageforberedelsenSakensDokumenter,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Relevante opplysninger fra andre fagsystemer er ikke journalført",
+                        value = kvalitetsvurderingV2.klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Journalførte dokumenter har feil titler/navn",
+                        value = kvalitetsvurderingV2.klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Mangler fysisk saksmappe",
+                        value = kvalitetsvurderingV2.klageforberedelsenSakensDokumenterManglerFysiskSaksmappe,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Oversittet klagefrist er ikke kommentert",
+                        value = kvalitetsvurderingV2.klageforberedelsenOversittetKlagefristIkkeKommentert,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Klagers relevante anførsler er ikke tilstrekkelig kommentert/imøtegått",
+                        value = kvalitetsvurderingV2.klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Feil ved begrunnelsen for hvorfor avslag opprettholdes/klager ikke oppfyller vilkår",
+                        value = kvalitetsvurderingV2.klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Oversendelsesbrevets innhold er ikke i samsvar med sakens tema",
+                        value = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Det er ikke sendt kopi av oversendelsesbrevet til parten, eller det er sendt til feil mottaker",
+                        value = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker,
+                        type = BOOLEAN
+                    )
+                )
+
+                //Utredningen
+                add(Field(fieldName = "Utredningen", value = kvalitetsvurderingV2.utredningen, type = STRING))
+                add(
+                    Field(
+                        fieldName = "Utredningen av medisinske forhold",
+                        value = kvalitetsvurderingV2.utredningenAvMedisinskeForhold,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Utredningen av inntektsforhold",
+                        value = kvalitetsvurderingV2.utredningenAvInntektsforhold,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Utredningen av arbeidsaktivitet",
+                        value = kvalitetsvurderingV2.utredningenAvArbeidsaktivitet,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Utredningen av EØS-/utenlandsproblematikk",
+                        value = kvalitetsvurderingV2.utredningenAvEoesUtenlandsproblematikk,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Utredningen av andre aktuelle forhold i saken",
+                        value = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISaken,
+                        type = BOOLEAN
+                    )
+                )
+
+                //Automatisk vedtak
+                add(
+                    Field(
+                        fieldName = "Avhuking for automatiske vedtak",
+                        value = kvalitetsvurderingV2.vedtaketAutomatiskVedtak,
+                        type = BOOLEAN
+                    )
+                )
+
+                //Vedtaket
+                add(Field(fieldName = "Vedtaket", value = kvalitetsvurderingV2.vedtaket, type = STRING))
+                add(
+                    Field(
+                        fieldName = "Det er brukt feil hjemmel eller alle relevante hjemler er ikke vurdert",
+                        value = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Det er brukt feil hjemmel eller alle relevante hjemler er ikke vurdert - hjemler",
+                        value = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.toHjemlerString(),
+                        type = STRING
+                    )
+                )
+
+                add(
+                    Field(
+                        fieldName = "Lovbestemmelsen er tolket feil",
+                        value = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeil,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Lovbestemmelsen er tolket feil - hjemler",
+                        value = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeilHjemlerList.toHjemlerString(),
+                        type = STRING
+                    )
+                )
+
+                add(
+                    Field(
+                        fieldName = "Innholdet i rettsreglene er ikke tilstrekkelig beskrevet",
+                        value = kvalitetsvurderingV2.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Innholdet i rettsreglene er ikke tilstrekkelig beskrevet - hjemale",
+                        value = kvalitetsvurderingV2.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList.toHjemlerString(),
+                        type = STRING
+                    )
+                )
+
+                add(
+                    Field(
+                        fieldName = "Det er lagt til grunn feil faktum",
+                        value = kvalitetsvurderingV2.vedtaketDetErLagtTilGrunnFeilFaktum,
+                        type = BOOLEAN
+                    )
+                )
+
+                add(
+                    Field(
+                        fieldName = "Feil i den konkrete rettsanvendelsen",
+                        value = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelse,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Feil i den konkrete rettsanvendelsen - hjemler",
+                        value = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelseHjemlerList.toHjemlerString(),
+                        type = STRING
+                    )
+                )
+
+                add(
+                    Field(
+                        fieldName = "Begrunnelsen er ikke konkret og individuell nok",
+                        value = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelse,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Det går ikke godt nok frem hva slags faktum som er lagt til grunn",
+                        value = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Det går ikke godt nok frem hvordan rettsregelen er anvendt på faktum",
+                        value = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Det er mye standardtekst",
+                        value = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelseMyeStandardtekst,
+                        type = BOOLEAN
+                    )
+                )
+
+                add(
+                    Field(
+                        fieldName = "Språket og formidlingen er ikke tydelig",
+                        value = kvalitetsvurderingV2.vedtaketSpraakOgFormidlingErIkkeTydelig,
+                        type = BOOLEAN
+                    )
+                )
+
+                //ROL
+                add(
+                    Field(
+                        fieldName = "Bruk av rådgivende lege",
+                        value = kvalitetsvurderingV2.brukAvRaadgivendeLege,
+                        type = STRING
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Rådgivende lege er ikke brukt",
+                        value = kvalitetsvurderingV2.raadgivendeLegeIkkebrukt,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Saksbehandlers bruk av rådgivende lege er mangelfull",
+                        value = kvalitetsvurderingV2.raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Rådgivende lege har uttalt seg om tema utover trygdemedisin",
+                        value = kvalitetsvurderingV2.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Rådgivende lege er brukt, men begrunnelsen fra rådgivende lege er mangelfull eller ikke dokumentert",
+                        value = kvalitetsvurderingV2.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
+                        type = BOOLEAN
+                    )
+                )
+
+                //Annet
+                add(
+                    Field(
+                        fieldName = "Annet",
+                        value = kvalitetsvurderingV2.annetFritekst,
+                        type = STRING
+                    )
+                )
+                //@formatter:on
+            }
+        }
+    }
 
     private fun Set<Registreringshjemmel>?.toHjemlerString() =
         this?.joinToString { "${it.lovKilde.beskrivelse} - ${it.spesifikasjon}" } ?: ""

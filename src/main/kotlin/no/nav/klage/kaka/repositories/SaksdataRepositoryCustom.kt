@@ -25,6 +25,11 @@ interface SaksdataRepositoryCustom {
         toDateTime: LocalDateTime
     ): List<SaksdataRepositoryCustomImpl.ResultV1>
 
+    fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime
+    ): List<SaksdataRepositoryCustomImpl.ResultV2>
+
     fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,

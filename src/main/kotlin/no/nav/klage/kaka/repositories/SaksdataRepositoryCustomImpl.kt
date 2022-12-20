@@ -55,7 +55,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .map { ResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }.toSet().toList()
     }
 
-    fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+    override fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
     ): List<ResultV2> {
@@ -74,7 +74,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
-            .map { ResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+            .map { ResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }.toSet().toList()
     }
 
     override fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV1(
