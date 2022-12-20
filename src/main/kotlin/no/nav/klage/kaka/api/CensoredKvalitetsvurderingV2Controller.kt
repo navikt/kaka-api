@@ -1,14 +1,13 @@
 package no.nav.klage.kaka.api
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.*
-import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.KvalitetsvurderingV2Input
-import no.nav.klage.kaka.api.view.KvalitetsvurderingV2View
-import no.nav.klage.kaka.api.view.toKvalitetsvurderingV2View
+import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
+import no.nav.klage.kaka.domain.kodeverk.Role
+import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.KvalitetsvurderingV2Service
+import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
@@ -19,10 +18,11 @@ import java.util.*
 @RestController
 @Tag(name = "kaka-api:kvalitetsvurdering-v2")
 @ProtectedWithClaims(issuer = ISSUER_AAD)
-@RequestMapping("/kvalitetsvurderinger/v2/{id}")
-class KvalitetsvurderingV2Controller(
+@RequestMapping("/censoredkvalitetsvurderinger/v2/{id}")
+class CensoredKvalitetsvurderingV2Controller(
     private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
     private val tokenUtil: TokenUtil,
+    private val roleMapper: RolleMapper,
 ) {
 
     companion object {
@@ -30,29 +30,27 @@ class KvalitetsvurderingV2Controller(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @PatchMapping
-    fun patchKvalitetsvurdering(
-        @PathVariable("id") kvalitetsvurderingId: UUID,
-        @Schema(implementation = KvalitetsvurderingV2Input::class)
-        @RequestBody
-        data: JsonNode
-    ): KvalitetsvurderingV2View {
-        return kvalitetsvurderingV2Service.patchKvalitetsvurdering(kvalitetsvurderingId, data)
-            .toKvalitetsvurderingV2View()
-    }
-
     @GetMapping
-    fun getKvalitetsvurdering(
+    fun getCensoredKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID
-    ): KvalitetsvurderingV2View {
+    ): CensoredKvalitetsvurderingV2View {
+        validateCanSeeKvalitetstilbakemeldinger()
+
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
-            ::getKvalitetsvurdering.name,
+            ::getCensoredKvalitetsvurdering.name,
             innloggetSaksbehandler,
             kvalitetsvurderingId,
             logger
         )
         return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
-            .toKvalitetsvurderingV2View()
+            .toCensoredKvalitetsvurderingV2View()
+    }
+
+    private fun validateCanSeeKvalitetstilbakemeldinger() {
+        val roles = roleMapper.toRoles(tokenUtil.getGroups())
+        if (Role.ROLE_KAKA_KVALITETSTILBAKEMELDINGER !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role ${Role.ROLE_KAKA_KVALITETSTILBAKEMELDINGER}")
+        }
     }
 }

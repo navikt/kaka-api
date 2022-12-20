@@ -355,7 +355,6 @@ class ExportServiceV2(
                 raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = kvalitetsvurderingV2.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
                 raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort = kvalitetsvurderingV2.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
                 brukAvRaadgivendeLege = kvalitetsvurderingV2.brukAvRaadgivendeLege?.name,
-                annetFritekst = kvalitetsvurderingV2.annetFritekst,
 
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
@@ -439,7 +438,6 @@ class ExportServiceV2(
                 raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = kvalitetsvurderingV2.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
                 raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort = kvalitetsvurderingV2.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
                 brukAvRaadgivendeLege = kvalitetsvurderingV2.brukAvRaadgivendeLege?.name,
-                annetFritekst = kvalitetsvurderingV2.annetFritekst,
 
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
@@ -520,7 +518,6 @@ class ExportServiceV2(
                 raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = kvalitetsvurderingV2.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
                 raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort = kvalitetsvurderingV2.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
                 brukAvRaadgivendeLege = kvalitetsvurderingV2.brukAvRaadgivendeLege?.name,
-                annetFritekst = kvalitetsvurderingV2.annetFritekst,
 
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
