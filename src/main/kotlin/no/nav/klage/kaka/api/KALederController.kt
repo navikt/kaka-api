@@ -43,7 +43,7 @@ class KALederController(
     }
 
     @GetMapping("/export/excel", "/export/v{version}/excel")
-    fun getAsExcelV1(
+    fun getAsExcel(
         @RequestParam(required = false) year: Int?,
         @PathVariable("version", required = false) version: Int?,
     ): ResponseEntity<ByteArray> {

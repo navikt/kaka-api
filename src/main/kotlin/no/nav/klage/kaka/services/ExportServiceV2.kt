@@ -32,12 +32,12 @@ class ExportServiceV2(
      * KA-ledere.
      */
     fun getAsExcel(year: Year): ByteArray {
-        val saksdataList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+        val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
             fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
             toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
         )
 
-        val saksdataFields = mapToFields(saksdataList)
+        val saksdataFields = mapToFields(resultList)
 
         val workbook = XSSFWorkbook()
 
