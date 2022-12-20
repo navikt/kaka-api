@@ -8,7 +8,7 @@ val archunitVersion = "1.0.1"
 val testContainersVersion = "1.17.6"
 val mockkVersion = "1.13.3"
 val apachePoiVersion = "5.2.3"
-val springDocVersion = "1.6.13"
+val springDocVersion = "1.6.14"
 val shedlockVersion = "4.42.0"
 
 plugins {
