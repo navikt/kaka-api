@@ -10,7 +10,8 @@ import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
-import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemler
+import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV1
+import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV2
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -51,21 +52,24 @@ class AddRandomDataController(
     }
 
     private fun getRandomSaksdata(): Saksdata {
-        val cohesiveTestData = getCohesiveTestData()
+        val kakaVersion = getKakaVersion()
+        val cohesiveTestData = getCohesiveTestData(kakaVersion)
 
         val mottattVedtaksinstans = LocalDate.of(2021, (1..10).random(), (1..28).random())
         val mottattKA = mottattVedtaksinstans.plusDays((1..30).random().toLong())
         val potentialEndDate = mottattKA.plusDays((1..108).random().toLong())
         val avsluttetAvSaksbehandler = if (potentialEndDate > LocalDate.now()) LocalDate.now() else potentialEndDate
 
-        val kakaVersion = getKakaVersion()
         val kvalitetsvurderingId = when (kakaVersion) {
             1 -> {
                 kvalitetsvurderingV1Repository.save(getRandomKvalitetsvurderingV1()).id
             }
+
             2 -> {
-                kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2(cohesiveTestData.hjemler)).id
-            } else -> error("Wrong version")
+                kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2(cohesiveTestData.hjemler!!)).id
+            }
+
+            else -> error("Wrong version")
 
         }
 
@@ -181,25 +185,42 @@ class AddRandomDataController(
         )
     }
 
-    private fun getCohesiveTestData(): CohesiveTestData {
+    private fun getCohesiveTestData(kakaVersion: Int): CohesiveTestData {
         val ytelse = Ytelse.values().random()
         val type = Type.values().filter { it != Type.ANKE_I_TRYGDERETTEN }.random()
-        return CohesiveTestData(
+        val data = CohesiveTestData(
             type = type,
             utfall = typeTilUtfall[type]!!.random(),
             ident = listOf("Z994862", "Z994863", "Z994864").random(),
             enhet = ytelseTilKlageenheter[ytelse]!!.random().navn,
             ytelse = ytelse,
             vedtaksEnhet = ytelseTilVedtaksenheter[ytelse]!!.random().navn,
-            hjemler = setOf(ytelseTilRegistreringshjemler[ytelse]!!.random(), ytelseTilRegistreringshjemler[ytelse]!!.random())
         )
+        when (kakaVersion) {
+            1 -> {
+                data.hjemler = setOf(
+                    ytelseTilRegistreringshjemlerV1[ytelse]!!.random(),
+                    ytelseTilRegistreringshjemlerV1[ytelse]!!.random()
+                )
+            }
+
+            2 -> {
+                data.hjemler = setOf(
+                    ytelseTilRegistreringshjemlerV2[ytelse]!!.random(),
+                    ytelseTilRegistreringshjemlerV2[ytelse]!!.random()
+                )
+            }
+
+            else -> throw error("wrong version")
+        }
+        return data
     }
 
     data class CohesiveTestData(
         val type: Type,
         val utfall: Utfall,
         val ident: String,
-        val hjemler: Set<Registreringshjemmel>,
+        var hjemler: Set<Registreringshjemmel>? = null,
         val enhet: String,
         val ytelse: Ytelse,
         val vedtaksEnhet: String
