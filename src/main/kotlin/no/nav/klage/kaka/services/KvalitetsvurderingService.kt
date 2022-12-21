@@ -69,7 +69,6 @@ class KvalitetsvurderingService(
         return kvalitetsvurdering
     }
 
-
     fun setKlagerensRelevanteAnfoerslerIkkeKommentert(
         kvalitetsvurderingId: UUID,
         input: Boolean,
@@ -80,7 +79,6 @@ class KvalitetsvurderingService(
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
     }
-
 
     fun setBegrunnelseForHvorforAvslagOpprettholdes(
         kvalitetsvurderingId: UUID,
@@ -478,7 +476,6 @@ class KvalitetsvurderingService(
         kvalitetsvurdering.modified = LocalDateTime.now()
         return kvalitetsvurdering
     }
-
 
     private fun getKvalitetsvurderingAndVerifyNotFinalized(
         kvalitetsvurderingId: UUID
