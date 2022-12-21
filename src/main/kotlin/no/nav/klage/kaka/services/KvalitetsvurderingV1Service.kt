@@ -81,7 +81,7 @@ class KvalitetsvurderingV1Service(
                 if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
                     "Saksdata er allerede fullført"
                 )
-                if (saksdata?.utfoerendeSaksbehandler != tokenUtil.getIdent()) {
+                if (saksdata != null && saksdata.utfoerendeSaksbehandler != tokenUtil.getIdent()) {
                     throw MissingTilgangException("Kvalitetsvurdering tilhører ikke innlogget saksbehandler")
                 }
             }
