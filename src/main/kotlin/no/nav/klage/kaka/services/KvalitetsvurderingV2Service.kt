@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.*
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
+import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.setFieldOnObject
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
@@ -19,6 +21,7 @@ import javax.transaction.Transactional
 class KvalitetsvurderingV2Service(
     private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
     private val saksdataRepository: SaksdataRepository,
+    private val tokenUtil: TokenUtil,
 ) {
 
     fun createKvalitetsvurdering(): KvalitetsvurderingV2 {
@@ -39,7 +42,7 @@ class KvalitetsvurderingV2Service(
     }
 
     fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): KvalitetsvurderingV2 {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(kvalitetsvurderingId)
 
         input.fields().forEach { (key, value) ->
             setFieldOnObject(obj = kvalitetsvurdering as Any, fieldToChange = key to getValue(value))
@@ -64,19 +67,18 @@ class KvalitetsvurderingV2Service(
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
 
-    private fun getKvalitetsvurderingAndVerifyNotFinalized(
+    private fun getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(
         kvalitetsvurderingId: UUID
-    ): KvalitetsvurderingV2 {
-        val kvalitetsvurdering = kvalitetsvurderingV2Repository.getReferenceById(kvalitetsvurderingId)
-            .also {
-                val saksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(it.id)
-                if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
-                    "Saksdata er allerede fullført"
-                )
+    ): KvalitetsvurderingV2 = kvalitetsvurderingV2Repository.getReferenceById(kvalitetsvurderingId)
+        .also {
+            val saksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(it.id)
+            if (saksdata?.avsluttetAvSaksbehandler != null) {
+                throw SaksdataFinalizedException("Saksdata er allerede fullført")
             }
-
-        return kvalitetsvurdering
-    }
+            if (saksdata?.utfoerendeSaksbehandler != tokenUtil.getIdent()) {
+                throw MissingTilgangException("Kvalitetsvurdering tilhører ikke innlogget saksbehandler")
+            }
+        }
 
     private fun getValue(node: JsonNode): Any? {
         return when (node) {
@@ -84,7 +86,9 @@ class KvalitetsvurderingV2Service(
             is BooleanNode -> node.booleanValue()
             is TextNode -> node.textValue()
             is NullNode -> null
-            is ArrayNode -> node.elements().asSequence().map { Registreringshjemmel.of(getValue(it).toString()) }.toSet()
+            is ArrayNode -> node.elements().asSequence().map { Registreringshjemmel.of(getValue(it).toString()) }
+                .toSet()
+
             else -> error("not supported")
         }
     }

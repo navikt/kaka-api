@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.*
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
+import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
+import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.setFieldOnObject
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.dao.EmptyResultDataAccessException
@@ -20,6 +22,7 @@ import javax.transaction.Transactional
 class KvalitetsvurderingV1Service(
     private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
     private val saksdataRepository: SaksdataRepository,
+    private val tokenUtil: TokenUtil,
 ) {
 
     fun createKvalitetsvurdering(): KvalitetsvurderingV1 {
@@ -40,7 +43,7 @@ class KvalitetsvurderingV1Service(
     }
 
     fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): KvalitetsvurderingV1 {
-        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyNotFinalized(kvalitetsvurderingId)
+        val kvalitetsvurdering = getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(kvalitetsvurderingId)
 
         input.fields().forEach { (key, value) ->
             setFieldOnObject(obj = kvalitetsvurdering as Any, fieldToChange = key to getValue(value))
@@ -65,7 +68,7 @@ class KvalitetsvurderingV1Service(
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
 
-    private fun getKvalitetsvurderingAndVerifyNotFinalized(
+    private fun getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(
         kvalitetsvurderingId: UUID
     ): KvalitetsvurderingV1 {
         val kvalitetsvurdering = kvalitetsvurderingV1Repository.findById(kvalitetsvurderingId)
@@ -78,6 +81,9 @@ class KvalitetsvurderingV1Service(
                 if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
                     "Saksdata er allerede fullført"
                 )
+                if (saksdata?.utfoerendeSaksbehandler != tokenUtil.getIdent()) {
+                    throw MissingTilgangException("Kvalitetsvurdering tilhører ikke innlogget saksbehandler")
+                }
             }
     }
 
