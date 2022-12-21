@@ -52,7 +52,6 @@ data class AnonymizedFinishedVurderingV2(
     var raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean,
     var raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort: Boolean,    
     var brukAvRaadgivendeLege: String? = null,
-    var annetFritekst: String? = null,
 
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
@@ -112,7 +111,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV2(
     var raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean,
     var raadgivendeLegeBegrunnelseMangelfullEllerIkkeSkriftliggjort: Boolean,
     var brukAvRaadgivendeLege: String? = null,
-    var annetFritekst: String? = null,
 
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
