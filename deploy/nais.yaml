@@ -88,7 +88,6 @@ spec:
           {{/if}}
       {{/each}}
   envFrom:
-    - secret: axsys
     - secret: sts-apikey
     - secret: pdl-apikey
     - secret: ereg

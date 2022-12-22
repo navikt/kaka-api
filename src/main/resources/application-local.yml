@@ -5,5 +5,3 @@ NAIS_DATABASE_KAKA_API_KAKA_API_USERNAME: kaka
 NAIS_DATABASE_KAKA_API_KAKA_API_PASSWORD: kaka
 
 AZURE_APP_WELL_KNOWN_URL: https://login.microsoftonline.com/966ac572-f5b7-4bbe-aa88-c76419c0f851/v2.0/.well-known/openid-configuration
-AXSYS_APIKEY: 357
-AXSYS_URL: https://axsys.dev.adeo.no/v1
