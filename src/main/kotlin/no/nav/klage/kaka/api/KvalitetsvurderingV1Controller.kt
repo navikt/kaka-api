@@ -18,7 +18,7 @@ import java.util.*
 @RestController
 @Tag(name = "kaka-api:kvalitetsvurdering-v1")
 @ProtectedWithClaims(issuer = ISSUER_AAD)
-@RequestMapping("/kvalitetsvurderinger/v1/{id}")
+@RequestMapping("/kvalitetsvurderinger/v1/{id}", "/kvalitetsvurdering/{id}")
 class KvalitetsvurderingV1Controller(
     private val kvalitetsvurderingV1Service: KvalitetsvurderingV1Service,
     private val tokenUtil: TokenUtil
