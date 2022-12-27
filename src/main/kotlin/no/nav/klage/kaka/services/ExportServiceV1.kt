@@ -144,7 +144,7 @@ class ExportServiceV1(
             )
         }
 
-        return privateGetFinishedAsRawDataWithVersion1(resultList = resultList)
+        return privateGetFinishedAsRawData(resultList = resultList)
     }
 
     /**
@@ -188,7 +188,7 @@ class ExportServiceV1(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
-        return privateGetFinishedAsRawDataWithVersion1(resultList = resultList)
+        return privateGetFinishedAsRawData(resultList = resultList)
     }
 
     /**
@@ -241,7 +241,7 @@ class ExportServiceV1(
                 toDateTime = toDate.atTime(LocalTime.MAX),
                 saksbehandler = saksbehandler,
             )
-        return privateGetFinishedAsRawDataWithVersion1(resultList = resultList)
+        return privateGetFinishedAsRawData(resultList = resultList)
     }
 
     /**
@@ -273,8 +273,8 @@ class ExportServiceV1(
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
-    private fun privateGetFinishedAsRawDataWithVersion1(
-        resultList: Collection<SaksdataRepositoryCustomImpl.QueryResultV1>,
+    private fun privateGetFinishedAsRawData(
+        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>,
     ): List<AnonymizedFinishedVurderingV1> {
 
         return resultList.map { result ->
@@ -290,10 +290,6 @@ class ExportServiceV1(
             val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
 
             val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
-
-            if (saksdata.kvalitetsvurderingReference.version == 2) {
-                error("This query only works for version 1 of kvalitetsvurderinger")
-            }
 
             AnonymizedFinishedVurderingV1(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -352,7 +348,7 @@ class ExportServiceV1(
      */
 
     private fun privateGetFinishedAsRawDataWithoutEnheterWithResultV1(
-        resultList: Collection<SaksdataRepositoryCustomImpl.QueryResultV1>,
+        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
 
         return resultList.map { result ->

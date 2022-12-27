@@ -215,7 +215,6 @@ class ExportServiceV2(
         toDate: LocalDate,
         vedtaksinstansEnhet: Enhet,
         mangelfullt: List<String>,
-        kommentarer: List<String>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV2> {
         val resultList =
             saksdataRepository.findForVedtaksinstanslederV2(
@@ -223,7 +222,6 @@ class ExportServiceV2(
                 toDateTime = toDate.atTime(LocalTime.MAX),
                 vedtaksinstansEnhet = vedtaksinstansEnhet.navn,
                 mangelfullt = mangelfullt,
-                kommentarer = kommentarer,
             )
         return privateGetFinishedAsRawDataWithoutEnheterWithVersion2(resultList = resultList)
     }
@@ -275,7 +273,7 @@ class ExportServiceV2(
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
     private fun privateGetFinishedAsRawData(
-        resultList: Collection<SaksdataRepositoryCustomImpl.QueryResultV2>,
+        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>,
     ): List<AnonymizedFinishedVurderingV2> {
 
         return resultList.map { result ->
@@ -356,7 +354,7 @@ class ExportServiceV2(
      * Return all 'finished' saksdata (anonymized (no fnr, navIdent or enheter)) based on given dates.
      */
     private fun privateGetFinishedAsRawDataWithoutEnheter(
-        resultList: Collection<SaksdataRepositoryCustomImpl.QueryResultV2>,
+        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV2> {
 
         return resultList.map { result ->
@@ -371,10 +369,6 @@ class ExportServiceV2(
             val totalBehandlingstidDays = avsluttetAvSaksbehandlerDate.epochDay - mottattForrigeInstans.epochDay
 
             val vedtaksinstansBehandlingstidDays = getVedtaksinstansBehandlingstidDays(saksdata)
-
-            if (saksdata.kvalitetsvurderingReference.version == 1) {
-                error("This query only works for version 2 of kvalitetsvurderinger")
-            }
 
             AnonymizedFinishedVurderingWithoutEnheterV2(
                 id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
@@ -437,7 +431,7 @@ class ExportServiceV2(
      * Return all 'finished' saksdata (anonymized (no fnr, navIdent or enheter)) based on given dates.
      */
     private fun privateGetFinishedAsRawDataWithoutEnheterWithVersion2(
-        resultList: Collection<SaksdataRepositoryCustomImpl.QueryResultV2>,
+        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV2> {
 
         return resultList.map { result ->

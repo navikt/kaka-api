@@ -17,8 +17,7 @@ interface SaksdataRepositoryCustom {
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
-        kommentarer: List<String>,
-    ): List<SaksdataRepositoryCustomImpl.QueryResultV2>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByAvsluttetAvSaksbehandlerBetweenV1(
         fromDateTime: LocalDateTime,
@@ -68,8 +67,4 @@ interface SaksdataRepositoryCustom {
         saksbehandlerIdentList: List<String>
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
-    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreatedV1(
-        toDateTime: LocalDateTime,
-        saksbehandler: String,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
 }

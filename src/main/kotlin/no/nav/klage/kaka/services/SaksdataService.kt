@@ -414,7 +414,7 @@ class SaksdataService(
         }
     }
 
-    fun searchAsVedtaksinstansleder(
+    fun searchAsVedtaksinstanslederV1(
         saksbehandlerIdent: String,
         enhet: Enhet,
         fromDate: LocalDate,
@@ -434,6 +434,35 @@ class SaksdataService(
             toDateTime = toDate.atTime(LocalTime.MAX),
             mangelfullt = mangelfullt,
             kommentarer = kommentarer,
+        ).filter {
+            verifiserTilgangTilPersonForSaksbehandler(
+                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                ident = saksbehandlerIdent,
+                kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
+                kanBehandleFortrolig = kanBehandleFortrolig,
+                kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
+            )
+        }.map { it.saksdata }
+    }
+
+    fun searchAsVedtaksinstanslederV2(
+        saksbehandlerIdent: String,
+        enhet: Enhet,
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        mangelfullt: List<String>,
+    ): List<Saksdata> {
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
+
+        val kanBehandleStrengtFortrolig = ROLE_KLAGE_STRENGT_FORTROLIG in roller
+        val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
+        val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
+
+        return saksdataRepository.findForVedtaksinstanslederV2(
+            vedtaksinstansEnhet = enhet.navn,
+            fromDateTime = fromDate.atStartOfDay(),
+            toDateTime = toDate.atTime(LocalTime.MAX),
+            mangelfullt = mangelfullt,
         ).filter {
             verifiserTilgangTilPersonForSaksbehandler(
                 fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),

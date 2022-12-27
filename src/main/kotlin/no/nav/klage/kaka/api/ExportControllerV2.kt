@@ -94,14 +94,12 @@ class ExportControllerV2(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
         @RequestParam(required = false) mangelfullt: List<String>?,
-        @RequestParam(required = false) kommentarer: List<String>?,
     ): TotalResponseWithoutEnheterV2 {
         logger.debug(
-            "getTotalForVedtaksinstansleder() called. FromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
+            "getTotalForVedtaksinstansleder() called. FromDate = {}, toDate = {}, mangelfullt = {}",
             fromDate,
             toDate,
             mangelfullt,
-            kommentarer
         )
 
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
@@ -117,7 +115,6 @@ class ExportControllerV2(
                 toDate = toDate,
                 vedtaksinstansEnhet = enhet,
                 mangelfullt = mangelfullt ?: emptyList(),
-                kommentarer = kommentarer ?: emptyList(),
             )
         )
     }

@@ -876,12 +876,12 @@ class SaksdataRepositoryTest {
         assertThat(saksdataAvsluttet.first().saksdata).isEqualTo(saksdataFullfoertInSamevedtaksinstans)
 
         val saksdataPaagaaende =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
                 saksbehandler = utfoerendeSaksbehandler,
             )
         assertThat(saksdataPaagaaende).hasSize(1)
-        assertThat(saksdataPaagaaende.first().saksdata).isEqualTo(saksdataPaagaaende1)
+        assertThat(saksdataPaagaaende.first()).isEqualTo(saksdataPaagaaende1)
     }
 
 
