@@ -31,7 +31,7 @@ class ExportServiceV1(
      */
     fun getAsExcel(year: Year): ByteArray {
         val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
                 toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
             )
@@ -157,20 +157,20 @@ class ExportServiceV1(
     ): List<AnonymizedUnfinishedVurdering> {
         validateNotCurrentMonth(toMonth)
 
-        val resultList = if (saksbehandlerIdentList == null) {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
+        val saksdataList = if (saksbehandlerIdentList == null) {
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
                 enhet = enhet.navn,
                 toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
             )
         } else {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
                 enhet = enhet.navn,
                 toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
-                saksbehandlerIdentList = saksbehandlerIdentList,
+                saksbehandlere = saksbehandlerIdentList,
             )
         }
 
-        return privateGetUnfinishedAsRawData(saksdataList = resultList.map { it.saksdata })
+        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
     }
 
     private fun validateNotCurrentMonth(toMonth: YearMonth) {
@@ -184,7 +184,7 @@ class ExportServiceV1(
      */
     fun getFinishedAsRawDataByDates(fromDate: LocalDate, toDate: LocalDate): List<AnonymizedFinishedVurderingV1> {
         val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
@@ -199,7 +199,7 @@ class ExportServiceV1(
         toDate: LocalDate
     ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
         val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
@@ -248,11 +248,11 @@ class ExportServiceV1(
      * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
      */
     fun getUnfinishedAsRawDataByToDate(toDate: LocalDate): List<AnonymizedUnfinishedVurdering> {
-        val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
+        val saksdataList =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
                 toDateTime = toDate.atTime(LocalTime.MAX)
             )
-        return privateGetUnfinishedAsRawData(saksdataList = resultList.map { it.saksdata })
+        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
     }
 
     /**
@@ -262,23 +262,24 @@ class ExportServiceV1(
         toDate: LocalDate,
         saksbehandler: String
     ): List<AnonymizedUnfinishedVurdering> {
-        val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreatedV1(
+        val saksdataList =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
                 toDateTime = toDate.atTime(LocalTime.MAX),
                 saksbehandler = saksbehandler,
             )
-        return privateGetUnfinishedAsRawData(saksdataList = resultList.map { it.saksdata })
+        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
     }
 
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
     private fun privateGetFinishedAsRawDataWithVersion1(
-        resultList: List<SaksdataRepositoryCustomImpl.ResultV1>,
+        resultList: Collection<SaksdataRepositoryCustomImpl.QueryResultV1>,
     ): List<AnonymizedFinishedVurderingV1> {
 
         return resultList.map { result ->
             val (saksdata, kvalitetsvurderingV1) = result
+
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
 
@@ -351,7 +352,7 @@ class ExportServiceV1(
      */
 
     private fun privateGetFinishedAsRawDataWithoutEnheterWithResultV1(
-        resultList: List<SaksdataRepositoryCustomImpl.ResultV1>,
+        resultList: Collection<SaksdataRepositoryCustomImpl.QueryResultV1>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
 
         return resultList.map { result ->
@@ -449,7 +450,7 @@ class ExportServiceV1(
         }
     }
 
-    private fun mapToFields(resultList: List<SaksdataRepositoryCustomImpl.ResultV1>): List<List<Field>> {
+    private fun mapToFields(resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>): List<List<Field>> {
         //@formatter:off
         return resultList.map { result ->
             val (saksdata, kvalitetsvurderingV1) = result

@@ -10,7 +10,7 @@ interface SaksdataRepositoryCustom {
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
         kommentarer: List<String>,
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
 
     fun findForVedtaksinstanslederV2(
         vedtaksinstansEnhet: String,
@@ -18,54 +18,58 @@ interface SaksdataRepositoryCustom {
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
         kommentarer: List<String>,
-    ): List<SaksdataRepositoryCustomImpl.ResultV2>
+    ): List<SaksdataRepositoryCustomImpl.QueryResultV2>
 
-    fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+    fun findByAvsluttetAvSaksbehandlerBetweenV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
 
-    fun findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+    fun findByAvsluttetAvSaksbehandlerBetweenV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
-    ): List<SaksdataRepositoryCustomImpl.ResultV2>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         saksbehandler: String,
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+
+    fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        saksbehandler: String,
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+
+    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+        enhet: String,
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         saksbehandlerIdentList: List<String>
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
 
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
+    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV2(
         enhet: String,
-        toDateTime: LocalDateTime
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
-
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
-        enhet: String,
+        fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         saksbehandlerIdentList: List<String>
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
-
-    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
-        toDateTime: LocalDateTime
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreatedV1(
         toDateTime: LocalDateTime,
         saksbehandler: String,
-    ): List<SaksdataRepositoryCustomImpl.ResultV1>
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
 }

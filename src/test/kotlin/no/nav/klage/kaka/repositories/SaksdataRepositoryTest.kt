@@ -235,14 +235,14 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val finished =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
             )
         assertThat(finished).hasSize(2)
 
         val unfinished =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
             )
         assertThat(unfinished).hasSize(1)
@@ -314,7 +314,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val finished =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV2(
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
             )
@@ -348,7 +348,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
             )
@@ -1046,9 +1046,10 @@ class SaksdataRepositoryTest {
                 saksbehandlerIdentList = listOf(utfoerendeSaksbehandler1, utfoerendeSaksbehandler2)
 
             )
-        assertThat(results).hasSize(2)
-        assertThat(results.first().saksdata).isEqualTo(
-            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1
+
+        assertThat(results.map { it.saksdata }).containsExactlyInAnyOrder(
+            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1,
+            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler2
         )
     }
 
@@ -1114,13 +1115,13 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val results =
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1(
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
                 enhet = tilknyttetEnhet1,
                 toDateTime = created1.plusMonths(1),
 
                 )
         assertThat(results).hasSize(1)
-        assertThat(results.first().saksdata).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1)
+        assertThat(results.first()).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1)
     }
 
     @Test
@@ -1214,13 +1215,13 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val results =
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
                 enhet = tilknyttetEnhet1,
                 toDateTime = created1.plusMonths(1),
-                saksbehandlerIdentList = listOf(utfoerendeSaksbehandler1),
+                saksbehandlere = listOf(utfoerendeSaksbehandler1),
             )
         assertThat(results).hasSize(1)
-        assertThat(results.first().saksdata).isEqualTo(
+        assertThat(results.first()).isEqualTo(
             saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1
         )
     }
