@@ -24,7 +24,6 @@ import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -465,8 +464,7 @@ class SaksdataService(
         saksdataRepository.deleteById(saksdataId)
     }
 
-    //TODO: Delete after run
-    @Scheduled(cron = "\${MIGRATE_CRON}", zone = "Europe/Oslo")
+    @Deprecated("Ran 01-01-2023, no longer needed.")
     @SchedulerLock(name = "migrateKvalitetsvurderingerFromV1ToV2")
     fun migrateKvalitetsvurderingerFromV1ToV2() {
         val candidates = saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
