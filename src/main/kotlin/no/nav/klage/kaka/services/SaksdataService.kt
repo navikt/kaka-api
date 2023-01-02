@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.services
 
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
