@@ -22,6 +22,8 @@ spec:
       containers:
         - image: ghcr.io/navikt/kaka-e2e-tests:latest
           name: kaka-e2e-tests
+          securityContext:
+            allowPrivilegeEscalation: false
           envFrom:
             - secretRef:
                 name: kaka-e2e-test-users
