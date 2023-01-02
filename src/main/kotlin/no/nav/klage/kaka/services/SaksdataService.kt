@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.services
 
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
 import no.nav.klage.kaka.clients.pdl.PdlFacade
@@ -24,7 +23,6 @@ import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -463,33 +461,6 @@ class SaksdataService(
         }
 
         saksdataRepository.deleteById(saksdataId)
-    }
-
-    //TODO: Delete after run
-    @Scheduled(cron = "\${MIGRATE_CRON}", zone = "Europe/Oslo")
-    @SchedulerLock(name = "migrateKvalitetsvurderingerFromV1ToV2")
-    fun migrateKvalitetsvurderingerFromV1ToV2() {
-        val candidates = saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
-            kvalitetsvurderingVersion = 1
-        )
-
-        logger.debug("Migrating kvalitetsvurdering from v1 to v2.")
-        logger.debug("Number of candidates: ${candidates.size}")
-
-        candidates.forEach {
-            logger.debug("Migrating saksdata ${it.id}, kvalitetsvurdering ${it.kvalitetsvurderingReference.id}")
-            kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2(id = it.kvalitetsvurderingReference.id))
-            it.kvalitetsvurderingReference.version = 2
-            kvalitetsvurderingV1Repository.deleteById(it.kvalitetsvurderingReference.id)
-            it.modified = now()
-        }
-
-        val candidatesAfterMigration =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
-                kvalitetsvurderingVersion = 1
-            )
-
-        logger.debug("Number of candidates after migration: ${candidatesAfterMigration.size}")
     }
 
     private fun verifiserTilgangTilPersonForSaksbehandler(
