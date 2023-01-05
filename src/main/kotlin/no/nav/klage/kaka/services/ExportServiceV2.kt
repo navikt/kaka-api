@@ -5,6 +5,7 @@ import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV2
 import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurderingV2
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
@@ -343,8 +344,8 @@ class ExportServiceV2(
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
+                createdDate = getCreatedDate(saksdata, kvalitetsvurderingV2),
+                modifiedDate = getModifiedDate(saksdata, kvalitetsvurderingV2),
 
                 )
         }
@@ -421,8 +422,8 @@ class ExportServiceV2(
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
+                createdDate = getCreatedDate(saksdata, kvalitetsvurderingV2),
+                modifiedDate = getModifiedDate(saksdata, kvalitetsvurderingV2),
             )
         }
     }
@@ -502,8 +503,8 @@ class ExportServiceV2(
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
+                createdDate = getCreatedDate(saksdata, kvalitetsvurderingV2),
+                modifiedDate = getModifiedDate(saksdata, kvalitetsvurderingV2),
             )
         }
     }
@@ -526,13 +527,11 @@ class ExportServiceV2(
         return mottattForrigeInstans
     }
 
-    private fun getCreatedDate(saksdata: Saksdata): Date {
-        if (saksdata.kvalitetsvurderingReference.version == 2) {
-            error("Don't support v2 yet")
+    private fun getCreatedDate(saksdata: Saksdata, kvalitetsvurderingV2: KvalitetsvurderingV2? = null): Date {
+        if (kvalitetsvurderingV2 == null) {
+            return saksdata.created.toDate()
         }
 
-        val kvalitetsvurderingV2 =
-            kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
         return if (saksdata.created.isBefore(kvalitetsvurderingV2.created)) {
             saksdata.created.toDate()
         } else {
@@ -540,13 +539,11 @@ class ExportServiceV2(
         }
     }
 
-    private fun getModifiedDate(saksdata: Saksdata): Date {
-        if (saksdata.kvalitetsvurderingReference.version == 2) {
-            error("Don't support v2 yet")
+    private fun getModifiedDate(saksdata: Saksdata, kvalitetsvurderingV2: KvalitetsvurderingV2? = null): Date {
+        if (kvalitetsvurderingV2 == null) {
+            return saksdata.created.toDate()
         }
 
-        val kvalitetsvurderingV2 =
-            kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
         return if (saksdata.modified.isAfter(kvalitetsvurderingV2.modified)) {
             saksdata.modified.toDate()
         } else {
