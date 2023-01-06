@@ -5,7 +5,6 @@ import io.mockk.mockk
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
-import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
 import no.nav.klage.kodeverk.*
@@ -25,7 +24,7 @@ internal class ExportServiceV1Test {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 any(),
                 any(),
             )
@@ -51,7 +50,7 @@ internal class ExportServiceV1Test {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 any(),
                 any(),
             )
@@ -72,11 +71,11 @@ internal class ExportServiceV1Test {
         )
     }
 
-    private fun getResultList(amount: Int = 1): List<SaksdataRepositoryCustomImpl.ResultV1> {
-        return buildList {
+    private fun getResultList(amount: Int = 1): Set<SaksdataRepositoryCustomImpl.QueryResultV1> {
+        return buildSet {
             repeat(amount) {
                 add(
-                    SaksdataRepositoryCustomImpl.ResultV1(
+                    SaksdataRepositoryCustomImpl.QueryResultV1(
                         saksdata = Saksdata(
                             sakstype = Type.KLAGE,
                             utfoerendeSaksbehandler = "someoneelse",

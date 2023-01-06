@@ -47,8 +47,8 @@ class SaksdataListController(
         )
     }
 
-    @GetMapping("/saksdatalisteledervedtaksinstans")
-    fun searchVedtaksinstansleder(
+    @GetMapping("/saksdatalisteledervedtaksinstans", "/saksdatalisteledervedtaksinstans/v1")
+    fun searchVedtaksinstanslederV1(
         @RequestParam navIdent: String,
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
@@ -57,7 +57,7 @@ class SaksdataListController(
     ): SaksdataListView {
         logger.debug(
             "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
-            ::searchVedtaksinstansleder.name,
+            ::searchVedtaksinstanslederV1.name,
             tokenUtil.getIdent(),
             fromDate,
             toDate,
@@ -74,7 +74,7 @@ class SaksdataListController(
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
         return SaksdataListView(
-            searchHits = saksdataService.searchAsVedtaksinstansleder(
+            searchHits = saksdataService.searchAsVedtaksinstanslederV1(
                 saksbehandlerIdent = navIdent,
                 enhet = enhet,
                 fromDate = fromDate,
@@ -85,9 +85,8 @@ class SaksdataListController(
         )
     }
 
-    @Deprecated(message = "replaced with saksdatalisteledervedtaksinstans")
-    @GetMapping("/saksdatalistelederfoersteinstans")
-    fun searchVedtakslederFoersteinstans(
+    @GetMapping("/saksdatalisteledervedtaksinstans/v2")
+    fun searchVedtaksinstanslederV2(
         @RequestParam navIdent: String,
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
@@ -95,13 +94,12 @@ class SaksdataListController(
         @RequestParam(required = false) kommentarer: List<String>?,
     ): SaksdataListView {
         logger.debug(
-            "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
-            ::searchVedtakslederFoersteinstans.name,
+            "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}",
+            ::searchVedtaksinstanslederV2.name,
             tokenUtil.getIdent(),
             fromDate,
             toDate,
             mangelfullt,
-            kommentarer,
         )
         validateIsSameUser(navIdent)
 
@@ -113,13 +111,12 @@ class SaksdataListController(
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
         return SaksdataListView(
-            searchHits = saksdataService.searchAsVedtaksinstansleder(
+            searchHits = saksdataService.searchAsVedtaksinstanslederV2(
                 saksbehandlerIdent = navIdent,
                 enhet = enhet,
                 fromDate = fromDate,
                 toDate = toDate,
                 mangelfullt = mangelfullt ?: emptyList(),
-                kommentarer = kommentarer ?: emptyList(),
             ).map { it.toSaksdataView() }
         )
     }
