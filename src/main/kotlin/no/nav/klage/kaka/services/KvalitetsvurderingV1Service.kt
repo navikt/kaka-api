@@ -2,6 +2,7 @@ package no.nav.klage.kaka.services
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.*
+import jakarta.transaction.Transactional
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -15,7 +16,6 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
-import javax.transaction.Transactional
 
 @Service
 @Transactional

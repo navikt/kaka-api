@@ -1,19 +1,17 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "7.2"
-val problemSpringWebStartVersion = "0.27.0"
-val springSleuthVersion = "3.1.5"
-val tokenValidationVersion = "2.1.8"
+val tokenValidationVersion = "3.0.2"
 val archunitVersion = "1.0.1"
 val testContainersVersion = "1.17.6"
 val mockkVersion = "1.13.3"
 val apachePoiVersion = "5.2.3"
-val springDocVersion = "1.6.14"
+val springDocVersion = "2.0.2"
 val shedlockVersion = "5.0.1"
 
 plugins {
-    val kotlinVersion = "1.7.22"
-    id("org.springframework.boot") version "2.7.6"
+    val kotlinVersion = "1.8.0"
+    id("org.springframework.boot") version "3.0.1"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -42,8 +40,7 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka")
     implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
     implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
-    implementation("org.zalando:problem-spring-web-starter:$problemSpringWebStartVersion")
-    implementation("org.springdoc:springdoc-openapi-ui:$springDocVersion")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
     implementation("org.flywaydb:flyway-core")
     implementation("org.postgresql:postgresql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -53,9 +50,11 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:$logstashVersion")
     implementation("org.projectreactor:reactor-spring:1.0.1.RELEASE")
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
-    implementation("org.springframework.cloud:spring-cloud-starter-sleuth:$springSleuthVersion")
     implementation("net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
+
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("io.micrometer:micrometer-tracing-bridge-brave")
 
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")

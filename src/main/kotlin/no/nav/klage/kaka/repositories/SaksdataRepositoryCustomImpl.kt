@@ -1,13 +1,13 @@
 package no.nav.klage.kaka.repositories
 
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kodeverk.Type
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
 
 /**
  * TODO Check queries again when we upgrade to Spring Boot 3 and Hibernate 6
