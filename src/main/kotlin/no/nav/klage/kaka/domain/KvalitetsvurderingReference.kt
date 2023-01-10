@@ -1,8 +1,8 @@
 package no.nav.klage.kaka.domain
 
+import jakarta.persistence.Column
+import jakarta.persistence.Embeddable
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Embeddable
 
 @Embeddable
 data class KvalitetsvurderingReference(

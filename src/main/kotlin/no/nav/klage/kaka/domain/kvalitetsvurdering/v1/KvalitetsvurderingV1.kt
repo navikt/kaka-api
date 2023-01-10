@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.domain.kvalitetsvurdering.v1
 
 
+import jakarta.persistence.*
 import no.nav.klage.kaka.domain.raadgivendeLegeYtelser
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
@@ -8,7 +9,6 @@ import no.nav.klage.kodeverk.Ytelse
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.*
 
 @Entity
 @Table(name = "kvalitetsvurdering_v1", schema = "kaka")

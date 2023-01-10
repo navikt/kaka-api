@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.domain
 
+import jakarta.persistence.*
 import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.domain.kodeverk.Role
 import no.nav.klage.kaka.exceptions.InvalidProperty
@@ -10,12 +11,10 @@ import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
-import no.nav.klage.kodeverk.hjemmel.RegistreringshjemmelConverter
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.*
 
 @Entity
 @Table(name = "saksdata", schema = "kaka")

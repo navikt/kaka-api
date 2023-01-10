@@ -1,82 +1,83 @@
 package no.nav.klage.kaka.config.problem
 
 import no.nav.klage.kaka.exceptions.*
-import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.http.HttpStatus
+import org.springframework.http.ProblemDetail
 import org.springframework.web.bind.annotation.ExceptionHandler
+import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.NativeWebRequest
-import org.zalando.problem.Problem
-import org.zalando.problem.Status
-import org.zalando.problem.ThrowableProblem
-import org.zalando.problem.spring.web.advice.AdviceTrait
-import org.zalando.problem.spring.web.advice.ProblemHandling
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
-@ControllerAdvice
-class ProblemHandlingControllerAdvice : KakaExceptionAdviceTrait, ProblemHandling
-
-interface KakaExceptionAdviceTrait : AdviceTrait {
+@RestControllerAdvice
+class ProblemHandlingControllerAdvice : ResponseEntityExceptionHandler() {
 
     @ExceptionHandler
     fun handleKvalitetsvurderingNotFoundException(
         ex: KvalitetsvurderingNotFoundException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(Status.NOT_FOUND, ex, request)
+    ): ProblemDetail =
+        create(HttpStatus.NOT_FOUND, ex)
 
     @ExceptionHandler
     fun handleSaksdataNotFoundException(
         ex: SaksdataNotFoundException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(Status.NOT_FOUND, ex, request)
+    ): ProblemDetail =
+        create(HttpStatus.NOT_FOUND, ex)
 
     @ExceptionHandler
     fun handleMissingTilgangException(
         ex: MissingTilgangException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(Status.FORBIDDEN, ex, request)
+    ): ProblemDetail =
+        create(HttpStatus.FORBIDDEN, ex)
 
     @ExceptionHandler
     fun handleKvalitetsvurderingFinalizedException(
         ex: KvalitetsvurderingFinalizedException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(Status.FORBIDDEN, ex, request)
+    ): ProblemDetail =
+        create(HttpStatus.FORBIDDEN, ex)
 
     @ExceptionHandler
     fun handleSaksdataFinalizedException(
         ex: SaksdataFinalizedException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(Status.FORBIDDEN, ex, request)
+    ): ProblemDetail =
+        create(HttpStatus.FORBIDDEN, ex)
 
     @ExceptionHandler
     fun handleInvalidSakenGjelderException(
         ex: InvalidSakenGjelderException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(Status.BAD_REQUEST, ex, request)
+    ): ProblemDetail =
+        create(HttpStatus.BAD_REQUEST, ex)
 
     @ExceptionHandler
     fun handleSectionedValidationErrorWithDetailsException(
         ex: SectionedValidationErrorWithDetailsException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(ex, createSectionedValidationProblem(ex), request)
+    ): ProblemDetail =
+        createSectionedValidationProblem(ex)
 
     @ExceptionHandler
     fun handleEnhetNotFoundForSaksbehandlerException(
         ex: EnhetNotFoundForSaksbehandlerException,
         request: NativeWebRequest
-    ): ResponseEntity<Problem> =
-        create(Status.INTERNAL_SERVER_ERROR, ex, request)
+    ): ProblemDetail =
+        create(HttpStatus.INTERNAL_SERVER_ERROR, ex)
 
-    private fun createSectionedValidationProblem(ex: SectionedValidationErrorWithDetailsException): ThrowableProblem {
-        return Problem.builder()
-            .withStatus(Status.BAD_REQUEST)
-            .withTitle(ex.title)
-            .with("sections", ex.sections)
-            .build()
+    private fun createSectionedValidationProblem(ex: SectionedValidationErrorWithDetailsException): ProblemDetail {
+        return ProblemDetail.forStatus(HttpStatus.BAD_REQUEST).apply {
+            this.title = ex.title
+            this.setProperty("sections", ex.sections)
+        }
+    }
+
+    private fun create(httpStatus: HttpStatus, ex: Exception): ProblemDetail {
+        val errorMessage = ex.message ?: "No error message available"
+        return ProblemDetail.forStatusAndDetail(httpStatus, errorMessage).apply {
+            title = errorMessage
+        }
     }
 }

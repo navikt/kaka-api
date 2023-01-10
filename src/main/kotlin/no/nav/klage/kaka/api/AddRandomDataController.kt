@@ -211,7 +211,6 @@ class AddRandomDataController(
                 )
             }
 
-            else -> throw error("wrong version")
         }
         return data
     }
