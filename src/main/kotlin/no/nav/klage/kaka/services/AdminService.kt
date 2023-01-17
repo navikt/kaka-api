@@ -7,7 +7,10 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
+import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV2
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.Month
 
 @Service
 class AdminService(
@@ -55,5 +58,24 @@ class AdminService(
         }
         secureLogger.debug("Errors found: $errorString")
         secureLogger.debug("Number of invalid values found: $errorsFound")
+    }
+
+    fun logV1HjemlerInV2() {
+        val results = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV2(
+            fromDateTime = LocalDateTime.of(2023, Month.JANUARY, 1, 0, 0),
+            toDateTime = LocalDateTime.now()
+        )
+
+        var resultString = "logV1HjemlerInV2:\n\n"
+
+        results.forEach { (saksdata, _) ->
+            saksdata.registreringshjemler?.forEach { hjemmel ->
+                if (hjemmel !in ytelseTilRegistreringshjemlerV2[saksdata.ytelse]!!) {
+                    resultString += "Hjemmel with id ${hjemmel.id} in saksdata ${saksdata.id} invalid\n"
+                }
+            }
+        }
+
+        secureLogger.debug(resultString)
     }
 }

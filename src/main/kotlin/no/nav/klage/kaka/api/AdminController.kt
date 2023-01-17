@@ -31,6 +31,12 @@ class AdminController(
         adminService.logInvalidSakenGjelder()
     }
 
+    @GetMapping("/logv1hjemlerinv2")
+    fun logV1HjemlerInV2() {
+        krevAdminTilgang()
+        adminService.logV1HjemlerInV2()
+    }
+
     private fun krevAdminTilgang() {
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
         if (!roller.contains(Role.ROLE_ADMIN)) {
