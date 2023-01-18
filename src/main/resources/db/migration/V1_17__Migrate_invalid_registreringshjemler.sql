@@ -1,6 +1,6 @@
 --Only in Kaka:
-UPDATE kaka.registreringshjemmel
-SET id = 'FS_HJE_MM_6D'
+DELETE
+FROM kaka.registreringshjemmel
 WHERE id = '56'
   AND saksdata_id = '5a00f3cd-bf82-47b7-b660-43dd683a3a59';
 
@@ -14,8 +14,8 @@ SET id = 'FTRL_10_6E'
 WHERE id = '10'
   AND saksdata_id = '07101235-79c3-4d35-aa3e-41952fa802c2';
 
-UPDATE kaka.registreringshjemmel
-SET id = 'FS_HJE_MM_6D'
+DELETE
+FROM kaka.registreringshjemmel
 WHERE id = '56'
   AND saksdata_id = '07101235-79c3-4d35-aa3e-41952fa802c2';
 
