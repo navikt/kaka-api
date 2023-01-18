@@ -142,7 +142,7 @@ class ExportServiceV2(
             AnonymizedManagerResponseV2(
                 saksbehandlere = resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.map {
                     it.key to privateGetFinishedAsRawData(resultList = it.value.toSet())
-                }.toMap(),
+                }.toMap().filter { it.key in saksbehandlerIdentList },
                 mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
                 rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
             )
