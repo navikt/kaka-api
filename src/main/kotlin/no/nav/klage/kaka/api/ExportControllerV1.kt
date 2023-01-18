@@ -46,20 +46,17 @@ class ExportControllerV1(
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
-        val mine = exportServiceV1.getFinishedAsRawDataByDatesAndSaksbehandler(
+        val data = exportServiceV1.getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
             fromDate = fromDate,
             toDate = toDate,
+            enhet = enhet,
             saksbehandler = innloggetSaksbehandler,
         )
+
         return MyResponseV1(
-            anonymizedFinishedVurderingList = mine,
-            mine = mine,
-            rest = exportServiceV1.getFinishedAsRawDataByDatesAndKlageenhetMinusSaksbehandler(
-                fromDate = fromDate,
-                toDate = toDate,
-                enhet = enhet,
-                saksbehandler = innloggetSaksbehandler,
-            ),
+            anonymizedFinishedVurderingList = data.mine,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
 

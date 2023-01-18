@@ -247,20 +247,25 @@ class ExportServiceV1(
     /**
      * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and klageenhet minus given saksbehandler
      */
-    fun getFinishedAsRawDataByDatesAndKlageenhetMinusSaksbehandler(
+    fun getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
         fromDate: LocalDate,
         toDate: LocalDate,
         saksbehandler: String,
         enhet: Enhet,
-    ): List<AnonymizedFinishedVurderingV1> {
+    ): AnonymizedMineRestResponseV1 {
         val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreatedV1(
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX),
-                saksbehandler = saksbehandler,
                 enhet = enhet.navn
             )
-        return privateGetFinishedAsRawData(resultList = resultList)
+
+        val (mine, rest) = resultList.partition { it.saksdata.utfoerendeSaksbehandler == saksbehandler }
+
+        return AnonymizedMineRestResponseV1(
+            mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+            rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
+        )
     }
 
     /**
@@ -788,3 +793,8 @@ private fun LocalDate.toDate(): Date {
         epochDay = this.toEpochDay().toInt()
     )
 }
+
+data class AnonymizedMineRestResponseV1(
+    val mine: List<AnonymizedFinishedVurderingV1>,
+    val rest: List<AnonymizedFinishedVurderingV1>,
+)

@@ -41,20 +41,6 @@ interface SaksdataRepositoryCustom {
         saksbehandler: String,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
-    fun findByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreatedV1(
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        enhet: String,
-        saksbehandler: String,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
-
-    fun findByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreatedV2(
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        enhet: String,
-        saksbehandler: String,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
-
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
         enhet: String,
         fromDateTime: LocalDateTime,
