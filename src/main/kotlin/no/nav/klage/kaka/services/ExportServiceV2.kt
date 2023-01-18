@@ -254,10 +254,11 @@ class ExportServiceV2(
         enhet: Enhet,
     ): List<AnonymizedFinishedVurderingV2> {
         val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV2(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreatedV2(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX),
                 saksbehandler = saksbehandler,
+                enhet = enhet.navn,
             )
         return privateGetFinishedAsRawData(resultList = resultList)
     }
