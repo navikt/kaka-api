@@ -133,6 +133,9 @@ data class Date(
 
 data class ManagerResponseV1(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
+    val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV1>>?,
+    val mine: List<AnonymizedFinishedVurderingV1>,
+    val rest: List<AnonymizedFinishedVurderingV1>,
 )
 
 data class TotalResponseV1(

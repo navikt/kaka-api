@@ -86,13 +86,17 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
+        val data = exportServiceV1.getFinishedForLederAsRawData(
+            enhet = enhet,
+            fromMonth = YearMonth.parse(fromMonth),
+            toMonth = YearMonth.parse(toMonth),
+            saksbehandlerIdentList = saksbehandlere,
+        )
         return ManagerResponseV1(
-            anonymizedFinishedVurderingList = exportServiceV1.getFinishedForLederAsRawData(
-                enhet = enhet,
-                fromMonth = YearMonth.parse(fromMonth),
-                toMonth = YearMonth.parse(toMonth),
-                saksbehandlerIdentList = saksbehandlere,
-            )
+            anonymizedFinishedVurderingList = data.mine,
+            saksbehandlere = data.saksbehandlere,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
 
@@ -125,13 +129,17 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
+        val data = exportServiceV2.getFinishedForLederAsRawData(
+            enhet = enhet,
+            fromMonth = YearMonth.parse(fromMonth),
+            toMonth = YearMonth.parse(toMonth),
+            saksbehandlerIdentList = saksbehandlere,
+        )
         return ManagerResponseV2(
-            anonymizedFinishedVurderingList = exportServiceV2.getFinishedForLederAsRawData(
-                enhet = enhet,
-                fromMonth = YearMonth.parse(fromMonth),
-                toMonth = YearMonth.parse(toMonth),
-                saksbehandlerIdentList = saksbehandlere,
-            )
+            anonymizedFinishedVurderingList = data.mine,
+            saksbehandlere = data.saksbehandlere,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
 

@@ -123,28 +123,35 @@ class ExportServiceV1(
         fromMonth: YearMonth,
         toMonth: YearMonth,
         saksbehandlerIdentList: List<String>?
-    ): List<AnonymizedFinishedVurderingV1> {
+    ): AnonymizedManagerResponseV1 {
         validateNotCurrentMonth(toMonth)
 
         val fromDateTime = fromMonth.atDay(1).atStartOfDay()
         val toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX)
 
-        val resultList = if (saksbehandlerIdentList == null) {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
-                enhet = enhet.navn,
-                fromDateTime = fromDateTime,
-                toDateTime = toDateTime,
+        val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
+            fromDateTime = fromDateTime,
+            toDateTime = toDateTime,
+        )
+
+        return if (!saksbehandlerIdentList.isNullOrEmpty()) {
+            val (mine, rest) = resultList.filter { it.saksdata.utfoerendeSaksbehandler !in saksbehandlerIdentList }
+                .partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+            AnonymizedManagerResponseV1(
+                saksbehandlere = resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.map {
+                    it.key to privateGetFinishedAsRawData(resultList = it.value.toSet())
+                }.toMap(),
+                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
             )
         } else {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
-                enhet = enhet.navn,
-                fromDateTime = fromDateTime,
-                toDateTime = toDateTime,
-                saksbehandlerIdentList = saksbehandlerIdentList,
+            val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+            AnonymizedManagerResponseV1(
+                saksbehandlere = null,
+                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
             )
         }
-
-        return privateGetFinishedAsRawData(resultList = resultList)
     }
 
     /**
@@ -797,4 +804,10 @@ private fun LocalDate.toDate(): Date {
 data class AnonymizedMineRestResponseV1(
     val mine: List<AnonymizedFinishedVurderingV1>,
     val rest: List<AnonymizedFinishedVurderingV1>,
+)
+
+data class AnonymizedManagerResponseV1(
+    val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV1>>?,
+    val mine: List<AnonymizedFinishedVurderingV1>,
+    val rest: List<AnonymizedFinishedVurderingV1>
 )

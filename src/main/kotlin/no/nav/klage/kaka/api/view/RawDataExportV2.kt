@@ -136,6 +136,9 @@ data class AnonymizedUnfinishedVurderingV2(
 
 data class ManagerResponseV2(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV2>,
+    val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV2>>?,
+    val mine: List<AnonymizedFinishedVurderingV2>,
+    val rest: List<AnonymizedFinishedVurderingV2>,
 )
 
 data class TotalResponseV2(
