@@ -131,9 +131,13 @@ data class Date(
     val epochDay: Int
 )
 
+data class ManagerResponseV1(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
+)
+
 data class TotalResponseV1(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
-    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
+    val rest: List<AnonymizedFinishedVurderingV1>,
 )
 
 data class MyResponseV1(

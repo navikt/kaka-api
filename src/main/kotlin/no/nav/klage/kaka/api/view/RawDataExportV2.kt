@@ -134,9 +134,13 @@ data class AnonymizedUnfinishedVurderingV2(
     val modifiedDate: Date,
 )
 
+data class ManagerResponseV2(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV2>,
+)
+
 data class TotalResponseV2(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV2>,
-    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurderingV2>,
+    val rest: List<AnonymizedFinishedVurderingV2>,
 )
 
 data class MyResponseV2(

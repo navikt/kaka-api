@@ -81,14 +81,13 @@ class ExportControllerV2(
     ): TotalResponseV2 {
         logger.debug("getTotal() called. FromDate = $fromDate, toDate = $toDate")
 
+        val anonymizedFinishedVurderingList = exportServiceV2.getFinishedAsRawDataByDates(
+            fromDate = fromDate,
+            toDate = toDate
+        )
         return TotalResponseV2(
-            anonymizedFinishedVurderingList = exportServiceV2.getFinishedAsRawDataByDates(
-                fromDate = fromDate,
-                toDate = toDate
-            ),
-            anonymizedUnfinishedVurderingList = exportServiceV2.getUnfinishedAsRawDataByToDate(
-                toDate = toDate
-            )
+            anonymizedFinishedVurderingList = anonymizedFinishedVurderingList,
+            rest = anonymizedFinishedVurderingList,
         )
     }
 
