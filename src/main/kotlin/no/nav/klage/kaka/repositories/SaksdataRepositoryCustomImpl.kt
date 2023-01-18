@@ -172,7 +172,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler h
             WHERE s.kvalitetsvurderingReference.version = $version
-            AND s.utfoerendeSaksbehandler != :saksbehandler
+            AND s.utfoerendeSaksbehandler <> :saksbehandler
             AND s.tilknyttetEnhet = $enhet
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
         """,
