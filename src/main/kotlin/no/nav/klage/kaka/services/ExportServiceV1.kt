@@ -245,6 +245,25 @@ class ExportServiceV1(
     }
 
     /**
+     * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and klageenhet minus given saksbehandler
+     */
+    fun getFinishedAsRawDataByDatesAndKlageenhetMinusSaksbehandler(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        saksbehandler: String,
+        enhet: Enhet,
+    ): List<AnonymizedFinishedVurderingV1> {
+        val resultList =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreatedV1(
+                fromDateTime = fromDate.atStartOfDay(),
+                toDateTime = toDate.atTime(LocalTime.MAX),
+                saksbehandler = saksbehandler,
+                enhet = enhet.navn
+            )
+        return privateGetFinishedAsRawData(resultList = resultList)
+    }
+
+    /**
      * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
      */
     fun getUnfinishedAsRawDataByToDate(toDate: LocalDate): List<AnonymizedUnfinishedVurdering> {

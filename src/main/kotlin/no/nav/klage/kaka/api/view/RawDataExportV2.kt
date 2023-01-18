@@ -139,6 +139,12 @@ data class TotalResponseV2(
     val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurderingV2>,
 )
 
+data class MyResponseV2(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV2>,
+    val mine: List<AnonymizedFinishedVurderingV2>,
+    val rest: List<AnonymizedFinishedVurderingV2>,
+)
+
 data class TotalResponseWithoutEnheterV2(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheterV2>
 )

@@ -90,7 +90,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
     }
 
-
     override fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
@@ -118,6 +117,63 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
              LEFT JOIN FETCH s.registreringshjemler h
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.utfoerendeSaksbehandler = :saksbehandler
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+        """,
+            Array::class.java
+        )
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .setParameter("saksbehandler", saksbehandler)
+            .resultList
+        return resultList
+    }
+
+    override fun findByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreatedV1(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        enhet: String,
+        saksbehandler: String
+    ): Set<QueryResultV1> {
+        return privateFindByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreated(
+            fromDateTime = fromDateTime,
+            toDateTime = toDateTime,
+            enhet = enhet,
+            saksbehandler = saksbehandler,
+            version = 1,
+        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+    }
+
+    override fun findByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreatedV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        enhet: String,
+        saksbehandler: String
+    ): Set<QueryResultV2> {
+        return privateFindByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreated(
+            fromDateTime = fromDateTime,
+            toDateTime = toDateTime,
+            enhet = enhet,
+            saksbehandler = saksbehandler,
+            version = 2,
+        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    private fun privateFindByAvsluttetAvSaksbehandlerBetweenAndEnhetAndNotUtfoerendeSaksbehandlerOrderByCreated(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        enhet: String,
+        saksbehandler: String,
+        version: Int,
+    ): List<Array<*>> {
+        val resultList = entityManager.createQuery(
+            """
+            SELECT s, k
+            FROM Saksdata s
+             LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
+             LEFT JOIN FETCH s.registreringshjemler h
+            WHERE s.kvalitetsvurderingReference.version = $version
+            AND s.utfoerendeSaksbehandler != :saksbehandler
+            AND s.tilknyttetEnhet = $enhet
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
         """,
             Array::class.java

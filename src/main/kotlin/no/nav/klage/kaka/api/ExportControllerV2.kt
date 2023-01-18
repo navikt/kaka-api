@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
+import no.nav.klage.kaka.api.view.MyResponseV2
 import no.nav.klage.kaka.api.view.TotalResponseV2
 import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheterV2
 import no.nav.klage.kaka.clients.azure.AzureGateway
@@ -38,21 +39,27 @@ class ExportControllerV2(
     fun getMyStats(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
-    ): TotalResponseV2 {
+    ): MyResponseV2 {
         logger.debug("getMyStats() called. FromDate = $fromDate, toDate = $toDate")
 
         val innloggetSaksbehandler = tokenUtil.getIdent()
 
-        return TotalResponseV2(
-            anonymizedFinishedVurderingList = exportServiceV2.getFinishedAsRawDataByDatesAndSaksbehandler(
+        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+
+        val mine = exportServiceV2.getFinishedAsRawDataByDatesAndSaksbehandler(
+            fromDate = fromDate,
+            toDate = toDate,
+            saksbehandler = innloggetSaksbehandler,
+        )
+        return MyResponseV2(
+            anonymizedFinishedVurderingList = mine,
+            mine = mine,
+            rest = exportServiceV2.getFinishedAsRawDataByDatesAndKlageenhetMinusSaksbehandler(
                 fromDate = fromDate,
                 toDate = toDate,
+                enhet = enhet,
                 saksbehandler = innloggetSaksbehandler,
             ),
-            anonymizedUnfinishedVurderingList = exportServiceV2.getUnfinishedAsRawDataByToDateAndSaksbehandler(
-                toDate = toDate,
-                saksbehandler = innloggetSaksbehandler,
-            )
         )
     }
 
