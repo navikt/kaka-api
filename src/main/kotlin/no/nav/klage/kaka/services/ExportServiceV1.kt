@@ -2,7 +2,6 @@ package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingV1
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV1
-import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurdering
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -238,17 +237,6 @@ class ExportServiceV1(
     }
 
     /**
-     * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
-     */
-    fun getUnfinishedAsRawDataByToDate(toDate: LocalDate): List<AnonymizedUnfinishedVurdering> {
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                toDateTime = toDate.atTime(LocalTime.MAX)
-            )
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
-    }
-
-    /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
     private fun privateGetFinishedAsRawData(
@@ -407,21 +395,6 @@ class ExportServiceV1(
             saksdata.mottattVedtaksinstans!!.toDate()
         }
         return mottattForrigeInstans
-    }
-
-    /**
-     * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
-     */
-    private fun privateGetUnfinishedAsRawData(saksdataList: List<Saksdata>): List<AnonymizedUnfinishedVurdering> {
-        return saksdataList.map { saksdata ->
-            AnonymizedUnfinishedVurdering(
-                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
-                tilknyttetEnhet = saksdata.tilknyttetEnhet,
-                sakstypeId = saksdata.sakstype.id,
-                createdDate = saksdata.created.toDate(),
-                modifiedDate = saksdata.modified.toDate(),
-            )
-        }
     }
 
     private fun mapToFields(resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>): List<List<Field>> {

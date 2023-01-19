@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.repositories
 
 import no.nav.klage.kaka.domain.Saksdata
-import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -19,27 +18,4 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
 
     fun findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId: UUID): Saksdata?
 
-    @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
-        enhet: String,
-        toDateTime: LocalDateTime,
-        saksbehandlere: List<String>
-    ): List<Saksdata>
-
-    @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-        enhet: String,
-        toDateTime: LocalDateTime
-    ): List<Saksdata>
-
-    @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-        toDateTime: LocalDateTime
-    ): List<Saksdata>
-
-    @EntityGraph(attributePaths = ["registreringshjemler"])
-    fun findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
-        toDateTime: LocalDateTime,
-        saksbehandler: String,
-    ): List<Saksdata>
 }

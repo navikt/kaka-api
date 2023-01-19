@@ -2,7 +2,6 @@ package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingV2
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV2
-import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurderingV2
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
@@ -513,21 +512,6 @@ class ExportServiceV2(
             saksdata.modified.toDate()
         } else {
             kvalitetsvurderingV2.modified.toDate()
-        }
-    }
-
-    /**
-     * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
-     */
-    private fun privateGetUnfinishedAsRawData(saksdataList: List<Saksdata>): List<AnonymizedUnfinishedVurderingV2> {
-        return saksdataList.map { saksdata ->
-            AnonymizedUnfinishedVurderingV2(
-                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
-                tilknyttetEnhet = saksdata.tilknyttetEnhet,
-                sakstypeId = saksdata.sakstype.id,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
-            )
         }
     }
 

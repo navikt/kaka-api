@@ -110,18 +110,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV1(
     val modifiedDate: Date,
 )
 
-data class AnonymizedUnfinishedVurdering(
-    /** unique and static id */
-    val id: UUID,
-    val sakstypeId: String,
-    val tilknyttetEnhet: String,
-
-    /** Første av de to created datoene (saksdata/kvalitetsvurdering). */
-    val createdDate: Date,
-    /** Siste av de to modified datoene (saksdata/kvalitetsvurdering). */
-    val modifiedDate: Date,
-)
-
 data class Date(
     val weekNumber: Int,
     val year: Int,

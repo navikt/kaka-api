@@ -122,18 +122,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV2(
     val modifiedDate: Date,
 )
 
-data class AnonymizedUnfinishedVurderingV2(
-    /** unique and static id */
-    val id: UUID,
-    val sakstypeId: String,
-    val tilknyttetEnhet: String,
-
-    /** Første av de to created datoene (saksdata/kvalitetsvurdering). */
-    val createdDate: Date,
-    /** Siste av de to modified datoene (saksdata/kvalitetsvurdering). */
-    val modifiedDate: Date,
-)
-
 data class ManagerResponseV2(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV2>,
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV2>>?,
