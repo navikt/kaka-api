@@ -426,7 +426,7 @@ class SaksdataService(
         val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
         val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
 
-        return saksdataRepository.findForVedtaksinstanslederV1(
+        return saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),
@@ -456,7 +456,7 @@ class SaksdataService(
         val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
         val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
 
-        return saksdataRepository.findForVedtaksinstanslederV2(
+        return saksdataRepository.findForVedtaksinstanslederWithEnhetV2(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),

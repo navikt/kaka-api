@@ -5,18 +5,31 @@ import java.time.LocalDateTime
 interface SaksdataRepositoryCustom {
 
     fun findForVedtaksinstanslederV1(
-        vedtaksinstansEnhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
 
-    fun findForVedtaksinstanslederV2(
-        vedtaksinstansEnhet: String,
+    fun findForVedtaksinstanslederWithEnhetV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
+        kommentarer: List<String>,
+        vedtaksinstansEnhet: String,
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+
+    fun findForVedtaksinstanslederV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
+
+    fun findForVedtaksinstanslederWithEnhetV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+        vedtaksinstansEnhet: String,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByAvsluttetAvSaksbehandlerBetweenV1(

@@ -154,32 +154,6 @@ class ExportServiceV1(
         }
     }
 
-    /**
-     * Return all 'unfinished' saksdata for ledere based on given months and saksbehandlere. Cannot not be current month.
-     */
-    fun getUnfinishedForLederAsRawData(
-        enhet: Enhet,
-        toMonth: YearMonth,
-        saksbehandlerIdentList: List<String>?
-    ): List<AnonymizedUnfinishedVurdering> {
-        validateNotCurrentMonth(toMonth)
-
-        val saksdataList = if (saksbehandlerIdentList == null) {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                enhet = enhet.navn,
-                toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
-            )
-        } else {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
-                enhet = enhet.navn,
-                toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
-                saksbehandlere = saksbehandlerIdentList,
-            )
-        }
-
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
-    }
-
     private fun validateNotCurrentMonth(toMonth: YearMonth) {
         if (toMonth == YearMonth.now()) {
             throw MissingTilgangException("Cannot fetch saksdata from current month")
@@ -222,33 +196,21 @@ class ExportServiceV1(
         vedtaksinstansEnhet: Enhet,
         mangelfullt: List<String>,
         kommentarer: List<String>,
-    ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
+    ): AnonymizedVedtaksinstanslederResponseV1 {
         val resultList =
             saksdataRepository.findForVedtaksinstanslederV1(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX),
-                vedtaksinstansEnhet = vedtaksinstansEnhet.navn,
                 mangelfullt = mangelfullt,
                 kommentarer = kommentarer,
             )
-        return privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = resultList)
-    }
 
-    /**
-     * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and saksbehandler
-     */
-    fun getFinishedAsRawDataByDatesAndSaksbehandler(
-        fromDate: LocalDate,
-        toDate: LocalDate,
-        saksbehandler: String
-    ): List<AnonymizedFinishedVurderingV1> {
-        val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV1(
-                fromDateTime = fromDate.atStartOfDay(),
-                toDateTime = toDate.atTime(LocalTime.MAX),
-                saksbehandler = saksbehandler,
-            )
-        return privateGetFinishedAsRawData(resultList = resultList)
+        val (mine, rest) = resultList.partition { it.saksdata.vedtaksinstansEnhet == vedtaksinstansEnhet.navn }
+
+        return AnonymizedVedtaksinstanslederResponseV1(
+            mine = privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = mine.toSet()),
+            rest = privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = rest.toSet()),
+        )
     }
 
     /**
@@ -282,21 +244,6 @@ class ExportServiceV1(
         val saksdataList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
                 toDateTime = toDate.atTime(LocalTime.MAX)
-            )
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
-    }
-
-    /**
-     * Return 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate and saksbehandler
-     */
-    fun getUnfinishedAsRawDataByToDateAndSaksbehandler(
-        toDate: LocalDate,
-        saksbehandler: String
-    ): List<AnonymizedUnfinishedVurdering> {
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
-                toDateTime = toDate.atTime(LocalTime.MAX),
-                saksbehandler = saksbehandler,
             )
         return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
     }
@@ -810,4 +757,9 @@ data class AnonymizedManagerResponseV1(
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV1>>,
     val mine: List<AnonymizedFinishedVurderingV1>,
     val rest: List<AnonymizedFinishedVurderingV1>
+)
+
+data class AnonymizedVedtaksinstanslederResponseV1(
+    val mine: List<AnonymizedFinishedVurderingWithoutEnheterV1>,
+    val rest: List<AnonymizedFinishedVurderingWithoutEnheterV1>
 )

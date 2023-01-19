@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.MyResponseV2
 import no.nav.klage.kaka.api.view.TotalResponseV2
 import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheterV2
+import no.nav.klage.kaka.api.view.VedtaksinstanslederResponseV2
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -96,7 +97,7 @@ class ExportControllerV2(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
         @RequestParam(required = false) mangelfullt: List<String>?,
-    ): TotalResponseWithoutEnheterV2 {
+    ): VedtaksinstanslederResponseV2 {
         logger.debug(
             "getTotalForVedtaksinstansleder() called. FromDate = {}, toDate = {}, mangelfullt = {}",
             fromDate,
@@ -111,13 +112,16 @@ class ExportControllerV2(
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
-        return TotalResponseWithoutEnheterV2(
-            anonymizedFinishedVurderingList = exportServiceV2.getFinishedAsRawDataByDatesForVedtaksinstansleder(
-                fromDate = fromDate,
-                toDate = toDate,
-                vedtaksinstansEnhet = enhet,
-                mangelfullt = mangelfullt ?: emptyList(),
-            )
+        val data = exportServiceV2.getFinishedAsRawDataByDatesForVedtaksinstansleder(
+            fromDate = fromDate,
+            toDate = toDate,
+            vedtaksinstansEnhet = enhet,
+            mangelfullt = mangelfullt ?: emptyList(),
+        )
+        return VedtaksinstanslederResponseV2(
+            anonymizedFinishedVurderingList = data.mine,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
 

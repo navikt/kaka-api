@@ -419,7 +419,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -461,7 +461,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -501,7 +501,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -542,7 +542,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -619,7 +619,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -660,7 +660,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -701,7 +701,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -743,7 +743,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -784,7 +784,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),

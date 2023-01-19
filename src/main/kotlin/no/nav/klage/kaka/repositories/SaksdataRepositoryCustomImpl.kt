@@ -237,12 +237,12 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .resultList
     }
 
-    override fun findForVedtaksinstanslederV1(
-        vedtaksinstansEnhet: String,
+    override fun findForVedtaksinstanslederWithEnhetV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
         kommentarer: List<String>,
+        vedtaksinstansEnhet: String,
     ): Set<QueryResultV1> {
         val query = """
             SELECT s, k 
@@ -267,11 +267,11 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
     }
 
-    override fun findForVedtaksinstanslederV2(
-        vedtaksinstansEnhet: String,
+    override fun findForVedtaksinstanslederWithEnhetV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
+        vedtaksinstansEnhet: String,
     ): Set<QueryResultV2> {
 
         val query = """
@@ -289,6 +289,59 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
 
         return entityManager.createQuery(query, Array::class.java)
             .setParameter("vedtaksinstansEnhet", vedtaksinstansEnhet)
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .setParameter("sakstype", Type.KLAGE)
+            .resultList
+            .mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    override fun findForVedtaksinstanslederV1(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+        kommentarer: List<String>,
+    ): Set<QueryResultV1> {
+        val query = """
+            SELECT s, k 
+            FROM Saksdata s 
+              LEFT JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id 
+              LEFT JOIN FETCH s.registreringshjemler h
+            WHERE s.kvalitetsvurderingReference.version = 1
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            AND s.sakstype = :sakstype
+            ${getMangelfulltQueryV1(mangelfullt)}
+            ${getKommentarerQueryV1(kommentarer)}
+            ORDER BY s.created
+        """
+
+        return entityManager.createQuery(query, Array::class.java)
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .setParameter("sakstype", Type.KLAGE)
+            .resultList
+            .mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+    }
+
+    override fun findForVedtaksinstanslederV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+    ): Set<QueryResultV2> {
+
+        val query = """
+            SELECT s, k 
+            FROM Saksdata s 
+              LEFT JOIN FETCH KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id 
+              LEFT JOIN FETCH s.registreringshjemler h
+            WHERE s.kvalitetsvurderingReference.version = 2
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            AND s.sakstype = :sakstype
+            ${getMangelfulltQueryV2(mangelfullt)}
+            ORDER BY s.created
+        """
+
+        return entityManager.createQuery(query, Array::class.java)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
