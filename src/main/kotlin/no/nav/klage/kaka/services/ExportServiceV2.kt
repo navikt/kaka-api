@@ -149,7 +149,7 @@ class ExportServiceV2(
         } else {
             val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
             AnonymizedManagerResponseV2(
-                saksbehandlere = null,
+                saksbehandlere = emptyMap(),
                 mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
                 rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
             )
@@ -918,7 +918,7 @@ data class AnonymizedMineRestResponseV2(
 )
 
 data class AnonymizedManagerResponseV2(
-    val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV2>>?,
+    val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV2>>,
     val mine: List<AnonymizedFinishedVurderingV2>,
     val rest: List<AnonymizedFinishedVurderingV2>
 )

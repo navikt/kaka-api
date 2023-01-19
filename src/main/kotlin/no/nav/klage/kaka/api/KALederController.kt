@@ -93,7 +93,7 @@ class KALederController(
             saksbehandlerIdentList = saksbehandlere,
         )
         return ManagerResponseV1(
-            anonymizedFinishedVurderingList = data.mine,
+            anonymizedFinishedVurderingList = data.mine + data.saksbehandlere.values.flatten(),
             saksbehandlere = data.saksbehandlere,
             mine = data.mine,
             rest = data.rest,
@@ -136,7 +136,7 @@ class KALederController(
             saksbehandlerIdentList = saksbehandlere,
         )
         return ManagerResponseV2(
-            anonymizedFinishedVurderingList = data.mine,
+            anonymizedFinishedVurderingList = data.mine + data.saksbehandlere.values.flatten(),
             saksbehandlere = data.saksbehandlere,
             mine = data.mine,
             rest = data.rest,
