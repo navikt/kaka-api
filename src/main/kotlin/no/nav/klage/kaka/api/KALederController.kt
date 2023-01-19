@@ -92,8 +92,13 @@ class KALederController(
             toMonth = YearMonth.parse(toMonth),
             saksbehandlerIdentList = saksbehandlere,
         )
+
         return ManagerResponseV1(
-            anonymizedFinishedVurderingList = data.mine + data.saksbehandlere.values.flatten(),
+            anonymizedFinishedVurderingList = if (saksbehandlere?.isNotEmpty() == true) {
+                data.saksbehandlere.values.flatten()
+            } else {
+                data.mine + data.saksbehandlere.values.flatten()
+            },
             saksbehandlere = data.saksbehandlere,
             mine = data.mine,
             rest = data.rest,
@@ -136,7 +141,11 @@ class KALederController(
             saksbehandlerIdentList = saksbehandlere,
         )
         return ManagerResponseV2(
-            anonymizedFinishedVurderingList = data.mine + data.saksbehandlere.values.flatten(),
+            anonymizedFinishedVurderingList = if (saksbehandlere?.isNotEmpty() == true) {
+                data.saksbehandlere.values.flatten()
+            } else {
+                data.mine + data.saksbehandlere.values.flatten()
+            },
             saksbehandlere = data.saksbehandlere,
             mine = data.mine,
             rest = data.rest,
