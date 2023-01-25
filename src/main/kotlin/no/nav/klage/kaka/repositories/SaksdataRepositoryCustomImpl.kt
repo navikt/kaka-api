@@ -66,7 +66,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             SELECT s, k
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
-             LEFT JOIN FETCH s.registreringshjemler h
+             LEFT JOIN FETCH s.registreringshjemler
+             ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
         """,
@@ -115,6 +116,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler h
+             ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.tilknyttetEnhet = :enhet
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
@@ -170,6 +172,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s 
               LEFT JOIN FETCH KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id 
               LEFT JOIN FETCH s.registreringshjemler h
+              ${getPossibleV2Joins(2)}
             WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
             AND s.kvalitetsvurderingReference.version = 2
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
@@ -225,6 +228,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s 
               LEFT JOIN FETCH KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id 
               LEFT JOIN FETCH s.registreringshjemler h
+              ${getPossibleV2Joins(2)}
             WHERE s.kvalitetsvurderingReference.version = 2
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             AND s.sakstype = :sakstype
@@ -238,5 +242,18 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("sakstype", Type.KLAGE)
             .resultList
             .mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    private fun getPossibleV2Joins(version: Int): String {
+        return if (version == 2) {
+            """
+                LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+                LEFT JOIN FETCH k.vedtaketLovbestemmelsenTolketFeilHjemlerList
+                LEFT JOIN FETCH k.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
+                LEFT JOIN FETCH k.vedtaketFeilKonkretRettsanvendelseHjemlerList
+            """
+        } else {
+            ""
+        }
     }
 }
