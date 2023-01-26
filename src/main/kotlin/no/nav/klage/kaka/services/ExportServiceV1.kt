@@ -143,7 +143,9 @@ class ExportServiceV1(
 
             //Replace those who have data
             resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.forEach {
-                saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
+                if (saksbehandlerMap.containsKey(it.key)) {
+                    saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
+                }
             }
 
             AnonymizedManagerResponseV1(
