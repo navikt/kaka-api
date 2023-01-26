@@ -1,9 +1,7 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.Saksbehandler
-import no.nav.klage.kaka.api.view.TotalResponseV1
-import no.nav.klage.kaka.api.view.TotalResponseV2
+import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_LEDERSTATISTIKK
@@ -75,7 +73,7 @@ class KALederController(
         @RequestParam(required = false) fromMonth: String?,
         @RequestParam(required = false) toMonth: String?,
         @RequestParam(required = false) saksbehandlere: List<String>?,
-    ): TotalResponseV1 {
+    ): ManagerResponseV1 {
         logger.debug(
             "getTotalForLeder() called. enhetsnummer param = $enhetsnummer, " +
                     "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
@@ -88,18 +86,22 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
-        return TotalResponseV1(
-            anonymizedFinishedVurderingList = exportServiceV1.getFinishedForLederAsRawData(
-                enhet = enhet,
-                fromMonth = YearMonth.parse(fromMonth),
-                toMonth = YearMonth.parse(toMonth),
-                saksbehandlerIdentList = saksbehandlere,
-            ),
-            anonymizedUnfinishedVurderingList = exportServiceV1.getUnfinishedForLederAsRawData(
-                enhet = enhet,
-                toMonth = YearMonth.parse(toMonth),
-                saksbehandlerIdentList = saksbehandlere,
-            )
+        val data = exportServiceV1.getFinishedForLederAsRawData(
+            enhet = enhet,
+            fromMonth = YearMonth.parse(fromMonth),
+            toMonth = YearMonth.parse(toMonth),
+            saksbehandlerIdentList = saksbehandlere,
+        )
+
+        return ManagerResponseV1(
+            anonymizedFinishedVurderingList = if (saksbehandlere?.isNotEmpty() == true) {
+                data.saksbehandlere.values.flatten()
+            } else {
+                data.mine + data.saksbehandlere.values.flatten()
+            },
+            saksbehandlere = data.saksbehandlere,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
 
@@ -109,7 +111,7 @@ class KALederController(
         @RequestParam(required = false) fromMonth: String?,
         @RequestParam(required = false) toMonth: String?,
         @RequestParam(required = false) saksbehandlere: List<String>?,
-    ): TotalResponseV1 {
+    ): ManagerResponseV1 {
         return getTotalForLeder(enhetsnummer, fromMonth, toMonth, saksbehandlere)
     }
 
@@ -119,7 +121,7 @@ class KALederController(
         @RequestParam(required = false) fromMonth: String?,
         @RequestParam(required = false) toMonth: String?,
         @RequestParam(required = false) saksbehandlere: List<String>?,
-    ): TotalResponseV2 {
+    ): ManagerResponseV2 {
         logger.debug(
             "getTotalForLederV2() called. enhetsnummer param = $enhetsnummer, " +
                     "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
@@ -132,18 +134,21 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
-        return TotalResponseV2(
-            anonymizedFinishedVurderingList = exportServiceV2.getFinishedForLederAsRawData(
-                enhet = enhet,
-                fromMonth = YearMonth.parse(fromMonth),
-                toMonth = YearMonth.parse(toMonth),
-                saksbehandlerIdentList = saksbehandlere,
-            ),
-            anonymizedUnfinishedVurderingList = exportServiceV2.getUnfinishedForLederAsRawData(
-                enhet = enhet,
-                toMonth = YearMonth.parse(toMonth),
-                saksbehandlerIdentList = saksbehandlere,
-            )
+        val data = exportServiceV2.getFinishedForLederAsRawData(
+            enhet = enhet,
+            fromMonth = YearMonth.parse(fromMonth),
+            toMonth = YearMonth.parse(toMonth),
+            saksbehandlerIdentList = saksbehandlere,
+        )
+        return ManagerResponseV2(
+            anonymizedFinishedVurderingList = if (saksbehandlere?.isNotEmpty() == true) {
+                data.saksbehandlere.values.flatten()
+            } else {
+                data.mine + data.saksbehandlere.values.flatten()
+            },
+            saksbehandlere = data.saksbehandlere,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
 

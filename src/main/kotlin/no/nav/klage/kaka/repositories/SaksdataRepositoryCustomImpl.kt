@@ -66,7 +66,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             SELECT s, k
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
-             LEFT JOIN FETCH s.registreringshjemler h
+             LEFT JOIN FETCH s.registreringshjemler
+             ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
         """,
@@ -75,58 +76,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
-    }
-
-    override fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV1(
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        saksbehandler: String,
-    ): Set<QueryResultV1> {
-        return privateFindByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
-            fromDateTime = fromDateTime,
-            toDateTime = toDateTime,
-            saksbehandler = saksbehandler,
-            version = 1,
-        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
-    }
-
-
-    override fun findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV2(
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        saksbehandler: String,
-    ): Set<QueryResultV2> {
-        return privateFindByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
-            fromDateTime = fromDateTime,
-            toDateTime = toDateTime,
-            saksbehandler = saksbehandler,
-            version = 2,
-        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
-    }
-
-    private fun privateFindByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreated(
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        saksbehandler: String,
-        version: Int,
-    ): List<Array<*>> {
-        val resultList = entityManager.createQuery(
-            """
-            SELECT s, k
-            FROM Saksdata s
-             LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
-             LEFT JOIN FETCH s.registreringshjemler h
-            WHERE s.kvalitetsvurderingReference.version = $version
-            AND s.utfoerendeSaksbehandler = :saksbehandler
-            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
-        """,
-            Array::class.java
-        )
-            .setParameter("fromDateTime", fromDateTime)
-            .setParameter("toDateTime", toDateTime)
-            .setParameter("saksbehandler", saksbehandler)
-            .resultList
-        return resultList
     }
 
     override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
@@ -167,6 +116,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler h
+             ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.tilknyttetEnhet = :enhet
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
@@ -180,70 +130,12 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .resultList
     }
 
-    override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
-        enhet: String,
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        saksbehandlerIdentList: List<String>
-    ): Set<QueryResultV1> {
-        return privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
-            enhet = enhet,
-            fromDateTime = fromDateTime,
-            toDateTime = toDateTime,
-            saksbehandlerIdentList = saksbehandlerIdentList,
-            version = 1,
-        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
-    }
-
-    override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV2(
-        enhet: String,
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        saksbehandlerIdentList: List<String>
-    ): Set<QueryResultV2> {
-        return privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
-            enhet = enhet,
-            fromDateTime = fromDateTime,
-            toDateTime = toDateTime,
-            saksbehandlerIdentList = saksbehandlerIdentList,
-            version = 2,
-        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
-    }
-
-    private fun privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreated(
-        enhet: String,
-        fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime,
-        saksbehandlerIdentList: List<String>,
-        version: Int
-    ): List<Array<*>> {
-        return entityManager.createQuery(
-            """
-            SELECT s, k
-            FROM Saksdata s
-             LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
-             LEFT JOIN FETCH s.registreringshjemler h
-            WHERE s.kvalitetsvurderingReference.version = $version
-            AND s.tilknyttetEnhet = :enhet
-            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
-            AND s.utfoerendeSaksbehandler IN :saksbehandlerIdentList
-            ORDER BY s.created
-        """,
-            Array::class.java
-        )
-            .setParameter("enhet", enhet)
-            .setParameter("fromDateTime", fromDateTime)
-            .setParameter("toDateTime", toDateTime)
-            .setParameter("saksbehandlerIdentList", saksbehandlerIdentList)
-            .resultList
-    }
-
-    override fun findForVedtaksinstanslederV1(
-        vedtaksinstansEnhet: String,
+    override fun findForVedtaksinstanslederWithEnhetV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
         kommentarer: List<String>,
+        vedtaksinstansEnhet: String,
     ): Set<QueryResultV1> {
         val query = """
             SELECT s, k 
@@ -268,11 +160,11 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
     }
 
-    override fun findForVedtaksinstanslederV2(
-        vedtaksinstansEnhet: String,
+    override fun findForVedtaksinstanslederWithEnhetV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
+        vedtaksinstansEnhet: String,
     ): Set<QueryResultV2> {
 
         val query = """
@@ -280,6 +172,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s 
               LEFT JOIN FETCH KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id 
               LEFT JOIN FETCH s.registreringshjemler h
+              ${getPossibleV2Joins(2)}
             WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
             AND s.kvalitetsvurderingReference.version = 2
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
@@ -295,5 +188,72 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .setParameter("sakstype", Type.KLAGE)
             .resultList
             .mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    override fun findForVedtaksinstanslederV1(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+        kommentarer: List<String>,
+    ): Set<QueryResultV1> {
+        val query = """
+            SELECT s, k 
+            FROM Saksdata s 
+              LEFT JOIN FETCH KvalitetsvurderingV1 k on s.kvalitetsvurderingReference.id = k.id 
+              LEFT JOIN FETCH s.registreringshjemler h
+            WHERE s.kvalitetsvurderingReference.version = 1
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            AND s.sakstype = :sakstype
+            ${getMangelfulltQueryV1(mangelfullt)}
+            ${getKommentarerQueryV1(kommentarer)}
+            ORDER BY s.created
+        """
+
+        return entityManager.createQuery(query, Array::class.java)
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .setParameter("sakstype", Type.KLAGE)
+            .resultList
+            .mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+    }
+
+    override fun findForVedtaksinstanslederV2(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+    ): Set<QueryResultV2> {
+
+        val query = """
+            SELECT s, k 
+            FROM Saksdata s 
+              LEFT JOIN FETCH KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id 
+              LEFT JOIN FETCH s.registreringshjemler h
+              ${getPossibleV2Joins(2)}
+            WHERE s.kvalitetsvurderingReference.version = 2
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            AND s.sakstype = :sakstype
+            ${getMangelfulltQueryV2(mangelfullt)}
+            ORDER BY s.created
+        """
+
+        return entityManager.createQuery(query, Array::class.java)
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .setParameter("sakstype", Type.KLAGE)
+            .resultList
+            .mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    private fun getPossibleV2Joins(version: Int): String {
+        return if (version == 2) {
+            """
+                LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+                LEFT JOIN FETCH k.vedtaketLovbestemmelsenTolketFeilHjemlerList
+                LEFT JOIN FETCH k.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
+                LEFT JOIN FETCH k.vedtaketFeilKonkretRettsanvendelseHjemlerList
+            """
+        } else {
+            ""
+        }
     }
 }

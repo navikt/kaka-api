@@ -1,8 +1,10 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
+import no.nav.klage.kaka.api.view.MyResponseV1
 import no.nav.klage.kaka.api.view.TotalResponseV1
 import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheterV1
+import no.nav.klage.kaka.api.view.VedtaksinstanslederResponseV1
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -38,21 +40,24 @@ class ExportControllerV1(
     fun getMyStats(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
-    ): TotalResponseV1 {
+    ): MyResponseV1 {
         logger.debug("getMyStats() called. FromDate = $fromDate, toDate = $toDate")
 
         val innloggetSaksbehandler = tokenUtil.getIdent()
 
-        return TotalResponseV1(
-            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesAndSaksbehandler(
-                fromDate = fromDate,
-                toDate = toDate,
-                saksbehandler = innloggetSaksbehandler,
-            ),
-            anonymizedUnfinishedVurderingList = exportServiceV1.getUnfinishedAsRawDataByToDateAndSaksbehandler(
-                toDate = toDate,
-                saksbehandler = innloggetSaksbehandler,
-            )
+        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+
+        val data = exportServiceV1.getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
+            fromDate = fromDate,
+            toDate = toDate,
+            enhet = enhet,
+            saksbehandler = innloggetSaksbehandler,
+        )
+
+        return MyResponseV1(
+            anonymizedFinishedVurderingList = data.mine,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
 
@@ -78,14 +83,13 @@ class ExportControllerV1(
     ): TotalResponseV1 {
         logger.debug("getTotal() called. FromDate = $fromDate, toDate = $toDate")
 
+        val anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDates(
+            fromDate = fromDate,
+            toDate = toDate
+        )
         return TotalResponseV1(
-            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDates(
-                fromDate = fromDate,
-                toDate = toDate
-            ),
-            anonymizedUnfinishedVurderingList = exportServiceV1.getUnfinishedAsRawDataByToDate(
-                toDate = toDate
-            )
+            anonymizedFinishedVurderingList = anonymizedFinishedVurderingList,
+            rest = anonymizedFinishedVurderingList,
         )
     }
 
@@ -95,7 +99,7 @@ class ExportControllerV1(
         @RequestParam toDate: LocalDate,
         @RequestParam(required = false) mangelfullt: List<String>?,
         @RequestParam(required = false) kommentarer: List<String>?,
-    ): TotalResponseWithoutEnheterV1 {
+    ): VedtaksinstanslederResponseV1 {
         logger.debug(
             "getTotalForVedtaksinstansleder() called. FromDate = {}, toDate = {}, mangelfullt = {}, kommentarer = {}",
             fromDate,
@@ -111,15 +115,17 @@ class ExportControllerV1(
 
         val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
 
-        return TotalResponseWithoutEnheterV1(
-            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesForVedtaksinstansleder(
-                fromDate = fromDate,
-                toDate = toDate,
-                vedtaksinstansEnhet = enhet,
-                mangelfullt = mangelfullt ?: emptyList(),
-                kommentarer = kommentarer ?: emptyList(),
-            )
+        val data = exportServiceV1.getFinishedAsRawDataByDatesForVedtaksinstansleder(
+            fromDate = fromDate,
+            toDate = toDate,
+            vedtaksinstansEnhet = enhet,
+            mangelfullt = mangelfullt ?: emptyList(),
+            kommentarer = kommentarer ?: emptyList(),
+        )
+        return VedtaksinstanslederResponseV1(
+            anonymizedFinishedVurderingList = data.mine,
+            mine = data.mine,
+            rest = data.rest,
         )
     }
-
 }

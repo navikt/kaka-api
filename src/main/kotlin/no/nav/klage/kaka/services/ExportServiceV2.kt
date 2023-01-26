@@ -2,12 +2,10 @@ package no.nav.klage.kaka.services
 
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingV2
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV2
-import no.nav.klage.kaka.api.view.AnonymizedUnfinishedVurderingV2
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.MissingTilgangException
-import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
 import no.nav.klage.kaka.services.ExportServiceV2.Field.Type.*
@@ -25,7 +23,6 @@ import java.util.*
 @Service
 class ExportServiceV2(
     private val saksdataRepository: SaksdataRepository,
-    private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
 ) {
 
     /**
@@ -125,54 +122,35 @@ class ExportServiceV2(
         fromMonth: YearMonth,
         toMonth: YearMonth,
         saksbehandlerIdentList: List<String>?
-    ): List<AnonymizedFinishedVurderingV2> {
+    ): AnonymizedManagerResponseV2 {
         validateNotCurrentMonth(toMonth)
 
         val fromDateTime = fromMonth.atDay(1).atStartOfDay()
         val toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX)
 
-        val resultList = if (saksbehandlerIdentList == null) {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
-                enhet = enhet.navn,
-                fromDateTime = fromDateTime,
-                toDateTime = toDateTime,
+        val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV2(
+            fromDateTime = fromDateTime,
+            toDateTime = toDateTime,
+        )
+
+        return if (!saksbehandlerIdentList.isNullOrEmpty()) {
+            val (mine, rest) = resultList.filter { it.saksdata.utfoerendeSaksbehandler !in saksbehandlerIdentList }
+                .partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+            AnonymizedManagerResponseV2(
+                saksbehandlere = resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.map {
+                    it.key to privateGetFinishedAsRawData(resultList = it.value.toSet())
+                }.toMap().filter { it.key in saksbehandlerIdentList },
+                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
             )
         } else {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV2(
-                enhet = enhet.navn,
-                fromDateTime = fromDateTime,
-                toDateTime = toDateTime,
-                saksbehandlerIdentList = saksbehandlerIdentList,
+            val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+            AnonymizedManagerResponseV2(
+                saksbehandlere = emptyMap(),
+                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
             )
         }
-
-        return privateGetFinishedAsRawData(resultList = resultList)
-    }
-
-    /**
-     * Return all 'unfinished' saksdata for ledere based on given months and saksbehandlere. Cannot not be current month.
-     */
-    fun getUnfinishedForLederAsRawData(
-        enhet: Enhet,
-        toMonth: YearMonth,
-        saksbehandlerIdentList: List<String>?
-    ): List<AnonymizedUnfinishedVurderingV2> {
-        validateNotCurrentMonth(toMonth)
-
-        val saksdataList = if (saksbehandlerIdentList == null) {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                enhet = enhet.navn,
-                toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
-            )
-        } else {
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
-                enhet = enhet.navn,
-                toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX),
-                saksbehandlere = saksbehandlerIdentList,
-            )
-        }
-
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
     }
 
     private fun validateNotCurrentMonth(toMonth: YearMonth) {
@@ -216,58 +194,44 @@ class ExportServiceV2(
         toDate: LocalDate,
         vedtaksinstansEnhet: Enhet,
         mangelfullt: List<String>,
-    ): List<AnonymizedFinishedVurderingWithoutEnheterV2> {
+    ): AnonymizedVedtaksinstanslederResponseV2 {
         val resultList =
             saksdataRepository.findForVedtaksinstanslederV2(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX),
-                vedtaksinstansEnhet = vedtaksinstansEnhet.navn,
                 mangelfullt = mangelfullt,
             )
-        return privateGetFinishedAsRawDataWithoutEnheterWithVersion2(resultList = resultList)
+
+        val (mine, rest) = resultList.partition { it.saksdata.vedtaksinstansEnhet == vedtaksinstansEnhet.navn }
+
+        return AnonymizedVedtaksinstanslederResponseV2(
+            mine = privateGetFinishedAsRawDataWithoutEnheterWithVersion2(resultList = mine.toSet()),
+            rest = privateGetFinishedAsRawDataWithoutEnheterWithVersion2(resultList = rest.toSet()),
+        )
     }
 
     /**
-     * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and saksbehandler
+     * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and klageenhet minus given saksbehandler
      */
-    fun getFinishedAsRawDataByDatesAndSaksbehandler(
+    fun getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
         fromDate: LocalDate,
         toDate: LocalDate,
-        saksbehandler: String
-    ): List<AnonymizedFinishedVurderingV2> {
+        saksbehandler: String,
+        enhet: Enhet,
+    ): AnonymizedMineRestResponseV2 {
         val resultList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV2(
+            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
                 fromDateTime = fromDate.atStartOfDay(),
                 toDateTime = toDate.atTime(LocalTime.MAX),
-                saksbehandler = saksbehandler,
+                enhet = enhet.navn,
             )
-        return privateGetFinishedAsRawData(resultList = resultList)
-    }
 
-    /**
-     * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
-     */
-    fun getUnfinishedAsRawDataByToDate(toDate: LocalDate): List<AnonymizedUnfinishedVurderingV2> {
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                toDateTime = toDate.atTime(LocalTime.MAX)
-            )
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
-    }
+        val (mine, rest) = resultList.partition { it.saksdata.utfoerendeSaksbehandler == saksbehandler }
 
-    /**
-     * Return 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate and saksbehandler
-     */
-    fun getUnfinishedAsRawDataByToDateAndSaksbehandler(
-        toDate: LocalDate,
-        saksbehandler: String
-    ): List<AnonymizedUnfinishedVurderingV2> {
-        val saksdataList =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
-                toDateTime = toDate.atTime(LocalTime.MAX),
-                saksbehandler = saksbehandler,
-            )
-        return privateGetUnfinishedAsRawData(saksdataList = saksdataList)
+        return AnonymizedMineRestResponseV2(
+            mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+            rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
+        )
     }
 
     /**
@@ -548,21 +512,6 @@ class ExportServiceV2(
             saksdata.modified.toDate()
         } else {
             kvalitetsvurderingV2.modified.toDate()
-        }
-    }
-
-    /**
-     * Return all 'unfinished' saksdata (anonymized (no fnr or navIdent)) based on given toDate
-     */
-    private fun privateGetUnfinishedAsRawData(saksdataList: List<Saksdata>): List<AnonymizedUnfinishedVurderingV2> {
-        return saksdataList.map { saksdata ->
-            AnonymizedUnfinishedVurderingV2(
-                id = UUID.nameUUIDFromBytes(saksdata.id.toString().toByteArray()),
-                tilknyttetEnhet = saksdata.tilknyttetEnhet,
-                sakstypeId = saksdata.sakstype.id,
-                createdDate = getCreatedDate(saksdata),
-                modifiedDate = getModifiedDate(saksdata),
-            )
         }
     }
 
@@ -906,3 +855,19 @@ private fun LocalDate.toDate(): Date {
         epochDay = this.toEpochDay().toInt()
     )
 }
+
+data class AnonymizedMineRestResponseV2(
+    val mine: List<AnonymizedFinishedVurderingV2>,
+    val rest: List<AnonymizedFinishedVurderingV2>,
+)
+
+data class AnonymizedManagerResponseV2(
+    val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV2>>,
+    val mine: List<AnonymizedFinishedVurderingV2>,
+    val rest: List<AnonymizedFinishedVurderingV2>
+)
+
+data class AnonymizedVedtaksinstanslederResponseV2(
+    val mine: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
+    val rest: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
+)

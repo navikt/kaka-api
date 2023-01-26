@@ -170,7 +170,7 @@ class SaksdataRepositoryTest {
     }
 
     @Test
-    fun `stats for finished and unfinished based on dates works kvalitetsvurderingV1`() {
+    fun `stats for finished based on dates works kvalitetsvurderingV1`() {
         val utfoerendeSaksbehandler = "abc123"
         val saksdataFullfoertx = Saksdata(
             utfoerendeSaksbehandler = "someoneelse",
@@ -202,32 +202,12 @@ class SaksdataRepositoryTest {
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
         )
-        val saksdataPaagaaende1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            tilknyttetEnhet = "4295",
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1()).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
-        )
-        val saksdataPaagaaende2 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            tilknyttetEnhet = "4295",
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1()).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
-        )
 
         saksdataRepository.saveAll(
             mutableListOf(
                 saksdataFullfoertx,
                 saksdataFullfoert1,
                 saksdataFullfoert2,
-                saksdataPaagaaende1,
-                saksdataPaagaaende2
             )
         )
 
@@ -240,12 +220,6 @@ class SaksdataRepositoryTest {
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
             )
         assertThat(finished).hasSize(2)
-
-        val unfinished =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
-            )
-        assertThat(unfinished).hasSize(1)
     }
 
     @Test
@@ -419,7 +393,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -461,7 +435,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -501,7 +475,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -542,7 +516,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -619,7 +593,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -660,7 +634,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -701,7 +675,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -743,7 +717,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -784,7 +758,7 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdata =
-            saksdataRepository.findForVedtaksinstanslederV1(
+            saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
                 vedtaksinstansEnhet = vedtaksinstansEnhet,
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
@@ -829,37 +803,11 @@ class SaksdataRepositoryTest {
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
         )
-        val saksdataPaagaaende1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            tilknyttetEnhet = "4295",
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
-        )
-        val saksdataPaagaaende2 = Saksdata(
-            utfoerendeSaksbehandler = "zxc",
-            tilknyttetEnhet = "4295",
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
-        )
 
         saksdataRepository.saveAll(
             mutableListOf(
                 saksdataFullfoertInSamevedtaksinstans,
                 saksdataFullfoertOtherVedtaksinstans,
-                saksdataPaagaaende1,
-                saksdataPaagaaende2
             )
         )
 
@@ -867,21 +815,12 @@ class SaksdataRepositoryTest {
         testEntityManager.clear()
 
         val saksdataAvsluttet =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerOrderByCreatedV1(
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 fromDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.MIN),
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
-                saksbehandler = utfoerendeSaksbehandler,
             )
-        assertThat(saksdataAvsluttet).hasSize(1)
-        assertThat(saksdataAvsluttet.first().saksdata).isEqualTo(saksdataFullfoertInSamevedtaksinstans)
-
-        val saksdataPaagaaende =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerOrderByCreated(
-                toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
-                saksbehandler = utfoerendeSaksbehandler,
-            )
-        assertThat(saksdataPaagaaende).hasSize(1)
-        assertThat(saksdataPaagaaende.first()).isEqualTo(saksdataPaagaaende1)
+        assertThat(saksdataAvsluttet).hasSize(2)
+        assertThat(saksdataAvsluttet.map { it.saksdata }).contains(saksdataFullfoertInSamevedtaksinstans)
     }
 
 
@@ -957,273 +896,6 @@ class SaksdataRepositoryTest {
             )
         assertThat(results).hasSize(1)
         assertThat(results.first().saksdata).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1)
-    }
-
-    @Test
-    fun `findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV1`() {
-        val utfoerendeSaksbehandler1 = "abc123"
-        val utfoerendeSaksbehandler2 = "abc321"
-        val vedtaksinstansEnhet = "4020"
-        val tilknyttetEnhet1 = "4295"
-        val tilknyttetEnhet2 = "4293"
-
-        val avsluttetAvSaksbehandler1 = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON)
-        val avsluttetAvSaksbehandler2 = LocalDateTime.of(LocalDate.of(2022, Month.DECEMBER, 14), LocalTime.NOON)
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-            avsluttetAvSaksbehandler = avsluttetAvSaksbehandler1
-        )
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler2 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler2,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-            avsluttetAvSaksbehandler = avsluttetAvSaksbehandler1
-        )
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler2UtfoerendeSaksbehandler1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-            avsluttetAvSaksbehandler = avsluttetAvSaksbehandler2
-        )
-
-        val saksdataTilknyttetEnhet2AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet2,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
-            avsluttetAvSaksbehandler = avsluttetAvSaksbehandler1
-        )
-
-        saksdataRepository.saveAll(
-            mutableListOf(
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1,
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler2,
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler2UtfoerendeSaksbehandler1,
-                saksdataTilknyttetEnhet2AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1,
-            )
-        )
-
-        testEntityManager.flush()
-        testEntityManager.clear()
-
-        val results =
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenAndUtfoerendeSaksbehandlerInOrderByCreatedV1(
-                enhet = tilknyttetEnhet1,
-                fromDateTime = avsluttetAvSaksbehandler1.minusMonths(1),
-                toDateTime = avsluttetAvSaksbehandler1.plusMonths(1),
-                saksbehandlerIdentList = listOf(utfoerendeSaksbehandler1, utfoerendeSaksbehandler2)
-
-            )
-
-        assertThat(results.map { it.saksdata }).containsExactlyInAnyOrder(
-            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler1,
-            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1UtfoerendeSaksbehandler2
-        )
-    }
-
-    @Test
-    fun `findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreatedV1`() {
-        val utfoerendeSaksbehandler1 = "abc123"
-        val vedtaksinstansEnhet = "4020"
-        val tilknyttetEnhet1 = "4295"
-        val tilknyttetEnhet2 = "4293"
-
-        val created1 = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON)
-        val created2 = LocalDateTime.of(LocalDate.of(2022, Month.DECEMBER, 14), LocalTime.NOON)
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created1,
-        )
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIs2Created1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created1,
-            avsluttetAvSaksbehandler = created2,
-        )
-
-        val saksdataTilknyttetEnhet2AvsluttetAvSaksbehandlerIsNullCreated1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet2,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created1,
-        )
-
-        saksdataRepository.saveAll(
-            mutableListOf(
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1,
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIs2Created1,
-                saksdataTilknyttetEnhet2AvsluttetAvSaksbehandlerIsNullCreated1,
-            )
-        )
-
-        testEntityManager.flush()
-        testEntityManager.clear()
-
-        val results =
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanOrderByCreated(
-                enhet = tilknyttetEnhet1,
-                toDateTime = created1.plusMonths(1),
-
-                )
-        assertThat(results).hasSize(1)
-        assertThat(results.first()).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1)
-    }
-
-    @Test
-    fun `findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreatedV1`() {
-        val utfoerendeSaksbehandler1 = "abc123"
-        val utfoerendeSaksbehandler2 = "abc321"
-        val vedtaksinstansEnhet = "4020"
-        val tilknyttetEnhet1 = "4295"
-        val tilknyttetEnhet2 = "4293"
-
-        val created1 = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON)
-        val created2 = LocalDateTime.of(LocalDate.of(2022, Month.DECEMBER, 14), LocalTime.NOON)
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created1,
-        )
-
-        val saksdataTilknyttetEnhet2AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet2,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created1,
-        )
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler2Created1UtfoerendeSaksbehandler1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet2,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created1,
-            avsluttetAvSaksbehandler = created2,
-        )
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated2UtfoerendeSaksbehandler1 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler1,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created2,
-        )
-
-        val saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler2 = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler2,
-            tilknyttetEnhet = tilknyttetEnhet1,
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV1Repository.save(
-                    KvalitetsvurderingV1()
-                ).id,
-                version = 1,
-            ),
-            created = created1,
-        )
-
-        saksdataRepository.saveAll(
-            mutableListOf(
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1,
-                saksdataTilknyttetEnhet2AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1,
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler2Created1UtfoerendeSaksbehandler1,
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated2UtfoerendeSaksbehandler1,
-                saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler2,
-            )
-        )
-
-        testEntityManager.flush()
-        testEntityManager.clear()
-
-        val results =
-            saksdataRepository.findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerIsNullAndCreatedLessThanAndUtfoerendeSaksbehandlerInOrderByCreated(
-                enhet = tilknyttetEnhet1,
-                toDateTime = created1.plusMonths(1),
-                saksbehandlere = listOf(utfoerendeSaksbehandler1),
-            )
-        assertThat(results).hasSize(1)
-        assertThat(results.first()).isEqualTo(
-            saksdataTilknyttetEnhet1AvsluttetAvSaksbehandlerIsNullCreated1UtfoerendeSaksbehandler1
-        )
     }
 }
 

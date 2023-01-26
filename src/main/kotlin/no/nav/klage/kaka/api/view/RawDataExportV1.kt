@@ -110,18 +110,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV1(
     val modifiedDate: Date,
 )
 
-data class AnonymizedUnfinishedVurdering(
-    /** unique and static id */
-    val id: UUID,
-    val sakstypeId: String,
-    val tilknyttetEnhet: String,
-
-    /** Første av de to created datoene (saksdata/kvalitetsvurdering). */
-    val createdDate: Date,
-    /** Siste av de to modified datoene (saksdata/kvalitetsvurdering). */
-    val modifiedDate: Date,
-)
-
 data class Date(
     val weekNumber: Int,
     val year: Int,
@@ -131,11 +119,30 @@ data class Date(
     val epochDay: Int
 )
 
+data class ManagerResponseV1(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
+    val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV1>>?,
+    val mine: List<AnonymizedFinishedVurderingV1>,
+    val rest: List<AnonymizedFinishedVurderingV1>,
+)
+
 data class TotalResponseV1(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
-    val anonymizedUnfinishedVurderingList: List<AnonymizedUnfinishedVurdering>,
+    val rest: List<AnonymizedFinishedVurderingV1>,
+)
+
+data class MyResponseV1(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
+    val mine: List<AnonymizedFinishedVurderingV1>,
+    val rest: List<AnonymizedFinishedVurderingV1>,
 )
 
 data class TotalResponseWithoutEnheterV1(
-    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheterV1>
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheterV1>,
+)
+
+data class VedtaksinstanslederResponseV1(
+    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheterV1>,
+    val mine: List<AnonymizedFinishedVurderingWithoutEnheterV1>,
+    val rest: List<AnonymizedFinishedVurderingWithoutEnheterV1>,
 )
