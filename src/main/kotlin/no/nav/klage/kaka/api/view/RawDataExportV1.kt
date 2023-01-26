@@ -139,6 +139,7 @@ data class MyResponseV1(
 
 data class TotalResponseWithoutEnheterV1(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheterV1>,
+    val rest: List<AnonymizedFinishedVurderingWithoutEnheterV1>,
 )
 
 data class VedtaksinstanslederResponseV1(

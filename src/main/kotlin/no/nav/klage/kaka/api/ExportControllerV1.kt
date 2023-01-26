@@ -68,11 +68,13 @@ class ExportControllerV1(
     ): TotalResponseWithoutEnheterV1 {
         logger.debug("getOpen() called. fromDate = $fromDate, toDate = $toDate")
 
+        val anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesWithoutEnheter(
+            fromDate = fromDate,
+            toDate = toDate
+        )
         return TotalResponseWithoutEnheterV1(
-            anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesWithoutEnheter(
-                fromDate = fromDate,
-                toDate = toDate
-            )
+            anonymizedFinishedVurderingList = anonymizedFinishedVurderingList,
+            rest = anonymizedFinishedVurderingList,
         )
     }
 
