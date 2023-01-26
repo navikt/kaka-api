@@ -136,10 +136,18 @@ class ExportServiceV2(
         return if (!saksbehandlerIdentList.isNullOrEmpty()) {
             val (mine, rest) = resultList.filter { it.saksdata.utfoerendeSaksbehandler !in saksbehandlerIdentList }
                 .partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+
+            val saksbehandlerMap = saksbehandlerIdentList.associateWith { _ ->
+                emptyList<AnonymizedFinishedVurderingV2>()
+            }.toMutableMap()
+
+            //Replace those who have data
+            resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.forEach {
+                saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
+            }
+
             AnonymizedManagerResponseV2(
-                saksbehandlere = resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.map {
-                    it.key to privateGetFinishedAsRawData(resultList = it.value.toSet())
-                }.toMap().filter { it.key in saksbehandlerIdentList },
+                saksbehandlere = saksbehandlerMap,
                 mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
                 rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
             )
