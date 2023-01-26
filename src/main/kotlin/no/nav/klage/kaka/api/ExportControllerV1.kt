@@ -2,8 +2,8 @@ package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.MyResponseV1
+import no.nav.klage.kaka.api.view.OpenResponseWithoutEnheterV1
 import no.nav.klage.kaka.api.view.TotalResponseV1
-import no.nav.klage.kaka.api.view.TotalResponseWithoutEnheterV1
 import no.nav.klage.kaka.api.view.VedtaksinstanslederResponseV1
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
@@ -65,14 +65,14 @@ class ExportControllerV1(
     fun getOpen(
         @RequestParam fromDate: LocalDate,
         @RequestParam toDate: LocalDate,
-    ): TotalResponseWithoutEnheterV1 {
+    ): OpenResponseWithoutEnheterV1 {
         logger.debug("getOpen() called. fromDate = $fromDate, toDate = $toDate")
 
         val anonymizedFinishedVurderingList = exportServiceV1.getFinishedAsRawDataByDatesWithoutEnheter(
             fromDate = fromDate,
             toDate = toDate
         )
-        return TotalResponseWithoutEnheterV1(
+        return OpenResponseWithoutEnheterV1(
             anonymizedFinishedVurderingList = anonymizedFinishedVurderingList,
             rest = anonymizedFinishedVurderingList,
         )

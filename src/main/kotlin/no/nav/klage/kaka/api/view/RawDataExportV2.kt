@@ -140,7 +140,7 @@ data class MyResponseV2(
     val rest: List<AnonymizedFinishedVurderingV2>,
 )
 
-data class TotalResponseWithoutEnheterV2(
+data class OpenResponseWithoutEnheterV2(
     val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
     val rest: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
 )
