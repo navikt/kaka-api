@@ -137,7 +137,7 @@ class ExportServiceV1(
             val (mine, rest) = resultList.filter { it.saksdata.utfoerendeSaksbehandler !in saksbehandlerIdentList }
                 .partition { it.saksdata.tilknyttetEnhet == enhet.navn }
 
-            val saksbehandlerMap = saksbehandlerIdentList.associateWith { ident ->
+            val saksbehandlerMap = saksbehandlerIdentList.associateWith { _ ->
                 emptyList<AnonymizedFinishedVurderingV1>()
             }.toMutableMap()
 
