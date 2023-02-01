@@ -286,6 +286,17 @@ class KvalitetsvurderingV2(
                     createMissingChecksValidationError(::vedtaketFeilKonkretRettsanvendelseHjemlerList.name)
                 )
             }
+
+            if (vedtaketIkkeKonkretIndividuellBegrunnelse) {
+                if (!vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum &&
+                    !vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum &&
+                    !vedtaketIkkeKonkretIndividuellBegrunnelseMyeStandardtekst
+                ) {
+                    result.add(
+                        createMissingChecksValidationError(::vedtaketIkkeKonkretIndividuellBegrunnelse.name + "Group")
+                    )
+                }
+            }
         }
 
         if (ytelse in raadgivendeLegeYtelser) {
@@ -328,6 +339,15 @@ class KvalitetsvurderingV2(
                 result.add(
                     createMissingChecksValidationError(::klageforberedelsen.name + "Group")
                 )
+            } else if (klageforberedelsenSakensDokumenter) {
+                if (!klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert &&
+                    !klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn &&
+                    !klageforberedelsenSakensDokumenterManglerFysiskSaksmappe
+                ) {
+                    result.add(
+                        createMissingChecksValidationError(::klageforberedelsenSakensDokumenter.name + "Group")
+                    )
+                }
             }
         }
         return result
