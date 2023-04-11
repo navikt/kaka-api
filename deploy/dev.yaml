@@ -2,6 +2,9 @@ ingress:
   - https://kaka-api.dev.nav.no
 externalHosts:
   - host: login.microsoftonline.com
+  - host: pdl-api.dev-fss-pub.nais.io
+  - host: api-gw-q1.oera.no
+  - host: norg2.dev-fss-pub.nais.io
 springProfile: dev-gcp
 tenant: trygdeetaten.no
 kafka_pool: nav-dev
