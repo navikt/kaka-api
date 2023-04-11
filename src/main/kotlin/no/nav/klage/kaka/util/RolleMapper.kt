@@ -25,23 +25,23 @@ class RolleMapper(
     @Value("\${ROLE_KLAGE_LEDER}") private val klageLederRole: String,
 ) {
     private val rolleMap = mapOf(
-        kakaKvalitetsvurderingRoleId to ROLE_KAKA_KVALITETSVURDERING,
-        kakaKvalitetstilbakemeldingerRoleId to ROLE_KAKA_KVALITETSTILBAKEMELDINGER,
-        kakaTotalstatistikkRoleId to ROLE_KAKA_TOTALSTATISTIKK,
-        kakaLederstatistikkRoleId to ROLE_KAKA_LEDERSTATISTIKK,
+        kakaKvalitetsvurderingRoleId to setOf(ROLE_KAKA_KVALITETSVURDERING),
+        kakaKvalitetstilbakemeldingerRoleId to setOf(ROLE_KAKA_KVALITETSTILBAKEMELDINGER),
+        kakaTotalstatistikkRoleId to setOf(ROLE_KAKA_TOTALSTATISTIKK),
+        kakaLederstatistikkRoleId to setOf(ROLE_KAKA_LEDERSTATISTIKK),
 
-        egenAnsattRoleId to ROLE_KLAGE_EGEN_ANSATT,
-        fortroligRoleId to ROLE_KLAGE_FORTROLIG,
-        strengtFortroligRoleId to ROLE_KLAGE_STRENGT_FORTROLIG,
+        egenAnsattRoleId to setOf(ROLE_KLAGE_EGEN_ANSATT, EGEN_ANSATT),
+        fortroligRoleId to setOf(ROLE_KLAGE_FORTROLIG, FORTROLIG),
+        strengtFortroligRoleId to setOf(ROLE_KLAGE_STRENGT_FORTROLIG, STRENGT_FORTROLIG),
 
-        adminRoleId to ROLE_ADMIN,
+        adminRoleId to setOf(ROLE_ADMIN),
 
         //TODO: Dette er samme uuid som KABAL_INNSYN_EGEN_ENHET_ROLE_ID. Overflødig her?
-        klageLederRole to ROLE_KLAGE_LEDER,
+        klageLederRole to setOf(ROLE_KLAGE_LEDER),
     )
 
     fun toRoles(roleIdList: List<String>): Set<Role> {
-        val roles = roleIdList.mapNotNull { rolleMap[it] }.toMutableSet()
+        val roles = roleIdList.mapNotNull { rolleMap[it] }.flatten().toMutableSet()
 
         //TODO: Review all special handling after 2022-04-01
 
