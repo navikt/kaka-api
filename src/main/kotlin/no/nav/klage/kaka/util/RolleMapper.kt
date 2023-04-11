@@ -19,7 +19,7 @@ class RolleMapper(
     @Value("\${FORTROLIG_ROLE_ID}") private val fortroligRoleId: String,
     @Value("\${STRENGT_FORTROLIG_ROLE_ID}") private val strengtFortroligRoleId: String,
 
-    @Value("\${KABAL_ADMIN_ROLE_ID}") private val adminRoleId: String,
+    @Value("\${ADMIN_ROLE_ID}") private val adminRoleId: String,
 
     //TODO: Sjekk om viktig.
     @Value("\${ROLE_KLAGE_LEDER}") private val klageLederRole: String,

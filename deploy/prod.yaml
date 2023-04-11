@@ -31,5 +31,5 @@ groups:
     value: 596cbd6f-bc5c-4a4c-bf9e-9f734d556051
   - name: KAKA_LEDERSTATISTIKK_ROLE_ID
     value: d399dc50-0e80-47fd-8b0e-4118c0fc5c9b
-  - name: KABAL_ADMIN_ROLE_ID
+  - name: ADMIN_ROLE_ID
     value: cd78b8e8-73a3-4fb6-8234-7bebb5e5b9e9
