@@ -10,31 +10,33 @@ import org.springframework.stereotype.Component
 @Component
 class RolleMapper(
     private val azureGateway: AzureGateway,
-    @Value("\${ROLE_KAKA_KVALITETSVURDERING}") private val kakaKvalitetsvurderingRole: String,
-    @Value("\${ROLE_KAKA_KVALITETSTILBAKEMELDINGER}") private val kakaKvalitetstilbakemeldingerRole: String,
-    @Value("\${ROLE_KAKA_TOTALSTATISTIKK}") private val kakaTotalstatistikkRole: String,
-    @Value("\${ROLE_KAKA_LEDERSTATISTIKK}") private val kakaLederstatistikkRole: String,
+    @Value("\${KAKA_KVALITETSVURDERING_ROLE_ID}") private val kakaKvalitetsvurderingRoleId: String,
+    @Value("\${KAKA_KVALITETSTILBAKEMELDING_ROLE_ID}") private val kakaKvalitetstilbakemeldingerRoleId: String,
+    @Value("\${KAKA_TOTALSTATISTIKK_ROLE_ID}") private val kakaTotalstatistikkRoleId: String,
+    @Value("\${KAKA_LEDERSTATISTIKK_ROLE_ID}") private val kakaLederstatistikkRoleId: String,
 
-    @Value("\${ROLE_KLAGE_EGEN_ANSATT}") private val kanBehandleEgenAnsattRole: String,
-    @Value("\${ROLE_KLAGE_FORTROLIG}") private val kanBehandleFortroligRole: String,
-    @Value("\${ROLE_KLAGE_STRENGT_FORTROLIG}") private val kanBehandleStrengtFortroligRole: String,
+    @Value("\${EGEN_ANSATT_ROLE_ID}") private val egenAnsattRoleId: String,
+    @Value("\${FORTROLIG_ROLE_ID}") private val fortroligRoleId: String,
+    @Value("\${STRENGT_FORTROLIG_ROLE_ID}") private val strengtFortroligRoleId: String,
 
-    @Value("\${ROLE_ADMIN}") private val adminRole: String,
+    @Value("\${KABAL_ADMIN_ROLE_ID}") private val adminRoleId: String,
 
+    //TODO: Sjekk om viktig.
     @Value("\${ROLE_KLAGE_LEDER}") private val klageLederRole: String,
 ) {
     private val rolleMap = mapOf(
-        kakaKvalitetsvurderingRole to ROLE_KAKA_KVALITETSVURDERING,
-        kakaKvalitetstilbakemeldingerRole to ROLE_KAKA_KVALITETSTILBAKEMELDINGER,
-        kakaTotalstatistikkRole to ROLE_KAKA_TOTALSTATISTIKK,
-        kakaLederstatistikkRole to ROLE_KAKA_LEDERSTATISTIKK,
+        kakaKvalitetsvurderingRoleId to ROLE_KAKA_KVALITETSVURDERING,
+        kakaKvalitetstilbakemeldingerRoleId to ROLE_KAKA_KVALITETSTILBAKEMELDINGER,
+        kakaTotalstatistikkRoleId to ROLE_KAKA_TOTALSTATISTIKK,
+        kakaLederstatistikkRoleId to ROLE_KAKA_LEDERSTATISTIKK,
 
-        kanBehandleEgenAnsattRole to ROLE_KLAGE_EGEN_ANSATT,
-        kanBehandleFortroligRole to ROLE_KLAGE_FORTROLIG,
-        kanBehandleStrengtFortroligRole to ROLE_KLAGE_STRENGT_FORTROLIG,
+        egenAnsattRoleId to ROLE_KLAGE_EGEN_ANSATT,
+        fortroligRoleId to ROLE_KLAGE_FORTROLIG,
+        strengtFortroligRoleId to ROLE_KLAGE_STRENGT_FORTROLIG,
 
-        adminRole to ROLE_ADMIN,
+        adminRoleId to ROLE_ADMIN,
 
+        //TODO: Dette er samme uuid som KABAL_INNSYN_EGEN_ENHET_ROLE_ID. Overflødig her?
         klageLederRole to ROLE_KLAGE_LEDER,
     )
 
