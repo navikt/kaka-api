@@ -25,16 +25,19 @@ class RolleMapper(
     @Value("\${ROLE_KLAGE_LEDER}") private val klageLederRole: String,
 ) {
     private val rolleMap = mapOf(
-        kakaKvalitetsvurderingRoleId to setOf(ROLE_KAKA_KVALITETSVURDERING),
-        kakaKvalitetstilbakemeldingerRoleId to setOf(ROLE_KAKA_KVALITETSTILBAKEMELDINGER),
-        kakaTotalstatistikkRoleId to setOf(ROLE_KAKA_TOTALSTATISTIKK),
-        kakaLederstatistikkRoleId to setOf(ROLE_KAKA_LEDERSTATISTIKK),
+        kakaKvalitetsvurderingRoleId to setOf(ROLE_KAKA_KVALITETSVURDERING, KAKA_KVALITETSVURDERING),
+        kakaKvalitetstilbakemeldingerRoleId to setOf(
+            ROLE_KAKA_KVALITETSTILBAKEMELDINGER,
+            KAKA_KVALITETSTILBAKEMELDINGER
+        ),
+        kakaTotalstatistikkRoleId to setOf(ROLE_KAKA_TOTALSTATISTIKK, KAKA_TOTALSTATISTIKK),
+        kakaLederstatistikkRoleId to setOf(ROLE_KAKA_LEDERSTATISTIKK, KAKA_LEDERSTATISTIKK),
 
         egenAnsattRoleId to setOf(ROLE_KLAGE_EGEN_ANSATT, EGEN_ANSATT),
         fortroligRoleId to setOf(ROLE_KLAGE_FORTROLIG, FORTROLIG),
         strengtFortroligRoleId to setOf(ROLE_KLAGE_STRENGT_FORTROLIG, STRENGT_FORTROLIG),
 
-        adminRoleId to setOf(ROLE_ADMIN),
+        adminRoleId to setOf(ROLE_ADMIN, KAKA_ADMIN),
 
         //TODO: Dette er samme uuid som KABAL_INNSYN_EGEN_ENHET_ROLE_ID. Overflødig her?
         klageLederRole to setOf(ROLE_KLAGE_LEDER),
@@ -46,18 +49,14 @@ class RolleMapper(
         //TODO: Review all special handling after 2022-04-01
 
         //give FE old names for roles for compatibility.
-        if (ROLE_KAKA_KVALITETSVURDERING in roles) {
-            roles += ROLE_KAKA_SAKSBEHANDLER
-        }
-        if (ROLE_KAKA_KVALITETSTILBAKEMELDINGER in roles) {
-            roles += ROLE_VEDTAKSINSTANS_LEDER
-        }
 
         if (ROLE_KLAGE_LEDER in roles) {
             if (azureGateway.getDataOmInnloggetSaksbehandler().enhet in klageenheter) {
                 roles += ROLE_KAKA_LEDERSTATISTIKK
+                roles += KAKA_LEDERSTATISTIKK
             }
             roles += ROLE_KAKA_TOTALSTATISTIKK
+            roles += KAKA_TOTALSTATISTIKK
         }
 
         return roles

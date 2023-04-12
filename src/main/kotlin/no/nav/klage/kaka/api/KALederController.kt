@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
-import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_LEDERSTATISTIKK
+import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_LEDERSTATISTIKK
 import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KLAGE_LEDER
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportServiceV1
@@ -179,8 +179,8 @@ class KALederController(
 
     private fun validateIsKakaLeder() {
         val roles = rolleMapper.toRoles(tokenUtil.getGroups())
-        if (ROLE_KAKA_LEDERSTATISTIKK !in roles) {
-            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KAKA_LEDERSTATISTIKK")
+        if (KAKA_LEDERSTATISTIKK !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $KAKA_LEDERSTATISTIKK")
         }
     }
 }

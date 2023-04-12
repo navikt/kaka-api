@@ -3,7 +3,7 @@ package no.nav.klage.kaka.api
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.config.SecurityConfig
-import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KAKA_KVALITETSVURDERING
+import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_KVALITETSVURDERING
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.RolleMapper
@@ -76,7 +76,7 @@ class SaksdataController(
         )
 
         val roles = rolleMapper.toRoles(tokenUtil.getGroups())
-        if (ROLE_KAKA_KVALITETSVURDERING !in roles) {
+        if (KAKA_KVALITETSVURDERING !in roles) {
             throw MissingTilgangException("User does not have access to create saksdata")
         }
 
