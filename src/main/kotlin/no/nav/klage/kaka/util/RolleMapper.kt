@@ -39,16 +39,12 @@ class RolleMapper(
 
         adminRoleId to setOf(ROLE_ADMIN, KAKA_ADMIN),
 
-        //TODO: Dette er samme uuid som KABAL_INNSYN_EGEN_ENHET_ROLE_ID. Overflødig her?
+        //TODO: Dette er samme uuid som KABAL_INNSYN_EGEN_ENHET_ROLE_ID. Overflødig her? Pågående diskusjon med fagsiden.
         klageLederRole to setOf(ROLE_KLAGE_LEDER),
     )
 
     fun toRoles(roleIdList: List<String>): Set<Role> {
         val roles = roleIdList.mapNotNull { rolleMap[it] }.flatten().toMutableSet()
-
-        //TODO: Review all special handling after 2022-04-01
-
-        //give FE old names for roles for compatibility.
 
         if (ROLE_KLAGE_LEDER in roles) {
             if (azureGateway.getDataOmInnloggetSaksbehandler().enhet in klageenheter) {
