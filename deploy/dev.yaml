@@ -18,21 +18,22 @@ envs:
     value: "-Xms512m -Xmx2048m"
 
 groups:
-  - name: ROLE_KAKA_KVALITETSVURDERING
+  - name: KAKA_KVALITETSVURDERING_ROLE_ID
     value: a4dbd743-5adb-45c8-8918-59c2c6e8e3f2
+    #TODO: Undersøk behov.
   - name: ROLE_KLAGE_LEDER
     value: 016fb83f-4e7c-47ec-ae8a-e3efa72a43e7
-  - name: ROLE_KAKA_KVALITETSTILBAKEMELDINGER
+  - name: KAKA_KVALITETSTILBAKEMELDING_ROLE_ID
     value: ef9eaacb-a19d-4d13-bfc5-930e4fb217cd
-  - name: ROLE_KLAGE_EGEN_ANSATT
-    value: 011af9b0-792d-4d2c-a2eb-9a59fc095002
-  - name: ROLE_KLAGE_FORTROLIG
-    value: 2980c598-8af7-473f-b7d1-233f785d7001
-  - name: ROLE_KLAGE_STRENGT_FORTROLIG
-    value: de92036b-c350-471c-9249-753f36acd24d
-  - name: ROLE_KAKA_TOTALSTATISTIKK
+  - name: EGEN_ANSATT_ROLE_ID
+    value: dbe4ad45-320b-4e9a-aaa1-73cca4ee124d
+  - name: FORTROLIG_ROLE_ID
+    value: ea930b6b-9397-44d9-b9e6-f4cf527a632a
+  - name: STRENGT_FORTROLIG_ROLE_ID
+    value: 5ef775f2-61f8-4283-bf3d-8d03f428aa14
+  - name: KAKA_TOTALSTATISTIKK_ROLE_ID
     value: 82c229e8-0ff7-41cb-a34d-92872afb84c5
-  - name: ROLE_KAKA_LEDERSTATISTIKK
+  - name: KAKA_LEDERSTATISTIKK_ROLE_ID
     value: 159c9814-4056-4809-8c90-d75e71ac0893
-  - name: ROLE_ADMIN
+  - name: ADMIN_ROLE_ID
     value: a9f5ef81-4e81-42e8-b368-0273071b64b9

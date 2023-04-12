@@ -422,9 +422,9 @@ class SaksdataService(
     ): List<Saksdata> {
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
 
-        val kanBehandleStrengtFortrolig = ROLE_KLAGE_STRENGT_FORTROLIG in roller
-        val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
-        val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
+        val kanBehandleStrengtFortrolig = STRENGT_FORTROLIG in roller
+        val kanBehandleFortrolig = FORTROLIG in roller
+        val kanBehandleEgenAnsatt = EGEN_ANSATT in roller
 
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
             vedtaksinstansEnhet = enhet.navn,
@@ -452,9 +452,9 @@ class SaksdataService(
     ): List<Saksdata> {
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
 
-        val kanBehandleStrengtFortrolig = ROLE_KLAGE_STRENGT_FORTROLIG in roller
-        val kanBehandleFortrolig = ROLE_KLAGE_FORTROLIG in roller
-        val kanBehandleEgenAnsatt = ROLE_KLAGE_EGEN_ANSATT in roller
+        val kanBehandleStrengtFortrolig = STRENGT_FORTROLIG in roller
+        val kanBehandleFortrolig = FORTROLIG in roller
+        val kanBehandleEgenAnsatt = EGEN_ANSATT in roller
 
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV2(
             vedtaksinstansEnhet = enhet.navn,

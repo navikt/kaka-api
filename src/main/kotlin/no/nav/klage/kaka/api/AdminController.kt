@@ -39,7 +39,7 @@ class AdminController(
 
     private fun krevAdminTilgang() {
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
-        if (!roller.contains(Role.ROLE_ADMIN)) {
+        if (!roller.contains(Role.KAKA_ADMIN)) {
             throw MissingTilgangException("Not an admin")
         }
     }

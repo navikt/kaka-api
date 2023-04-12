@@ -10,52 +10,49 @@ import org.springframework.stereotype.Component
 @Component
 class RolleMapper(
     private val azureGateway: AzureGateway,
-    @Value("\${ROLE_KAKA_KVALITETSVURDERING}") private val kakaKvalitetsvurderingRole: String,
-    @Value("\${ROLE_KAKA_KVALITETSTILBAKEMELDINGER}") private val kakaKvalitetstilbakemeldingerRole: String,
-    @Value("\${ROLE_KAKA_TOTALSTATISTIKK}") private val kakaTotalstatistikkRole: String,
-    @Value("\${ROLE_KAKA_LEDERSTATISTIKK}") private val kakaLederstatistikkRole: String,
+    @Value("\${KAKA_KVALITETSVURDERING_ROLE_ID}") private val kakaKvalitetsvurderingRoleId: String,
+    @Value("\${KAKA_KVALITETSTILBAKEMELDING_ROLE_ID}") private val kakaKvalitetstilbakemeldingerRoleId: String,
+    @Value("\${KAKA_TOTALSTATISTIKK_ROLE_ID}") private val kakaTotalstatistikkRoleId: String,
+    @Value("\${KAKA_LEDERSTATISTIKK_ROLE_ID}") private val kakaLederstatistikkRoleId: String,
 
-    @Value("\${ROLE_KLAGE_EGEN_ANSATT}") private val kanBehandleEgenAnsattRole: String,
-    @Value("\${ROLE_KLAGE_FORTROLIG}") private val kanBehandleFortroligRole: String,
-    @Value("\${ROLE_KLAGE_STRENGT_FORTROLIG}") private val kanBehandleStrengtFortroligRole: String,
+    @Value("\${EGEN_ANSATT_ROLE_ID}") private val egenAnsattRoleId: String,
+    @Value("\${FORTROLIG_ROLE_ID}") private val fortroligRoleId: String,
+    @Value("\${STRENGT_FORTROLIG_ROLE_ID}") private val strengtFortroligRoleId: String,
 
-    @Value("\${ROLE_ADMIN}") private val adminRole: String,
+    @Value("\${ADMIN_ROLE_ID}") private val adminRoleId: String,
 
+    //TODO: Sjekk om viktig.
     @Value("\${ROLE_KLAGE_LEDER}") private val klageLederRole: String,
 ) {
     private val rolleMap = mapOf(
-        kakaKvalitetsvurderingRole to ROLE_KAKA_KVALITETSVURDERING,
-        kakaKvalitetstilbakemeldingerRole to ROLE_KAKA_KVALITETSTILBAKEMELDINGER,
-        kakaTotalstatistikkRole to ROLE_KAKA_TOTALSTATISTIKK,
-        kakaLederstatistikkRole to ROLE_KAKA_LEDERSTATISTIKK,
+        kakaKvalitetsvurderingRoleId to setOf(ROLE_KAKA_KVALITETSVURDERING, KAKA_KVALITETSVURDERING),
+        kakaKvalitetstilbakemeldingerRoleId to setOf(
+            ROLE_KAKA_KVALITETSTILBAKEMELDINGER,
+            KAKA_KVALITETSTILBAKEMELDINGER
+        ),
+        kakaTotalstatistikkRoleId to setOf(ROLE_KAKA_TOTALSTATISTIKK, KAKA_TOTALSTATISTIKK),
+        kakaLederstatistikkRoleId to setOf(ROLE_KAKA_LEDERSTATISTIKK, KAKA_LEDERSTATISTIKK),
 
-        kanBehandleEgenAnsattRole to ROLE_KLAGE_EGEN_ANSATT,
-        kanBehandleFortroligRole to ROLE_KLAGE_FORTROLIG,
-        kanBehandleStrengtFortroligRole to ROLE_KLAGE_STRENGT_FORTROLIG,
+        egenAnsattRoleId to setOf(ROLE_KLAGE_EGEN_ANSATT, EGEN_ANSATT),
+        fortroligRoleId to setOf(ROLE_KLAGE_FORTROLIG, FORTROLIG),
+        strengtFortroligRoleId to setOf(ROLE_KLAGE_STRENGT_FORTROLIG, STRENGT_FORTROLIG),
 
-        adminRole to ROLE_ADMIN,
+        adminRoleId to setOf(ROLE_ADMIN, KAKA_ADMIN),
 
-        klageLederRole to ROLE_KLAGE_LEDER,
+        //TODO: Dette er samme uuid som KABAL_INNSYN_EGEN_ENHET_ROLE_ID. Overflødig her? Pågående diskusjon med fagsiden.
+        klageLederRole to setOf(ROLE_KLAGE_LEDER),
     )
 
     fun toRoles(roleIdList: List<String>): Set<Role> {
-        val roles = roleIdList.mapNotNull { rolleMap[it] }.toMutableSet()
-
-        //TODO: Review all special handling after 2022-04-01
-
-        //give FE old names for roles for compatibility.
-        if (ROLE_KAKA_KVALITETSVURDERING in roles) {
-            roles += ROLE_KAKA_SAKSBEHANDLER
-        }
-        if (ROLE_KAKA_KVALITETSTILBAKEMELDINGER in roles) {
-            roles += ROLE_VEDTAKSINSTANS_LEDER
-        }
+        val roles = roleIdList.mapNotNull { rolleMap[it] }.flatten().toMutableSet()
 
         if (ROLE_KLAGE_LEDER in roles) {
             if (azureGateway.getDataOmInnloggetSaksbehandler().enhet in klageenheter) {
                 roles += ROLE_KAKA_LEDERSTATISTIKK
+                roles += KAKA_LEDERSTATISTIKK
             }
             roles += ROLE_KAKA_TOTALSTATISTIKK
+            roles += KAKA_TOTALSTATISTIKK
         }
 
         return roles

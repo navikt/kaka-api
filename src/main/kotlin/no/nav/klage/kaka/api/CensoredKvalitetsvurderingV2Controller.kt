@@ -49,8 +49,8 @@ class CensoredKvalitetsvurderingV2Controller(
 
     private fun validateCanSeeKvalitetstilbakemeldinger() {
         val roles = roleMapper.toRoles(tokenUtil.getGroups())
-        if (Role.ROLE_KAKA_KVALITETSTILBAKEMELDINGER !in roles) {
-            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role ${Role.ROLE_KAKA_KVALITETSTILBAKEMELDINGER}")
+        if (Role.KAKA_KVALITETSTILBAKEMELDINGER !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role ${Role.KAKA_KVALITETSTILBAKEMELDINGER}")
         }
     }
 }
