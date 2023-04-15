@@ -1,5 +1,6 @@
-ingress:
+ingresses:
   - https://kaka-api.dev.nav.no
+  - https://kaka-api.intern.dev.nav.no
 externalHosts:
   - host: login.microsoftonline.com
   - host: pdl-api.dev-fss-pub.nais.io

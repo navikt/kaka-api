@@ -61,9 +61,11 @@ spec:
         extra:
           - NAVident
           - azp_name
-  {{#if ingress}}
+  {{#if ingresses}}
   ingresses:
+  {{#each ingresses as |ingress|}}
     - {{ingress}}
+  {{/each}}
   {{/if}}
   accessPolicy:
     inbound:
