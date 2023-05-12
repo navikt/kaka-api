@@ -52,6 +52,16 @@ class KabalKvalitetsvurderingV2Controller(
         }
     }
 
+    @DeleteMapping("/kvalitetsvurderinger/v2/{id}")
+    fun deleteKvalitetsvurdering(
+        @PathVariable("id") kvalitetsvurderingId: UUID,
+    ) {
+        val callingApplication = verifyAndGetCallingApplication()
+        logger.debug("Delete kvalitetsvurdering is requested by $callingApplication")
+        kvalitetsvurderingV2Service.deleteKvalitetsvurdering(kvalitetsvurderingId)
+        logger.debug("Successfully deleted kvalitetsvurdering {}", kvalitetsvurderingId)
+    }
+
     @GetMapping("/kvalitetsvurderinger/v2/{id}/validationerrors")
     fun getValidationErrors(
         @PathVariable("id") kvalitetsvurderingId: UUID,

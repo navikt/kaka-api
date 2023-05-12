@@ -12,6 +12,7 @@ import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.setFieldOnObject
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
@@ -65,6 +66,14 @@ class KvalitetsvurderingV2Service(
         val kvalitetsvurdering = kvalitetsvurderingV2Repository.getReferenceById(kvalitetsvurderingId)
         kvalitetsvurdering.cleanup()
         kvalitetsvurdering.modified = LocalDateTime.now()
+    }
+
+    fun deleteKvalitetsvurdering(id: UUID) {
+        try {
+            kvalitetsvurderingV2Repository.deleteById(id)
+        } catch(e: EmptyResultDataAccessException) {
+            throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $id")
+        }
     }
 
     private fun getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(
