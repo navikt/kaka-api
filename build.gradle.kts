@@ -8,6 +8,7 @@ val mockkVersion = "1.13.5"
 val apachePoiVersion = "5.2.3"
 val springDocVersion = "2.1.0"
 val shedlockVersion = "5.3.0"
+val klageKodeverkVersion = "1.3.8"
 
 plugins {
     val kotlinVersion = "1.8.21"
@@ -59,7 +60,7 @@ dependencies {
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
-    implementation("com.github.navikt:klage-kodeverk:1.3.5")
+    implementation("com.github.navikt:klage-kodeverk:$klageKodeverkVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
