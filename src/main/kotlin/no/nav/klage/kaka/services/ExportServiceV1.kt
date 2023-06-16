@@ -35,7 +35,7 @@ class ExportServiceV1(
                 toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
             )
 
-        val saksdataFields = mapToFields(resultList, includeFritekst)
+        val saksdataFields = mapToFields(resultList = resultList, includeFritekst = includeFritekst)
 
         val workbook = XSSFWorkbook()
 

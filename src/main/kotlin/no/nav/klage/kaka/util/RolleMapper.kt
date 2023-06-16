@@ -42,7 +42,7 @@ class RolleMapper(
         adminRoleId to setOf(KAKA_ADMIN),
 
         //TODO: Dette er samme uuid som KABAL_INNSYN_EGEN_ENHET_ROLE_ID. Overflødig her? Pågående diskusjon med fagsiden.
-        klageLederRole to setOf(ROLE_KLAGE_LEDER),
+        klageLederRole to setOf(ROLE_KLAGE_LEDER, KAKA_EXCEL_UTTREKK_MED_FRITEKST),
     )
 
     fun toRoles(roleIdList: List<String>): Set<Role> = roleIdList.mapNotNull { rolleMap[it] }.flatten().toSet()
