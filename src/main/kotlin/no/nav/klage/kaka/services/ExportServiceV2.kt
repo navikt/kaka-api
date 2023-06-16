@@ -29,13 +29,13 @@ class ExportServiceV2(
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)). For now, only used by
      * KA-ledere.
      */
-    fun getAsExcel(year: Year): ByteArray {
+    fun getAsExcel(year: Year, includeFritekst: Boolean): ByteArray {
         val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV2(
             fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
             toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
         )
 
-        val saksdataFields = mapToFields(resultList)
+        val saksdataFields = mapToFields(resultList, includeFritekst)
 
         val workbook = XSSFWorkbook()
 
@@ -525,7 +525,7 @@ class ExportServiceV2(
         }
     }
 
-    private fun mapToFields(saksdataList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>): List<List<Field>> {
+    private fun mapToFields(saksdataList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>, includeFritekst: Boolean): List<List<Field>> {
         //@formatter:off
         return saksdataList.map { result ->
             val (saksdata, kvalitetsvurderingV2) = result
@@ -821,13 +821,15 @@ class ExportServiceV2(
                 )
 
                 //Annet
-                add(
-                    Field(
-                        fieldName = "Annet",
-                        value = kvalitetsvurderingV2.annetFritekst,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Annet",
+                            value = kvalitetsvurderingV2.annetFritekst,
+                            type = STRING
+                        )
                     )
-                )
+                }
                 //@formatter:on
             }
         }
