@@ -33,3 +33,7 @@ groups:
     value: d399dc50-0e80-47fd-8b0e-4118c0fc5c9b
   - name: ADMIN_ROLE_ID
     value: cd78b8e8-73a3-4fb6-8234-7bebb5e5b9e9
+  - name: KAKA_EXCEL_UTTREKK_MED_FRITEKST_ROLE_ID
+    value: 4b1b3c8d-1d63-4533-b396-22b1f1103efe
+  - name: KAKA_EXCEL_UTTREKK_UTEN_FRITEKST_ROLE_ID
+    value: 5a3380b0-80b5-4059-a6eb-9bd54516928e

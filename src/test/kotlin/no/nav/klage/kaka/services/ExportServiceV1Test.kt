@@ -40,7 +40,8 @@ internal class ExportServiceV1Test {
 
         File(fileLocation).writeBytes(
             exportService.getAsExcel(
-                year = Year.now()
+                year = Year.now(),
+                includeFritekst = true,
             )
         )
     }
@@ -66,7 +67,8 @@ internal class ExportServiceV1Test {
 
         File(fileLocation).writeBytes(
             exportServiceV1.getAsExcel(
-                year = Year.now()
+                year = Year.now(),
+                includeFritekst = true,
             )
         )
     }

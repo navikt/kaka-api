@@ -28,14 +28,14 @@ class ExportServiceV1(
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)). For now, only used by
      * KA-ledere.
      */
-    fun getAsExcel(year: Year): ByteArray {
+    fun getAsExcel(year: Year, includeFritekst: Boolean): ByteArray {
         val resultList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
                 fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
                 toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
             )
 
-        val saksdataFields = mapToFields(resultList)
+        val saksdataFields = mapToFields(resultList, includeFritekst)
 
         val workbook = XSSFWorkbook()
 
@@ -407,7 +407,7 @@ class ExportServiceV1(
         return mottattForrigeInstans
     }
 
-    private fun mapToFields(resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>): List<List<Field>> {
+    private fun mapToFields(resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>, includeFritekst: Boolean): List<List<Field>> {
         //@formatter:off
         return resultList.map { result ->
             val (saksdata, kvalitetsvurderingV1) = result
@@ -489,13 +489,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Utredningen av medisinske forhold stikkord",
-                        value = kvalitetsvurderingV1.utredningenAvMedisinskeForholdText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Utredningen av medisinske forhold stikkord",
+                            value = kvalitetsvurderingV1.utredningenAvMedisinskeForholdText,
+                            type = STRING
+                        )
                     )
-                )
+                }
                 add(
                     Field(
                         fieldName = "Utredningen av inntektsforhold",
@@ -503,13 +505,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Utredningen av inntektsforhold stikkord",
-                        value = kvalitetsvurderingV1.utredningenAvInntektsforholdText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Utredningen av inntektsforhold stikkord",
+                            value = kvalitetsvurderingV1.utredningenAvInntektsforholdText,
+                            type = STRING
+                        )
                     )
-                )
+                }
                 add(
                     Field(
                         fieldName = "Utredningen av arbeid",
@@ -517,13 +521,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Utredningen av arbeid stikkord",
-                        value = kvalitetsvurderingV1.utredningenAvArbeidText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Utredningen av arbeid stikkord",
+                            value = kvalitetsvurderingV1.utredningenAvArbeidText,
+                            type = STRING
+                        )
                     )
-                )
+                }
                 add(
                     Field(
                         fieldName = "Arbeidsrettet brukeroppfølging",
@@ -531,13 +537,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Arbeidsrettet brukeroppfølging stikkord",
-                        value = kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelgingText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Arbeidsrettet brukeroppfølging stikkord",
+                            value = kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelgingText,
+                            type = STRING
+                        )
                     )
-                )
+                }
                 add(
                     Field(
                         fieldName = "Utredningen av andre aktuelle forhold i saken",
@@ -545,13 +553,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Utredningen av andre aktuelle forhold i saken stikkord",
-                        value = kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISakenText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Utredningen av andre aktuelle forhold i saken stikkord",
+                            value = kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISakenText,
+                            type = STRING
+                        )
                     )
-                )
+                }
                 add(
                     Field(
                         fieldName = "Utredningen av EØS / utenlandsproblematikk",
@@ -559,13 +569,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Utredningen av EØS / utenlandsproblematikk stikkord",
-                        value = kvalitetsvurderingV1.utredningenAvEoesProblematikkText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Utredningen av EØS / utenlandsproblematikk stikkord",
+                            value = kvalitetsvurderingV1.utredningenAvEoesProblematikkText,
+                            type = STRING
+                        )
                     )
-                )
+                }
                 add(
                     Field(
                         fieldName = "Veiledning fra NAV",
@@ -573,13 +585,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Veiledning fra NAV stikkord",
-                        value = kvalitetsvurderingV1.veiledningFraNavText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Veiledning fra NAV stikkord",
+                            value = kvalitetsvurderingV1.veiledningFraNavText,
+                            type = STRING
+                        )
                     )
-                )
+                }
 
                 //Vedtaket
                 add(Field(fieldName = "Vedtaket", value = kvalitetsvurderingV1.vedtaketRadioValg, type = STRING))
@@ -648,13 +662,15 @@ class ExportServiceV1(
                         type = BOOLEAN
                     )
                 )
-                add(
-                    Field(
-                        fieldName = "Bruk gjerne vedtaket som eksempel i opplæring stikkord",
-                        value = kvalitetsvurderingV1.brukIOpplaeringText,
-                        type = STRING
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Bruk gjerne vedtaket som eksempel i opplæring stikkord",
+                            value = kvalitetsvurderingV1.brukIOpplaeringText,
+                            type = STRING
+                        )
                     )
-                )
+                }
 
                 //ROL
                 add(

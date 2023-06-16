@@ -4,8 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
-import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_LEDERSTATISTIKK
-import no.nav.klage.kaka.domain.kodeverk.Role.ROLE_KLAGE_LEDER
+import no.nav.klage.kaka.domain.kodeverk.Role.*
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportServiceV1
 import no.nav.klage.kaka.services.ExportServiceV2
@@ -40,20 +39,47 @@ class KALederController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @GetMapping("/export/excel", "/export/v{version}/excel")
-    fun getAsExcel(
+    @GetMapping( "/export/v{version}/excel", "/export/v{version}/excel-med-fritekst")
+    fun getAsExcelMedFritekst(
         @RequestParam(required = false) year: Int?,
         @PathVariable("version", required = false) version: Int?,
     ): ResponseEntity<ByteArray> {
-        logger.debug("getAsExcel() called. Year param = $year, version = $version")
+        logger.debug("getAsExcelMedFritekst() called. Year param = $year, version = $version")
 
-        validateIsKALeder()
+        validateHasExcelMedFritekst()
 
         val yearToUse = if (year != null) Year.of(year) else Year.now()
         val fileAsBytes = if (version == 2) {
-            exportServiceV2.getAsExcel(yearToUse)
+            exportServiceV2.getAsExcel(year = yearToUse, includeFritekst = true)
         } else {
-            exportServiceV1.getAsExcel(yearToUse)
+            exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = true)
+        }
+
+        val responseHeaders = HttpHeaders()
+        responseHeaders.contentType =
+            MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        responseHeaders.add("Content-Disposition", "inline; filename=export.xlsx")
+        return ResponseEntity(
+            fileAsBytes,
+            responseHeaders,
+            HttpStatus.OK
+        )
+    }
+
+    @GetMapping( "/export/v{version}/excel-uten-fritekst")
+    fun getAsExcelUtenFritekst(
+        @RequestParam(required = false) year: Int?,
+        @PathVariable("version", required = false) version: Int?,
+    ): ResponseEntity<ByteArray> {
+        logger.debug("getAsExcelUtenFritekst() called. Year param = $year, version = $version")
+
+        validateHasExcelUtenFritekst()
+
+        val yearToUse = if (year != null) Year.of(year) else Year.now()
+        val fileAsBytes = if (version == 2) {
+            exportServiceV2.getAsExcel(year = yearToUse, includeFritekst = false)
+        } else {
+            exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = false)
         }
 
         val responseHeaders = HttpHeaders()
@@ -170,10 +196,17 @@ class KALederController(
         }
     }
 
-    private fun validateIsKALeder() {
+    private fun validateHasExcelMedFritekst() {
         val roles = rolleMapper.toRoles(tokenUtil.getGroups())
-        if (ROLE_KLAGE_LEDER !in roles) {
-            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $ROLE_KLAGE_LEDER")
+        if (KAKA_EXCEL_UTTREKK_MED_FRITEKST !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $KAKA_EXCEL_UTTREKK_MED_FRITEKST")
+        }
+    }
+
+    private fun validateHasExcelUtenFritekst() {
+        val roles = rolleMapper.toRoles(tokenUtil.getGroups())
+        if (KAKA_EXCEL_UTTREKK_UTEN_FRITEKST !in roles) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} does not have the role $KAKA_EXCEL_UTTREKK_UTEN_FRITEKST")
         }
     }
 
