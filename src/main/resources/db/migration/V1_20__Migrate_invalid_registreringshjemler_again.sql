@@ -60,7 +60,7 @@ SET id = 'FTRL_17_8A'
 WHERE id = '558'
   AND saksdata_id = '085367f5-7234-45b3-b038-99177766e22c';
 
-UPDATE kaka.registreringshjemmel
-SET id = 'FTRL_17_8B'
+DELETE
+FROM kaka.registreringshjemmel
 WHERE id = '558'
   AND saksdata_id = '62b5547f-9932-4c28-9928-0854749a16e1';
