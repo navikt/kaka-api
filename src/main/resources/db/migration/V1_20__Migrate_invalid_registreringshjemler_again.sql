@@ -17,13 +17,11 @@ WHERE id = '403'
    '3a5c2d1e-723a-4686-9360-b0fd19183df4',
    '69035d13-54c7-4dfb-a94c-12f4d422b6e9',
    'bd840aa9-955c-4f69-8c1c-61dd9f389ebc',
-   'd4dae109-650d-45e4-bd03-cd3898cfd2ec',
    'd7f88ac7-707a-4850-bd1c-daf66532be74',
-   'f3fb4131-b097-452c-83bc-d398f492e21d'
    );
 
-UPDATE kaka.registreringshjemmel
-SET id = 'FTRL_14_7A'
+DELETE
+FROM kaka.registreringshjemmel
 WHERE id = '190'
   AND saksdata_id = '3a5c2d1e-723a-4686-9360-b0fd19183df4';
 
