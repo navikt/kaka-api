@@ -17,7 +17,7 @@ WHERE id = '403'
    '3a5c2d1e-723a-4686-9360-b0fd19183df4',
    '69035d13-54c7-4dfb-a94c-12f4d422b6e9',
    'bd840aa9-955c-4f69-8c1c-61dd9f389ebc',
-   'd7f88ac7-707a-4850-bd1c-daf66532be74',
+   'd7f88ac7-707a-4850-bd1c-daf66532be74'
    );
 
 DELETE
