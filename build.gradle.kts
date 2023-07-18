@@ -8,7 +8,7 @@ val mockkVersion = "1.13.5"
 val apachePoiVersion = "5.2.3"
 val springDocVersion = "2.1.0"
 val shedlockVersion = "5.5.0"
-val klageKodeverkVersion = "1.3.14"
+val klageKodeverkVersion = "1.5.5"
 
 plugins {
     val kotlinVersion = "1.8.22"
@@ -24,7 +24,7 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
+    maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
 dependencies {
@@ -60,7 +60,7 @@ dependencies {
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
-    implementation("com.github.navikt:klage-kodeverk:$klageKodeverkVersion")
+    implementation("no.nav.klage:klage-kodeverk:$klageKodeverkVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
