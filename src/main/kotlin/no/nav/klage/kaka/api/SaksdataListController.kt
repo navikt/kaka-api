@@ -31,7 +31,7 @@ class SaksdataListController(
         private val secureLogger = getSecureLogger()
     }
 
-    @GetMapping("/saksdataliste")
+    @GetMapping(value = ["/saksdataliste", "/saksdataliste/"])
     fun searchKA(
         @RequestParam saksbehandlerIdent: String,
         @RequestParam fullfoert: Boolean,
