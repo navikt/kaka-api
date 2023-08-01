@@ -7,12 +7,12 @@ val testContainersVersion = "1.18.3"
 val mockkVersion = "1.13.5"
 val apachePoiVersion = "5.2.3"
 val springDocVersion = "2.1.0"
-val shedlockVersion = "5.5.0"
-val klageKodeverkVersion = "1.5.5"
+val shedlockVersion = "5.6.0"
+val klageKodeverkVersion = "1.5.7"
 
 plugins {
-    val kotlinVersion = "1.8.22"
-    id("org.springframework.boot") version "3.1.1"
+    val kotlinVersion = "1.9.0"
+    id("org.springframework.boot") version "3.1.2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
