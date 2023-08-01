@@ -52,7 +52,7 @@ class KabalKvalitetsvurderingV2Controller(
         }
     }
 
-    @DeleteMapping("/kvalitetsvurderinger/v2/{id}")
+    @DeleteMapping(value = ["/kvalitetsvurderinger/v2/{id}","/kvalitetsvurderinger/v2/{id}/"] )
     fun deleteKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID,
     ) {
