@@ -4,13 +4,11 @@ import no.nav.klage.kodeverk.Ytelse.*
 
 val raadgivendeLegeYtelser = setOf(
     GRU_GRU,
-    HJE_HJE,
     SYK_SYK,
     OMS_OMP,
     OMS_OLP,
     OMS_PSB,
     OMS_PLS,
-    HJE_HJE,
     AAP_AAP,
     UFO_UFO,
     YRK_YRK,
@@ -19,4 +17,7 @@ val raadgivendeLegeYtelser = setOf(
     FOR_FOR,
     FOR_SVA,
     UFO_TVF,
+    HJE_HJE,
+    BIL_BIL,
+    HEL_HEL,
 )
