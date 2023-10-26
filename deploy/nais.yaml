@@ -14,7 +14,7 @@ spec:
   gcp:
     sqlInstances:
       - name: kaka-api
-        type: POSTGRES_12
+        type: {{ db_type }}
         maintenanceWindow:
           day: 1
           hour: 4
