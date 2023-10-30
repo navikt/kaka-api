@@ -59,9 +59,9 @@ class MicrosoftGraphClient(
             .retrieve()
             .onStatus(HttpStatusCode::isError) { response ->
                 logger.error("Error in getInnloggetSaksbehandler")
-                logger.error(response.toString())
-                logger.error(response.statusCode().toString())
-                logger.error(response.bodyToMono<String>().block())
+                logger.error("response.toString(): {}", response.toString())
+                logger.error("statuscode: {}", response.statusCode().toString())
+                logger.error("bodyToMono: {}", response.bodyToMono<String>())
                 Mono.error(RuntimeException("Error"))
             }
             .bodyToMono<AzureUser>()
