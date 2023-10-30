@@ -61,9 +61,12 @@ class MicrosoftGraphClient(
                 logger.error("Error in getInnloggetSaksbehandler")
                 logger.error("response.toString(): {}", response.toString())
                 logger.error("statuscode: {}", response.statusCode().toString())
-                logger.error("toEntity: {}", response.toEntity(String::class.java))
-                logger.error("bodyToMono: {}", response.bodyToMono<String>())
-                Mono.error(RuntimeException("Error"))
+                response.bodyToMono(String::class.java).map {
+                    val errorString =
+                        "Got ${response.statusCode()} when requesting GET - response body: '$it'"
+                    logger.error(errorString)
+                    RuntimeException(errorString)
+                }
             }
             .bodyToMono<AzureUser>()
             .block().let { secureLogger.debug("me: $it"); it }
