@@ -8,3 +8,8 @@ EREG_URL: https://api-gw-q1.oera.no/ereg-services/api
 NORG2_BASE_URL: https://norg2.dev-fss-pub.nais.io/norg2/api/v1
 
 KAKA_VERSION_2_DATE: 2022-12-20
+
+spring:
+  datasource:
+    hikari:
+      maximum-pool-size: 5

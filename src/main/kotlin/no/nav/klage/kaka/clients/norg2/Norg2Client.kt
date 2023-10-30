@@ -4,7 +4,9 @@ import brave.Tracer
 import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kaka.util.logErrorResponse
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -38,6 +40,9 @@ class Norg2Client(
                 .header("Nav-Call-Id", tracer.currentSpan().context().traceIdString())
                 .header("Nav-Consumer-Id", applicationName)
                 .retrieve()
+                .onStatus(HttpStatusCode::isError) { response ->
+                    logErrorResponse(response, ::getEnhet.name, secureLogger)
+                }
                 .bodyToMono<Norg2Enhet>()
                 .block()
         }.fold(
