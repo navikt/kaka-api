@@ -51,8 +51,8 @@ class MicrosoftGraphClient(
         return microsoftGraphWebClient.get()
             .uri { uriBuilder ->
                 uriBuilder
-                    .path("/me")
-                    .queryParam("\$select", userSelect + ",bla")
+                    .path("/mes")
+                    .queryParam("\$select", userSelect)
                     .build()
             }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
 
