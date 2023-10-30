@@ -3,9 +3,11 @@ package no.nav.klage.kaka.clients.azure
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
+import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Mono
 
 @Component
 class MicrosoftGraphClient(
@@ -52,9 +54,16 @@ class MicrosoftGraphClient(
                     .path("/me")
                     .queryParam("\$select", userSelect)
                     .build()
-            }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
+            }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}a")
 
             .retrieve()
+            .onStatus(HttpStatusCode::isError) { response ->
+                logger.error("Error in getInnloggetSaksbehandler")
+                logger.error(response.toString())
+                logger.error(response.statusCode().toString())
+                logger.error(response.bodyToMono<String>().block())
+                Mono.error(RuntimeException("Error"))
+            }
             .bodyToMono<AzureUser>()
             .block().let { secureLogger.debug("me: $it"); it }
             ?: throw RuntimeException("AzureAD data about authenticated user could not be fetched")
