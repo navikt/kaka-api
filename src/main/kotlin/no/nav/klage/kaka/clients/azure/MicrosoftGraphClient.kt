@@ -52,15 +52,16 @@ class MicrosoftGraphClient(
             .uri { uriBuilder ->
                 uriBuilder
                     .path("/me")
-                    .queryParam("\$select", userSelect)
+                    .queryParam("\$select", userSelect + ",bla")
                     .build()
-            }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}a")
+            }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
 
             .retrieve()
             .onStatus(HttpStatusCode::isError) { response ->
                 logger.error("Error in getInnloggetSaksbehandler")
                 logger.error("response.toString(): {}", response.toString())
                 logger.error("statuscode: {}", response.statusCode().toString())
+                logger.error("toEntity: {}", response.toEntity(String::class.java))
                 logger.error("bodyToMono: {}", response.bodyToMono<String>())
                 Mono.error(RuntimeException("Error"))
             }
