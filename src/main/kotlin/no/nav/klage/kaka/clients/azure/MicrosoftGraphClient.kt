@@ -3,11 +3,11 @@ package no.nav.klage.kaka.clients.azure
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kaka.util.logErrorResponse
 import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import reactor.core.publisher.Mono
 
 @Component
 class MicrosoftGraphClient(
@@ -40,6 +40,9 @@ class MicrosoftGraphClient(
             .header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
             .header("ConsistencyLevel", "eventual")
             .retrieve()
+            .onStatus(HttpStatusCode::isError) { response ->
+                logErrorResponse(response, ::getEnhetensAnsattesNavIdents.name, secureLogger)
+            }
             .bodyToMono<AzureSlimUserList>()
             .block()
     }
@@ -51,22 +54,14 @@ class MicrosoftGraphClient(
         return microsoftGraphWebClient.get()
             .uri { uriBuilder ->
                 uriBuilder
-                    .path("/mes")
+                    .path("/me")
                     .queryParam("\$select", userSelect)
                     .build()
             }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
 
             .retrieve()
             .onStatus(HttpStatusCode::isError) { response ->
-                logger.error("Error in getInnloggetSaksbehandler")
-                logger.error("response.toString(): {}", response.toString())
-                logger.error("statuscode: {}", response.statusCode().toString())
-                response.bodyToMono(String::class.java).map {
-                    val errorString =
-                        "Got ${response.statusCode()} when requesting GET - response body: '$it'"
-                    logger.error(errorString)
-                    RuntimeException(errorString)
-                }
+                logErrorResponse(response, ::getInnloggetSaksbehandler.name, secureLogger)
             }
             .bodyToMono<AzureUser>()
             .block().let { secureLogger.debug("me: $it"); it }
@@ -90,6 +85,9 @@ class MicrosoftGraphClient(
                     .build()
             }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
             .retrieve()
+            .onStatus(HttpStatusCode::isError) { response ->
+                logErrorResponse(response, ::getInnloggetSaksbehandlersGroups.name, secureLogger)
+            }
             .bodyToMono<AzureGroupList>()
             .block()?.value?.map { secureLogger.debug("AD Gruppe: $it"); it }
             ?: throw RuntimeException("AzureAD data about authenticated users groups could not be fetched")
@@ -106,6 +104,9 @@ class MicrosoftGraphClient(
         }
         .header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
         .retrieve()
+        .onStatus(HttpStatusCode::isError) { response ->
+            logErrorResponse(response, ::findUserByNavIdent.name, secureLogger)
+        }
         .bodyToMono<AzureUserList>().block()?.value?.firstOrNull()?.let { secureLogger.debug("Saksbehandler: $it"); it }
         ?: throw RuntimeException("AzureAD data about user by nav ident $navIdent could not be fetched")
 }

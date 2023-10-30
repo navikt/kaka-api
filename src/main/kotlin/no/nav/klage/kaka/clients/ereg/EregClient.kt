@@ -5,7 +5,9 @@ import brave.Tracer
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kaka.util.logErrorResponse
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpStatusCode
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -40,6 +42,9 @@ class EregClient(
                 .header("Nav-Call-Id", tracer.currentSpan().context().traceIdString())
                 .header("Nav-Consumer-Id", applicationName)
                 .retrieve()
+                .onStatus(HttpStatusCode::isError) { response ->
+                    logErrorResponse(response, ::hentOrganisasjon.name, secureLogger)
+                }
                 .bodyToMono<Organisasjon>()
                 .block()
         }.fold(
