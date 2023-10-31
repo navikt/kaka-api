@@ -61,7 +61,14 @@ class MicrosoftGraphClient(
 
             .retrieve()
             .onStatus(HttpStatusCode::isError) { response ->
-                logErrorResponse(response, ::getInnloggetSaksbehandler.name, logger)
+                response.bodyToMono(String::class.java).map {
+                    val errorString =
+                        "Got ${response.statusCode()} when requesting ${::getInnloggetSaksbehandler.name} - response body: '$it'"
+                    logger.error(errorString)
+                    RuntimeException(errorString)
+                }
+
+                //logErrorResponse(response, ::getInnloggetSaksbehandler.name, logger)
             }
             .bodyToMono<AzureUser>()
             .block().let { secureLogger.debug("me: $it"); it }
