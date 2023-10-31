@@ -61,7 +61,7 @@ class MicrosoftGraphClient(
 
             .retrieve()
             .onStatus(HttpStatusCode::isError) { response ->
-                logErrorResponse(response, ::getInnloggetSaksbehandler.name, secureLogger)
+                logErrorResponse(response, ::getInnloggetSaksbehandler.name, logger)
             }
             .bodyToMono<AzureUser>()
             .block().let { secureLogger.debug("me: $it"); it }
