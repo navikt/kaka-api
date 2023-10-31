@@ -38,7 +38,7 @@ class AzureGateway(
         val data = try {
             microsoftGraphClient.getSaksbehandler(navIdent)
         } catch (e: Exception) {
-            logger.error("Failed to call getSaksbehandler for navident $navIdent", e)
+            logger.error("Error in ${::getPersonligDataOmSaksbehandlerMedIdent.name}, failed to call getSaksbehandler for navident $navIdent", e)
             throw e
         }
         return SaksbehandlerPersonligInfo(
@@ -56,7 +56,7 @@ class AzureGateway(
         val data = try {
             microsoftGraphClient.getInnloggetSaksbehandler()
         } catch (e: Exception) {
-            logger.error("Failed to call getInnloggetSaksbehandler", e)
+            logger.error("Error in ${::getStreetAddressInnloggetSaksbehandler.name}, failed to call getInnloggetSaksbehandler", e)
             throw e
         }
         return data.streetAddress
@@ -66,7 +66,7 @@ class AzureGateway(
         val data = try {
             microsoftGraphClient.getInnloggetSaksbehandler()
         } catch (e: Exception) {
-            logger.error("Failed to call getInnloggetSaksbehandler", e)
+            logger.error("Error in ${::getNavnInnloggetSaksehandler.name}, failed to call getInnloggetSaksbehandler", e)
             throw e
         }
         return Navn(
@@ -80,7 +80,7 @@ class AzureGateway(
         val data = try {
             microsoftGraphClient.getInnloggetSaksbehandler()
         } catch (e: Exception) {
-            logger.error("Failed to call getInnloggetSaksbehandler", e)
+            logger.error("Error in ${::getDataOmInnloggetSaksbehandler.name}, failed to call getInnloggetSaksbehandler", e)
             throw e
         }
         return SaksbehandlerPersonligInfo(
@@ -99,7 +99,7 @@ class AzureGateway(
             microsoftGraphClient.getInnloggetSaksbehandlersGroups()
                 .map { SaksbehandlerRolle(it.id, it.displayName ?: it.mailNickname ?: it.id) }
         } catch (e: Exception) {
-            logger.error("Failed to call getInnloggetSaksbehandlersGroups", e)
+            logger.error("Error in ${::getRollerForInnloggetSaksbehandler.name}, failed to call getInnloggetSaksbehandlersGroups", e)
             throw e
         }
 
