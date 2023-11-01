@@ -5,6 +5,7 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.logErrorResponse
 import org.springframework.http.HttpStatusCode
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -26,6 +27,7 @@ class MicrosoftGraphClient(
         private const val slimUserSelect = "userPrincipalName,onPremisesSamAccountName,displayName"
     }
 
+    @Retryable
     fun getEnhetensAnsattesNavIdents(enhetNr: String): AzureSlimUserList? {
         return microsoftGraphWebClient.get()
             .uri { uriBuilder ->
@@ -47,7 +49,7 @@ class MicrosoftGraphClient(
             .block()
     }
 
-    //@Retryable
+    @Retryable
     fun getInnloggetSaksbehandler(): AzureUser {
         logger.debug("Fetching data about authenticated user from Microsoft Graph")
 
@@ -75,13 +77,13 @@ class MicrosoftGraphClient(
             ?: throw RuntimeException("AzureAD data about authenticated user could not be fetched")
     }
 
-    //@Retryable
+    @Retryable
     fun getSaksbehandler(navIdent: String): AzureUser {
         logger.debug("Fetching data about authenticated user from Microsoft Graph")
         return findUserByNavIdent(navIdent)
     }
 
-    //@Retryable
+    @Retryable
     fun getInnloggetSaksbehandlersGroups(): List<AzureGroup> {
         logger.debug("Fetching data about authenticated users groups from Microsoft Graph")
 
@@ -100,7 +102,7 @@ class MicrosoftGraphClient(
             ?: throw RuntimeException("AzureAD data about authenticated users groups could not be fetched")
     }
 
-    //TODO: Denne har vi ikke brukt med OBO-token før, så det må testes
+    @Retryable
     private fun findUserByNavIdent(navIdent: String): AzureUser = microsoftGraphWebClient.get()
         .uri { uriBuilder ->
             uriBuilder
