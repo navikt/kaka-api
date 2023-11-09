@@ -12,7 +12,7 @@ db_ha: true
 db_type: POSTGRES_15
 envs:
   - name: JAVA_OPTS
-    value: "-Xms2048 -Xmx8192m"
+    value: "-Xms2048m -Xmx8192m"
 
 groups:
   - name: KAKA_KVALITETSVURDERING_ROLE_ID
