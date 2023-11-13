@@ -10,6 +10,11 @@ db_tier: db-custom-1-3840
 db_size: 10
 db_ha: true
 db_type: POSTGRES_15
+limits_cpu: 8000m
+limits_memory: 8192Mi
+requests_cpu: 4000m
+requests_memory: 8192Mi
+
 envs:
   - name: JAVA_OPTS
     value: "-Xms2048m -Xmx8192m"
