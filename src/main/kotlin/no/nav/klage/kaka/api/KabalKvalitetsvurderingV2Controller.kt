@@ -19,6 +19,7 @@ import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDate
 import java.util.*
 
 @RestController
@@ -31,6 +32,8 @@ class KabalKvalitetsvurderingV2Controller(
     private val tokenUtil: TokenUtil,
     @Value("\${kabalApiName}")
     private val kabalApiName: String,
+    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_1_DATE}')}")
+    private val kakaVersion2_1Date: LocalDate,
 ) {
 
     companion object {
@@ -52,7 +55,7 @@ class KabalKvalitetsvurderingV2Controller(
         }
     }
 
-    @DeleteMapping(value = ["/kvalitetsvurderinger/v2/{id}","/kvalitetsvurderinger/v2/{id}/"] )
+    @DeleteMapping(value = ["/kvalitetsvurderinger/v2/{id}", "/kvalitetsvurderinger/v2/{id}/"])
     fun deleteKvalitetsvurdering(
         @PathVariable("id") kvalitetsvurderingId: UUID,
     ) {
@@ -76,12 +79,17 @@ class KabalKvalitetsvurderingV2Controller(
         val ytelseToUse = ytelseId?.let { Ytelse.of(it) } ?: Ytelse.OMS_OMP
         val typeToUse = typeId?.let { Type.of(it) } ?: Type.KLAGE
 
-        return ValidationErrors(kvalitetsvurdering.getInvalidProperties(ytelseToUse, typeToUse).map {
-            ValidationErrors.InvalidProperty(
-                field = it.field,
-                reason = it.reason
-            )
-        })
+        return ValidationErrors(
+            kvalitetsvurdering.getInvalidProperties(
+                ytelse = ytelseToUse,
+                type = typeToUse,
+                kakaVersion2_1Date = kakaVersion2_1Date
+            ).map {
+                ValidationErrors.InvalidProperty(
+                    field = it.field,
+                    reason = it.reason
+                )
+            })
     }
 
     @PostMapping("/saksdata/v2")

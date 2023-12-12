@@ -46,6 +46,8 @@ class SaksdataService(
     private val egenAnsattService: EgenAnsattService,
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
     private val kakaVersion2Date: LocalDate,
+    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_1_DATE}')}")
+    private val kakaVersion2_1Date: LocalDate,
 ) {
 
     companion object {
@@ -307,7 +309,11 @@ class SaksdataService(
                 2 -> {
                     val kvalitetsvurderingV2 =
                         kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
-                    kvalitetsvurderingV2.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
+                    kvalitetsvurderingV2.getInvalidProperties(
+                        ytelse = saksdata.ytelse,
+                        type = saksdata.sakstype,
+                        kakaVersion2_1Date = kakaVersion2_1Date
+                    )
                 }
 
                 else -> error("unknown version: ${saksdata.kvalitetsvurderingReference.version}")

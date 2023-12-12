@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.api.view
 
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 
 data class KvalitetsvurderingV2View(
     val klageforberedelsen: KvalitetsvurderingV2.Radiovalg?,
@@ -13,18 +14,28 @@ data class KvalitetsvurderingV2View(
     val klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert: Boolean,
     val klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn: Boolean,
     val klageforberedelsenSakensDokumenterManglerFysiskSaksmappe: Boolean,
+    val klageforberedelsenUtredningenUnderKlageforberedelsen: Boolean,
+    val klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger: Boolean,
+    val klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst: String?,
+    val klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger: Boolean,
+    val klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst: String?,
     val utredningen: KvalitetsvurderingV2.Radiovalg?,
     val utredningenAvMedisinskeForhold: Boolean,
     val utredningenAvInntektsforhold: Boolean,
     val utredningenAvArbeidsaktivitet: Boolean,
     val utredningenAvEoesUtenlandsproblematikk: Boolean,
     val utredningenAvAndreAktuelleForholdISaken: Boolean,
+    val utredningenAvSivilstandBoforhold: Boolean,
     val vedtaketAutomatiskVedtak: Boolean,
     val vedtaket: KvalitetsvurderingV2.Radiovalg?,
     val vedtaketDetErLagtTilGrunnFeilFaktum: Boolean,
     val vedtaketSpraakOgFormidlingErIkkeTydelig: Boolean,
     val vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert: Boolean,
     val vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<String>?,
+    val vedtaketBruktFeilHjemmel: Boolean,
+    val vedtaketBruktFeilHjemmelHjemlerList: Set<Registreringshjemmel>?,
+    val vedtaketAlleRelevanteHjemlerErIkkeVurdert: Boolean,
+    val vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<Registreringshjemmel>?,
     val vedtaketLovbestemmelsenTolketFeil: Boolean,
     val vedtaketLovbestemmelsenTolketFeilHjemlerList: Set<String>?,
     val vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet: Boolean,
@@ -55,24 +66,38 @@ fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View 
         klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert,
         klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn = klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn,
         klageforberedelsenSakensDokumenterManglerFysiskSaksmappe = klageforberedelsenSakensDokumenterManglerFysiskSaksmappe,
+        klageforberedelsenUtredningenUnderKlageforberedelsen = klageforberedelsenUtredningenUnderKlageforberedelsen,
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger = klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger,
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst = klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst,
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger = klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger,
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst = klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst,
         utredningen = utredningen,
         utredningenAvMedisinskeForhold = utredningenAvMedisinskeForhold,
         utredningenAvInntektsforhold = utredningenAvInntektsforhold,
         utredningenAvArbeidsaktivitet = utredningenAvArbeidsaktivitet,
         utredningenAvEoesUtenlandsproblematikk = utredningenAvEoesUtenlandsproblematikk,
         utredningenAvAndreAktuelleForholdISaken = utredningenAvAndreAktuelleForholdISaken,
+        utredningenAvSivilstandBoforhold = utredningenAvSivilstandBoforhold,
         vedtaketAutomatiskVedtak = vedtaketAutomatiskVedtak,
         vedtaket = vedtaket,
         vedtaketDetErLagtTilGrunnFeilFaktum = vedtaketDetErLagtTilGrunnFeilFaktum,
         vedtaketSpraakOgFormidlingErIkkeTydelig = vedtaketSpraakOgFormidlingErIkkeTydelig,
         vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
-        vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id }?.toSet(),
+        vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id }
+            ?.toSet(),
+        vedtaketBruktFeilHjemmel = vedtaketBruktFeilHjemmel,
+        vedtaketBruktFeilHjemmelHjemlerList = vedtaketBruktFeilHjemmelHjemlerList,
+        vedtaketAlleRelevanteHjemlerErIkkeVurdert = vedtaketAlleRelevanteHjemlerErIkkeVurdert,
+        vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList,
         vedtaketLovbestemmelsenTolketFeil = vedtaketLovbestemmelsenTolketFeil,
-        vedtaketLovbestemmelsenTolketFeilHjemlerList = vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id }?.toSet(),
+        vedtaketLovbestemmelsenTolketFeilHjemlerList = vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id }
+            ?.toSet(),
         vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
-        vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList = vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList?.map { it.id }?.toSet(),
+        vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList = vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList?.map { it.id }
+            ?.toSet(),
         vedtaketFeilKonkretRettsanvendelse = vedtaketFeilKonkretRettsanvendelse,
-        vedtaketFeilKonkretRettsanvendelseHjemlerList = vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id }?.toSet(),
+        vedtaketFeilKonkretRettsanvendelseHjemlerList = vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id }
+            ?.toSet(),
         vedtaketIkkeKonkretIndividuellBegrunnelse = vedtaketIkkeKonkretIndividuellBegrunnelse,
         vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum = vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum,
         vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum,
@@ -83,6 +108,5 @@ fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View 
         raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
         raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
         annetFritekst = annetFritekst,
-
-        )
+    )
 }

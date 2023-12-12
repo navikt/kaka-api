@@ -8,6 +8,7 @@ import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.hibernate.annotations.DynamicUpdate
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -33,12 +34,24 @@ class KvalitetsvurderingV2(
     var klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn: Boolean = false,
     var klageforberedelsenSakensDokumenterManglerFysiskSaksmappe: Boolean = false,
 
+    @Column(name = "klageforberedelsen_uuk")
+    var klageforberedelsenUtredningenUnderKlageforberedelsen: Boolean = false,
+    @Column(name = "klageforberedelsen_uuk_khbuoaino")
+    var klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger: Boolean = false,
+    @Column(name = "klageforberedelsen_uuk_khbuoaino_fritekst")
+    var klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst: String? = null,
+    @Column(name = "klageforberedelsen_uuk_khsino")
+    var klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger: Boolean = false,
+    @Column(name = "klageforberedelsen_uuk_khsino_fritekst")
+    var klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst: String? = null,
+
     @Enumerated(EnumType.STRING)
     var utredningen: Radiovalg? = null,
     var utredningenAvMedisinskeForhold: Boolean = false,
     var utredningenAvInntektsforhold: Boolean = false,
     var utredningenAvArbeidsaktivitet: Boolean = false,
     var utredningenAvEoesUtenlandsproblematikk: Boolean = false,
+    var utredningenAvSivilstandBoforhold: Boolean = false,
     @Column(name = "utredningen_av_andre_aktuelle_forhold_i_saken")
     var utredningenAvAndreAktuelleForholdISaken: Boolean = false,
 
@@ -49,6 +62,7 @@ class KvalitetsvurderingV2(
     var vedtaketDetErLagtTilGrunnFeilFaktum: Boolean = false,
     var vedtaketSpraakOgFormidlingErIkkeTydelig: Boolean = false,
 
+    @Column(name = "vedtaket_brukt_feil_hjemmel_eller_alle_relevante_hjemler_er_ikk")
     var vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert: Boolean = false,
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
@@ -59,6 +73,28 @@ class KvalitetsvurderingV2(
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
     var vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<Registreringshjemmel>? = null,
+
+    var vedtaketBruktFeilHjemmel: Boolean = false,
+    @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "r_k_v2_vedtaket_bfh_hjemler_list",
+        schema = "kaka",
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v2_id", referencedColumnName = "id", nullable = false)]
+    )
+    @Convert(converter = RegistreringshjemmelConverter::class)
+    @Column(name = "id")
+    var vedtaketBruktFeilHjemmelHjemlerList: Set<Registreringshjemmel>? = null,
+
+    var vedtaketAlleRelevanteHjemlerErIkkeVurdert: Boolean = false,
+    @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "r_k_v2_vedtaket_arheiv_hjemler_list",
+        schema = "kaka",
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v2_id", referencedColumnName = "id", nullable = false)]
+    )
+    @Convert(converter = RegistreringshjemmelConverter::class)
+    @Column(name = "id")
+    var vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<Registreringshjemmel>? = null,
 
     var vedtaketLovbestemmelsenTolketFeil: Boolean = false,
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
@@ -140,6 +176,12 @@ class KvalitetsvurderingV2(
         klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = false
         klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn = false
         klageforberedelsenSakensDokumenterManglerFysiskSaksmappe = false
+
+        klageforberedelsenUtredningenUnderKlageforberedelsen = false
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger = false
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst = null
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger = false
+        klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst = null
     }
 
     fun cleanup() {
@@ -153,11 +195,22 @@ class KvalitetsvurderingV2(
             klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = false
             klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn = false
             klageforberedelsenSakensDokumenterManglerFysiskSaksmappe = false
+            klageforberedelsenUtredningenUnderKlageforberedelsen = false
+            klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger = false
+            klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst = null
+            klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger = false
+            klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst = null
         } else {
             if (!klageforberedelsenSakensDokumenter) {
                 klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = false
                 klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn = false
                 klageforberedelsenSakensDokumenterManglerFysiskSaksmappe = false
+            }
+            if (!klageforberedelsenUtredningenUnderKlageforberedelsen) {
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger = false
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst = null
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger = false
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst = null
             }
         }
 
@@ -167,6 +220,7 @@ class KvalitetsvurderingV2(
             utredningenAvArbeidsaktivitet = false
             utredningenAvEoesUtenlandsproblematikk = false
             utredningenAvAndreAktuelleForholdISaken = false
+            utredningenAvSivilstandBoforhold = false
         }
 
         if (vedtaket == Radiovalg.BRA) {
@@ -189,13 +243,18 @@ class KvalitetsvurderingV2(
             if (!vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert) {
                 vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = null
             }
+            if (!vedtaketBruktFeilHjemmel) {
+                vedtaketBruktFeilHjemmelHjemlerList = null
+            }
+            if (!vedtaketAlleRelevanteHjemlerErIkkeVurdert) {
+                vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = null
+            }
             if (!vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet) {
                 vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList = null
             }
             if (!vedtaketFeilKonkretRettsanvendelse) {
                 vedtaketFeilKonkretRettsanvendelseHjemlerList = null
             }
-
             if (!vedtaketIkkeKonkretIndividuellBegrunnelse) {
                 vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum = false
                 vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = false
@@ -211,19 +270,21 @@ class KvalitetsvurderingV2(
         }
     }
 
-    fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
+    fun getInvalidProperties(ytelse: Ytelse?, type: Type, kakaVersion2_1Date: LocalDate): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
-        result += getCommonInvalidProperties(ytelse)
+        val shouldValidateNewFields2024 = kakaVersion2_1Date.isAfter(LocalDate.now().minusDays(1))
+
+        result += getCommonInvalidProperties(ytelse, shouldValidateNewFields2024)
 
         if (type == Type.KLAGE) {
-            result += getSpecificInvalidPropertiesForKlage()
+            result += getSpecificInvalidPropertiesForKlage(shouldValidateNewFields2024)
         }
 
         return result
     }
 
-    private fun getCommonInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
+    private fun getCommonInvalidProperties(ytelse: Ytelse?, shouldValidateNewFields2024: Boolean): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
         if (utredningen == null) {
@@ -236,7 +297,8 @@ class KvalitetsvurderingV2(
                 !utredningenAvInntektsforhold &&
                 !utredningenAvArbeidsaktivitet &&
                 !utredningenAvEoesUtenlandsproblematikk &&
-                !utredningenAvAndreAktuelleForholdISaken
+                !utredningenAvAndreAktuelleForholdISaken &&
+                (shouldValidateNewFields2024 && !utredningenAvSivilstandBoforhold)
             ) {
                 result.add(
                     createMissingChecksValidationError(::utredningen.name + "Group")
@@ -251,12 +313,16 @@ class KvalitetsvurderingV2(
         } else if (vedtaket == Radiovalg.MANGELFULLT) {
             if (
                 !vedtaketLovbestemmelsenTolketFeil &&
-                !vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert &&
                 !vedtaketFeilKonkretRettsanvendelse &&
                 !vedtaketIkkeKonkretIndividuellBegrunnelse &&
                 !vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet &&
                 !vedtaketDetErLagtTilGrunnFeilFaktum &&
-                !vedtaketSpraakOgFormidlingErIkkeTydelig
+                !vedtaketSpraakOgFormidlingErIkkeTydelig &&
+                if (shouldValidateNewFields2024) {
+                    !vedtaketBruktFeilHjemmel && !vedtaketAlleRelevanteHjemlerErIkkeVurdert
+                } else {
+                    !vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert
+                }
             ) {
                 result.add(
                     createMissingChecksValidationError(::vedtaket.name + "Group")
@@ -269,10 +335,24 @@ class KvalitetsvurderingV2(
                 )
             }
 
-            if (vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert && vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
-                result.add(
-                    createMissingChecksValidationError(::vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.name)
-                )
+            if (shouldValidateNewFields2024) {
+                if (vedtaketBruktFeilHjemmel && vedtaketBruktFeilHjemmelHjemlerList.isNullOrEmpty()) {
+                    result.add(
+                        createMissingChecksValidationError(::vedtaketBruktFeilHjemmelHjemlerList.name)
+                    )
+                }
+
+                if (vedtaketAlleRelevanteHjemlerErIkkeVurdert && vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
+                    result.add(
+                        createMissingChecksValidationError(::vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList.name)
+                    )
+                }
+            } else {
+                if (vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert && vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
+                    result.add(
+                        createMissingChecksValidationError(::vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.name)
+                    )
+                }
             }
 
             if (vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet && vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList.isNullOrEmpty()) {
@@ -321,7 +401,7 @@ class KvalitetsvurderingV2(
         return result
     }
 
-    private fun getSpecificInvalidPropertiesForKlage(): List<InvalidProperty> {
+    private fun getSpecificInvalidPropertiesForKlage(shouldValidateNewFields2024: Boolean): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
         if (klageforberedelsen == null) {
             result.add(
@@ -334,19 +414,32 @@ class KvalitetsvurderingV2(
                 !klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt &&
                 !klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar &&
                 !klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema &&
-                !klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker
+                !klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker &&
+                (shouldValidateNewFields2024 && !klageforberedelsenUtredningenUnderKlageforberedelsen)
             ) {
                 result.add(
                     createMissingChecksValidationError(::klageforberedelsen.name + "Group")
                 )
-            } else if (klageforberedelsenSakensDokumenter) {
-                if (!klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert &&
-                    !klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn &&
-                    !klageforberedelsenSakensDokumenterManglerFysiskSaksmappe
-                ) {
-                    result.add(
-                        createMissingChecksValidationError(::klageforberedelsenSakensDokumenter.name + "Group")
-                    )
+            } else {
+                if (klageforberedelsenSakensDokumenter) {
+                    if (!klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert &&
+                        !klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn &&
+                        !klageforberedelsenSakensDokumenterManglerFysiskSaksmappe
+                    ) {
+                        result.add(
+                            createMissingChecksValidationError(::klageforberedelsenSakensDokumenter.name + "Group")
+                        )
+                    }
+                }
+
+                if (klageforberedelsenUtredningenUnderKlageforberedelsen) {
+                    if (!klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger &&
+                        !klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger
+                    ) {
+                        result.add(
+                            createMissingChecksValidationError(::klageforberedelsenUtredningenUnderKlageforberedelsen.name + "Group")
+                        )
+                    }
                 }
             }
         }
