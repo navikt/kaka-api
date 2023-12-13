@@ -160,17 +160,18 @@ class Saksdata(
         }
 
         //TODO: Create test for invalid utfall when such are added
-        if (!typeTilUtfall[sakstype]!!.contains(utfall)) {
-            validationErrors.add(
-                createInvalidUtfallValidationError(SaksdataView::utfallId.name)
-            )
-        }
 
         if (utfall == null) {
             validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::utfallId.name)
             )
         } else if (utfall !in noRegistringshjemmelNeeded) {
+            if (!typeTilUtfall[sakstype]!!.contains(utfall)) {
+                validationErrors.add(
+                    createInvalidUtfallValidationError(SaksdataView::utfallId.name)
+                )
+            }
+
             if (registreringshjemler.isNullOrEmpty()) {
                 validationErrors.add(
                     createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
