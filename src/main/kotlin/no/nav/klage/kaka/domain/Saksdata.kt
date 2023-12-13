@@ -163,7 +163,7 @@ class Saksdata(
             validationErrors.add(
                 createMustBeSelectedValidationError(SaksdataView::utfallId.name)
             )
-        } else if (utfall !in noRegistringshjemmelNeeded) {
+        } else {
             //TODO: Create test for invalid utfall when such are added
             if (!typeTilUtfall[sakstype]!!.contains(utfall)) {
                 validationErrors.add(
@@ -171,10 +171,12 @@ class Saksdata(
                 )
             }
 
-            if (registreringshjemler.isNullOrEmpty()) {
-                validationErrors.add(
-                    createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
-                )
+            if (utfall !in noRegistringshjemmelNeeded) {
+                if (registreringshjemler.isNullOrEmpty()) {
+                    validationErrors.add(
+                        createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
+                    )
+                }
             }
         }
         return validationErrors
