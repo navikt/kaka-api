@@ -8,7 +8,6 @@ import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.hibernate.annotations.DynamicUpdate
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
 
@@ -270,21 +269,19 @@ class KvalitetsvurderingV2(
         }
     }
 
-    fun getInvalidProperties(ytelse: Ytelse?, type: Type, kakaVersion2_1Date: LocalDate): List<InvalidProperty> {
+    fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
-        val shouldValidateNewFields2024 = kakaVersion2_1Date.isAfter(LocalDate.now().minusDays(1))
-
-        result += getCommonInvalidProperties(ytelse, shouldValidateNewFields2024)
+        result += getCommonInvalidProperties(ytelse)
 
         if (type == Type.KLAGE) {
-            result += getSpecificInvalidPropertiesForKlage(shouldValidateNewFields2024)
+            result += getSpecificInvalidPropertiesForKlage()
         }
 
         return result
     }
 
-    private fun getCommonInvalidProperties(ytelse: Ytelse?, shouldValidateNewFields2024: Boolean): List<InvalidProperty> {
+    private fun getCommonInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
         if (utredningen == null) {
@@ -298,7 +295,7 @@ class KvalitetsvurderingV2(
                 !utredningenAvArbeidsaktivitet &&
                 !utredningenAvEoesUtenlandsproblematikk &&
                 !utredningenAvAndreAktuelleForholdISaken &&
-                (shouldValidateNewFields2024 && !utredningenAvSivilstandBoforhold)
+                !utredningenAvSivilstandBoforhold
             ) {
                 result.add(
                     createMissingChecksValidationError(::utredningen.name + "Group")
@@ -318,11 +315,8 @@ class KvalitetsvurderingV2(
                 !vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet &&
                 !vedtaketDetErLagtTilGrunnFeilFaktum &&
                 !vedtaketSpraakOgFormidlingErIkkeTydelig &&
-                if (shouldValidateNewFields2024) {
-                    !vedtaketBruktFeilHjemmel && !vedtaketAlleRelevanteHjemlerErIkkeVurdert
-                } else {
-                    !vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert
-                }
+                !vedtaketBruktFeilHjemmel &&
+                !vedtaketAlleRelevanteHjemlerErIkkeVurdert
             ) {
                 result.add(
                     createMissingChecksValidationError(::vedtaket.name + "Group")
@@ -335,24 +329,10 @@ class KvalitetsvurderingV2(
                 )
             }
 
-            if (shouldValidateNewFields2024) {
-                if (vedtaketBruktFeilHjemmel && vedtaketBruktFeilHjemmelHjemlerList.isNullOrEmpty()) {
-                    result.add(
-                        createMissingChecksValidationError(::vedtaketBruktFeilHjemmelHjemlerList.name)
-                    )
-                }
-
-                if (vedtaketAlleRelevanteHjemlerErIkkeVurdert && vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
-                    result.add(
-                        createMissingChecksValidationError(::vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList.name)
-                    )
-                }
-            } else {
-                if (vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert && vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
-                    result.add(
-                        createMissingChecksValidationError(::vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList.name)
-                    )
-                }
+            if (vedtaketAlleRelevanteHjemlerErIkkeVurdert && vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList.isNullOrEmpty()) {
+                result.add(
+                    createMissingChecksValidationError(::vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList.name)
+                )
             }
 
             if (vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet && vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList.isNullOrEmpty()) {
@@ -401,7 +381,7 @@ class KvalitetsvurderingV2(
         return result
     }
 
-    private fun getSpecificInvalidPropertiesForKlage(shouldValidateNewFields2024: Boolean): List<InvalidProperty> {
+    private fun getSpecificInvalidPropertiesForKlage(): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
         if (klageforberedelsen == null) {
             result.add(
@@ -415,7 +395,7 @@ class KvalitetsvurderingV2(
                 !klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar &&
                 !klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema &&
                 !klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker &&
-                (shouldValidateNewFields2024 && !klageforberedelsenUtredningenUnderKlageforberedelsen)
+                !klageforberedelsenUtredningenUnderKlageforberedelsen
             ) {
                 result.add(
                     createMissingChecksValidationError(::klageforberedelsen.name + "Group")

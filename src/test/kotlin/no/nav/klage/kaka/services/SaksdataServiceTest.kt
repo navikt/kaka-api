@@ -31,7 +31,6 @@ internal class SaksdataServiceTest {
             pdlFacade = mockk(),
             egenAnsattService = mockk(),
             kakaVersion2Date = mockk(),
-            kakaVersion2_1Date = mockk(),
         )
 
     @BeforeEach

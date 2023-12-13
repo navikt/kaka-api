@@ -19,7 +19,6 @@ import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
 import java.util.*
 
 @RestController
@@ -32,8 +31,6 @@ class KabalKvalitetsvurderingV2Controller(
     private val tokenUtil: TokenUtil,
     @Value("\${kabalApiName}")
     private val kabalApiName: String,
-    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_1_DATE}')}")
-    private val kakaVersion2_1Date: LocalDate,
 ) {
 
     companion object {
@@ -83,7 +80,6 @@ class KabalKvalitetsvurderingV2Controller(
             kvalitetsvurdering.getInvalidProperties(
                 ytelse = ytelseToUse,
                 type = typeToUse,
-                kakaVersion2_1Date = kakaVersion2_1Date
             ).map {
                 ValidationErrors.InvalidProperty(
                     field = it.field,
