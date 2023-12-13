@@ -1,7 +1,6 @@
 package no.nav.klage.kaka.api.view
 
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
-import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 
 data class KvalitetsvurderingV2View(
     val klageforberedelsen: KvalitetsvurderingV2.Radiovalg?,
@@ -33,9 +32,9 @@ data class KvalitetsvurderingV2View(
     val vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert: Boolean,
     val vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<String>?,
     val vedtaketBruktFeilHjemmel: Boolean,
-    val vedtaketBruktFeilHjemmelHjemlerList: Set<Registreringshjemmel>?,
+    val vedtaketBruktFeilHjemmelHjemlerList: Set<String>?,
     val vedtaketAlleRelevanteHjemlerErIkkeVurdert: Boolean,
-    val vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<Registreringshjemmel>?,
+    val vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<String>?,
     val vedtaketLovbestemmelsenTolketFeil: Boolean,
     val vedtaketLovbestemmelsenTolketFeilHjemlerList: Set<String>?,
     val vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet: Boolean,
@@ -86,9 +85,11 @@ fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View 
         vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id }
             ?.toSet(),
         vedtaketBruktFeilHjemmel = vedtaketBruktFeilHjemmel,
-        vedtaketBruktFeilHjemmelHjemlerList = vedtaketBruktFeilHjemmelHjemlerList,
+        vedtaketBruktFeilHjemmelHjemlerList = vedtaketBruktFeilHjemmelHjemlerList?.map { it.id }
+            ?.toSet(),
         vedtaketAlleRelevanteHjemlerErIkkeVurdert = vedtaketAlleRelevanteHjemlerErIkkeVurdert,
-        vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList,
+        vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id }
+            ?.toSet(),
         vedtaketLovbestemmelsenTolketFeil = vedtaketLovbestemmelsenTolketFeil,
         vedtaketLovbestemmelsenTolketFeilHjemlerList = vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id }
             ?.toSet(),
