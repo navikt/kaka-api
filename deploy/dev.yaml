@@ -12,10 +12,9 @@ db_tier: db-f1-micro
 db_size: 10
 db_ha: false
 db_type: POSTGRES_15
-limits_cpu: 4000m
 limits_memory: 4096Mi
-requests_cpu: 2000m
-requests_memory: 4096Mi
+requests_cpu: 200m
+requests_memory: 2048Mi
 
 envs:
   - name: JAVA_TOOL_OPTIONS
