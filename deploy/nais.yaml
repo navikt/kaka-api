@@ -96,7 +96,6 @@ spec:
     - secret: ereg-services
   resources:
     limits:
-      cpu: {{ limits_cpu }}
       memory: {{ limits_memory }}
     requests:
       cpu: {{ requests_cpu }}
