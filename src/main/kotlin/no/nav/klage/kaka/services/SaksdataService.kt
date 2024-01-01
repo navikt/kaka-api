@@ -307,7 +307,10 @@ class SaksdataService(
                 2 -> {
                     val kvalitetsvurderingV2 =
                         kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
-                    kvalitetsvurderingV2.getInvalidProperties(ytelse = saksdata.ytelse, type = saksdata.sakstype)
+                    kvalitetsvurderingV2.getInvalidProperties(
+                        ytelse = saksdata.ytelse,
+                        type = saksdata.sakstype,
+                    )
                 }
 
                 else -> error("unknown version: ${saksdata.kvalitetsvurderingReference.version}")
