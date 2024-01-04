@@ -13,6 +13,7 @@ data class AnonymizedFinishedVurderingV2(
     val sakstypeId: String,
     val mottattVedtaksinstans: Date?,
     val vedtaksinstansEnhet: String,
+    val vedtaksinstansgruppe: Vedtaksinstansgruppe,
     val mottattKlageinstans: Date,
 
     var klageforberedelsenSakensDokumenter: Boolean,
@@ -150,3 +151,27 @@ data class VedtaksinstanslederResponseV2(
     val mine: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
     val rest: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
 )
+
+enum class Vedtaksinstansgruppe {
+    AKERSHUS,
+    OSLO,
+    VESTLAND,
+    ROGALAND,
+    TROENDELAG,
+    INNLANDET,
+    AGDER,
+    OESTFOLD,
+    MOERE_OG_ROMSDAL,
+    BUSKERUD,
+    VESTFOLD,
+    NORDLAND,
+    TELEMARK,
+    TROMS,
+    FINNMARK,
+    NAV_OEKONOMI_STOENAD,
+    NAV_ARBEID_OG_YTELSER,
+    NAV_KONTROLL_FORVALTNING,
+    NAV_HJELPEMIDDELSENTRAL,
+    NAV_FAMILIE_OG_PENSJONSYTELSER,
+    UNKNOWN,
+}
