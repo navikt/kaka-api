@@ -282,7 +282,7 @@ class ExportServiceV2(
                 sakstypeId = saksdata.sakstype.id,
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
-                vedtaksinstansgruppe = getVedtaksinstansgruppe(saksdata.vedtaksinstansEnhet!!),
+                vedtaksinstansgruppe = getVedtaksinstansgruppe(saksdata.vedtaksinstansEnhet!!).id,
                 mottattKlageinstans = mottattKlageinstansDate,
 
                 klageforberedelsenSakensDokumenter = kvalitetsvurderingV2.klageforberedelsenSakensDokumenter,
