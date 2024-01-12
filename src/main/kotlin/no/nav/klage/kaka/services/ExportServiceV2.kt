@@ -295,16 +295,24 @@ class ExportServiceV2(
                 klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar = kvalitetsvurderingV2.klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar,
                 klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema,
                 klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker,
+                klageforberedelsenUtredningenUnderKlageforberedelsen = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsen,
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger,
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger,
                 utredningen = kvalitetsvurderingV2.utredningen?.name,
                 utredningenAvMedisinskeForhold = kvalitetsvurderingV2.utredningenAvMedisinskeForhold,
                 utredningenAvInntektsforhold = kvalitetsvurderingV2.utredningenAvInntektsforhold,
                 utredningenAvArbeidsaktivitet = kvalitetsvurderingV2.utredningenAvArbeidsaktivitet,
                 utredningenAvEoesUtenlandsproblematikk = kvalitetsvurderingV2.utredningenAvEoesUtenlandsproblematikk,
                 utredningenAvAndreAktuelleForholdISaken = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvSivilstandBoforhold = kvalitetsvurderingV2.utredningenAvSivilstandBoforhold,
                 vedtaketLovbestemmelsenTolketFeil = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeil,
                 vedtaketLovbestemmelsenTolketFeilHjemlerList = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id },
                 vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
                 vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id },
+                vedtaketBruktFeilHjemmel = kvalitetsvurderingV2.vedtaketBruktFeilHjemmel,
+                vedtaketBruktFeilHjemmelHjemlerList = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelHjemlerList?.map { it.id },
+                vedtaketAlleRelevanteHjemlerErIkkeVurdert = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdert,
+                vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id },
                 vedtaketFeilKonkretRettsanvendelse = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelse,
                 vedtaketFeilKonkretRettsanvendelseHjemlerList = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id },
                 vedtaketIkkeKonkretIndividuellBegrunnelse = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelse,
@@ -405,16 +413,24 @@ class ExportServiceV2(
                 klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar = kvalitetsvurderingV2.klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar,
                 klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema,
                 klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker,
+                klageforberedelsenUtredningenUnderKlageforberedelsen = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsen,
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger,
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger,
                 utredningen = kvalitetsvurderingV2.utredningen?.name,
                 utredningenAvMedisinskeForhold = kvalitetsvurderingV2.utredningenAvMedisinskeForhold,
                 utredningenAvInntektsforhold = kvalitetsvurderingV2.utredningenAvInntektsforhold,
                 utredningenAvArbeidsaktivitet = kvalitetsvurderingV2.utredningenAvArbeidsaktivitet,
                 utredningenAvEoesUtenlandsproblematikk = kvalitetsvurderingV2.utredningenAvEoesUtenlandsproblematikk,
                 utredningenAvAndreAktuelleForholdISaken = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvSivilstandBoforhold = kvalitetsvurderingV2.utredningenAvSivilstandBoforhold,
                 vedtaketLovbestemmelsenTolketFeil = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeil,
                 vedtaketLovbestemmelsenTolketFeilHjemlerList = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id },
                 vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
                 vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id },
+                vedtaketBruktFeilHjemmel = kvalitetsvurderingV2.vedtaketBruktFeilHjemmel,
+                vedtaketBruktFeilHjemmelHjemlerList = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelHjemlerList?.map { it.id },
+                vedtaketAlleRelevanteHjemlerErIkkeVurdert = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdert,
+                vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id },
                 vedtaketFeilKonkretRettsanvendelse = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelse,
                 vedtaketFeilKonkretRettsanvendelseHjemlerList = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id },
                 vedtaketIkkeKonkretIndividuellBegrunnelse = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelse,
@@ -486,16 +502,24 @@ class ExportServiceV2(
                 klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar = kvalitetsvurderingV2.klageforberedelsenFeilVedBegrunnelsenForHvorforAvslagOpprettholdesKlagerIkkeOppfyllerVilkaar,
                 klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevetsInnholdErIkkeISamsvarMedSakensTema,
                 klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker = kvalitetsvurderingV2.klageforberedelsenOversendelsesbrevIkkeSendtKopiTilPartenEllerFeilMottaker,
+                klageforberedelsenUtredningenUnderKlageforberedelsen = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsen,
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger,
+                klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger,
                 utredningen = kvalitetsvurderingV2.utredningen?.name,
                 utredningenAvMedisinskeForhold = kvalitetsvurderingV2.utredningenAvMedisinskeForhold,
                 utredningenAvInntektsforhold = kvalitetsvurderingV2.utredningenAvInntektsforhold,
                 utredningenAvArbeidsaktivitet = kvalitetsvurderingV2.utredningenAvArbeidsaktivitet,
                 utredningenAvEoesUtenlandsproblematikk = kvalitetsvurderingV2.utredningenAvEoesUtenlandsproblematikk,
                 utredningenAvAndreAktuelleForholdISaken = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvSivilstandBoforhold = kvalitetsvurderingV2.utredningenAvSivilstandBoforhold,
                 vedtaketLovbestemmelsenTolketFeil = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeil,
                 vedtaketLovbestemmelsenTolketFeilHjemlerList = kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id },
                 vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
                 vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id },
+                vedtaketBruktFeilHjemmel = kvalitetsvurderingV2.vedtaketBruktFeilHjemmel,
+                vedtaketBruktFeilHjemmelHjemlerList = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelHjemlerList?.map { it.id },
+                vedtaketAlleRelevanteHjemlerErIkkeVurdert = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdert,
+                vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id },
                 vedtaketFeilKonkretRettsanvendelse = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelse,
                 vedtaketFeilKonkretRettsanvendelseHjemlerList = kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id },
                 vedtaketIkkeKonkretIndividuellBegrunnelse = kvalitetsvurderingV2.vedtaketIkkeKonkretIndividuellBegrunnelse,
@@ -635,6 +659,45 @@ class ExportServiceV2(
                 )
                 add(
                     Field(
+                        fieldName = "Utredningen under klageforberedelsen",
+                        value = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsen,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Klageinstansen har bedt underinstansen om å innhente nye opplysninger",
+                        value = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger,
+                        type = BOOLEAN
+                    )
+                )
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Skriv hvilke opplysninger som måtte hentes inn her (valgfri)",
+                            value = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysningerFritekst,
+                            type = STRING
+                        )
+                    )
+                }
+                add(
+                    Field(
+                        fieldName = "Klageinstansen har selv innhentet nye opplysninger",
+                        value = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger,
+                        type = BOOLEAN
+                    )
+                )
+                if (includeFritekst) {
+                    add(
+                        Field(
+                            fieldName = "Skriv hvilke opplysninger som måtte hentes inn her (valgfri)",
+                            value = kvalitetsvurderingV2.klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysningerFritekst,
+                            type = STRING
+                        )
+                    )
+                }
+                add(
+                    Field(
                         fieldName = "Oversittet klagefrist er ikke kommentert",
                         value = kvalitetsvurderingV2.klageforberedelsenOversittetKlagefristIkkeKommentert,
                         type = BOOLEAN
@@ -701,6 +764,13 @@ class ExportServiceV2(
                 )
                 add(
                     Field(
+                        fieldName = "Utredningen av sivilstand/boforhold",
+                        value = kvalitetsvurderingV2.utredningenAvSivilstandBoforhold,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
                         fieldName = "Utredningen av andre aktuelle forhold i saken",
                         value = kvalitetsvurderingV2.utredningenAvAndreAktuelleForholdISaken,
                         type = BOOLEAN
@@ -732,7 +802,34 @@ class ExportServiceV2(
                         type = STRING
                     )
                 )
-
+                add(
+                    Field(
+                        fieldName = "Det er brukt feil hjemmel",
+                        value = kvalitetsvurderingV2.vedtaketBruktFeilHjemmel,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Hjemler for «Det er brukt feil hjemmel»",
+                        value = kvalitetsvurderingV2.vedtaketBruktFeilHjemmelHjemlerList.toHjemlerString(),
+                        type = STRING
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Alle relevante hjemler er ikke vurdert",
+                        value = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdert,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Hjemler for «Alle relevante hjemler er ikke vurdert»",
+                        value = kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList.toHjemlerString(),
+                        type = STRING
+                    )
+                )
                 add(
                     Field(
                         fieldName = "Lovbestemmelsen er tolket feil",
