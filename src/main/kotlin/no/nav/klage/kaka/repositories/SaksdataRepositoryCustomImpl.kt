@@ -61,8 +61,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         toDateTime: LocalDateTime,
         version: Int,
     ): List<Array<*>> {
-        return entityManager.createQuery(
-            """
+        val query = """
             SELECT s, k
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
@@ -70,7 +69,10 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
              ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
-        """,
+        """
+
+        return entityManager.createQuery(
+            query,
             Array::class.java
         )
             .setParameter("fromDateTime", fromDateTime)
@@ -251,6 +253,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
                 LEFT JOIN FETCH k.vedtaketLovbestemmelsenTolketFeilHjemlerList
                 LEFT JOIN FETCH k.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
                 LEFT JOIN FETCH k.vedtaketFeilKonkretRettsanvendelseHjemlerList
+                LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelHjemlerList
+                LEFT JOIN FETCH k.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList
             """
         } else {
             ""
