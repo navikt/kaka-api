@@ -363,6 +363,7 @@ class ExportServiceV2(
             "45" -> Vedtaksinstansgruppe.NAV_KONTROLL_FORVALTNING
             "47" -> Vedtaksinstansgruppe.NAV_HJELPEMIDDELSENTRAL
             "48" -> Vedtaksinstansgruppe.NAV_FAMILIE_OG_PENSJONSYTELSER
+            "42" -> Vedtaksinstansgruppe.UNKNOWN //Klageenhet, expected for anke
             else -> {
                 logger.warn(
                     "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
