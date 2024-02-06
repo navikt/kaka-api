@@ -1,7 +1,9 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.*
+import no.nav.klage.kaka.api.view.ManagerResponseV1
+import no.nav.klage.kaka.api.view.ManagerResponseV2
+import no.nav.klage.kaka.api.view.Saksbehandler
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.*
@@ -12,14 +14,16 @@ import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
+import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.io.FileInputStream
 import java.time.Year
 import java.time.YearMonth
 
@@ -39,17 +43,17 @@ class KALederController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @GetMapping( "/export/v{version}/excel", "/export/v{version}/excel-med-fritekst")
+    @GetMapping("/export/v{version}/excel", "/export/v{version}/excel-med-fritekst")
     fun getAsExcelMedFritekst(
         @RequestParam(required = false) year: Int?,
         @PathVariable("version", required = false) version: Int?,
-    ): ResponseEntity<ByteArray> {
+    ): ResponseEntity<Resource> {
         logger.debug("getAsExcelMedFritekst() called. Year param = $year, version = $version")
 
         validateHasExcelMedFritekst()
 
         val yearToUse = if (year != null) Year.of(year) else Year.now()
-        val fileAsBytes = if (version == 2) {
+        val file = if (version == 2) {
             exportServiceV2.getAsExcel(year = yearToUse, includeFritekst = true)
         } else {
             exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = true)
@@ -59,24 +63,33 @@ class KALederController(
         responseHeaders.contentType =
             MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         responseHeaders.add("Content-Disposition", "inline; filename=export.xlsx")
-        return ResponseEntity(
-            fileAsBytes,
-            responseHeaders,
-            HttpStatus.OK
-        )
+
+        return try {
+            ResponseEntity.ok()
+                .headers(responseHeaders)
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(InputStreamResource(FileInputStream(file)))
+        } finally {
+            try {
+                file.delete()
+            } catch (e: Exception) {
+                logger.warn("could not delete temporary excel file", e)
+            }
+        }
     }
 
-    @GetMapping( "/export/v{version}/excel-uten-fritekst")
+    @GetMapping("/export/v{version}/excel-uten-fritekst")
     fun getAsExcelUtenFritekst(
         @RequestParam(required = false) year: Int?,
         @PathVariable("version", required = false) version: Int?,
-    ): ResponseEntity<ByteArray> {
+    ): ResponseEntity<Resource> {
         logger.debug("getAsExcelUtenFritekst() called. Year param = $year, version = $version")
 
         validateHasExcelUtenFritekst()
 
         val yearToUse = if (year != null) Year.of(year) else Year.now()
-        val fileAsBytes = if (version == 2) {
+        val file = if (version == 2) {
             exportServiceV2.getAsExcel(year = yearToUse, includeFritekst = false)
         } else {
             exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = false)
@@ -86,11 +99,20 @@ class KALederController(
         responseHeaders.contentType =
             MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         responseHeaders.add("Content-Disposition", "inline; filename=export.xlsx")
-        return ResponseEntity(
-            fileAsBytes,
-            responseHeaders,
-            HttpStatus.OK
-        )
+
+        return try {
+            ResponseEntity.ok()
+                .headers(responseHeaders)
+                .contentLength(file.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(InputStreamResource(FileInputStream(file)))
+        } finally {
+            try {
+                file.delete()
+            } catch (e: Exception) {
+                logger.warn("could not delete temporary excel file", e)
+            }
+        }
     }
 
     @GetMapping("/statistics/enheter/{enhetsnummer}/manager")
