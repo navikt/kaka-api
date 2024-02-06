@@ -14,9 +14,10 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
-import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import org.springframework.stereotype.Service
-import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.time.*
 import java.time.temporal.ChronoField
 import java.util.*
@@ -36,7 +37,7 @@ class ExportServiceV2(
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)). For now, only used by
      * KA-ledere.
      */
-    fun getAsExcel(year: Year, includeFritekst: Boolean): ByteArray {
+    fun getAsExcel(year: Year, includeFritekst: Boolean): File {
         val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV2(
             fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
             toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
@@ -44,7 +45,7 @@ class ExportServiceV2(
 
         val saksdataFields = mapToFields(resultList, includeFritekst)
 
-        val workbook = XSSFWorkbook()
+        val workbook = SXSSFWorkbook(500)
 
         val sheet = workbook.createSheet("Uttrekk år $year")
 
@@ -116,9 +117,15 @@ class ExportServiceV2(
             }
         }
 
-        val baos = ByteArrayOutputStream()
-        workbook.write(baos)
-        return baos.toByteArray()
+        val pathToExcelFile = kotlin.io.path.createTempFile()
+        val fileOutputStream = FileOutputStream(pathToExcelFile.toFile())
+
+        workbook.write(fileOutputStream)
+
+        fileOutputStream.close()
+        workbook.dispose()
+
+        return pathToExcelFile.toFile()
     }
 
     /**
