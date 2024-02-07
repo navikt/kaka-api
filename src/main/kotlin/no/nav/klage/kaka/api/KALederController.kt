@@ -60,15 +60,13 @@ class KALederController(
         }
 
         val responseHeaders = HttpHeaders()
-        responseHeaders.contentType =
-            MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         responseHeaders.add("Content-Disposition", "inline; filename=export.xlsx")
 
         return try {
             ResponseEntity.ok()
                 .headers(responseHeaders)
                 .contentLength(file.length())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(InputStreamResource(FileInputStream(file)))
         } finally {
             try {
@@ -96,15 +94,13 @@ class KALederController(
         }
 
         val responseHeaders = HttpHeaders()
-        responseHeaders.contentType =
-            MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         responseHeaders.add("Content-Disposition", "inline; filename=export.xlsx")
 
         return try {
             ResponseEntity.ok()
                 .headers(responseHeaders)
                 .contentLength(file.length())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(InputStreamResource(FileInputStream(file)))
         } finally {
             try {
