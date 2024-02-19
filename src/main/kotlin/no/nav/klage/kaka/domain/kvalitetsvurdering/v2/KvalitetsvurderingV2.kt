@@ -418,16 +418,6 @@ class KvalitetsvurderingV2(
                         )
                     }
                 }
-
-                if (klageforberedelsenUtredningenUnderKlageforberedelsen) {
-                    if (!klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarBedtUnderinstansenOmAaInnhenteNyeOpplysninger &&
-                        !klageforberedelsenUtredningenUnderKlageforberedelsenKlageinstansenHarSelvInnhentetNyeOpplysninger
-                    ) {
-                        result.add(
-                            createMissingChecksValidationError(::klageforberedelsenUtredningenUnderKlageforberedelsen.name + "Group")
-                        )
-                    }
-                }
             }
         }
         return result
