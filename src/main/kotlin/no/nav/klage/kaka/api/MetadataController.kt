@@ -38,7 +38,7 @@ class MetadataController(
             navn = azureGateway.getNavnInnloggetSaksehandler().toNavnView(),
             ansattEnhet = metadataService.getInnloggetSaksbehandlerEnhetKodeDto(),
             roller = roller.map { it.name },
-            expiresIn = tokenUtil.getTokenExpiryInMillis() ?: 0
+            expiresIn = tokenUtil.getTokenExpiryInMillis()
         )
     }
 
