@@ -5,6 +5,7 @@ data class UserData(
     val navn: Navn,
     val ansattEnhet: EnhetKodeDto,
     val roller: List<String>,
+    val expiresIn: Long,
 ) {
     data class Navn(
         val fornavn: String? = null,

@@ -20,6 +20,9 @@ class TokenUtil(
         private val securelogger = getSecureLogger()
     }
 
+    fun getTokenExpiryInMillis(): Long? =
+        tokenValidationContextHolder.tokenValidationContext?.getClaims(SecurityConfig.ISSUER_AAD)?.expirationTime?.time
+
     fun getIdent(): String =
         tokenValidationContextHolder.tokenValidationContext.getJwtToken(SecurityConfig.ISSUER_AAD)
             .jwtTokenClaims?.get("NAVident")?.toString()
