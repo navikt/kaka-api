@@ -3,6 +3,8 @@ package no.nav.klage.kaka.domain
 import jakarta.persistence.*
 import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.domain.kodeverk.Role
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.exceptions.ValidationSection
@@ -63,7 +65,13 @@ class Saksdata(
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
-    var modified: LocalDateTime = LocalDateTime.now()
+    var modified: LocalDateTime = LocalDateTime.now(),
+    @OneToOne
+    @JoinColumn(name = "kvalitetsvurdering_id", unique = true)
+    val kvalitetsvurderingV1: KvalitetsvurderingV1? = null,
+    @OneToOne
+    @JoinColumn(name = "kvalitetsvurdering_id", unique = true)
+    val kvalitetsvurderingV2: KvalitetsvurderingV2? = null,
 ) {
 
     override fun toString(): String {

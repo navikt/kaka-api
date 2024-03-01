@@ -69,11 +69,11 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         version: Int,
-    ): List<Array<*>> {
+    ): List<Saksdata> {
         val query = """
-            SELECT s, k
+            SELECT s
             FROM Saksdata s
-             LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
+             JOIN FETCH s.kvalitetsvurderingV$version
              LEFT JOIN FETCH s.registreringshjemler
              ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
@@ -82,7 +82,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
 
         return entityManager.createQuery(
             query,
-            Array::class.java
+            Saksdata::class.java
         )
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
