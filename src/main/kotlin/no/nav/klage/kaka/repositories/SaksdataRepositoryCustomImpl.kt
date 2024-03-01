@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kodeverk.Type
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
@@ -16,6 +17,11 @@ import java.time.LocalDateTime
  */
 @Repository
 class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
+
+    companion object {
+        @Suppress("JAVA_CLASS_ON_COMPANION")
+        private val logger = getLogger(javaClass.enclosingClass)
+    }
 
     @PersistenceContext
     lateinit var entityManager: EntityManager
@@ -49,11 +55,14 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
     ): Set<QueryResultV2> {
-        return privateFindByAvsluttetAvSaksbehandlerBetween(
+        val start = System.currentTimeMillis()
+        val privateFindByAvsluttetAvSaksbehandlerBetween = privateFindByAvsluttetAvSaksbehandlerBetween(
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 2,
-        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+        )
+        logger.debug("findByAvsluttetAvSaksbehandlerBetweenV2 took ${System.currentTimeMillis() - start} millis for ${privateFindByAvsluttetAvSaksbehandlerBetween.size} rows")
+        return privateFindByAvsluttetAvSaksbehandlerBetween.mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
     }
 
     private fun privateFindByAvsluttetAvSaksbehandlerBetween(
