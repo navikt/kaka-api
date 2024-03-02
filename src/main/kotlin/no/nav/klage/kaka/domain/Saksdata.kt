@@ -66,11 +66,11 @@ class Saksdata(
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
     var modified: LocalDateTime = LocalDateTime.now(),
-    @OneToOne
-    @JoinColumn(name = "kvalitetsvurdering_id", unique = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kvalitetsvurdering_id", unique = true, insertable = false, updatable = false)
     val kvalitetsvurderingV1: KvalitetsvurderingV1? = null,
-    @OneToOne
-    @JoinColumn(name = "kvalitetsvurdering_id", unique = true)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "kvalitetsvurdering_id", unique = true, insertable = false, updatable = false)
     val kvalitetsvurderingV2: KvalitetsvurderingV2? = null,
 ) {
 

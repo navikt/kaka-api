@@ -48,7 +48,9 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 1,
-        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+        ).map {
+            QueryResultV1(it, it.kvalitetsvurderingV1!!)
+        }.toSet()
     }
 
     override fun findByAvsluttetAvSaksbehandlerBetweenV2(
@@ -62,7 +64,12 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             version = 2,
         )
         logger.debug("findByAvsluttetAvSaksbehandlerBetweenV2 took ${System.currentTimeMillis() - start} millis for ${privateFindByAvsluttetAvSaksbehandlerBetween.size} rows")
-        return privateFindByAvsluttetAvSaksbehandlerBetween.mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+        return privateFindByAvsluttetAvSaksbehandlerBetween.map {
+            QueryResultV2(
+                saksdata = it,
+                kvalitetsvurdering = it.kvalitetsvurderingV2!!,
+            )
+        }.toSet()
     }
 
     private fun privateFindByAvsluttetAvSaksbehandlerBetween(
@@ -73,7 +80,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         val query = """
             SELECT s
             FROM Saksdata s
-             JOIN FETCH s.kvalitetsvurderingV$version
              LEFT JOIN FETCH s.registreringshjemler
              ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
@@ -258,15 +264,18 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     private fun getPossibleV2Joins(version: Int): String {
         return if (version == 2) {
             """
-                LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
-                LEFT JOIN FETCH k.vedtaketLovbestemmelsenTolketFeilHjemlerList
-                LEFT JOIN FETCH k.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
-                LEFT JOIN FETCH k.vedtaketFeilKonkretRettsanvendelseHjemlerList
-                LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelHjemlerList
-                LEFT JOIN FETCH k.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+                LEFT JOIN FETCH s.kvalitetsvurderingV2
+                LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+                LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeilHjemlerList
+                LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
+                LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketFeilKonkretRettsanvendelseHjemlerList
+                LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketBruktFeilHjemmelHjemlerList
+                LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList
             """
         } else {
-            ""
+            """
+                LEFT JOIN FETCH s.kvalitetsvurderingV1
+            """.trimIndent()
         }
     }
 }

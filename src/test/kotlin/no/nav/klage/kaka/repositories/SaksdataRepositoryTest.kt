@@ -4,7 +4,8 @@ package no.nav.klage.kaka.repositories
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
@@ -245,11 +246,18 @@ class SaksdataRepositoryTest {
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
         )
+        val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.save(
+            KvalitetsvurderingV2(
+                vedtaketBruktFeilHjemmel = true,
+                vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = false,
+                vedtaketBruktFeilHjemmelHjemlerList = setOf(Registreringshjemmel.ARBML_12, Registreringshjemmel.ARBML_17)
+            )
+        )
         val saksdataFullfoert2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                id = kvalitetsvurderingV2.id,
                 version = 2,
             ),
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
