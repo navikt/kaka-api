@@ -63,7 +63,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             toDateTime = toDateTime,
             version = 2,
         )
-        logger.debug("findByAvsluttetAvSaksbehandlerBetweenV2 took ${System.currentTimeMillis() - start} millis for ${privateFindByAvsluttetAvSaksbehandlerBetween.size} rows")
+        val millisSpent = System.currentTimeMillis() - start
+        logger.debug("findByAvsluttetAvSaksbehandlerBetweenV2 took $millisSpent millis for ${privateFindByAvsluttetAvSaksbehandlerBetween.size} rows")
         return privateFindByAvsluttetAvSaksbehandlerBetween.map {
             QueryResultV2(
                 saksdata = it,
@@ -80,6 +81,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         val query = """
             SELECT s
             FROM Saksdata s
+             LEFT JOIN FETCH s.kvalitetsvurderingV1
+             LEFT JOIN FETCH s.kvalitetsvurderingV2
              LEFT JOIN FETCH s.registreringshjemler
              ${getPossibleV2Joins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
@@ -264,7 +267,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
     private fun getPossibleV2Joins(version: Int): String {
         return if (version == 2) {
             """
-                LEFT JOIN FETCH s.kvalitetsvurderingV2
                 LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
                 LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketLovbestemmelsenTolketFeilHjemlerList
                 LEFT JOIN FETCH s.kvalitetsvurderingV2.vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
@@ -274,7 +276,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             """
         } else {
             """
-                LEFT JOIN FETCH s.kvalitetsvurderingV1
             """.trimIndent()
         }
     }

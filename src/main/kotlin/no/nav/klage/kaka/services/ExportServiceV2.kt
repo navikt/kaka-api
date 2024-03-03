@@ -264,8 +264,9 @@ class ExportServiceV2(
     private fun privateGetFinishedAsRawData(
         resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>,
     ): List<AnonymizedFinishedVurderingV2> {
+        val start = System.currentTimeMillis()
 
-        return resultList.map { result ->
+        val map = resultList.map { result ->
             val (saksdata, kvalitetsvurderingV2) = result
 
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
@@ -346,6 +347,8 @@ class ExportServiceV2(
 
                 )
         }
+        logger.debug("After map operation: ${System.currentTimeMillis() - start} millis")
+        return map
     }
 
     private fun getVedtaksinstansgruppe(vedtaksinstansEnhet: String): Vedtaksinstansgruppe {
