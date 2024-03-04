@@ -68,7 +68,7 @@ class AdminService(
 
         var resultString = "logV1HjemlerInV2:\n\n"
 
-        results.forEach { (saksdata, _) ->
+        results.forEach { saksdata ->
             saksdata.registreringshjemler?.forEach { hjemmel ->
                 if (hjemmel !in ytelseTilRegistreringshjemlerV2[saksdata.ytelse]!!) {
                     resultString += "Hjemmel with id ${hjemmel.id} in saksdata ${saksdata.id} invalid\n"

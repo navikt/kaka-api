@@ -6,18 +6,14 @@ import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
 import no.nav.klage.kaka.services.ExportServiceV1.Field.Type.*
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
-
 import org.springframework.stereotype.Service
-
 import java.io.File
 import java.io.FileOutputStream
-
 import java.time.*
 import java.time.temporal.ChronoField
 import java.util.*
@@ -144,31 +140,31 @@ class ExportServiceV1(
         )
 
         return if (!saksbehandlerIdentList.isNullOrEmpty()) {
-            val (mine, rest) = resultList.filter { it.saksdata.utfoerendeSaksbehandler !in saksbehandlerIdentList }
-                .partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+            val (mine, rest) = resultList.filter { it.utfoerendeSaksbehandler !in saksbehandlerIdentList }
+                .partition { it.tilknyttetEnhet == enhet.navn }
 
             val saksbehandlerMap = saksbehandlerIdentList.associateWith { _ ->
                 emptyList<AnonymizedFinishedVurderingV1>()
             }.toMutableMap()
 
             //Replace those who have data
-            resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.forEach {
+            resultList.groupBy { it.utfoerendeSaksbehandler }.forEach {
                 if (saksbehandlerMap.containsKey(it.key)) {
-                    saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
+                    saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value)
                 }
             }
 
             AnonymizedManagerResponseV1(
                 saksbehandlere = saksbehandlerMap,
-                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
-                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
+                mine = privateGetFinishedAsRawData(resultList = mine),
+                rest = privateGetFinishedAsRawData(resultList = rest),
             )
         } else {
-            val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+            val (mine, rest) = resultList.partition { it.tilknyttetEnhet == enhet.navn }
             AnonymizedManagerResponseV1(
                 saksbehandlere = emptyMap(),
-                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
-                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
+                mine = privateGetFinishedAsRawData(resultList = mine),
+                rest = privateGetFinishedAsRawData(resultList = rest),
             )
         }
     }
@@ -224,11 +220,11 @@ class ExportServiceV1(
                 kommentarer = kommentarer,
             )
 
-        val (mine, rest) = resultList.partition { it.saksdata.vedtaksinstansEnhet == vedtaksinstansEnhet.navn }
+        val (mine, rest) = resultList.partition { it.vedtaksinstansEnhet == vedtaksinstansEnhet.navn }
 
         return AnonymizedVedtaksinstanslederResponseV1(
-            mine = privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = mine.toSet()),
-            rest = privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = rest.toSet()),
+            mine = privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = mine),
+            rest = privateGetFinishedAsRawDataWithoutEnheterWithResultV1(resultList = rest),
         )
     }
 
@@ -248,11 +244,11 @@ class ExportServiceV1(
                 enhet = enhet.navn
             )
 
-        val (mine, rest) = resultList.partition { it.saksdata.utfoerendeSaksbehandler == saksbehandler }
+        val (mine, rest) = resultList.partition { it.utfoerendeSaksbehandler == saksbehandler }
 
         return AnonymizedMineRestResponseV1(
-            mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
-            rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
+            mine = privateGetFinishedAsRawData(resultList = mine),
+            rest = privateGetFinishedAsRawData(resultList = rest),
         )
     }
 
@@ -260,11 +256,10 @@ class ExportServiceV1(
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
     private fun privateGetFinishedAsRawData(
-        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>,
+        resultList: List<Saksdata>,
     ): List<AnonymizedFinishedVurderingV1> {
 
-        return resultList.map { result ->
-            val (saksdata, kvalitetsvurderingV1) = result
+        return resultList.map { saksdata ->
 
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
@@ -288,42 +283,42 @@ class ExportServiceV1(
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
                 mottattKlageinstans = mottattKlageinstansDate,
-                arbeidsrettetBrukeroppfoelging = kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelging,
-                begrunnelseForHvorforAvslagOpprettholdes = kvalitetsvurderingV1.begrunnelseForHvorforAvslagOpprettholdes,
-                begrunnelsenErIkkeKonkretOgIndividuell = kvalitetsvurderingV1.begrunnelsenErIkkeKonkretOgIndividuell,
-                betydeligAvvik = kvalitetsvurderingV1.betydeligAvvik,
-                brukIOpplaering = kvalitetsvurderingV1.brukIOpplaering,
-                detErFeilIKonkretRettsanvendelse = kvalitetsvurderingV1.detErFeilIKonkretRettsanvendelse,
-                detErIkkeBruktRiktigHjemmel = kvalitetsvurderingV1.detErIkkeBruktRiktigHjemmel,
-                innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = kvalitetsvurderingV1.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
-                klagerensRelevanteAnfoerslerIkkeKommentert = kvalitetsvurderingV1.klagerensRelevanteAnfoerslerIkkeKommentert,
-                konklusjonen = kvalitetsvurderingV1.konklusjonen,
-                nyeOpplysningerMottatt = kvalitetsvurderingV1.nyeOpplysningerMottatt,
-                oversendelsesbrevetsInnholdIkkeISamsvarMedTema = kvalitetsvurderingV1.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
-                oversittetKlagefristIkkeKommentert = kvalitetsvurderingV1.oversittetKlagefristIkkeKommentert,
-                raadgivendeLegeErBruktFeilSpoersmaal = kvalitetsvurderingV1.raadgivendeLegeErBruktFeilSpoersmaal,
-                raadgivendeLegeErBruktMangelfullDokumentasjon = kvalitetsvurderingV1.raadgivendeLegeErBruktMangelfullDokumentasjon,
-                raadgivendeLegeErIkkeBrukt = kvalitetsvurderingV1.raadgivendeLegeErIkkeBrukt,
-                raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = kvalitetsvurderingV1.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
-                rettsregelenErBenyttetFeil = kvalitetsvurderingV1.rettsregelenErBenyttetFeil,
-                sakensDokumenter = kvalitetsvurderingV1.sakensDokumenter,
-                spraaketErIkkeTydelig = kvalitetsvurderingV1.spraaketErIkkeTydelig,
-                utredningenAvAndreAktuelleForholdISaken = kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISaken,
-                utredningenAvArbeid = kvalitetsvurderingV1.utredningenAvArbeid,
-                utredningenAvEoesProblematikk = kvalitetsvurderingV1.utredningenAvEoesProblematikk,
-                utredningenAvInntektsforhold = kvalitetsvurderingV1.utredningenAvInntektsforhold,
-                utredningenAvMedisinskeForhold = kvalitetsvurderingV1.utredningenAvMedisinskeForhold,
-                veiledningFraNav = kvalitetsvurderingV1.veiledningFraNav,
-                vurderingAvFaktumErMangelfull = kvalitetsvurderingV1.vurderingAvFaktumErMangelfull,
-                klageforberedelsenRadioValg = kvalitetsvurderingV1.klageforberedelsenRadioValg?.name,
-                utredningenRadioValg = kvalitetsvurderingV1.utredningenRadioValg?.name,
-                vedtaketRadioValg = kvalitetsvurderingV1.vedtaketRadioValg?.name,
-                brukAvRaadgivendeLegeRadioValg = kvalitetsvurderingV1.brukAvRaadgivendeLegeRadioValg?.name,
+                arbeidsrettetBrukeroppfoelging = saksdata.kvalitetsvurderingV1!!.arbeidsrettetBrukeroppfoelging,
+                begrunnelseForHvorforAvslagOpprettholdes = saksdata.kvalitetsvurderingV1.begrunnelseForHvorforAvslagOpprettholdes,
+                begrunnelsenErIkkeKonkretOgIndividuell = saksdata.kvalitetsvurderingV1.begrunnelsenErIkkeKonkretOgIndividuell,
+                betydeligAvvik = saksdata.kvalitetsvurderingV1.betydeligAvvik,
+                brukIOpplaering = saksdata.kvalitetsvurderingV1.brukIOpplaering,
+                detErFeilIKonkretRettsanvendelse = saksdata.kvalitetsvurderingV1.detErFeilIKonkretRettsanvendelse,
+                detErIkkeBruktRiktigHjemmel = saksdata.kvalitetsvurderingV1.detErIkkeBruktRiktigHjemmel,
+                innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = saksdata.kvalitetsvurderingV1.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                klagerensRelevanteAnfoerslerIkkeKommentert = saksdata.kvalitetsvurderingV1.klagerensRelevanteAnfoerslerIkkeKommentert,
+                konklusjonen = saksdata.kvalitetsvurderingV1.konklusjonen,
+                nyeOpplysningerMottatt = saksdata.kvalitetsvurderingV1.nyeOpplysningerMottatt,
+                oversendelsesbrevetsInnholdIkkeISamsvarMedTema = saksdata.kvalitetsvurderingV1.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
+                oversittetKlagefristIkkeKommentert = saksdata.kvalitetsvurderingV1.oversittetKlagefristIkkeKommentert,
+                raadgivendeLegeErBruktFeilSpoersmaal = saksdata.kvalitetsvurderingV1.raadgivendeLegeErBruktFeilSpoersmaal,
+                raadgivendeLegeErBruktMangelfullDokumentasjon = saksdata.kvalitetsvurderingV1.raadgivendeLegeErBruktMangelfullDokumentasjon,
+                raadgivendeLegeErIkkeBrukt = saksdata.kvalitetsvurderingV1.raadgivendeLegeErIkkeBrukt,
+                raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = saksdata.kvalitetsvurderingV1.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
+                rettsregelenErBenyttetFeil = saksdata.kvalitetsvurderingV1.rettsregelenErBenyttetFeil,
+                sakensDokumenter = saksdata.kvalitetsvurderingV1.sakensDokumenter,
+                spraaketErIkkeTydelig = saksdata.kvalitetsvurderingV1.spraaketErIkkeTydelig,
+                utredningenAvAndreAktuelleForholdISaken = saksdata.kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvArbeid = saksdata.kvalitetsvurderingV1.utredningenAvArbeid,
+                utredningenAvEoesProblematikk = saksdata.kvalitetsvurderingV1.utredningenAvEoesProblematikk,
+                utredningenAvInntektsforhold = saksdata.kvalitetsvurderingV1.utredningenAvInntektsforhold,
+                utredningenAvMedisinskeForhold = saksdata.kvalitetsvurderingV1.utredningenAvMedisinskeForhold,
+                veiledningFraNav = saksdata.kvalitetsvurderingV1.veiledningFraNav,
+                vurderingAvFaktumErMangelfull = saksdata.kvalitetsvurderingV1.vurderingAvFaktumErMangelfull,
+                klageforberedelsenRadioValg = saksdata.kvalitetsvurderingV1.klageforberedelsenRadioValg?.name,
+                utredningenRadioValg = saksdata.kvalitetsvurderingV1.utredningenRadioValg?.name,
+                vedtaketRadioValg = saksdata.kvalitetsvurderingV1.vedtaketRadioValg?.name,
+                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurderingV1.brukAvRaadgivendeLegeRadioValg?.name,
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = kvalitetsvurderingV1.created.toDate(),
-                modifiedDate = kvalitetsvurderingV1.modified.toDate(),
+                createdDate = saksdata.kvalitetsvurderingV1.created.toDate(),
+                modifiedDate = saksdata.kvalitetsvurderingV1.modified.toDate(),
             )
         }
     }
@@ -334,11 +329,10 @@ class ExportServiceV1(
      */
 
     private fun privateGetFinishedAsRawDataWithoutEnheterWithResultV1(
-        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>,
+        resultList: List<Saksdata>,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV1> {
 
-        return resultList.map { result ->
-            val (saksdata, kvalitetsvurdering) = result
+        return resultList.map { saksdata ->
 
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
             val avsluttetAvSaksbehandlerDate = saksdata.avsluttetAvSaksbehandler!!.toDate()
@@ -359,42 +353,42 @@ class ExportServiceV1(
                 sakstypeId = saksdata.sakstype.id,
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 mottattKlageinstans = mottattKlageinstansDate,
-                arbeidsrettetBrukeroppfoelging = kvalitetsvurdering.arbeidsrettetBrukeroppfoelging,
-                begrunnelseForHvorforAvslagOpprettholdes = kvalitetsvurdering.begrunnelseForHvorforAvslagOpprettholdes,
-                begrunnelsenErIkkeKonkretOgIndividuell = kvalitetsvurdering.begrunnelsenErIkkeKonkretOgIndividuell,
-                betydeligAvvik = kvalitetsvurdering.betydeligAvvik,
-                brukIOpplaering = kvalitetsvurdering.brukIOpplaering,
-                detErFeilIKonkretRettsanvendelse = kvalitetsvurdering.detErFeilIKonkretRettsanvendelse,
-                detErIkkeBruktRiktigHjemmel = kvalitetsvurdering.detErIkkeBruktRiktigHjemmel,
-                innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = kvalitetsvurdering.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
-                klagerensRelevanteAnfoerslerIkkeKommentert = kvalitetsvurdering.klagerensRelevanteAnfoerslerIkkeKommentert,
-                konklusjonen = kvalitetsvurdering.konklusjonen,
-                nyeOpplysningerMottatt = kvalitetsvurdering.nyeOpplysningerMottatt,
-                oversendelsesbrevetsInnholdIkkeISamsvarMedTema = kvalitetsvurdering.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
-                oversittetKlagefristIkkeKommentert = kvalitetsvurdering.oversittetKlagefristIkkeKommentert,
-                raadgivendeLegeErBruktFeilSpoersmaal = kvalitetsvurdering.raadgivendeLegeErBruktFeilSpoersmaal,
-                raadgivendeLegeErBruktMangelfullDokumentasjon = kvalitetsvurdering.raadgivendeLegeErBruktMangelfullDokumentasjon,
-                raadgivendeLegeErIkkeBrukt = kvalitetsvurdering.raadgivendeLegeErIkkeBrukt,
-                raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = kvalitetsvurdering.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
-                rettsregelenErBenyttetFeil = kvalitetsvurdering.rettsregelenErBenyttetFeil,
-                sakensDokumenter = kvalitetsvurdering.sakensDokumenter,
-                spraaketErIkkeTydelig = kvalitetsvurdering.spraaketErIkkeTydelig,
-                utredningenAvAndreAktuelleForholdISaken = kvalitetsvurdering.utredningenAvAndreAktuelleForholdISaken,
-                utredningenAvArbeid = kvalitetsvurdering.utredningenAvArbeid,
-                utredningenAvEoesProblematikk = kvalitetsvurdering.utredningenAvEoesProblematikk,
-                utredningenAvInntektsforhold = kvalitetsvurdering.utredningenAvInntektsforhold,
-                utredningenAvMedisinskeForhold = kvalitetsvurdering.utredningenAvMedisinskeForhold,
-                veiledningFraNav = kvalitetsvurdering.veiledningFraNav,
-                vurderingAvFaktumErMangelfull = kvalitetsvurdering.vurderingAvFaktumErMangelfull,
-                klageforberedelsenRadioValg = kvalitetsvurdering.klageforberedelsenRadioValg?.name,
-                utredningenRadioValg = kvalitetsvurdering.utredningenRadioValg?.name,
-                vedtaketRadioValg = kvalitetsvurdering.vedtaketRadioValg?.name,
-                brukAvRaadgivendeLegeRadioValg = kvalitetsvurdering.brukAvRaadgivendeLegeRadioValg?.name,
+                arbeidsrettetBrukeroppfoelging = saksdata.kvalitetsvurderingV1!!.arbeidsrettetBrukeroppfoelging,
+                begrunnelseForHvorforAvslagOpprettholdes = saksdata.kvalitetsvurderingV1.begrunnelseForHvorforAvslagOpprettholdes,
+                begrunnelsenErIkkeKonkretOgIndividuell = saksdata.kvalitetsvurderingV1.begrunnelsenErIkkeKonkretOgIndividuell,
+                betydeligAvvik = saksdata.kvalitetsvurderingV1.betydeligAvvik,
+                brukIOpplaering = saksdata.kvalitetsvurderingV1.brukIOpplaering,
+                detErFeilIKonkretRettsanvendelse = saksdata.kvalitetsvurderingV1.detErFeilIKonkretRettsanvendelse,
+                detErIkkeBruktRiktigHjemmel = saksdata.kvalitetsvurderingV1.detErIkkeBruktRiktigHjemmel,
+                innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = saksdata.kvalitetsvurderingV1.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                klagerensRelevanteAnfoerslerIkkeKommentert = saksdata.kvalitetsvurderingV1.klagerensRelevanteAnfoerslerIkkeKommentert,
+                konklusjonen = saksdata.kvalitetsvurderingV1.konklusjonen,
+                nyeOpplysningerMottatt = saksdata.kvalitetsvurderingV1.nyeOpplysningerMottatt,
+                oversendelsesbrevetsInnholdIkkeISamsvarMedTema = saksdata.kvalitetsvurderingV1.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
+                oversittetKlagefristIkkeKommentert = saksdata.kvalitetsvurderingV1.oversittetKlagefristIkkeKommentert,
+                raadgivendeLegeErBruktFeilSpoersmaal = saksdata.kvalitetsvurderingV1.raadgivendeLegeErBruktFeilSpoersmaal,
+                raadgivendeLegeErBruktMangelfullDokumentasjon = saksdata.kvalitetsvurderingV1.raadgivendeLegeErBruktMangelfullDokumentasjon,
+                raadgivendeLegeErIkkeBrukt = saksdata.kvalitetsvurderingV1.raadgivendeLegeErIkkeBrukt,
+                raadgivendeLegeHarUttaltSegUtoverTrygdemedisin = saksdata.kvalitetsvurderingV1.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
+                rettsregelenErBenyttetFeil = saksdata.kvalitetsvurderingV1.rettsregelenErBenyttetFeil,
+                sakensDokumenter = saksdata.kvalitetsvurderingV1.sakensDokumenter,
+                spraaketErIkkeTydelig = saksdata.kvalitetsvurderingV1.spraaketErIkkeTydelig,
+                utredningenAvAndreAktuelleForholdISaken = saksdata.kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISaken,
+                utredningenAvArbeid = saksdata.kvalitetsvurderingV1.utredningenAvArbeid,
+                utredningenAvEoesProblematikk = saksdata.kvalitetsvurderingV1.utredningenAvEoesProblematikk,
+                utredningenAvInntektsforhold = saksdata.kvalitetsvurderingV1.utredningenAvInntektsforhold,
+                utredningenAvMedisinskeForhold = saksdata.kvalitetsvurderingV1.utredningenAvMedisinskeForhold,
+                veiledningFraNav = saksdata.kvalitetsvurderingV1.veiledningFraNav,
+                vurderingAvFaktumErMangelfull = saksdata.kvalitetsvurderingV1.vurderingAvFaktumErMangelfull,
+                klageforberedelsenRadioValg = saksdata.kvalitetsvurderingV1.klageforberedelsenRadioValg?.name,
+                utredningenRadioValg = saksdata.kvalitetsvurderingV1.utredningenRadioValg?.name,
+                vedtaketRadioValg = saksdata.kvalitetsvurderingV1.vedtaketRadioValg?.name,
+                brukAvRaadgivendeLegeRadioValg = saksdata.kvalitetsvurderingV1.brukAvRaadgivendeLegeRadioValg?.name,
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
-                createdDate = kvalitetsvurdering.created.toDate(),
-                modifiedDate = kvalitetsvurdering.modified.toDate(),
+                createdDate = saksdata.kvalitetsvurderingV1.created.toDate(),
+                modifiedDate = saksdata.kvalitetsvurderingV1.modified.toDate(),
             )
         }
     }
@@ -418,12 +412,11 @@ class ExportServiceV1(
     }
 
     private fun mapToFields(
-        resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV1>,
+        resultList: List<Saksdata>,
         includeFritekst: Boolean
     ): List<List<Field>> {
         //@formatter:off
-        return resultList.map { result ->
-            val (saksdata, kvalitetsvurderingV1) = result
+        return resultList.map { saksdata ->
             buildList {
                 //Saksdata
                 add(Field(fieldName = "Tilknyttet enhet", value = saksdata.tilknyttetEnhet, type = STRING))
@@ -452,53 +445,53 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Klageforberedelsen",
-                        value = kvalitetsvurderingV1.klageforberedelsenRadioValg,
+                        value = saksdata.kvalitetsvurderingV1!!.klageforberedelsenRadioValg,
                         type = STRING
                     )
                 )
                 add(
                     Field(
                         fieldName = "Sakens dokumenter",
-                        value = kvalitetsvurderingV1.sakensDokumenter,
+                        value = saksdata.kvalitetsvurderingV1.sakensDokumenter,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Oversittet klagefrist er ikke kommentert",
-                        value = kvalitetsvurderingV1.oversittetKlagefristIkkeKommentert,
+                        value = saksdata.kvalitetsvurderingV1.oversittetKlagefristIkkeKommentert,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Klagerens relevante anførseler er ikke tilstrekkelig kommentert/imøtegått",
-                        value = kvalitetsvurderingV1.klagerensRelevanteAnfoerslerIkkeKommentert,
+                        value = saksdata.kvalitetsvurderingV1.klagerensRelevanteAnfoerslerIkkeKommentert,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelse for hvorfor avslag opprettholdes / klager ikke oppfyller vilkår",
-                        value = kvalitetsvurderingV1.begrunnelseForHvorforAvslagOpprettholdes,
+                        value = saksdata.kvalitetsvurderingV1.begrunnelseForHvorforAvslagOpprettholdes,
                         type = BOOLEAN
                     )
                 )
-                add(Field(fieldName = "Konklusjonen", value = kvalitetsvurderingV1.konklusjonen, type = BOOLEAN))
+                add(Field(fieldName = "Konklusjonen", value = saksdata.kvalitetsvurderingV1.konklusjonen, type = BOOLEAN))
                 add(
                     Field(
                         fieldName = "Oversendelsesbrevets innhold er ikke i samsvar med sakens tema",
-                        value = kvalitetsvurderingV1.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
+                        value = saksdata.kvalitetsvurderingV1.oversendelsesbrevetsInnholdIkkeISamsvarMedTema,
                         type = BOOLEAN
                     )
                 )
 
                 //Utredningen
-                add(Field(fieldName = "Utredningen", value = kvalitetsvurderingV1.utredningenRadioValg, type = STRING))
+                add(Field(fieldName = "Utredningen", value = saksdata.kvalitetsvurderingV1.utredningenRadioValg, type = STRING))
                 add(
                     Field(
                         fieldName = "Utredningen av medisinske forhold",
-                        value = kvalitetsvurderingV1.utredningenAvMedisinskeForhold,
+                        value = saksdata.kvalitetsvurderingV1.utredningenAvMedisinskeForhold,
                         type = BOOLEAN
                     )
                 )
@@ -506,7 +499,7 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Utredningen av medisinske forhold stikkord",
-                            value = kvalitetsvurderingV1.utredningenAvMedisinskeForholdText,
+                            value = saksdata.kvalitetsvurderingV1.utredningenAvMedisinskeForholdText,
                             type = STRING
                         )
                     )
@@ -514,7 +507,7 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Utredningen av inntektsforhold",
-                        value = kvalitetsvurderingV1.utredningenAvInntektsforhold,
+                        value = saksdata.kvalitetsvurderingV1.utredningenAvInntektsforhold,
                         type = BOOLEAN
                     )
                 )
@@ -522,7 +515,7 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Utredningen av inntektsforhold stikkord",
-                            value = kvalitetsvurderingV1.utredningenAvInntektsforholdText,
+                            value = saksdata.kvalitetsvurderingV1.utredningenAvInntektsforholdText,
                             type = STRING
                         )
                     )
@@ -530,7 +523,7 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Utredningen av arbeid",
-                        value = kvalitetsvurderingV1.utredningenAvArbeid,
+                        value = saksdata.kvalitetsvurderingV1.utredningenAvArbeid,
                         type = BOOLEAN
                     )
                 )
@@ -538,7 +531,7 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Utredningen av arbeid stikkord",
-                            value = kvalitetsvurderingV1.utredningenAvArbeidText,
+                            value = saksdata.kvalitetsvurderingV1.utredningenAvArbeidText,
                             type = STRING
                         )
                     )
@@ -546,7 +539,7 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Arbeidsrettet brukeroppfølging",
-                        value = kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelging,
+                        value = saksdata.kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelging,
                         type = BOOLEAN
                     )
                 )
@@ -554,7 +547,7 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Arbeidsrettet brukeroppfølging stikkord",
-                            value = kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelgingText,
+                            value = saksdata.kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelgingText,
                             type = STRING
                         )
                     )
@@ -562,7 +555,7 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Utredningen av andre aktuelle forhold i saken",
-                        value = kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISaken,
+                        value = saksdata.kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISaken,
                         type = BOOLEAN
                     )
                 )
@@ -570,7 +563,7 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Utredningen av andre aktuelle forhold i saken stikkord",
-                            value = kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISakenText,
+                            value = saksdata.kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISakenText,
                             type = STRING
                         )
                     )
@@ -578,7 +571,7 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Utredningen av EØS / utenlandsproblematikk",
-                        value = kvalitetsvurderingV1.utredningenAvEoesProblematikk,
+                        value = saksdata.kvalitetsvurderingV1.utredningenAvEoesProblematikk,
                         type = BOOLEAN
                     )
                 )
@@ -586,7 +579,7 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Utredningen av EØS / utenlandsproblematikk stikkord",
-                            value = kvalitetsvurderingV1.utredningenAvEoesProblematikkText,
+                            value = saksdata.kvalitetsvurderingV1.utredningenAvEoesProblematikkText,
                             type = STRING
                         )
                     )
@@ -594,7 +587,7 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Veiledning fra NAV",
-                        value = kvalitetsvurderingV1.veiledningFraNav,
+                        value = saksdata.kvalitetsvurderingV1.veiledningFraNav,
                         type = BOOLEAN
                     )
                 )
@@ -602,60 +595,60 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Veiledning fra NAV stikkord",
-                            value = kvalitetsvurderingV1.veiledningFraNavText,
+                            value = saksdata.kvalitetsvurderingV1.veiledningFraNavText,
                             type = STRING
                         )
                     )
                 }
 
                 //Vedtaket
-                add(Field(fieldName = "Vedtaket", value = kvalitetsvurderingV1.vedtaketRadioValg, type = STRING))
+                add(Field(fieldName = "Vedtaket", value = saksdata.kvalitetsvurderingV1.vedtaketRadioValg, type = STRING))
                 add(
                     Field(
                         fieldName = "Det er ikke brukt riktig hjemmel(er)",
-                        value = kvalitetsvurderingV1.detErIkkeBruktRiktigHjemmel,
+                        value = saksdata.kvalitetsvurderingV1.detErIkkeBruktRiktigHjemmel,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Innholdet i rettsreglene er ikke tilstrekkelig beskrevet",
-                        value = kvalitetsvurderingV1.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
+                        value = saksdata.kvalitetsvurderingV1.innholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Rettsregelen er benyttet eller tolket feil",
-                        value = kvalitetsvurderingV1.rettsregelenErBenyttetFeil,
+                        value = saksdata.kvalitetsvurderingV1.rettsregelenErBenyttetFeil,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Vurdering av faktum / bevisvurdering er mangelfull",
-                        value = kvalitetsvurderingV1.vurderingAvFaktumErMangelfull,
+                        value = saksdata.kvalitetsvurderingV1.vurderingAvFaktumErMangelfull,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Det er feil i den konkrete rettsanvendelsen",
-                        value = kvalitetsvurderingV1.detErFeilIKonkretRettsanvendelse,
+                        value = saksdata.kvalitetsvurderingV1.detErFeilIKonkretRettsanvendelse,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelsen er ikke konkret og individuell",
-                        value = kvalitetsvurderingV1.begrunnelsenErIkkeKonkretOgIndividuell,
+                        value = saksdata.kvalitetsvurderingV1.begrunnelsenErIkkeKonkretOgIndividuell,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Språket/Formidlingen er ikke tydelig",
-                        value = kvalitetsvurderingV1.spraaketErIkkeTydelig,
+                        value = saksdata.kvalitetsvurderingV1.spraaketErIkkeTydelig,
                         type = BOOLEAN
                     )
                 )
@@ -664,14 +657,14 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Nye opplysninger mottatt etter oversendelse til klageinstansen",
-                        value = kvalitetsvurderingV1.nyeOpplysningerMottatt,
+                        value = saksdata.kvalitetsvurderingV1.nyeOpplysningerMottatt,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Bruk gjerne vedtaket som eksempel i opplæring",
-                        value = kvalitetsvurderingV1.brukIOpplaering,
+                        value = saksdata.kvalitetsvurderingV1.brukIOpplaering,
                         type = BOOLEAN
                     )
                 )
@@ -679,7 +672,7 @@ class ExportServiceV1(
                     add(
                         Field(
                             fieldName = "Bruk gjerne vedtaket som eksempel i opplæring stikkord",
-                            value = kvalitetsvurderingV1.brukIOpplaeringText,
+                            value = saksdata.kvalitetsvurderingV1.brukIOpplaeringText,
                             type = STRING
                         )
                     )
@@ -689,35 +682,35 @@ class ExportServiceV1(
                 add(
                     Field(
                         fieldName = "Bruk av rådgivende lege",
-                        value = kvalitetsvurderingV1.brukAvRaadgivendeLegeRadioValg,
+                        value = saksdata.kvalitetsvurderingV1.brukAvRaadgivendeLegeRadioValg,
                         type = STRING
                     )
                 )
                 add(
                     Field(
                         fieldName = "Rådgivende lege er ikke brukt",
-                        value = kvalitetsvurderingV1.raadgivendeLegeErIkkeBrukt,
+                        value = saksdata.kvalitetsvurderingV1.raadgivendeLegeErIkkeBrukt,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Rådgivende lege er brukt, men saksbehandler har stilt feil spørsmål og får derfor feil svar",
-                        value = kvalitetsvurderingV1.raadgivendeLegeErBruktFeilSpoersmaal,
+                        value = saksdata.kvalitetsvurderingV1.raadgivendeLegeErBruktFeilSpoersmaal,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Rådgivende lege har uttalt seg om tema utover trygdemedisin",
-                        value = kvalitetsvurderingV1.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
+                        value = saksdata.kvalitetsvurderingV1.raadgivendeLegeHarUttaltSegUtoverTrygdemedisin,
                         type = BOOLEAN
                     )
                 )
                 add(
                     Field(
                         fieldName = "Rådgivende lege er brukt, men dokumentasjonen er mangelfull / ikke skriftliggjort",
-                        value = kvalitetsvurderingV1.raadgivendeLegeErBruktMangelfullDokumentasjon,
+                        value = saksdata.kvalitetsvurderingV1.raadgivendeLegeErBruktMangelfullDokumentasjon,
                         type = BOOLEAN
                     )
                 )

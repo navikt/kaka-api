@@ -38,27 +38,27 @@ fun getMangelfulltQueryV2(mangelfullt: List<String>): String {
 private fun getForberedelsenQuery(mangelfullt: List<String>) =
     if ("forberedelsen" in mangelfullt) {
         """
-                k.klageforberedelsen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
+                kvalitetsvurderingV2.klageforberedelsen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
             """.trimIndent()
     } else null
 
 private fun getUtredningenQuery(mangelfullt: List<String>) =
     if ("utredningen" in mangelfullt) {
         """
-                k.utredningen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
+                kvalitetsvurderingV2.utredningen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
             """.trimIndent()
     } else null
 
 private fun getVedtaketQuery(mangelfullt: List<String>) =
     if ("vedtaket" in mangelfullt) {
         """
-                k.vedtaket = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
+                kvalitetsvurderingV2.vedtaket = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
             """.trimIndent()
     } else null
 
 private fun getROLQuery(mangelfullt: List<String>) =
     if ("rol" in mangelfullt) {
         """
-                k.brukAvRaadgivendeLege = '${KvalitetsvurderingV2.RadiovalgRaadgivendeLege.MANGELFULLT.name}'
+                kvalitetsvurderingV2.brukAvRaadgivendeLege = '${KvalitetsvurderingV2.RadiovalgRaadgivendeLege.MANGELFULLT.name}'
             """.trimIndent()
     } else null

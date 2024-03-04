@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.repositories
 
+import no.nav.klage.kaka.domain.Saksdata
 import java.time.LocalDateTime
 
 interface SaksdataRepositoryCustom {
@@ -9,7 +10,7 @@ interface SaksdataRepositoryCustom {
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
         kommentarer: List<String>,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+    ): List<Saksdata>
 
     fun findForVedtaksinstanslederWithEnhetV1(
         fromDateTime: LocalDateTime,
@@ -17,41 +18,41 @@ interface SaksdataRepositoryCustom {
         mangelfullt: List<String>,
         kommentarer: List<String>,
         vedtaksinstansEnhet: String,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+    ): List<Saksdata>
 
     fun findForVedtaksinstanslederV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
+    ): List<Saksdata>
 
     fun findForVedtaksinstanslederWithEnhetV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
         vedtaksinstansEnhet: String,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
+    ): List<Saksdata>
 
     fun findByAvsluttetAvSaksbehandlerBetweenV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+    ): List<Saksdata>
 
     fun findByAvsluttetAvSaksbehandlerBetweenV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
+    ): List<Saksdata>
 
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+    ): List<Saksdata>
 
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
-    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
+    ): List<Saksdata>
 
 }

@@ -38,28 +38,28 @@ fun getMangelfulltQueryV1(mangelfullt: List<String>): String {
 private fun getForberedelsenQuery(mangelfullt: List<String>) =
     if ("forberedelsen" in mangelfullt) {
         """
-                k.klageforberedelsenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
+                kvalitetsvurderingV1.klageforberedelsenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
             """.trimIndent()
     } else null
 
 private fun getUtredningenQuery(mangelfullt: List<String>) =
     if ("utredningen" in mangelfullt) {
         """
-                k.utredningenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
+                kvalitetsvurderingV1.utredningenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
             """.trimIndent()
     } else null
 
 private fun getVedtaketQuery(mangelfullt: List<String>) =
     if ("vedtaket" in mangelfullt) {
         """
-                k.vedtaketRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
+                kvalitetsvurderingV1.vedtaketRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
             """.trimIndent()
     } else null
 
 private fun getROLQuery(mangelfullt: List<String>) =
     if ("rol" in mangelfullt) {
         """
-                k.brukAvRaadgivendeLegeRadioValg = '${KvalitetsvurderingV1.RadioValgRaadgivendeLege.MANGELFULLT.name}'
+                kvalitetsvurderingV1.brukAvRaadgivendeLegeRadioValg = '${KvalitetsvurderingV1.RadioValgRaadgivendeLege.MANGELFULLT.name}'
             """.trimIndent()
     } else null
 
@@ -74,13 +74,13 @@ fun getKommentarerQueryV1(
 
     if ("utredningen" in kommentarer) {
         query += """
-                    k.utredningenAvMedisinskeForholdText IS NOT NULL OR
-                    k.utredningenAvInntektsforholdText IS NOT NULL OR
-                    k.utredningenAvArbeidText IS NOT NULL OR
-                    k.arbeidsrettetBrukeroppfoelgingText IS NOT NULL OR
-                    k.utredningenAvAndreAktuelleForholdISakenText IS NOT NULL OR
-                    k.utredningenAvEoesProblematikkText IS NOT NULL OR
-                    k.veiledningFraNavText IS NOT NULL
+                    kvalitetsvurderingV1.utredningenAvMedisinskeForholdText IS NOT NULL OR
+                    kvalitetsvurderingV1.utredningenAvInntektsforholdText IS NOT NULL OR
+                    kvalitetsvurderingV1.utredningenAvArbeidText IS NOT NULL OR
+                    kvalitetsvurderingV1.arbeidsrettetBrukeroppfoelgingText IS NOT NULL OR
+                    kvalitetsvurderingV1.utredningenAvAndreAktuelleForholdISakenText IS NOT NULL OR
+                    kvalitetsvurderingV1.utredningenAvEoesProblematikkText IS NOT NULL OR
+                    kvalitetsvurderingV1.veiledningFraNavText IS NOT NULL
             """.trimIndent()
     }
 
@@ -89,7 +89,7 @@ fun getKommentarerQueryV1(
             query += " OR "
         }
         query += """
-                    k.betydeligAvvikText IS NOT NULL
+                    kvalitetsvurderingV1.betydeligAvvikText IS NOT NULL
             """.trimIndent()
     }
 
@@ -98,7 +98,7 @@ fun getKommentarerQueryV1(
             query += " OR "
         }
         query += """
-                    k.brukIOpplaeringText IS NOT NULL
+                    kvalitetsvurderingV1.brukIOpplaeringText IS NOT NULL
             """.trimIndent()
     }
 

@@ -6,7 +6,6 @@ import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.junit.jupiter.api.Test
@@ -84,31 +83,29 @@ internal class ExportServiceV1Test {
         println(file.absolutePath)
     }
 
-    private fun getResultList(amount: Int = 1): Set<SaksdataRepositoryCustomImpl.QueryResultV1> {
-        return buildSet {
+    private fun getResultList(amount: Int = 1): List<Saksdata> {
+        return buildList {
             repeat(amount) {
                 add(
-                    SaksdataRepositoryCustomImpl.QueryResultV1(
-                        saksdata = Saksdata(
-                            sakstype = Type.KLAGE,
-                            utfoerendeSaksbehandler = "someoneelse",
-                            tilknyttetEnhet = Enhet.E4295.navn,
-                            ytelse = Ytelse.OMS_OMP,
-                            vedtaksinstansEnhet = Enhet.E0001.navn,
-                            utfall = Utfall.STADFESTELSE,
-                            registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4, Registreringshjemmel.FTRL_9_11),
-                            sakenGjelder = "12345678910",
-                            mottattVedtaksinstans = LocalDate.now(),
-                            mottattKlageinstans = LocalDate.now().minusDays(1),
-                            avsluttetAvSaksbehandler = LocalDateTime.now(),
-                            source = Source.KAKA,
-                            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                                id = UUID.randomUUID(),
-                                version = 1,
-                            ),
+                    Saksdata(
+                        sakstype = Type.KLAGE,
+                        utfoerendeSaksbehandler = "someoneelse",
+                        tilknyttetEnhet = Enhet.E4295.navn,
+                        ytelse = Ytelse.OMS_OMP,
+                        vedtaksinstansEnhet = Enhet.E0001.navn,
+                        utfall = Utfall.STADFESTELSE,
+                        registreringshjemler = setOf(Registreringshjemmel.FTRL_9_4, Registreringshjemmel.FTRL_9_11),
+                        sakenGjelder = "12345678910",
+                        mottattVedtaksinstans = LocalDate.now(),
+                        mottattKlageinstans = LocalDate.now().minusDays(1),
+                        avsluttetAvSaksbehandler = LocalDateTime.now(),
+                        source = Source.KAKA,
+                        kvalitetsvurderingReference = KvalitetsvurderingReference(
+                            id = UUID.randomUUID(),
+                            version = 1,
                         ),
-                        kvalitetsvurdering = KvalitetsvurderingV1()
-                    )
+                        kvalitetsvurderingV1 = KvalitetsvurderingV1()
+                    ),
                 )
             }
         }

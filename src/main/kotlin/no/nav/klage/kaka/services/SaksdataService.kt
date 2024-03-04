@@ -437,13 +437,13 @@ class SaksdataService(
             kommentarer = kommentarer,
         ).filter {
             verifiserTilgangTilPersonForSaksbehandler(
-                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                fnr = it.sakenGjelder ?: throw RuntimeException("missing fnr"),
                 ident = saksbehandlerIdent,
                 kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
                 kanBehandleFortrolig = kanBehandleFortrolig,
                 kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
             )
-        }.map { it.saksdata }
+        }.map { it }
     }
 
     fun searchAsVedtaksinstanslederV2(
@@ -466,13 +466,13 @@ class SaksdataService(
             mangelfullt = mangelfullt,
         ).filter {
             verifiserTilgangTilPersonForSaksbehandler(
-                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                fnr = it.sakenGjelder ?: throw RuntimeException("missing fnr"),
                 ident = saksbehandlerIdent,
                 kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
                 kanBehandleFortrolig = kanBehandleFortrolig,
                 kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
             )
-        }.map { it.saksdata }
+        }.map { it }
     }
 
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
