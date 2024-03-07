@@ -828,7 +828,7 @@ class SaksdataRepositoryTest {
                 toDateTime = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 15), LocalTime.MIN),
             )
         assertThat(saksdataAvsluttet).hasSize(2)
-        assertThat(saksdataAvsluttet.map { it.saksdata }).contains(saksdataFullfoertInSamevedtaksinstans)
+        assertThat(saksdataAvsluttet.map { it }).contains(saksdataFullfoertInSamevedtaksinstans)
     }
 
 
@@ -903,7 +903,7 @@ class SaksdataRepositoryTest {
 
             )
         assertThat(results).hasSize(1)
-        assertThat(results.first().saksdata).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1)
+        assertThat(results.first()).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1)
     }
 }
 
