@@ -9,6 +9,7 @@ val apachePoiVersion = "5.2.5"
 val springDocVersion = "2.3.0"
 val shedlockVersion = "5.10.2"
 val klageKodeverkVersion = "1.8.1"
+val ehcacheVersion = "3.10.8"
 
 plugins {
     val kotlinVersion = "1.9.22"
@@ -53,6 +54,10 @@ dependencies {
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
     implementation("net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
+
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("javax.cache:cache-api")
+    implementation("org.ehcache:ehcache:$ehcacheVersion")
 
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("io.micrometer:micrometer-tracing-bridge-brave")

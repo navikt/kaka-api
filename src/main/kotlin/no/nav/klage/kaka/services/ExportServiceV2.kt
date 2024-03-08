@@ -4,6 +4,10 @@ import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingV2
 import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV2
 import no.nav.klage.kaka.api.view.Date
 import no.nav.klage.kaka.api.view.Vedtaksinstansgruppe
+import no.nav.klage.kaka.config.CacheWithJCacheConfiguration.Companion.FINISHED_FOR_LEDER_CACHE
+import no.nav.klage.kaka.config.CacheWithJCacheConfiguration.Companion.OPEN_CACHE
+import no.nav.klage.kaka.config.CacheWithJCacheConfiguration.Companion.TOTAL_CACHE
+import no.nav.klage.kaka.config.CacheWithJCacheConfiguration.Companion.VEDTAKSINSTANSLEDER_CACHE
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -15,6 +19,7 @@ import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.apache.poi.xssf.streaming.SXSSFWorkbook
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import java.io.File
 import java.io.FileOutputStream
@@ -131,6 +136,7 @@ class ExportServiceV2(
     /**
      * Return all 'finished' saksdata for ledere based on given months and saksbehandlere. Cannot not be current month.
      */
+    @Cacheable(FINISHED_FOR_LEDER_CACHE)
     fun getFinishedForLederAsRawData(
         enhet: Enhet,
         fromMonth: YearMonth,
@@ -186,6 +192,7 @@ class ExportServiceV2(
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
+    @Cacheable(TOTAL_CACHE)
     fun getFinishedAsRawDataByDates(fromDate: LocalDate, toDate: LocalDate): List<AnonymizedFinishedVurderingV2> {
         val resultList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV2(
@@ -198,6 +205,7 @@ class ExportServiceV2(
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
+    @Cacheable(OPEN_CACHE)
     fun getFinishedAsRawDataByDatesWithoutEnheter(
         fromDate: LocalDate,
         toDate: LocalDate
@@ -213,6 +221,7 @@ class ExportServiceV2(
     /**
      * Return all 'finished' saksdata for vedtaksinstansleder (anonymized (no fnr or navIdent)) based on given dates
      */
+    @Cacheable(VEDTAKSINSTANSLEDER_CACHE)
     fun getFinishedAsRawDataByDatesForVedtaksinstansleder(
         fromDate: LocalDate,
         toDate: LocalDate,
@@ -237,6 +246,7 @@ class ExportServiceV2(
     /**
      * Return 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates and klageenhet minus given saksbehandler
      */
+    @Cacheable(FINISHED_FOR_LEDER_CACHE)
     fun getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
         fromDate: LocalDate,
         toDate: LocalDate,
