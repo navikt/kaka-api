@@ -104,7 +104,7 @@ class AzureGateway(
         }
 
     private fun mapToEnhet(enhetNr: String): Enhet =
-        Enhet.values().find { it.navn == enhetNr }
+        Enhet.entries.find { it.navn == enhetNr }
             ?: throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetNr")
 
     data class Navn(

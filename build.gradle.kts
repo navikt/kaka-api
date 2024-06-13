@@ -8,7 +8,7 @@ val mockkVersion = "1.13.10"
 val apachePoiVersion = "5.2.5"
 val springDocVersion = "2.5.0"
 val shedlockVersion = "5.13.0"
-val klageKodeverkVersion = "1.8.23"
+val klageKodeverkVersion = "1.8.30"
 val ehcacheVersion = "3.10.8"
 
 plugins {
