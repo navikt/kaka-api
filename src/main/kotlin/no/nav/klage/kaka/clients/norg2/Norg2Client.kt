@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.clients.norg2
 
-import brave.Tracer
+import io.opentelemetry.api.trace.Span
 import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
@@ -16,7 +16,6 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class Norg2Client(
     private val norg2WebClient: WebClient,
-    private val tracer: Tracer
 ) {
 
     companion object {
@@ -37,7 +36,7 @@ class Norg2Client(
                         .build(enhetsnummer)
                 }
                 .accept(MediaType.APPLICATION_JSON)
-                .header("Nav-Call-Id", tracer.currentSpan().context().traceIdString())
+                .header("Nav-Call-Id", Span.current().spanContext.traceId)
                 .header("Nav-Consumer-Id", applicationName)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError) { response ->

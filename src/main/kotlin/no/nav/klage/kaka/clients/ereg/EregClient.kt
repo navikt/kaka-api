@@ -1,8 +1,8 @@
 package no.nav.klage.kaka.clients.ereg
 
 
-import brave.Tracer
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import io.opentelemetry.api.trace.Span
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.logErrorResponse
@@ -17,7 +17,6 @@ import org.springframework.web.reactive.function.client.bodyToMono
 @Component
 class EregClient(
     private val eregWebClient: WebClient,
-    private val tracer: Tracer
 ) {
 
     companion object {
@@ -39,7 +38,7 @@ class EregClient(
                         .build(orgnummer)
                 }
                 .accept(MediaType.APPLICATION_JSON)
-                .header("Nav-Call-Id", tracer.currentSpan().context().traceIdString())
+                .header("Nav-Call-Id", Span.current().spanContext.traceId)
                 .header("Nav-Consumer-Id", applicationName)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError) { response ->

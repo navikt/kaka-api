@@ -10,6 +10,7 @@ val springDocVersion = "2.5.0"
 val shedlockVersion = "5.13.0"
 val klageKodeverkVersion = "1.8.32"
 val ehcacheVersion = "3.10.8"
+val otelVersion = "1.40.0"
 
 plugins {
     val kotlinVersion = "1.9.24"
@@ -55,12 +56,13 @@ dependencies {
     implementation("net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
 
+    implementation("io.opentelemetry:opentelemetry-api:$otelVersion")
+
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("javax.cache:cache-api")
     implementation("org.ehcache:ehcache:$ehcacheVersion")
 
     implementation("io.micrometer:micrometer-registry-prometheus")
-    implementation("io.micrometer:micrometer-tracing-bridge-brave")
 
     implementation("org.apache.poi:poi:$apachePoiVersion")
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
