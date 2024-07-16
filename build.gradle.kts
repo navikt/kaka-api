@@ -1,20 +1,20 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "7.4"
-val tokenValidationVersion = "4.1.5"
+val tokenValidationVersion = "5.0.1"
 val archunitVersion = "1.3.0"
 val testContainersVersion = "1.19.8"
-val mockkVersion = "1.13.10"
-val apachePoiVersion = "5.2.5"
-val springDocVersion = "2.5.0"
+val mockkVersion = "1.13.11"
+val apachePoiVersion = "5.3.0"
+val springDocVersion = "2.6.0"
 val shedlockVersion = "5.13.0"
-val klageKodeverkVersion = "1.8.32"
+val klageKodeverkVersion = "1.8.35"
 val ehcacheVersion = "3.10.8"
 val otelVersion = "1.40.0"
 
 plugins {
-    val kotlinVersion = "1.9.24"
-    id("org.springframework.boot") version "3.2.5"
+    val kotlinVersion = "2.0.0"
+    id("org.springframework.boot") version "3.3.1"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -45,6 +45,7 @@ dependencies {
     implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
     implementation("org.flywaydb:flyway-core")
+    implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.postgresql:postgresql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
