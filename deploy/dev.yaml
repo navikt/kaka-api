@@ -4,7 +4,7 @@ externalHosts:
   - host: login.microsoftonline.com
   - host: pdl-api.dev-fss-pub.nais.io
   - host: ereg-services-q2.dev-fss-pub.nais.io
-  - host: norg2.dev-fss-pub.nais.io
+  - host: norg2.intern.dev.nav.no
 springProfile: dev-gcp
 tenant: trygdeetaten.no
 kafka_pool: nav-dev

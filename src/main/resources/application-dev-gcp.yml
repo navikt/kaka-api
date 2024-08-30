@@ -5,7 +5,7 @@ PDL_SCOPE: dev-fss.pdl.pdl-api
 
 EREG_URL: https://ereg-services-q2.dev-fss-pub.nais.io/api/v2
 
-NORG2_BASE_URL: https://norg2.dev-fss-pub.nais.io/norg2/api/v1
+NORG2_BASE_URL: https://norg2.intern.dev.nav.no/norg2/api/v1
 
 KAKA_VERSION_2_DATE: 2022-12-20
 
