@@ -106,7 +106,7 @@ class SaksdataService(
         sakstype: Type,
         ytelse: Ytelse,
         mottattVedtaksinstans: LocalDate?,
-        vedtaksinstansEnhet: String,
+        vedtaksinstansEnhet: String?,
         mottattKlageinstans: LocalDate,
         utfall: Utfall,
         hjemler: List<Registreringshjemmel>,
@@ -115,33 +115,17 @@ class SaksdataService(
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
         source: Source,
-        kvalitsvurderingVersion: Int,
     ): Saksdata {
         val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId)
 
-        if (utfall !in noKvalitetsvurderingNeeded) {
-            when (kvalitsvurderingVersion) {
-                1 -> kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
-                2 -> kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
-            }
+        if (sakstype == Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET || utfall in noKvalitetsvurderingNeeded) {
+            kvalitetsvurderingV2Repository.save(
+                KvalitetsvurderingV2(
+                    id = kvalitetsvurderingId
+                ),
+            )
         } else {
-            when (kvalitsvurderingVersion) {
-                1 -> {
-                    kvalitetsvurderingV1Repository.save(
-                        KvalitetsvurderingV1(
-                            id = kvalitetsvurderingId
-                        ),
-                    )
-                }
-
-                2 -> {
-                    kvalitetsvurderingV2Repository.save(
-                        KvalitetsvurderingV2(
-                            id = kvalitetsvurderingId
-                        ),
-                    )
-                }
-            }
+            kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
         }
 
         return if (existingSaksdata != null) {
@@ -157,7 +141,7 @@ class SaksdataService(
             existingSaksdata.tilknyttetEnhet = tilknyttetEnhet
             existingSaksdata.avsluttetAvSaksbehandler = avsluttetAvSaksbehandler
             existingSaksdata.source = source
-            existingSaksdata.modified = LocalDateTime.now()
+            existingSaksdata.modified = now()
 
             existingSaksdata
         } else {
@@ -176,7 +160,7 @@ class SaksdataService(
                     tilknyttetEnhet = tilknyttetEnhet,
                     kvalitetsvurderingReference = KvalitetsvurderingReference(
                         id = kvalitetsvurderingId,
-                        version = kvalitsvurderingVersion,
+                        version = 2,
                     ),
                     source = source
                 )
