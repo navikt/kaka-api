@@ -30,20 +30,24 @@ class MetadataController(
     }
 
     @GetMapping("/userdata", produces = ["application/json"])
-    fun getUserData(): UserData {
+    fun getCurrentUserData(): UserData {
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
 
         return UserData(
             ident = tokenUtil.getIdent(),
-            navn = azureGateway.getNavnInnloggetSaksehandler().toNavnView(),
+            navn = tokenUtil.getName().toNavnView(),
             ansattEnhet = metadataService.getInnloggetSaksbehandlerEnhetKodeDto(),
             roller = roller.map { it.name }
         )
     }
 
-    fun AzureGateway.Navn.toNavnView(): UserData.Navn {
+    fun String.toNavnView(): UserData.Navn {
+        val nameList = this.split(",")
+        if (nameList.size != 2) {
+            throw error("Unexpected format")
+        }
         return UserData.Navn(
-            fornavn = fornavn, etternavn = etternavn, sammensattNavn = sammensattNavn
+            fornavn = nameList[1], etternavn = nameList[0], sammensattNavn = "${nameList[1]} (${nameList[0]})"
         )
     }
 }

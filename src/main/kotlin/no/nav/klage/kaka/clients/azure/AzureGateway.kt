@@ -30,28 +30,6 @@ class AzureGateway(
         } ?: emptyList()
     }
 
-    fun getKlageenheterForSaksbehandler(ident: String): List<Enhet> =
-        listOf(getPersonligDataOmSaksbehandlerMedIdent(ident).enhet).filter { it in klageenheter || it == Enhet.E4200 }
-            .ifEmpty { throw EnhetNotFoundForSaksbehandlerException("$ident er ikke ansatt i en klageenhet") }
-
-    fun getPersonligDataOmSaksbehandlerMedIdent(navIdent: String): SaksbehandlerPersonligInfo {
-        val data = try {
-            microsoftGraphClient.getSaksbehandler(navIdent)
-        } catch (e: Exception) {
-            logger.error("Error in ${::getPersonligDataOmSaksbehandlerMedIdent.name}, failed to call getSaksbehandler for navident $navIdent", e)
-            throw e
-        }
-        return SaksbehandlerPersonligInfo(
-            data.onPremisesSamAccountName,
-            data.id,
-            data.givenName,
-            data.surname,
-            data.displayName,
-            data.mail,
-            mapToEnhet(data.streetAddress),
-        )
-    }
-
     fun getStreetAddressInnloggetSaksbehandler(): String {
         val data = try {
             microsoftGraphClient.getInnloggetSaksbehandler()
@@ -60,20 +38,6 @@ class AzureGateway(
             throw e
         }
         return data.streetAddress
-    }
-
-    fun getNavnInnloggetSaksehandler(): Navn {
-        val data = try {
-            microsoftGraphClient.getInnloggetSaksbehandler()
-        } catch (e: Exception) {
-            logger.error("Error in ${::getNavnInnloggetSaksehandler.name}, failed to call getInnloggetSaksbehandler", e)
-            throw e
-        }
-        return Navn(
-            data.givenName,
-            data.surname,
-            data.displayName,
-        )
     }
 
     fun getDataOmInnloggetSaksbehandler(): SaksbehandlerPersonligInfo {
@@ -94,22 +58,7 @@ class AzureGateway(
         )
     }
 
-    fun getRollerForInnloggetSaksbehandler(): List<SaksbehandlerRolle> =
-        try {
-            microsoftGraphClient.getInnloggetSaksbehandlersGroups()
-                .map { SaksbehandlerRolle(it.id, it.displayName ?: it.mailNickname ?: it.id) }
-        } catch (e: Exception) {
-            logger.error("Error in ${::getRollerForInnloggetSaksbehandler.name}, failed to call getInnloggetSaksbehandlersGroups", e)
-            throw e
-        }
-
     private fun mapToEnhet(enhetNr: String): Enhet =
         Enhet.entries.find { it.navn == enhetNr }
             ?: throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr $enhetNr")
-
-    data class Navn(
-        val fornavn: String,
-        val etternavn: String,
-        val sammensattNavn: String,
-    )
 }
