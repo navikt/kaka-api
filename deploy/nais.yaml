@@ -65,7 +65,6 @@ spec:
         extra:
           - NAVident
           - azp_name
-          - streetAddress
   {{#if ingresses}}
   ingresses:
   {{#each ingresses as |ingress|}}
