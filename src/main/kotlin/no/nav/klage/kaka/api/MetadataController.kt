@@ -43,6 +43,7 @@ class MetadataController(
 
     fun String.toNavnView(): UserData.Navn {
         val nameList = this.split(",")
+        logger.debug("nameList: {}", nameList)
         if (nameList.size != 2) {
             throw error("Unexpected format")
         }
