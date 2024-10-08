@@ -118,7 +118,11 @@ class SaksdataService(
     ): Saksdata {
         val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId)
 
-        if (sakstype == Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET || utfall in noKvalitetsvurderingNeeded) {
+        if (sakstype in listOf(
+                Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
+                Type.OMGJOERINGSKRAV
+            ) || utfall in noKvalitetsvurderingNeeded
+        ) {
             kvalitetsvurderingV2Repository.save(
                 KvalitetsvurderingV2(
                     id = kvalitetsvurderingId
