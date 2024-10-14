@@ -4,8 +4,11 @@ package no.nav.klage.kaka.repositories
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kodeverk.Type
+import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
@@ -897,5 +900,120 @@ class SaksdataRepositoryTest {
         assertThat(results).hasSize(1)
         assertThat(results.first().saksdata).isEqualTo(saksdataTilknyttetEnhet1AvsluttetAvSaksbehandler1)
     }
-}
 
+    @Test
+    fun `test query for excel report`() {
+        val utfoerendeSaksbehandler = "abc123"
+        val saksdataFullfoertTidligere = Saksdata(
+            utfoerendeSaksbehandler = "someoneelse",
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                version = 2,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2021, Month.JANUARY, 1), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2021, Month.JANUARY, 12), LocalTime.NOON),
+        )
+        val saksdataFullfoertx = Saksdata(
+            utfoerendeSaksbehandler = "someoneelse",
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = "1000", //Agder vedtaksgruppe
+            ytelse = Ytelse.FOR_FOR,
+            utfall = Utfall.STADFESTELSE,
+            registreringshjemler = setOf(Registreringshjemmel.ARBML_12),
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                version = 2,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 12), LocalTime.NOON),
+        )
+        val saksdataFullfoert1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4292",
+            vedtaksinstansEnhet = "1000", //Agder vedtaksgruppe
+            ytelse = Ytelse.FOR_FOR,
+            utfall = Utfall.STADFESTELSE,
+            registreringshjemler = setOf(Registreringshjemmel.FTRL_11_A4_3),
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                version = 2,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
+        )
+        val saksdataFullfoert2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                version = 2,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+        )
+        val saksdataFullfoert3 = Saksdata(
+            sakstype = Type.ANKE,
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            vedtaksinstansEnhet = "1000", //Agder vedtaksgruppe
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                version = 2,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
+            avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
+        )
+        val saksdataPaagaaende1 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                version = 2,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.MIN),
+        )
+        val saksdataPaagaaende2 = Saksdata(
+            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+            tilknyttetEnhet = "4295",
+            kvalitetsvurderingReference = KvalitetsvurderingReference(
+                id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
+                version = 2,
+            ),
+            created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 2), LocalTime.NOON),
+        )
+
+        saksdataRepository.saveAll(
+            mutableListOf(
+                saksdataFullfoertTidligere,
+                saksdataFullfoertx,
+                saksdataFullfoert1,
+                saksdataFullfoert2,
+                saksdataFullfoert3,
+                saksdataPaagaaende1,
+                saksdataPaagaaende2
+            )
+        )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+
+        val finished =
+            saksdataRepository.findByQueryParamsV2(
+                version = 2,
+                fromDate = LocalDate.of(2022, Month.JANUARY, 1),
+                toDate = LocalDate.of(2024, Month.NOVEMBER, 1),
+                tilbakekreving = "include",
+                klageenheter = listOf("4295", "4292", "4200"), //4200 not in test data
+                vedtaksinstansgrupper = listOf(6, 666), //Agder vedtaksgruppe, invalid vedtaksgruppe
+                enheter = listOf("1000", "xxxx"), //Agder vedtaksgruppe, invalid enhet
+                types = listOf(Type.KLAGE.id),
+                ytelser = listOf(Ytelse.FOR_FOR.id),
+                utfall = listOf(Utfall.STADFESTELSE.id),
+                hjemler = listOf(Registreringshjemmel.ARBML_12.id, Registreringshjemmel.FTRL_11_A4_3.id)
+
+            )
+        assertThat(finished).hasSize(2)
+    }
+
+}

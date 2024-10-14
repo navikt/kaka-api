@@ -1,9 +1,7 @@
 package no.nav.klage.kaka.services
 
-import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingV2
-import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV2
+import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.api.view.Date
-import no.nav.klage.kaka.api.view.Vedtaksinstansgruppe
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.exceptions.MissingTilgangException
@@ -18,7 +16,10 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook
 import org.springframework.stereotype.Service
 import java.io.File
 import java.io.FileOutputStream
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.YearMonth
 import java.time.temporal.ChronoField
 import java.util.*
 
@@ -37,17 +38,26 @@ class ExportServiceV2(
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)). For now, only used by
      * KA-ledere.
      */
-    fun getAsExcel(year: Year, includeFritekst: Boolean): File {
-        val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV2(
-            fromDateTime = LocalDate.of(year.value, Month.JANUARY, 1).atStartOfDay(),
-            toDateTime = LocalDate.of(year.value, Month.DECEMBER, 31).atTime(LocalTime.MAX),
+    fun getAsExcel(includeFritekst: Boolean, queryParams: ExcelQueryParams): File {
+        val resultList = saksdataRepository.findByQueryParamsV2(
+            version = queryParams.version,
+            fromDate = queryParams.fromDate,
+            toDate = queryParams.toDate,
+            tilbakekreving = queryParams.tilbakekreving,
+            klageenheter = queryParams.klageenheter,
+            vedtaksinstansgrupper = queryParams.vedtaksinstansgrupper,
+            enheter = queryParams.enheter,
+            types = queryParams.types,
+            ytelser = queryParams.ytelser,
+            utfall = queryParams.utfall,
+            hjemler = queryParams.hjemler,
         )
 
         val saksdataFields = mapToFields(resultList, includeFritekst)
 
         val workbook = SXSSFWorkbook(500)
 
-        val sheet = workbook.createSheet("Uttrekk år $year")
+        val sheet = workbook.createSheet("Uttrekk for ${queryParams.fromDate} til ${queryParams.toDate}")
 
         if (saksdataFields.isNotEmpty()) {
 
@@ -354,35 +364,15 @@ class ExportServiceV2(
     }
 
     private fun getVedtaksinstansgruppe(vedtaksinstansEnhet: String): Vedtaksinstansgruppe {
-        return when (vedtaksinstansEnhet.take(2)) {
-            "02" -> Vedtaksinstansgruppe.AKERSHUS
-            "03" -> Vedtaksinstansgruppe.OSLO
-            "46", "12", "14", "13" -> Vedtaksinstansgruppe.VESTLAND
-            "11" -> Vedtaksinstansgruppe.ROGALAND
-            "50", "16", "17", "57" -> Vedtaksinstansgruppe.TROENDELAG
-            "34", "04", "05" -> Vedtaksinstansgruppe.INNLANDET
-            "09", "10" -> Vedtaksinstansgruppe.AGDER
-            "01" -> Vedtaksinstansgruppe.OESTFOLD
-            "15" -> Vedtaksinstansgruppe.MOERE_OG_ROMSDAL
-            "06" -> Vedtaksinstansgruppe.BUSKERUD
-            "07", "53" -> Vedtaksinstansgruppe.VESTFOLD
-            "18" -> Vedtaksinstansgruppe.NORDLAND
-            "08" -> Vedtaksinstansgruppe.TELEMARK
-            "19" -> Vedtaksinstansgruppe.TROMS
-            "20" -> Vedtaksinstansgruppe.FINNMARK
-            "41" -> Vedtaksinstansgruppe.NAV_OEKONOMI_STOENAD
-            "44" -> Vedtaksinstansgruppe.NAV_ARBEID_OG_YTELSER
-            "45" -> Vedtaksinstansgruppe.NAV_KONTROLL_FORVALTNING
-            "47" -> Vedtaksinstansgruppe.NAV_HJELPEMIDDELSENTRAL
-            "48" -> Vedtaksinstansgruppe.NAV_FAMILIE_OG_PENSJONSYTELSER
-            "42", "00" -> Vedtaksinstansgruppe.UNKNOWN // 42: Klageenhet, expected for anke. 00: Utland
-            else -> {
-                logger.warn(
-                    "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
-                    vedtaksinstansEnhet
-                )
-                Vedtaksinstansgruppe.UNKNOWN
-            }
+        val vedtaksinstansgruppe = vedtaksinstansgruppeMap[vedtaksinstansEnhet.take(2)]
+        return if (vedtaksinstansgruppe != null) {
+            vedtaksinstansgruppe
+        } else {
+            logger.warn(
+                "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
+                vedtaksinstansEnhet
+            )
+            Vedtaksinstansgruppe.UNKNOWN
         }
     }
 
@@ -570,11 +560,12 @@ class ExportServiceV2(
     }
 
     private fun getMottattForrigeInstans(saksdata: Saksdata): Date {
-        val mottattForrigeInstans = if (saksdata.sakstype in listOf(Type.ANKE, Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET)) {
-            saksdata.mottattKlageinstans!!.toDate()
-        } else {
-            saksdata.mottattVedtaksinstans!!.toDate()
-        }
+        val mottattForrigeInstans =
+            if (saksdata.sakstype in listOf(Type.ANKE, Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET)) {
+                saksdata.mottattKlageinstans!!.toDate()
+            } else {
+                saksdata.mottattVedtaksinstans!!.toDate()
+            }
         return mottattForrigeInstans
     }
 
@@ -602,7 +593,10 @@ class ExportServiceV2(
         }
     }
 
-    private fun mapToFields(saksdataList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>, includeFritekst: Boolean): List<List<Field>> {
+    private fun mapToFields(
+        saksdataList: Set<SaksdataRepositoryCustomImpl.QueryResultV2>,
+        includeFritekst: Boolean
+    ): List<List<Field>> {
         //@formatter:off
         return saksdataList.map { result ->
             val (saksdata, kvalitetsvurderingV2) = result
@@ -1032,4 +1026,39 @@ data class AnonymizedManagerResponseV2(
 data class AnonymizedVedtaksinstanslederResponseV2(
     val mine: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
     val rest: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
+)
+
+val vedtaksinstansgruppeMap = mapOf(
+    "02" to Vedtaksinstansgruppe.AKERSHUS,
+    "03" to Vedtaksinstansgruppe.OSLO,
+    "46" to Vedtaksinstansgruppe.VESTLAND,
+    "12" to Vedtaksinstansgruppe.VESTLAND,
+    "14" to Vedtaksinstansgruppe.VESTLAND,
+    "13" to Vedtaksinstansgruppe.VESTLAND,
+    "11" to Vedtaksinstansgruppe.ROGALAND,
+    "50" to Vedtaksinstansgruppe.TROENDELAG,
+    "16" to Vedtaksinstansgruppe.TROENDELAG,
+    "17" to Vedtaksinstansgruppe.TROENDELAG,
+    "57" to Vedtaksinstansgruppe.TROENDELAG,
+    "34" to Vedtaksinstansgruppe.INNLANDET,
+    "04" to Vedtaksinstansgruppe.INNLANDET,
+    "05" to Vedtaksinstansgruppe.INNLANDET,
+    "09" to Vedtaksinstansgruppe.AGDER,
+    "10" to Vedtaksinstansgruppe.AGDER,
+    "01" to Vedtaksinstansgruppe.OESTFOLD,
+    "15" to Vedtaksinstansgruppe.MOERE_OG_ROMSDAL,
+    "06" to Vedtaksinstansgruppe.BUSKERUD,
+    "07" to Vedtaksinstansgruppe.VESTFOLD,
+    "53" to Vedtaksinstansgruppe.VESTFOLD,
+    "18" to Vedtaksinstansgruppe.NORDLAND,
+    "08" to Vedtaksinstansgruppe.TELEMARK,
+    "19" to Vedtaksinstansgruppe.TROMS,
+    "20" to Vedtaksinstansgruppe.FINNMARK,
+    "41" to Vedtaksinstansgruppe.NAV_OEKONOMI_STOENAD,
+    "44" to Vedtaksinstansgruppe.NAV_ARBEID_OG_YTELSER,
+    "45" to Vedtaksinstansgruppe.NAV_KONTROLL_FORVALTNING,
+    "47" to Vedtaksinstansgruppe.NAV_HJELPEMIDDELSENTRAL,
+    "48" to Vedtaksinstansgruppe.NAV_FAMILIE_OG_PENSJONSYTELSER,
+    "42" to Vedtaksinstansgruppe.UNKNOWN,
+    "00" to Vedtaksinstansgruppe.UNKNOWN,
 )
