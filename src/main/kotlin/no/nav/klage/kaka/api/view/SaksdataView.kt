@@ -27,7 +27,8 @@ data class SaksdataView(
     val avsluttetAvSaksbehandler: LocalDateTime?,
     val sourceId: String,
     val created: LocalDateTime,
-    val modified: LocalDateTime
+    val modified: LocalDateTime,
+    val tilbakekreving: Boolean,
 ) {
     data class KvalitetsvurderingReference(
         val id: UUID,
@@ -56,7 +57,8 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
         sourceId = source.id,
         created = created,
-        modified = modified
+        modified = modified,
+        tilbakekreving = tilbakekreving,
     )
 }
 

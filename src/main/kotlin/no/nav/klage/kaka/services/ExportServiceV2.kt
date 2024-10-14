@@ -296,6 +296,7 @@ class ExportServiceV2(
                 vedtaksinstansEnhet = saksdata.vedtaksinstansEnhet!!,
                 vedtaksinstansgruppe = getVedtaksinstansgruppe(saksdata.vedtaksinstansEnhet!!).id,
                 mottattKlageinstans = mottattKlageinstansDate,
+                tilbakekreving = saksdata.tilbakekreving,
 
                 klageforberedelsenSakensDokumenter = kvalitetsvurderingV2.klageforberedelsenSakensDokumenter,
                 klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = kvalitetsvurderingV2.klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert,
@@ -415,6 +416,7 @@ class ExportServiceV2(
                 sakstypeId = saksdata.sakstype.id,
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 mottattKlageinstans = mottattKlageinstansDate,
+                tilbakekreving = saksdata.tilbakekreving,
 
                 klageforberedelsenSakensDokumenter = kvalitetsvurderingV2.klageforberedelsenSakensDokumenter,
                 klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = kvalitetsvurderingV2.klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert,
@@ -504,6 +506,7 @@ class ExportServiceV2(
                 sakstypeId = saksdata.sakstype.id,
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 mottattKlageinstans = mottattKlageinstansDate,
+                tilbakekreving = saksdata.tilbakekreving,
 
                 klageforberedelsenSakensDokumenter = kvalitetsvurderingV2.klageforberedelsenSakensDokumenter,
                 klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = kvalitetsvurderingV2.klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert,
@@ -633,6 +636,7 @@ class ExportServiceV2(
                         type = STRING
                     )
                 )
+                add(Field(fieldName = "Tilbakekreving", value = saksdata.tilbakekreving, type = BOOLEAN))
 
                 //Klageforberedelsen
                 add(
