@@ -27,6 +27,8 @@ data class KabalSaksdataInput(
     val kvalitetsvurderingId: UUID,
     val avsluttetAvSaksbehandler: LocalDateTime,
     val tilknyttetEnhet: String,
+    //TODO: Remove nullable after kabal-api update
+    val tilbakekreving: Boolean?,
 )
 
 data class ValidationErrors(

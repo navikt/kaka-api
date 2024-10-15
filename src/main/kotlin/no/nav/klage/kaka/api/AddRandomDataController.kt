@@ -85,7 +85,7 @@ class AddRandomDataController(
             mottattVedtaksinstans = mottattVedtaksinstans,
             mottattKlageinstans = mottattKA,
             avsluttetAvSaksbehandler = avsluttetAvSaksbehandler.atStartOfDay(),
-            source = Source.values().random(),
+            source = Source.entries.toTypedArray().random(),
 
             kvalitetsvurderingReference = KvalitetsvurderingReference(
                 id = kvalitetsvurderingId,
@@ -93,7 +93,8 @@ class AddRandomDataController(
             ),
 
             created = mottattKA.atStartOfDay(),
-            modified = avsluttetAvSaksbehandler.atStartOfDay()
+            modified = avsluttetAvSaksbehandler.atStartOfDay(),
+            tilbakekreving = Random.nextBoolean(),
         )
     }
 

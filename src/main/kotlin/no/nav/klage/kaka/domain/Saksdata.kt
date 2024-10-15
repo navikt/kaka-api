@@ -63,7 +63,9 @@ class Saksdata(
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
-    var modified: LocalDateTime = LocalDateTime.now()
+    var modified: LocalDateTime = LocalDateTime.now(),
+    @Column(name = "tilbakekreving")
+    var tilbakekreving: Boolean = false,
 ) {
 
     override fun toString(): String {

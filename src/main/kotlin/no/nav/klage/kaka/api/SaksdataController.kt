@@ -272,6 +272,26 @@ class SaksdataController(
         return saksdataService.setUtfall(saksdataId, Utfall.of(input.value), innloggetSaksbehandler).toSaksdataView()
     }
 
+    @PutMapping("/{id}/tilbakekreving")
+    fun setTilbakekreving(
+        @PathVariable("id") saksdataId: UUID,
+        @RequestBody input: BooleanInput
+    ): SaksdataView {
+        val innloggetSaksbehandler = tokenUtil.getIdent()
+        logSaksdataMethodDetails(
+            ::setTilbakekreving.name,
+            innloggetSaksbehandler,
+            saksdataId,
+            logger
+        )
+
+        return saksdataService.setTilbakekreving(
+            saksdataId = saksdataId,
+            tilbakekreving = input.value,
+            innloggetSaksbehandler = innloggetSaksbehandler
+        ).toSaksdataView()
+    }
+
     @PutMapping("/{id}/hjemmelidlist")
     fun setHjemmelIdList(
         @PathVariable("id") saksdataId: UUID,

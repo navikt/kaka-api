@@ -15,6 +15,7 @@ data class AnonymizedFinishedVurderingV2(
     val vedtaksinstansEnhet: String,
     val vedtaksinstansgruppe: Int,
     val mottattKlageinstans: Date,
+    val tilbakekreving: Boolean,
 
     var klageforberedelsenSakensDokumenter: Boolean,
     var klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert: Boolean,
@@ -82,6 +83,7 @@ data class AnonymizedFinishedVurderingWithoutEnheterV2(
     val sakstypeId: String,
     val mottattVedtaksinstans: Date?,
     val mottattKlageinstans: Date,
+    val tilbakekreving: Boolean,
 
     var klageforberedelsenSakensDokumenter: Boolean,
     var klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert: Boolean,
