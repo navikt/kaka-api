@@ -45,13 +45,14 @@ class KALederController(
 
     @GetMapping("/export/v{version}/excel", "/export/v{version}/excel-med-fritekst")
     fun getAsExcelMedFritekst(
+        @PathVariable("version", required = true) version: Int,
         queryParams: ExcelQueryParams,
     ): ResponseEntity<Resource> {
         logger.debug("getAsExcelMedFritekst() called. Query params = {}", queryParams)
 
         validateHasExcelMedFritekst()
 
-        val file = if (queryParams.version == 2) {
+        val file = if (version == 2) {
             exportServiceV2.getAsExcel(includeFritekst = true, queryParams = queryParams)
         } else {
             exportServiceV1.getAsExcel(includeFritekst = true, queryParams = queryParams)
@@ -77,13 +78,14 @@ class KALederController(
 
     @GetMapping("/export/v{version}/excel-uten-fritekst")
     fun getAsExcelUtenFritekst(
+        @PathVariable("version", required = true) version: Int,
         queryParams: ExcelQueryParams,
     ): ResponseEntity<Resource> {
         logger.debug("getAsExcelUtenFritekst() called. Query params = {}", queryParams)
 
         validateHasExcelUtenFritekst()
 
-        val file = if (queryParams.version == 2) {
+        val file = if (version == 2) {
             exportServiceV2.getAsExcel(includeFritekst = false, queryParams = queryParams)
         } else {
             exportServiceV1.getAsExcel(includeFritekst = false, queryParams = queryParams)

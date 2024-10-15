@@ -44,7 +44,6 @@ internal class ExportServiceV1Test {
         val file = exportService.getAsExcel(
             includeFritekst = true,
             queryParams = ExcelQueryParams(
-                version = 1,
                 fromDate = LocalDate.now(),
                 toDate = LocalDate.now(),
                 tilbakekreving = "false",
@@ -86,7 +85,6 @@ internal class ExportServiceV1Test {
         val file = exportServiceV1.getAsExcel(
             includeFritekst = true,
             queryParams = ExcelQueryParams(
-                version = 1,
                 fromDate = LocalDate.now(),
                 toDate = LocalDate.now(),
                 tilbakekreving = "false",
@@ -128,7 +126,6 @@ internal class ExportServiceV1Test {
         val file = exportService.getAsExcel(
             includeFritekst = true,
             queryParams = ExcelQueryParams(
-                version = 1,
                 fromDate = LocalDate.now(),
                 toDate = LocalDate.now(),
                 tilbakekreving = "false",
