@@ -10,6 +10,7 @@ import no.nav.klage.kaka.util.isValidOrgnr
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV2
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.Month
 
@@ -80,6 +81,7 @@ class AdminService(
         secureLogger.debug(resultString)
     }
 
+    @Transactional
     fun migrateTilbakekreving() {
         val candidates = saksdataRepository.findByTilbakekrevingIsFalse()
         logger.debug("Found ${candidates.size} candidates for tilbakekreving migration.")

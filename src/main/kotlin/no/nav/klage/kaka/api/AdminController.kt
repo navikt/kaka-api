@@ -37,8 +37,8 @@ class AdminController(
         adminService.logV1HjemlerInV2()
     }
 
-    @GetMapping("/migratetilbakekreving")
-    fun migratetilbakekreving() {
+    @GetMapping("/migrateTilbakekreving")
+    fun migrateTilbakekreving() {
         krevAdminTilgang()
         adminService.migrateTilbakekreving()
     }
