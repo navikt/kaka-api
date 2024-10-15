@@ -82,14 +82,18 @@ class AdminService(
 
     fun migrateTilbakekreving() {
         val candidates = saksdataRepository.findByTilbakekrevingIsFalse()
+        logger.debug("Found ${candidates.size} candidates for tilbakekreving migration.")
+        var migrations = 0
         candidates.forEach { candidate ->
             if (candidate.registreringshjemler?.any {
                     it in tilbakekrevingHjemler
                 } == true
             ) {
                 candidate.tilbakekreving = true
+                migrations++
             }
         }
+        logger.debug("Migrated $migrations candidates.")
     }
 
     val tilbakekrevingHjemler = listOf(
