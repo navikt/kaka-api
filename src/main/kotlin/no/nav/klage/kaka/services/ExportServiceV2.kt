@@ -1,9 +1,13 @@
 package no.nav.klage.kaka.services
 
-import no.nav.klage.kaka.api.view.*
+import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingV2
+import no.nav.klage.kaka.api.view.AnonymizedFinishedVurderingWithoutEnheterV2
 import no.nav.klage.kaka.api.view.Date
+import no.nav.klage.kaka.api.view.ExcelQueryParams
 import no.nav.klage.kaka.domain.Saksdata
+import no.nav.klage.kaka.domain.Vedtaksinstansgruppe
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kaka.domain.vedtaksinstansgruppeMap
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
@@ -40,7 +44,6 @@ class ExportServiceV2(
      */
     fun getAsExcel(includeFritekst: Boolean, queryParams: ExcelQueryParams): File {
         val resultList = saksdataRepository.findByQueryParamsV2(
-            version = queryParams.version,
             fromDate = queryParams.fromDate,
             toDate = queryParams.toDate,
             tilbakekreving = queryParams.tilbakekreving,
@@ -1030,39 +1033,4 @@ data class AnonymizedManagerResponseV2(
 data class AnonymizedVedtaksinstanslederResponseV2(
     val mine: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
     val rest: List<AnonymizedFinishedVurderingWithoutEnheterV2>,
-)
-
-val vedtaksinstansgruppeMap = mapOf(
-    "02" to Vedtaksinstansgruppe.AKERSHUS,
-    "03" to Vedtaksinstansgruppe.OSLO,
-    "46" to Vedtaksinstansgruppe.VESTLAND,
-    "12" to Vedtaksinstansgruppe.VESTLAND,
-    "14" to Vedtaksinstansgruppe.VESTLAND,
-    "13" to Vedtaksinstansgruppe.VESTLAND,
-    "11" to Vedtaksinstansgruppe.ROGALAND,
-    "50" to Vedtaksinstansgruppe.TROENDELAG,
-    "16" to Vedtaksinstansgruppe.TROENDELAG,
-    "17" to Vedtaksinstansgruppe.TROENDELAG,
-    "57" to Vedtaksinstansgruppe.TROENDELAG,
-    "34" to Vedtaksinstansgruppe.INNLANDET,
-    "04" to Vedtaksinstansgruppe.INNLANDET,
-    "05" to Vedtaksinstansgruppe.INNLANDET,
-    "09" to Vedtaksinstansgruppe.AGDER,
-    "10" to Vedtaksinstansgruppe.AGDER,
-    "01" to Vedtaksinstansgruppe.OESTFOLD,
-    "15" to Vedtaksinstansgruppe.MOERE_OG_ROMSDAL,
-    "06" to Vedtaksinstansgruppe.BUSKERUD,
-    "07" to Vedtaksinstansgruppe.VESTFOLD,
-    "53" to Vedtaksinstansgruppe.VESTFOLD,
-    "18" to Vedtaksinstansgruppe.NORDLAND,
-    "08" to Vedtaksinstansgruppe.TELEMARK,
-    "19" to Vedtaksinstansgruppe.TROMS,
-    "20" to Vedtaksinstansgruppe.FINNMARK,
-    "41" to Vedtaksinstansgruppe.NAV_OEKONOMI_STOENAD,
-    "44" to Vedtaksinstansgruppe.NAV_ARBEID_OG_YTELSER,
-    "45" to Vedtaksinstansgruppe.NAV_KONTROLL_FORVALTNING,
-    "47" to Vedtaksinstansgruppe.NAV_HJELPEMIDDELSENTRAL,
-    "48" to Vedtaksinstansgruppe.NAV_FAMILIE_OG_PENSJONSYTELSER,
-    "42" to Vedtaksinstansgruppe.UNKNOWN,
-    "00" to Vedtaksinstansgruppe.UNKNOWN,
 )

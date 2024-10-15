@@ -5,7 +5,7 @@ import jakarta.persistence.PersistenceContext
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
-import no.nav.klage.kaka.services.vedtaksinstansgruppeMap
+import no.nav.klage.kaka.domain.vedtaksinstansgruppeMap
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.Ytelse
@@ -62,8 +62,34 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
     }
 
+    override fun findByQueryParamsV1(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?
+    ): Set<QueryResultV1> {
+        return privateFindByQueryParams(
+            version = 1,
+            fromDate = fromDate,
+            toDate = toDate,
+            tilbakekreving = tilbakekreving,
+            klageenheter = klageenheter,
+            vedtaksinstansgrupper = vedtaksinstansgrupper,
+            enheter = enheter,
+            types = types,
+            ytelser = ytelser,
+            utfall = utfall,
+            hjemler = hjemler
+        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+    }
+
     override fun findByQueryParamsV2(
-        version: Int,
         fromDate: LocalDate,
         toDate: LocalDate,
         tilbakekreving: String,
@@ -75,7 +101,35 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         utfall: List<String>?,
         hjemler: List<String>?
     ): Set<QueryResultV2> {
-        val (hjemlerQuery, registreringshjemmelSet) = getHjemlerQuery(hjemler, tilbakekreving)
+        return privateFindByQueryParams(
+            version = 2,
+            fromDate = fromDate,
+            toDate = toDate,
+            tilbakekreving = tilbakekreving,
+            klageenheter = klageenheter,
+            vedtaksinstansgrupper = vedtaksinstansgrupper,
+            enheter = enheter,
+            types = types,
+            ytelser = ytelser,
+            utfall = utfall,
+            hjemler = hjemler
+        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    private fun privateFindByQueryParams(
+        version: Int,
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?
+    ): List<Array<*>> {
+        val (hjemlerQuery, registreringshjemmelSet) = getHjemlerQuery(hjemler)
         val (typesQuery, typeSet) = getTypesQuery(types)
         val (ytelseQuery, ytelseSet) = getYtelserQuery(ytelser)
         val (utfallQuery, utfallSet) = getUtfallQuery(utfall)
@@ -95,6 +149,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             $ytelseQuery
             $utfallQuery
             $hjemlerQuery
+            ${getTilbakekrevingQuery(tilbakekreving)}
         """
 
         val typedQuery = entityManager.createQuery(
@@ -119,56 +174,35 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         if (utfallSet.isNotEmpty()) {
             typedQuery.setParameter("utfall", utfallSet)
         }
-
         if (registreringshjemmelSet.isNotEmpty()) {
             registreringshjemmelSet.forEach {
                 typedQuery.setParameter("h_${it.id}", it)
             }
         }
 
-        return typedQuery
-            .resultList.mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+        return typedQuery.resultList
     }
 
-    private fun getHjemlerQuery(hjemler: List<String>?, tilbakekreving: String): Pair<String, Set<Registreringshjemmel>> {
+    private fun getTilbakekrevingQuery(tilbakekreving: String): String {
+        return when (tilbakekreving) {
+            "include" -> ""
+            "exclude" -> "AND s.tilbakekreving = false"
+            "only" -> "AND s.tilbakekreving = true"
+            else -> ""
+        }
+    }
+
+    private fun getHjemlerQuery(hjemler: List<String>?): Pair<String, Set<Registreringshjemmel>> {
         val hjemlerToWorkWith = hjemler?.mapToSet { Registreringshjemmel.of(it) } ?: emptySet()
 
-        return when (tilbakekreving) {
-            //passthrough
-            "include" -> {
-                if (hjemlerToWorkWith.isNotEmpty()) {
-                    hjemlerToWorkWith.joinToString(
-                        prefix = "AND (",
-                        postfix = ")",
-                        separator = " OR "
-                    ) { ":h_${it.id} member s.registreringshjemler" } to hjemlerToWorkWith
-                } else {
-                    "" to emptySet()
-                }
-            }
-            //this case might need more handling when creating query
-            //Uten §22-15
-            //Vis alle saker uten tilbakekrevingshjemler.
-//            "exclude" -> {
-                //TODO
-//            }
-            //Kun §22-15
-            //Vis kun saker med tilbakekrevingshjemler.
-            "only" -> {
-//                if (hjemlerToWorkWith.isNotEmpty()) {
-//                    hjemlerToWorkWith.joinToString(
-//                        prefix = "AND (",
-//                        postfix = ")",
-//                        separator = " OR "
-//                    ) { ":h_${it.id} member s.registreringshjemler AND 'is tilbakekreving'" } to hjemlerToWorkWith
-//                } else {
-//                    "" to emptySet()
-//                }
-                TODO()
-            }
-            else -> {
-                TODO()
-            }
+        return if (hjemlerToWorkWith.isNotEmpty()) {
+            hjemlerToWorkWith.joinToString(
+                prefix = "AND (",
+                postfix = ")",
+                separator = " OR "
+            ) { ":h_${it.id} member s.registreringshjemler" } to hjemlerToWorkWith
+        } else {
+            "" to emptySet()
         }
     }
 

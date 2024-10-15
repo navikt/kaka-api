@@ -54,8 +54,7 @@ class KALederController(
         val file = if (queryParams.version == 2) {
             exportServiceV2.getAsExcel(includeFritekst = true, queryParams = queryParams)
         } else {
-//            exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = true)
-            TODO()
+            exportServiceV1.getAsExcel(includeFritekst = true, queryParams = queryParams)
         }
 
         val responseHeaders = HttpHeaders()
@@ -87,8 +86,7 @@ class KALederController(
         val file = if (queryParams.version == 2) {
             exportServiceV2.getAsExcel(includeFritekst = false, queryParams = queryParams)
         } else {
-//            exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = false)
-            TODO()
+            exportServiceV1.getAsExcel(includeFritekst = false, queryParams = queryParams)
         }
 
         val responseHeaders = HttpHeaders()

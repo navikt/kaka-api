@@ -914,13 +914,14 @@ class SaksdataRepositoryTest {
             created = LocalDateTime.of(LocalDate.of(2021, Month.JANUARY, 1), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2021, Month.JANUARY, 12), LocalTime.NOON),
         )
-        val saksdataFullfoertx = Saksdata(
+        val saksdataFullfoertToFind1 = Saksdata(
             utfoerendeSaksbehandler = "someoneelse",
             tilknyttetEnhet = "4295",
             vedtaksinstansEnhet = "1000", //Agder vedtaksgruppe
             ytelse = Ytelse.FOR_FOR,
             utfall = Utfall.STADFESTELSE,
             registreringshjemler = setOf(Registreringshjemmel.ARBML_12),
+            tilbakekreving = true,
             kvalitetsvurderingReference = KvalitetsvurderingReference(
                 id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
                 version = 2,
@@ -928,12 +929,13 @@ class SaksdataRepositoryTest {
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 1), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 12), LocalTime.NOON),
         )
-        val saksdataFullfoert1 = Saksdata(
+        val saksdataFullfoertToFind2 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4292",
             vedtaksinstansEnhet = "1000", //Agder vedtaksgruppe
             ytelse = Ytelse.FOR_FOR,
             utfall = Utfall.STADFESTELSE,
+            tilbakekreving = true,
             registreringshjemler = setOf(Registreringshjemmel.FTRL_11_A4_3),
             kvalitetsvurderingReference = KvalitetsvurderingReference(
                 id = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2()).id,
@@ -942,7 +944,7 @@ class SaksdataRepositoryTest {
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 14), LocalTime.NOON),
         )
-        val saksdataFullfoert2 = Saksdata(
+        val saksdataFullfoertOther1 = Saksdata(
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
             kvalitetsvurderingReference = KvalitetsvurderingReference(
@@ -952,7 +954,7 @@ class SaksdataRepositoryTest {
             created = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 3), LocalTime.NOON),
             avsluttetAvSaksbehandler = LocalDateTime.of(LocalDate.of(2022, Month.JANUARY, 13), LocalTime.MIN),
         )
-        val saksdataFullfoert3 = Saksdata(
+        val saksdataFullfoertOther2 = Saksdata(
             sakstype = Type.ANKE,
             utfoerendeSaksbehandler = utfoerendeSaksbehandler,
             tilknyttetEnhet = "4295",
@@ -986,10 +988,10 @@ class SaksdataRepositoryTest {
         saksdataRepository.saveAll(
             mutableListOf(
                 saksdataFullfoertTidligere,
-                saksdataFullfoertx,
-                saksdataFullfoert1,
-                saksdataFullfoert2,
-                saksdataFullfoert3,
+                saksdataFullfoertToFind1,
+                saksdataFullfoertToFind2,
+                saksdataFullfoertOther1,
+                saksdataFullfoertOther2,
                 saksdataPaagaaende1,
                 saksdataPaagaaende2
             )
@@ -1000,10 +1002,9 @@ class SaksdataRepositoryTest {
 
         val finished =
             saksdataRepository.findByQueryParamsV2(
-                version = 2,
                 fromDate = LocalDate.of(2022, Month.JANUARY, 1),
                 toDate = LocalDate.of(2024, Month.NOVEMBER, 1),
-                tilbakekreving = "include",
+                tilbakekreving = "only",
                 klageenheter = listOf("4295", "4292", "4200"), //4200 not in test data
                 vedtaksinstansgrupper = listOf(6, 666), //Agder vedtaksgruppe, invalid vedtaksgruppe
                 enheter = listOf("1000", "xxxx"), //Agder vedtaksgruppe, invalid enhet
@@ -1011,7 +1012,6 @@ class SaksdataRepositoryTest {
                 ytelser = listOf(Ytelse.FOR_FOR.id),
                 utfall = listOf(Utfall.STADFESTELSE.id),
                 hjemler = listOf(Registreringshjemmel.ARBML_12.id, Registreringshjemmel.FTRL_11_A4_3.id)
-
             )
         assertThat(finished).hasSize(2)
     }
