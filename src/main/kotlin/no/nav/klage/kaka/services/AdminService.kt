@@ -7,6 +7,7 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV2
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -78,4 +79,27 @@ class AdminService(
 
         secureLogger.debug(resultString)
     }
+
+    fun migrateTilbakekreving() {
+        val candidates = saksdataRepository.findByTilbakekrevingIsFalse()
+        candidates.forEach { candidate ->
+            if (candidate.registreringshjemler?.any {
+                    it in tilbakekrevingHjemler
+                } == true
+            ) {
+                candidate.tilbakekreving = true
+            }
+        }
+    }
+
+    val tilbakekrevingHjemler = listOf(
+        Registreringshjemmel.FTRL_22_15_TILBAKEKREVING,
+        Registreringshjemmel.FTRL_22_15A,
+        Registreringshjemmel.FTRL_22_15B,
+        Registreringshjemmel.FTRL_22_15C,
+        Registreringshjemmel.FTRL_22_15G,
+        Registreringshjemmel.FTRL_22_15D,
+        Registreringshjemmel.FTRL_22_15E,
+        Registreringshjemmel.FTRL_22_15F,
+    )
 }
