@@ -7,8 +7,10 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV2
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.Month
 
@@ -78,4 +80,32 @@ class AdminService(
 
         secureLogger.debug(resultString)
     }
+
+    @Transactional
+    fun migrateTilbakekreving() {
+        val candidates = saksdataRepository.findByTilbakekrevingIsFalse()
+        logger.debug("Found ${candidates.size} candidates for tilbakekreving migration.")
+        var migrations = 0
+        candidates.forEach { candidate ->
+            if (candidate.registreringshjemler?.any {
+                    it in tilbakekrevingHjemler
+                } == true
+            ) {
+                candidate.tilbakekreving = true
+                migrations++
+            }
+        }
+        logger.debug("Migrated $migrations candidates.")
+    }
+
+    val tilbakekrevingHjemler = listOf(
+        Registreringshjemmel.FTRL_22_15_TILBAKEKREVING,
+        Registreringshjemmel.FTRL_22_15A,
+        Registreringshjemmel.FTRL_22_15B,
+        Registreringshjemmel.FTRL_22_15C,
+        Registreringshjemmel.FTRL_22_15G,
+        Registreringshjemmel.FTRL_22_15D,
+        Registreringshjemmel.FTRL_22_15E,
+        Registreringshjemmel.FTRL_22_15F,
+    )
 }
