@@ -1,6 +1,7 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
+import no.nav.klage.kaka.api.view.ExcelQueryParams
 import no.nav.klage.kaka.api.view.ManagerResponseV1
 import no.nav.klage.kaka.api.view.ManagerResponseV2
 import no.nav.klage.kaka.api.view.Saksbehandler
@@ -24,7 +25,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.io.FileInputStream
-import java.time.Year
 import java.time.YearMonth
 
 @RestController
@@ -45,18 +45,17 @@ class KALederController(
 
     @GetMapping("/export/v{version}/excel", "/export/v{version}/excel-med-fritekst")
     fun getAsExcelMedFritekst(
-        @RequestParam(required = false) year: Int?,
-        @PathVariable("version", required = false) version: Int?,
+        @PathVariable("version", required = true) version: Int,
+        queryParams: ExcelQueryParams,
     ): ResponseEntity<Resource> {
-        logger.debug("getAsExcelMedFritekst() called. Year param = $year, version = $version")
+        logger.debug("getAsExcelMedFritekst() called. Query params = {}", queryParams)
 
         validateHasExcelMedFritekst()
 
-        val yearToUse = if (year != null) Year.of(year) else Year.now()
         val file = if (version == 2) {
-            exportServiceV2.getAsExcel(year = yearToUse, includeFritekst = true)
+            exportServiceV2.getAsExcel(includeFritekst = true, queryParams = queryParams)
         } else {
-            exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = true)
+            exportServiceV1.getAsExcel(includeFritekst = true, queryParams = queryParams)
         }
 
         val responseHeaders = HttpHeaders()
@@ -79,18 +78,17 @@ class KALederController(
 
     @GetMapping("/export/v{version}/excel-uten-fritekst")
     fun getAsExcelUtenFritekst(
-        @RequestParam(required = false) year: Int?,
-        @PathVariable("version", required = false) version: Int?,
+        @PathVariable("version", required = true) version: Int,
+        queryParams: ExcelQueryParams,
     ): ResponseEntity<Resource> {
-        logger.debug("getAsExcelUtenFritekst() called. Year param = $year, version = $version")
+        logger.debug("getAsExcelUtenFritekst() called. Query params = {}", queryParams)
 
         validateHasExcelUtenFritekst()
 
-        val yearToUse = if (year != null) Year.of(year) else Year.now()
         val file = if (version == 2) {
-            exportServiceV2.getAsExcel(year = yearToUse, includeFritekst = false)
+            exportServiceV2.getAsExcel(includeFritekst = false, queryParams = queryParams)
         } else {
-            exportServiceV1.getAsExcel(year = yearToUse, includeFritekst = false)
+            exportServiceV1.getAsExcel(includeFritekst = false, queryParams = queryParams)
         }
 
         val responseHeaders = HttpHeaders()

@@ -1,5 +1,6 @@
 package no.nav.klage.kaka.repositories
 
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 interface SaksdataRepositoryCustom {
@@ -40,6 +41,32 @@ interface SaksdataRepositoryCustom {
     fun findByAvsluttetAvSaksbehandlerBetweenV2(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
+
+    fun findByQueryParamsV1(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?,
+    ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
+
+    fun findByQueryParamsV2(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV1(

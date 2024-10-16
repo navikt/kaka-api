@@ -2,6 +2,7 @@ package no.nav.klage.kaka.services
 
 import io.mockk.every
 import io.mockk.mockk
+import no.nav.klage.kaka.api.view.ExcelQueryParams
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
@@ -12,7 +13,6 @@ import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.Year
 import java.util.*
 
 
@@ -23,7 +23,15 @@ internal class ExportServiceV1Test {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
+            saksdataRepository.findByQueryParamsV1(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
                 any(),
                 any(),
             )
@@ -34,8 +42,19 @@ internal class ExportServiceV1Test {
         )
 
         val file = exportService.getAsExcel(
-            year = Year.now(),
             includeFritekst = true,
+            queryParams = ExcelQueryParams(
+                fromDate = LocalDate.now(),
+                toDate = LocalDate.now(),
+                tilbakekreving = "false",
+                klageenheter = emptyList(),
+                vedtaksinstansgrupper = emptyList(),
+                enheter = emptyList(),
+                types = emptyList(),
+                ytelser = emptyList(),
+                utfall = emptyList(),
+                hjemler = emptyList(),
+            )
         )
         println(file.absolutePath)
     }
@@ -45,7 +64,15 @@ internal class ExportServiceV1Test {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
+            saksdataRepository.findByQueryParamsV1(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
                 any(),
                 any(),
             )
@@ -56,8 +83,19 @@ internal class ExportServiceV1Test {
         )
 
         val file = exportServiceV1.getAsExcel(
-            year = Year.now(),
             includeFritekst = true,
+            queryParams = ExcelQueryParams(
+                fromDate = LocalDate.now(),
+                toDate = LocalDate.now(),
+                tilbakekreving = "false",
+                klageenheter = emptyList(),
+                vedtaksinstansgrupper = emptyList(),
+                enheter = emptyList(),
+                types = emptyList(),
+                ytelser = emptyList(),
+                utfall = emptyList(),
+                hjemler = emptyList(),
+            )
         )
         println(file.absolutePath)
     }
@@ -67,7 +105,15 @@ internal class ExportServiceV1Test {
         val saksdataRepository = mockk<SaksdataRepository>()
 
         every {
-            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV1(
+            saksdataRepository.findByQueryParamsV1(
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
+                any(),
                 any(),
                 any(),
             )
@@ -78,8 +124,19 @@ internal class ExportServiceV1Test {
         )
 
         val file = exportService.getAsExcel(
-            year = Year.now(),
             includeFritekst = true,
+            queryParams = ExcelQueryParams(
+                fromDate = LocalDate.now(),
+                toDate = LocalDate.now(),
+                tilbakekreving = "false",
+                klageenheter = emptyList(),
+                vedtaksinstansgrupper = emptyList(),
+                enheter = emptyList(),
+                types = emptyList(),
+                ytelser = emptyList(),
+                utfall = emptyList(),
+                hjemler = emptyList(),
+            )
         )
         println(file.absolutePath)
     }
