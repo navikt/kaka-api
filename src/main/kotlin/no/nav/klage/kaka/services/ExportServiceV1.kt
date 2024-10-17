@@ -51,7 +51,7 @@ class ExportServiceV1(
 
         val workbook = SXSSFWorkbook(500)
 
-        val sheet = workbook.createSheet("Uttrekk for ${queryParams.fromDate} til ${queryParams.toDate}")
+        val sheet = workbook.createSheet("${queryParams.fromDate} til ${queryParams.toDate}")
 
         if (saksdataFields.isNotEmpty()) {
 
