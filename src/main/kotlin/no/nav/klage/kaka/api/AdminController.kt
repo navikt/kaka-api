@@ -37,6 +37,12 @@ class AdminController(
         adminService.logV1HjemlerInV2()
     }
 
+    @GetMapping("/migrateTilbakekreving")
+    fun migrateTilbakekreving() {
+        krevAdminTilgang()
+        adminService.migrateTilbakekreving()
+    }
+
     private fun krevAdminTilgang() {
         val roller = rolleMapper.toRoles(tokenUtil.getGroups())
         if (!roller.contains(Role.KAKA_ADMIN)) {

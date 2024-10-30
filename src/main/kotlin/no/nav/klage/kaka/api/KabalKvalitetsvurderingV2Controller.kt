@@ -109,6 +109,7 @@ class KabalKvalitetsvurderingV2Controller(
                 utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
                 tilknyttetEnhet = input.tilknyttetEnhet,
                 source = Source.KABAL,
+                tilbakekreving = input.tilbakekreving ?: false,
             ).id
         )
     }

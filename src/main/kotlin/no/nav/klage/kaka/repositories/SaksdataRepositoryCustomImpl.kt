@@ -5,9 +5,15 @@ import jakarta.persistence.PersistenceContext
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kaka.domain.vedtaksinstansgruppeMap
 import no.nav.klage.kodeverk.Type
+import no.nav.klage.kodeverk.Utfall
+import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 /**
  * TODO Check queries again when we upgrade to Spring Boot 3 and Hibernate 6
@@ -54,6 +60,205 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             toDateTime = toDateTime,
             version = 2,
         ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    override fun findByQueryParamsV1(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?
+    ): Set<QueryResultV1> {
+        return privateFindByQueryParams(
+            version = 1,
+            fromDate = fromDate,
+            toDate = toDate,
+            tilbakekreving = tilbakekreving,
+            klageenheter = klageenheter,
+            vedtaksinstansgrupper = vedtaksinstansgrupper,
+            enheter = enheter,
+            types = types,
+            ytelser = ytelser,
+            utfall = utfall,
+            hjemler = hjemler
+        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+    }
+
+    override fun findByQueryParamsV2(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?
+    ): Set<QueryResultV2> {
+        return privateFindByQueryParams(
+            version = 2,
+            fromDate = fromDate,
+            toDate = toDate,
+            tilbakekreving = tilbakekreving,
+            klageenheter = klageenheter,
+            vedtaksinstansgrupper = vedtaksinstansgrupper,
+            enheter = enheter,
+            types = types,
+            ytelser = ytelser,
+            utfall = utfall,
+            hjemler = hjemler
+        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    private fun privateFindByQueryParams(
+        version: Int,
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?
+    ): List<Array<*>> {
+        val (hjemlerQuery, registreringshjemmelSet) = getHjemlerQuery(hjemler)
+        val (typesQuery, typeSet) = getTypesQuery(types)
+        val (ytelseQuery, ytelseSet) = getYtelserQuery(ytelser)
+        val (utfallQuery, utfallSet) = getUtfallQuery(utfall)
+
+        val jpaQuery = """
+            SELECT s, k
+            FROM Saksdata s
+             LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
+             LEFT JOIN FETCH s.registreringshjemler
+             ${getPossibleV2Joins(version)}
+            WHERE s.kvalitetsvurderingReference.version = $version
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            ${getKlageenheterQuery(klageenheter)}
+            ${getVedtaksinstansgrupperQuery(vedtaksinstansgrupper)}
+            ${getEnheterQuery(enheter)}
+            $typesQuery
+            $ytelseQuery
+            $utfallQuery
+            $hjemlerQuery
+            ${getTilbakekrevingQuery(tilbakekreving)}
+        """
+
+        val typedQuery = entityManager.createQuery(
+            jpaQuery,
+            Array::class.java
+        )
+            .setParameter("fromDateTime", fromDate.atStartOfDay())
+            .setParameter("toDateTime", toDate.atTime(LocalTime.MAX))
+
+        if (!klageenheter.isNullOrEmpty()) {
+            typedQuery.setParameter("klageenheter", klageenheter)
+        }
+        if (!enheter.isNullOrEmpty()) {
+            typedQuery.setParameter("enheter", enheter)
+        }
+        if (typeSet.isNotEmpty()) {
+            typedQuery.setParameter("types", typeSet)
+        }
+        if (ytelseSet.isNotEmpty()) {
+            typedQuery.setParameter("ytelser", ytelseSet)
+        }
+        if (utfallSet.isNotEmpty()) {
+            typedQuery.setParameter("utfall", utfallSet)
+        }
+        if (registreringshjemmelSet.isNotEmpty()) {
+            registreringshjemmelSet.forEach {
+                typedQuery.setParameter("h_${it.id}", it)
+            }
+        }
+
+        return typedQuery.resultList
+    }
+
+    private fun getTilbakekrevingQuery(tilbakekreving: String): String {
+        return when (tilbakekreving) {
+            "include" -> ""
+            "exclude" -> "AND s.tilbakekreving = false"
+            "only" -> "AND s.tilbakekreving = true"
+            else -> ""
+        }
+    }
+
+    private fun getHjemlerQuery(hjemler: List<String>?): Pair<String, Set<Registreringshjemmel>> {
+        val hjemlerToWorkWith = hjemler?.mapToSet { Registreringshjemmel.of(it) } ?: emptySet()
+
+        return if (hjemlerToWorkWith.isNotEmpty()) {
+            hjemlerToWorkWith.joinToString(
+                prefix = "AND (",
+                postfix = ")",
+                separator = " OR "
+            ) { ":h_${it.id} member s.registreringshjemler" } to hjemlerToWorkWith
+        } else {
+            "" to emptySet()
+        }
+    }
+
+    private fun getKlageenheterQuery(klageenheter: List<String>?): String {
+        if (klageenheter.isNullOrEmpty()) {
+            return ""
+        }
+        return "AND s.tilknyttetEnhet IN :klageenheter"
+    }
+
+    private fun getEnheterQuery(enheter: List<String>?): String {
+        if (enheter.isNullOrEmpty()) {
+            return ""
+        }
+        return "AND s.vedtaksinstansEnhet IN :enheter"
+    }
+
+    private fun getTypesQuery(types: List<String>?): Pair<String, Set<Type>> {
+        if (types.isNullOrEmpty()) {
+            return "" to emptySet()
+        }
+        return "AND s.sakstype IN :types" to types.mapToSet { Type.of(it) }
+    }
+
+    private fun getYtelserQuery(ytelser: List<String>?): Pair<String, Set<Ytelse>> {
+        if (ytelser.isNullOrEmpty()) {
+            return "" to emptySet()
+        }
+        return "AND s.ytelse IN :ytelser" to ytelser.mapToSet { Ytelse.of(it) }
+    }
+
+    private fun getUtfallQuery(utfall: List<String>?): Pair<String, Set<Utfall>> {
+        if (utfall.isNullOrEmpty()) {
+            return "" to emptySet()
+        }
+        return "AND s.utfall IN :utfall" to utfall.mapToSet { Utfall.of(it) }
+    }
+
+    private fun getVedtaksinstansgrupperQuery(vedtaksinstansgrupper: List<Int>?): String {
+        if (vedtaksinstansgrupper.isNullOrEmpty()) {
+            return ""
+        }
+
+        val firstTwoLettersOfVedtaksinstansList = vedtaksinstansgrupper.flatMap { vedtaksinstansgruppeId ->
+            vedtaksinstansgruppeMap.entries.filter { it.value.id == vedtaksinstansgruppeId }
+        }.map { it.key }
+
+        return if (firstTwoLettersOfVedtaksinstansList.isNotEmpty()) {
+            firstTwoLettersOfVedtaksinstansList.joinToString(
+                prefix = "AND (",
+                postfix = ")",
+                separator = " OR "
+            ) { "s.vedtaksinstansEnhet like concat('$it', '%')" }
+        } else {
+            ""
+        }
     }
 
     private fun privateFindByAvsluttetAvSaksbehandlerBetween(
