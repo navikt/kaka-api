@@ -56,5 +56,6 @@ val vedtaksinstansgruppeMap = mapOf(
     "47" to Vedtaksinstansgruppe.NAV_HJELPEMIDDELSENTRAL,
     "48" to Vedtaksinstansgruppe.NAV_FAMILIE_OG_PENSJONSYTELSER,
     "42" to Vedtaksinstansgruppe.UNKNOWN,
+    "21" to Vedtaksinstansgruppe.UNKNOWN,
     "00" to Vedtaksinstansgruppe.UNKNOWN,
 )
