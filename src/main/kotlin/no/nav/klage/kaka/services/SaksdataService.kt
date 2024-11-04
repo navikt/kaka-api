@@ -115,6 +115,7 @@ class SaksdataService(
         kvalitetsvurderingId: UUID,
         avsluttetAvSaksbehandler: LocalDateTime,
         source: Source,
+        tilbakekreving: Boolean,
     ): Saksdata {
         val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId)
 
@@ -146,6 +147,7 @@ class SaksdataService(
             existingSaksdata.avsluttetAvSaksbehandler = avsluttetAvSaksbehandler
             existingSaksdata.source = source
             existingSaksdata.modified = now()
+            existingSaksdata.tilbakekreving = tilbakekreving
 
             existingSaksdata
         } else {
@@ -166,7 +168,8 @@ class SaksdataService(
                         id = kvalitetsvurderingId,
                         version = 2,
                     ),
-                    source = source
+                    source = source,
+                    tilbakekreving = tilbakekreving,
                 )
             )
         }
@@ -175,14 +178,14 @@ class SaksdataService(
     fun setSakenGjelder(saksdataId: UUID, sakenGjelder: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakenGjelder = sakenGjelder
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
         return saksdata
     }
 
     fun setSakstype(saksdataId: UUID, sakstype: Type, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.sakstype = sakstype
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
         return saksdata
     }
 
@@ -192,35 +195,42 @@ class SaksdataService(
             setRegistreringshjemler(saksdataId, emptySet(), innloggetSaksbehandler)
         }
         saksdata.ytelse = ytelse
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
         return saksdata
     }
 
     fun setMottattVedtaksinstans(saksdataId: UUID, dato: LocalDate?, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.mottattVedtaksinstans = dato
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
         return saksdata
     }
 
     fun setVedtaksinstansEnhet(saksdataId: UUID, enhetsnummer: String, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.vedtaksinstansEnhet = enhetsnummer
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
         return saksdata
     }
 
     fun setMottattKlageinstans(saksdataId: UUID, dato: LocalDate?, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.mottattKlageinstans = dato
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
         return saksdata
     }
 
     fun setUtfall(saksdataId: UUID, utfall: Utfall, innloggetSaksbehandler: String): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.utfall = utfall
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
+        return saksdata
+    }
+
+    fun setTilbakekreving(saksdataId: UUID, tilbakekreving: Boolean, innloggetSaksbehandler: String): Saksdata {
+        val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
+        saksdata.tilbakekreving = tilbakekreving
+        saksdata.modified = now()
         return saksdata
     }
 
@@ -231,7 +241,7 @@ class SaksdataService(
     ): Saksdata {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
         saksdata.registreringshjemler = registreringshjemler.toMutableSet()
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
         return saksdata
     }
 
@@ -355,7 +365,7 @@ class SaksdataService(
             else -> error("Invalid version")
         }
         saksdata.avsluttetAvSaksbehandler = null
-        saksdata.modified = LocalDateTime.now()
+        saksdata.modified = now()
 
         return saksdata
     }
