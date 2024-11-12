@@ -9,7 +9,7 @@ val apachePoiVersion = "5.3.0"
 val springDocVersion = "2.6.0"
 
 val shedlockVersion = "5.16.0"
-val klageKodeverkVersion = "1.8.58-rc.0"
+val klageKodeverkVersion = "1.8.58"
 val ehcacheVersion = "3.10.8"
 val otelVersion = "1.43.0"
 
