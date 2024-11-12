@@ -566,12 +566,11 @@ class ExportServiceV2(
     }
 
     private fun getMottattForrigeInstans(saksdata: Saksdata): Date {
-        val mottattForrigeInstans =
-            if (saksdata.sakstype in listOf(Type.ANKE, Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET)) {
-                saksdata.mottattKlageinstans!!.toDate()
-            } else {
-                saksdata.mottattVedtaksinstans!!.toDate()
-            }
+        val mottattForrigeInstans = if (saksdata.sakstype in listOf(Type.ANKE, Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET, Type.OMGJOERINGSKRAV)) {
+            saksdata.mottattKlageinstans!!.toDate()
+        } else {
+            saksdata.mottattVedtaksinstans!!.toDate()
+        }
         return mottattForrigeInstans
     }
 
