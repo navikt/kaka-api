@@ -8,7 +8,7 @@ import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.domain.vedtaksinstansgruppeMap
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
-import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.ytelse.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Repository
 import java.time.LocalDate

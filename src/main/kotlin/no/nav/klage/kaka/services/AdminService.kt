@@ -8,7 +8,7 @@ import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
-import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV2
+import no.nav.klage.kodeverk.hjemmel.ytelseToRegistreringshjemlerV2
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -72,7 +72,7 @@ class AdminService(
 
         results.forEach { (saksdata, _) ->
             saksdata.registreringshjemler?.forEach { hjemmel ->
-                if (hjemmel !in ytelseTilRegistreringshjemlerV2[saksdata.ytelse]!!) {
+                if (hjemmel !in ytelseToRegistreringshjemlerV2[saksdata.ytelse]!!) {
                     resultString += "Hjemmel with id ${hjemmel.id} in saksdata ${saksdata.id} invalid\n"
                 }
             }

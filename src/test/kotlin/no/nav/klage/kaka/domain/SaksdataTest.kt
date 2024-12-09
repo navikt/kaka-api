@@ -3,7 +3,7 @@ package no.nav.klage.kaka.domain
 import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_KVALITETSTILBAKEMELDINGER
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kodeverk.Utfall
-import no.nav.klage.kodeverk.Ytelse
+import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate

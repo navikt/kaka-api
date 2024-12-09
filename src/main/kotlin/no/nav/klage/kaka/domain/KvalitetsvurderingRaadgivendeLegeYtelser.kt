@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.domain
 
-import no.nav.klage.kodeverk.Ytelse.*
+import no.nav.klage.kodeverk.ytelse.Ytelse.*
 
 val raadgivendeLegeYtelser = setOf(
     GRU_GRU,

@@ -10,8 +10,11 @@ import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kodeverk.*
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
-import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV1
-import no.nav.klage.kodeverk.hjemmel.ytelseTilRegistreringshjemlerV2
+import no.nav.klage.kodeverk.hjemmel.ytelseToRegistreringshjemlerV1
+import no.nav.klage.kodeverk.hjemmel.ytelseToRegistreringshjemlerV2
+import no.nav.klage.kodeverk.ytelse.Ytelse
+import no.nav.klage.kodeverk.ytelse.ytelseToKlageenheter
+import no.nav.klage.kodeverk.ytelse.ytelseToVedtaksenheter
 import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
@@ -191,24 +194,24 @@ class AddRandomDataController(
         val type = Type.values().filter { it != Type.ANKE_I_TRYGDERETTEN }.random()
         val data = CohesiveTestData(
             type = type,
-            utfall = typeTilUtfall[type]!!.random(),
+            utfall = typeToUtfall[type]!!.random(),
             ident = listOf("Z994862", "Z994863", "Z994864").random(),
-            enhet = ytelseTilKlageenheter[ytelse]!!.random().navn,
+            enhet = ytelseToKlageenheter[ytelse]!!.random().navn,
             ytelse = ytelse,
-            vedtaksEnhet = ytelseTilVedtaksenheter[ytelse]!!.random().navn,
+            vedtaksEnhet = ytelseToVedtaksenheter[ytelse]!!.random().navn,
         )
         when (kakaVersion) {
             1 -> {
                 data.hjemler = setOf(
-                    ytelseTilRegistreringshjemlerV1[ytelse]!!.random(),
-                    ytelseTilRegistreringshjemlerV1[ytelse]!!.random()
+                    ytelseToRegistreringshjemlerV1[ytelse]!!.random(),
+                    ytelseToRegistreringshjemlerV1[ytelse]!!.random()
                 )
             }
 
             2 -> {
                 data.hjemler = setOf(
-                    ytelseTilRegistreringshjemlerV2[ytelse]!!.random(),
-                    ytelseTilRegistreringshjemlerV2[ytelse]!!.random()
+                    ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
+                    ytelseToRegistreringshjemlerV2[ytelse]!!.random()
                 )
             }
 

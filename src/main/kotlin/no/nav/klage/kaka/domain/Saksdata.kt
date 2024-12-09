@@ -9,8 +9,12 @@ import no.nav.klage.kaka.exceptions.ValidationSection
 import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
-import no.nav.klage.kodeverk.*
+import no.nav.klage.kodeverk.Source
+import no.nav.klage.kodeverk.Type
+import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import no.nav.klage.kodeverk.typeToUtfall
+import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -167,7 +171,7 @@ class Saksdata(
             )
         } else {
             //TODO: Create test for invalid utfall when such are added
-            if (!typeTilUtfall[sakstype]!!.contains(utfall)) {
+            if (!typeToUtfall[sakstype]!!.contains(utfall)) {
                 validationErrors.add(
                     createInvalidUtfallValidationError(SaksdataView::utfallId.name)
                 )
