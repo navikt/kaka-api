@@ -30,11 +30,6 @@ class TokenUtil(
             ?.jwtTokenClaims?.get("name")?.toString()
             ?: throw RuntimeException("name not found in token")
 
-    //Brukes ikke per nå:
-    fun isMaskinTilMaskinToken(): Boolean {
-        return getClaim("sub") == getClaim("oid")
-    }
-
     fun getCallingApplication(): String {
         //azp_name er på formen <dev-gcp:some-team:some-consumer>
         return getClaim("azp_name").orEmpty()
