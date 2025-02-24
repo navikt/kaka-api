@@ -1,21 +1,21 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val logstashVersion = "8.0"
-val tokenValidationVersion = "5.0.14"
-val archunitVersion = "1.3.0"
-val testContainersVersion = "1.20.4"
+val tokenValidationVersion = "5.0.17"
+val archunitVersion = "1.4.0"
+val testContainersVersion = "1.20.5"
 val mockkVersion = "1.13.16"
 val apachePoiVersion = "5.4.0"
-val springDocVersion = "2.8.3"
+val springDocVersion = "2.8.5"
 
-val shedlockVersion = "6.2.0"
+val shedlockVersion = "6.3.0"
 val klageKodeverkVersion = "1.9.20"
 val ehcacheVersion = "3.10.8"
-val otelVersion = "1.46.0"
+val otelVersion = "1.47.0"
 
 plugins {
-    val kotlinVersion = "2.1.0"
-    id("org.springframework.boot") version "3.4.2"
+    val kotlinVersion = "2.1.10"
+    id("org.springframework.boot") version "3.4.3"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
