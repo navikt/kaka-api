@@ -76,46 +76,4 @@ class MicrosoftGraphClient(
             .block().let { secureLogger.debug("me: $it"); it }
             ?: throw RuntimeException("AzureAD data about authenticated user could not be fetched")
     }
-
-    @Retryable
-    fun getSaksbehandler(navIdent: String): AzureUser {
-        logger.debug("Fetching data about authenticated user from Microsoft Graph")
-        return findUserByNavIdent(navIdent)
-    }
-
-    @Retryable
-    fun getInnloggetSaksbehandlersGroups(): List<AzureGroup> {
-        logger.debug("Fetching data about authenticated users groups from Microsoft Graph")
-
-        return microsoftGraphWebClient.get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .path("/me/memberOf")
-                    .build()
-            }.header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
-            .retrieve()
-            .onStatus(HttpStatusCode::isError) { response ->
-                logErrorResponse(response, ::getInnloggetSaksbehandlersGroups.name, secureLogger)
-            }
-            .bodyToMono<AzureGroupList>()
-            .block()?.value?.map { secureLogger.debug("AD Gruppe: $it"); it }
-            ?: throw RuntimeException("AzureAD data about authenticated users groups could not be fetched")
-    }
-
-    @Retryable
-    private fun findUserByNavIdent(navIdent: String): AzureUser = microsoftGraphWebClient.get()
-        .uri { uriBuilder ->
-            uriBuilder
-                .path("/users")
-                .queryParam("\$filter", "mailnickname eq '$navIdent'")
-                .queryParam("\$select", userSelect)
-                .build()
-        }
-        .header("Authorization", "Bearer ${tokenUtil.getSaksbehandlerAccessTokenWithGraphScope()}")
-        .retrieve()
-        .onStatus(HttpStatusCode::isError) { response ->
-            logErrorResponse(response, ::findUserByNavIdent.name, secureLogger)
-        }
-        .bodyToMono<AzureUserList>().block()?.value?.firstOrNull()?.let { secureLogger.debug("Saksbehandler: $it"); it }
-        ?: throw RuntimeException("AzureAD data about user by nav ident $navIdent could not be fetched")
 }
