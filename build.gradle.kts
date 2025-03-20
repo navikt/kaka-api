@@ -14,7 +14,7 @@ val ehcacheVersion = "3.10.8"
 val otelVersion = "1.48.0"
 
 plugins {
-    val kotlinVersion = "2.1.10"
+    val kotlinVersion = "2.1.20"
     id("org.springframework.boot") version "3.4.3"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
