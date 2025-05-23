@@ -8,7 +8,7 @@ import java.util.*
 
 fun getLogger(forClass: Class<*>): Logger = LoggerFactory.getLogger(forClass)
 
-fun getSecureLogger(): Logger = LoggerFactory.getLogger("secure")
+fun getTeamLogger(): Logger = LoggerFactory.getLogger("team-logs")
 
 fun logSaksdataMethodDetails(methodName: String, innloggetIdent: String, saksdataId: UUID?, logger: Logger) {
     logger.debug(
@@ -28,11 +28,11 @@ fun logKvalitetsvurderingMethodDetails(methodName: String, innloggetIdent: Strin
     )
 }
 
-fun logErrorResponse(response: ClientResponse, functionName: String, logger: Logger): Mono<RuntimeException> {
+fun logErrorResponse(response: ClientResponse, functionName: String, classLogger: Logger): Mono<RuntimeException> {
     return response.bodyToMono(String::class.java).map {
-        val errorString =
-            "Got ${response.statusCode()} when requesting $functionName - response body: '$it'"
-        logger.error(errorString)
+        val errorString = "Got ${response.statusCode()} when requesting $functionName"
+        classLogger.error("$errorString. See team-logs for more details.")
+        getTeamLogger().error("$errorString - response body: '$it'")
         RuntimeException(errorString)
     }
 }

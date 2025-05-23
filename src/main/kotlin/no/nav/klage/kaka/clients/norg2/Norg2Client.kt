@@ -3,7 +3,6 @@ package no.nav.klage.kaka.clients.norg2
 import io.opentelemetry.api.trace.Span
 import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.logErrorResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
@@ -21,7 +20,6 @@ class Norg2Client(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
     }
 
     @Value("\${spring.application.name}")
@@ -40,7 +38,11 @@ class Norg2Client(
                 .header("Nav-Consumer-Id", applicationName)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError) { response ->
-                    logErrorResponse(response, ::getEnhet.name, secureLogger)
+                    logErrorResponse(
+                        response = response,
+                        functionName = ::getEnhet.name,
+                        classLogger = logger,
+                    )
                 }
                 .bodyToMono<Norg2Enhet>()
                 .block()

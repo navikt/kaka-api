@@ -5,7 +5,6 @@ import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerPersonligInfo
 import no.nav.klage.kaka.domain.saksbehandler.SaksbehandlerRolle
 import no.nav.klage.kaka.exceptions.EnhetNotFoundForSaksbehandlerException
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.klageenheter
 import org.springframework.stereotype.Service
@@ -18,7 +17,6 @@ class AzureGateway(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val securelogger = getSecureLogger()
     }
 
     fun getAnsatteIEnhet(enhetNr: String): List<SaksbehandlerIdent> {

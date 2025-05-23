@@ -19,7 +19,7 @@ import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kaka.util.getTeamLogger
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Source
 import no.nav.klage.kodeverk.Type
@@ -55,7 +55,7 @@ class SaksdataService(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
+        private val teamLogger = getTeamLogger()
     }
 
     fun getSaksdata(saksdataId: UUID, innloggetSaksbehandler: String): Saksdata {
@@ -515,39 +515,39 @@ class SaksdataService(
             val erEgenAnsatt = egenAnsattService.erEgenAnsatt(fnr)
 
             if (harBeskyttelsesbehovStrengtFortrolig) {
-                secureLogger.info("erStrengtFortrolig")
+                logger.debug("erStrengtFortrolig. See more details in team-logs.")
                 //Merk at vi ikke sjekker egenAnsatt her, strengt fortrolig trumfer det
                 if (kanBehandleStrengtFortrolig) {
-                    secureLogger.info("Access granted to strengt fortrolig for $ident")
+                    teamLogger.debug("Access granted to strengt fortrolig for $ident")
                 } else {
-                    secureLogger.info("Access denied to strengt fortrolig for $ident")
+                    teamLogger.debug("Access denied to strengt fortrolig for $ident")
                     return false
                 }
             }
             if (harBeskyttelsesbehovFortrolig) {
-                secureLogger.info("erFortrolig")
+                logger.debug("erFortrolig. See more details in team-logs.")
                 //Merk at vi ikke sjekker egenAnsatt her, fortrolig trumfer det
                 if (kanBehandleFortrolig) {
-                    secureLogger.info("Access granted to fortrolig for $ident")
+                    teamLogger.debug("Access granted to fortrolig for $ident")
                 } else {
-                    secureLogger.info("Access denied to fortrolig for $ident")
+                    teamLogger.debug("Access denied to fortrolig for $ident")
                     return false
                 }
             }
             if (erEgenAnsatt && !(harBeskyttelsesbehovFortrolig || harBeskyttelsesbehovStrengtFortrolig)) {
-                secureLogger.info("erEgenAnsatt")
+                logger.debug("erEgenAnsatt. See more details in team-logs.")
                 //Er kun egenAnsatt, har ikke et beskyttelsesbehov i tillegg
                 if (kanBehandleEgenAnsatt) {
-                    secureLogger.info("Access granted to egen ansatt for $ident")
+                    teamLogger.debug("Access granted to egen ansatt for $ident")
                 } else {
-                    secureLogger.info("Access denied to egen ansatt for $ident")
+                    teamLogger.debug("Access denied to egen ansatt for $ident")
                     return false
                 }
             }
             return true
         } catch (e: Exception) {
-            logger.warn("Could not verify access to person. See secure logs.")
-            secureLogger.warn("Could not verify access to person", e)
+            logger.warn("Could not verify access to person. See team-logs for more details.")
+            teamLogger.warn("Could not verify access to person", e)
             return false
         }
     }

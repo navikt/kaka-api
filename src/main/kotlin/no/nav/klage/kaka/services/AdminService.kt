@@ -4,7 +4,7 @@ import no.nav.klage.kaka.clients.ereg.EregClient
 import no.nav.klage.kaka.clients.pdl.PdlFacade
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kaka.util.getTeamLogger
 import no.nav.klage.kaka.util.isValidFnrOrDnr
 import no.nav.klage.kaka.util.isValidOrgnr
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
@@ -24,15 +24,15 @@ class AdminService(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
+        private val teamLogger = getTeamLogger()
     }
 
     fun logInvalidSakenGjelder() {
         val results = saksdataRepository.findAll()
         var errorsFound = 0
         var errorString = ""
-        secureLogger.debug("Getting all invalid registered sakenGjelder values.")
-        secureLogger.debug("Size: " + results.size)
+        teamLogger.debug("Getting all invalid registered sakenGjelder values.")
+        teamLogger.debug("Size: " + results.size)
         results.forEach {
             if (it.avsluttetAvSaksbehandler != null) {
                 if (it.sakenGjelder?.length == 11) {
@@ -58,8 +58,8 @@ class AdminService(
                 }
             }
         }
-        secureLogger.debug("Errors found: $errorString")
-        secureLogger.debug("Number of invalid values found: $errorsFound")
+        teamLogger.debug("Errors found: $errorString")
+        teamLogger.debug("Number of invalid values found: $errorsFound")
     }
 
     fun logV1HjemlerInV2() {
@@ -78,7 +78,7 @@ class AdminService(
             }
         }
 
-        secureLogger.debug(resultString)
+        logger.debug(resultString)
     }
 
     @Transactional
