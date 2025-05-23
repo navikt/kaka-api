@@ -81,6 +81,8 @@ spec:
       rules:
         - application: kabal-document
         - application: kaka-api
+        - application: logging
+          namespace: nais-system
       external:
       {{#each externalHosts}}
         - host: {{host}}
@@ -108,8 +110,6 @@ spec:
     min: 2
     max: 4
     cpuThresholdPercentage: 80
-  secureLogs:
-    enabled: true
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: {{springProfile}}

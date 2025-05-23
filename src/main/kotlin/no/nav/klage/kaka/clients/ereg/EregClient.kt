@@ -4,7 +4,6 @@ package no.nav.klage.kaka.clients.ereg
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.opentelemetry.api.trace.Span
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.getSecureLogger
 import no.nav.klage.kaka.util.logErrorResponse
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatusCode
@@ -22,7 +21,6 @@ class EregClient(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
     }
 
     @Value("\${spring.application.name}")
@@ -42,7 +40,11 @@ class EregClient(
                 .header("Nav-Consumer-Id", applicationName)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError) { response ->
-                    logErrorResponse(response, ::hentOrganisasjon.name, secureLogger)
+                    logErrorResponse(
+                        response = response,
+                        functionName = ::hentOrganisasjon.name,
+                        classLogger = logger,
+                    )
                 }
                 .bodyToMono<Organisasjon>()
                 .block()
@@ -54,6 +56,7 @@ class EregClient(
                         logger.error("$orgnummer not found in ereg", error)
                         null
                     }
+
                     else -> {
                         logger.error("Error from ereg.", error)
                         null

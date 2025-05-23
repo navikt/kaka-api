@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import no.nav.klage.kaka.config.PartitionFinder
 import no.nav.klage.kaka.util.getLogger
-import no.nav.klage.kaka.util.getSecureLogger
+import no.nav.klage.kaka.util.getTeamLogger
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.annotation.PartitionOffset
@@ -23,7 +23,7 @@ class EgenAnsattKafkaConsumer(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
+        private val teamLogger = getTeamLogger()
         private val mapper = ObjectMapper().registerModule(
             KotlinModule.Builder()
                 .withReflectionCacheSize(512)
@@ -53,8 +53,8 @@ class EgenAnsattKafkaConsumer(
             val egenAnsatt = egenAnsattRecord.value().toEgenAnsatt()
             egenAnsattService.oppdaterEgenAnsatt(foedselsnr, egenAnsatt)
         }.onFailure {
-            secureLogger.error("Failed to process egenansatt record", it)
-            throw RuntimeException("Could not process egenansatt record. See more details in secure log.")
+            teamLogger.error("Failed to process egenansatt record", it)
+            throw RuntimeException("Could not process egenansatt record. See more details in team-logs.")
         }
     }
 

@@ -7,7 +7,10 @@ import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.SaksdataService
-import no.nav.klage.kaka.util.*
+import no.nav.klage.kaka.util.RolleMapper
+import no.nav.klage.kaka.util.TokenUtil
+import no.nav.klage.kaka.util.getLogger
+import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -28,7 +31,6 @@ class SaksdataListController(
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
-        private val secureLogger = getSecureLogger()
     }
 
     @GetMapping(value = ["/saksdataliste", "/saksdataliste/"])
