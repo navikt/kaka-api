@@ -372,10 +372,17 @@ class ExportServiceV2(
         return if (vedtaksinstansgruppe != null) {
             vedtaksinstansgruppe
         } else {
-            logger.warn(
-                "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
-                vedtaksinstansEnhet
-            )
+            if (vedtaksinstansEnhet == "9999") {
+                logger.debug(
+                    "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
+                    vedtaksinstansEnhet
+                )
+            } else {
+                logger.warn(
+                    "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
+                    vedtaksinstansEnhet
+                )
+            }
             Vedtaksinstansgruppe.UNKNOWN
         }
     }
