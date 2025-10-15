@@ -125,7 +125,8 @@ class SaksdataService(
 
         if (sakstype in listOf(
                 Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
-                Type.OMGJOERINGSKRAV
+                Type.OMGJOERINGSKRAV,
+                Type.BEGJAERING_OM_GJENOPPTAK,
             ) || utfall in noKvalitetsvurderingNeeded
         ) {
             kvalitetsvurderingV2Repository.save(
