@@ -267,15 +267,22 @@ class KvalitetsvurderingV3(
             saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = null
         } else {
             if (!saerregelverkLovenErTolketEllerAnvendtFeil) {
+                // If parent is not checked, reset all children
                 saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning = false
-                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn = false
-            }
-            if (!saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning) {
                 saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList = null
-            }
-            if (!saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn) {
+                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn = false
                 saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = null
+            } else {
+                // Parent is checked, clean up hjemler lists if checkboxes are not checked
+                if (!saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning) {
+                    saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList = null
+                }
+                if (!saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn) {
+                    saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = null
+                }
             }
+
+            // detErLagtTilGrunnFeilFaktum is at same level as lovenErTolketEllerAnvendtFeil
             if (!saerregelverkDetErLagtTilGrunnFeilFaktum) {
                 saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = null
             }
@@ -378,7 +385,7 @@ class KvalitetsvurderingV3(
         }
 
         // Cleanup Trygdemedisin
-        if (brukAvRaadgivendeLege == RadiovalgRaadgivendeLege.BRA) {
+        if (brukAvRaadgivendeLege != RadiovalgRaadgivendeLege.MANGELFULLT) {
             raadgivendeLegeIkkebrukt = false
             raadgivendeLegeMangelfullBrukAvRaadgivendeLege = false
             raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = false
