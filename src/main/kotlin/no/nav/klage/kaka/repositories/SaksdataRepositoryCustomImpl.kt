@@ -5,11 +5,12 @@ import jakarta.persistence.PersistenceContext
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v3.KvalitetsvurderingV3
 import no.nav.klage.kaka.domain.vedtaksinstansgruppeMap
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
-import no.nav.klage.kodeverk.ytelse.Ytelse
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
+import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.springframework.stereotype.Repository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -36,6 +37,11 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         val kvalitetsvurdering: KvalitetsvurderingV2,
     )
 
+    data class QueryResultV3(
+        val saksdata: Saksdata,
+        val kvalitetsvurdering: KvalitetsvurderingV3,
+    )
+
     private inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> {
         return mapTo(HashSet(), transform)
     }
@@ -60,6 +66,17 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             toDateTime = toDateTime,
             version = 2,
         ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+    }
+
+    override fun findByAvsluttetAvSaksbehandlerBetweenV3(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime
+    ): Set<QueryResultV3> {
+        return privateFindByAvsluttetAvSaksbehandlerBetween(
+            fromDateTime = fromDateTime,
+            toDateTime = toDateTime,
+            version = 3,
+        ).mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
     }
 
     override fun findByQueryParamsV1(
@@ -116,6 +133,33 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
     }
 
+    override fun findByQueryParamsV3(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        tilbakekreving: String,
+        klageenheter: List<String>?,
+        vedtaksinstansgrupper: List<Int>?,
+        enheter: List<String>?,
+        types: List<String>?,
+        ytelser: List<String>?,
+        utfall: List<String>?,
+        hjemler: List<String>?
+    ): Set<QueryResultV3> {
+        return privateFindByQueryParams(
+            version = 3,
+            fromDate = fromDate,
+            toDate = toDate,
+            tilbakekreving = tilbakekreving,
+            klageenheter = klageenheter,
+            vedtaksinstansgrupper = vedtaksinstansgrupper,
+            enheter = enheter,
+            types = types,
+            ytelser = ytelser,
+            utfall = utfall,
+            hjemler = hjemler
+        ).mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
+    }
+
     private fun privateFindByQueryParams(
         version: Int,
         fromDate: LocalDate,
@@ -139,7 +183,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler
-             ${getPossibleV2Joins(version)}
+             ${getPossibleHjemlerJoins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             ${getKlageenheterQuery(klageenheter)}
@@ -271,7 +315,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler
-             ${getPossibleV2Joins(version)}
+             ${getPossibleHjemlerJoins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
         """
@@ -311,6 +355,19 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
     }
 
+    override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV3(
+        enhet: String,
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+    ): Set<QueryResultV3> {
+        return privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+            enhet = enhet,
+            fromDateTime = fromDateTime,
+            toDateTime = toDateTime,
+            version = 3,
+        ).mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
+    }
+
     private fun privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
         enhet: String,
         fromDateTime: LocalDateTime,
@@ -323,7 +380,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
              LEFT JOIN FETCH s.registreringshjemler h
-             ${getPossibleV2Joins(version)}
+             ${getPossibleHjemlerJoins(version)}
             WHERE s.kvalitetsvurderingReference.version = $version
             AND s.tilknyttetEnhet = :enhet
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
@@ -379,7 +436,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s 
               LEFT JOIN FETCH KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id 
               LEFT JOIN FETCH s.registreringshjemler h
-              ${getPossibleV2Joins(2)}
+              ${getPossibleHjemlerJoins(2)}
             WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
             AND s.kvalitetsvurderingReference.version = 2
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
@@ -435,7 +492,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             FROM Saksdata s 
               LEFT JOIN FETCH KvalitetsvurderingV2 k on s.kvalitetsvurderingReference.id = k.id 
               LEFT JOIN FETCH s.registreringshjemler h
-              ${getPossibleV2Joins(2)}
+              ${getPossibleHjemlerJoins(2)}
             WHERE s.kvalitetsvurderingReference.version = 2
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             AND s.sakstype = :sakstype
@@ -451,7 +508,64 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             .mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
     }
 
-    private fun getPossibleV2Joins(version: Int): String {
+    override fun findForVedtaksinstanslederV3(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+    ): Set<QueryResultV3> {
+
+        val query = """
+            SELECT s, k 
+            FROM Saksdata s 
+              LEFT JOIN FETCH KvalitetsvurderingV3 k on s.kvalitetsvurderingReference.id = k.id 
+              LEFT JOIN FETCH s.registreringshjemler h
+              ${getPossibleHjemlerJoins(3)}
+            WHERE s.kvalitetsvurderingReference.version = 3
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            AND s.sakstype = :sakstype
+            ${getMangelfulltQueryV3(mangelfullt)}
+            ORDER BY s.created
+        """
+
+        return entityManager.createQuery(query, Array::class.java)
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .setParameter("sakstype", Type.KLAGE)
+            .resultList
+            .mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
+    }
+
+    override fun findForVedtaksinstanslederWithEnhetV3(
+        fromDateTime: LocalDateTime,
+        toDateTime: LocalDateTime,
+        mangelfullt: List<String>,
+        vedtaksinstansEnhet: String,
+    ): Set<QueryResultV3> {
+
+        val query = """
+            SELECT s, k 
+            FROM Saksdata s 
+              LEFT JOIN FETCH KvalitetsvurderingV3 k on s.kvalitetsvurderingReference.id = k.id 
+              LEFT JOIN FETCH s.registreringshjemler h
+              ${getPossibleHjemlerJoins(3)}
+            WHERE s.vedtaksinstansEnhet = :vedtaksinstansEnhet
+            AND s.kvalitetsvurderingReference.version = 3
+            AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
+            AND s.sakstype = :sakstype
+            ${getMangelfulltQueryV3(mangelfullt)}
+            ORDER BY s.created
+        """
+
+        return entityManager.createQuery(query, Array::class.java)
+            .setParameter("vedtaksinstansEnhet", vedtaksinstansEnhet)
+            .setParameter("fromDateTime", fromDateTime)
+            .setParameter("toDateTime", toDateTime)
+            .setParameter("sakstype", Type.KLAGE)
+            .resultList
+            .mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
+    }
+
+    private fun getPossibleHjemlerJoins(version: Int): String {
         return if (version == 2) {
             """
                 LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
@@ -460,6 +574,15 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
                 LEFT JOIN FETCH k.vedtaketFeilKonkretRettsanvendelseHjemlerList
                 LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelHjemlerList
                 LEFT JOIN FETCH k.vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+            """
+        } else if (version == 3) {
+            """
+                LEFT JOIN FETCH k.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList
+                LEFT JOIN FETCH k.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList
+                LEFT JOIN FETCH k.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList
+                LEFT JOIN FETCH k.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList
+                LEFT JOIN FETCH k.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList
+                LEFT JOIN FETCH k.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList
             """
         } else {
             ""
