@@ -8,6 +8,7 @@ import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kodeverk.Role.*
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v3.KvalitetsvurderingV3
 import no.nav.klage.kaka.domain.noKvalitetsvurderingNeeded
 import no.nav.klage.kaka.exceptions.SaksdataFinalizedException
 import no.nav.klage.kaka.exceptions.SaksdataNotFoundException
@@ -15,6 +16,7 @@ import no.nav.klage.kaka.exceptions.SectionedValidationErrorWithDetailsException
 import no.nav.klage.kaka.exceptions.ValidationSection
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV3Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
@@ -41,8 +43,10 @@ class SaksdataService(
     private val saksdataRepository: SaksdataRepository,
     private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
     private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
+    private val kvalitetsvurderingV3Repository: KvalitetsvurderingV3Repository,
     private val kvalitetsvurderingV1Service: KvalitetsvurderingV1Service,
     private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
+    private val kvalitetsvurderingV3Service: KvalitetsvurderingV3Service,
     private val azureGateway: AzureGateway,
     private val tokenUtil: TokenUtil,
     private val rolleMapper: RolleMapper,
@@ -50,6 +54,8 @@ class SaksdataService(
     private val egenAnsattService: EgenAnsattService,
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
     private val kakaVersion2Date: LocalDate,
+    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_3_DATE}')}")
+    private val kakaVersion3Date: LocalDate,
 ) {
 
     companion object {
@@ -91,16 +97,28 @@ class SaksdataService(
                     )
                 }
 
+                3 -> {
+                    val kvalitetsvurderingV3 = kvalitetsvurderingV3Repository.save(KvalitetsvurderingV3())
+                    Saksdata(
+                        utfoerendeSaksbehandler = innloggetSaksbehandler,
+                        tilknyttetEnhet = enhet.navn,
+                        kvalitetsvurderingReference = KvalitetsvurderingReference(
+                            id = kvalitetsvurderingV3.id,
+                            version = 3,
+                        ),
+                    )
+                }
+
                 else -> error("Unknown kvalitetsvurdering version")
             }
         )
     }
 
     private fun getKakaVersion(): Int {
-        val kvalitetsvurderingVersion = if (LocalDate.now() >= kakaVersion2Date) {
-            2
-        } else {
-            1
+        val kvalitetsvurderingVersion = when {
+            LocalDate.now() >= kakaVersion3Date -> 3
+            LocalDate.now() >= kakaVersion2Date -> 2
+            else -> 1
         }
         return kvalitetsvurderingVersion
     }
@@ -120,6 +138,7 @@ class SaksdataService(
         avsluttetAvSaksbehandler: LocalDateTime,
         source: Source,
         tilbakekreving: Boolean,
+        version: Int,
     ): Saksdata {
         val existingSaksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId)
 
@@ -129,13 +148,17 @@ class SaksdataService(
                 Type.BEGJAERING_OM_GJENOPPTAK,
             ) || utfall in noKvalitetsvurderingNeeded
         ) {
-            kvalitetsvurderingV2Repository.save(
-                KvalitetsvurderingV2(
-                    id = kvalitetsvurderingId
-                ),
-            )
+            when (version) {
+                1 -> kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1(id = kvalitetsvurderingId))
+                2 -> kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2(id = kvalitetsvurderingId))
+                3 -> kvalitetsvurderingV3Repository.save(KvalitetsvurderingV3(id = kvalitetsvurderingId))
+            }
         } else {
-            kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+            when (version) {
+                1 -> kvalitetsvurderingV1Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+                2 -> kvalitetsvurderingV2Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+                3 -> kvalitetsvurderingV3Service.cleanUpKvalitetsvurdering(kvalitetsvurderingId)
+            }
         }
 
         return if (existingSaksdata != null) {
@@ -171,7 +194,7 @@ class SaksdataService(
                     tilknyttetEnhet = tilknyttetEnhet,
                     kvalitetsvurderingReference = KvalitetsvurderingReference(
                         id = kvalitetsvurderingId,
-                        version = 2,
+                        version = version,
                     ),
                     source = source,
                     tilbakekreving = tilbakekreving,
@@ -288,6 +311,22 @@ class SaksdataService(
                 }
             }
 
+            3 -> {
+                if (saksdata.sakstype == Type.ANKE) {
+                    saksdata.mottattVedtaksinstans = null
+                    kvalitetsvurderingV3Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
+                }
+                if (saksdata.hasKvalitetsvurdering()) {
+                    kvalitetsvurderingV3Service.cleanUpKvalitetsvurdering(saksdata.kvalitetsvurderingReference.id)
+                } else {
+                    kvalitetsvurderingV3Repository.save(
+                        KvalitetsvurderingV3(
+                            id = saksdata.kvalitetsvurderingReference.id
+                        )
+                    )
+                }
+            }
+
             else -> error("Unknown version: $version")
         }
 
@@ -311,6 +350,15 @@ class SaksdataService(
                     val kvalitetsvurderingV2 =
                         kvalitetsvurderingV2Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
                     kvalitetsvurderingV2.getInvalidProperties(
+                        ytelse = saksdata.ytelse,
+                        type = saksdata.sakstype,
+                    )
+                }
+
+                3 -> {
+                    val kvalitetsvurderingV3 =
+                        kvalitetsvurderingV3Repository.getReferenceById(saksdata.kvalitetsvurderingReference.id)
+                    kvalitetsvurderingV3.getInvalidProperties(
                         ytelse = saksdata.ytelse,
                         type = saksdata.sakstype,
                     )
@@ -347,7 +395,10 @@ class SaksdataService(
         when (getKakaVersion()) {
             1 -> {
                 if (saksdata.kvalitetsvurderingReference.version != 1) {
-                    kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    when (saksdata.kvalitetsvurderingReference.version) {
+                        2 -> kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                        3 -> kvalitetsvurderingV3Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    }
                     val kvalitetsvurderingV1 = kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1())
                     saksdata.kvalitetsvurderingReference = KvalitetsvurderingReference(
                         id = kvalitetsvurderingV1.id,
@@ -358,11 +409,28 @@ class SaksdataService(
 
             2 -> {
                 if (saksdata.kvalitetsvurderingReference.version != 2) {
-                    kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    when (saksdata.kvalitetsvurderingReference.version) {
+                        1 -> kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                        3 -> kvalitetsvurderingV3Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    }
                     val kvalitetsvurderingV2 = kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2())
                     saksdata.kvalitetsvurderingReference = KvalitetsvurderingReference(
                         id = kvalitetsvurderingV2.id,
                         version = 2
+                    )
+                }
+            }
+
+            3 -> {
+                if (saksdata.kvalitetsvurderingReference.version != 3) {
+                    when (saksdata.kvalitetsvurderingReference.version) {
+                        1 -> kvalitetsvurderingV1Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                        2 -> kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+                    }
+                    val kvalitetsvurderingV3 = kvalitetsvurderingV3Repository.save(KvalitetsvurderingV3())
+                    saksdata.kvalitetsvurderingReference = KvalitetsvurderingReference(
+                        id = kvalitetsvurderingV3.id,
+                        version = 3
                     )
                 }
             }
@@ -478,6 +546,35 @@ class SaksdataService(
         }.map { it.saksdata }
     }
 
+    fun searchAsVedtaksinstanslederV3(
+        saksbehandlerIdent: String,
+        enhet: Enhet,
+        fromDate: LocalDate,
+        toDate: LocalDate,
+        mangelfullt: List<String>,
+    ): List<Saksdata> {
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
+
+        val kanBehandleStrengtFortrolig = STRENGT_FORTROLIG in roller
+        val kanBehandleFortrolig = FORTROLIG in roller
+        val kanBehandleEgenAnsatt = EGEN_ANSATT in roller
+
+        return saksdataRepository.findForVedtaksinstanslederWithEnhetV3(
+            vedtaksinstansEnhet = enhet.navn,
+            fromDateTime = fromDate.atStartOfDay(),
+            toDateTime = toDate.atTime(LocalTime.MAX),
+            mangelfullt = mangelfullt,
+        ).filter {
+            verifiserTilgangTilPersonForSaksbehandler(
+                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                ident = saksbehandlerIdent,
+                kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
+                kanBehandleFortrolig = kanBehandleFortrolig,
+                kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
+            )
+        }.map { it.saksdata }
+    }
+
     fun deleteSaksdata(saksdataId: UUID, innloggetSaksbehandler: String) {
         val saksdata = getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler)
 
@@ -488,6 +585,10 @@ class SaksdataService(
 
             2 -> {
                 kvalitetsvurderingV2Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
+            }
+
+            3 -> {
+                kvalitetsvurderingV3Repository.deleteById(saksdata.kvalitetsvurderingReference.id)
             }
 
             else -> {
