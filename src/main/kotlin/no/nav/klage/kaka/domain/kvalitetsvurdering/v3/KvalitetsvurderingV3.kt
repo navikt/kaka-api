@@ -389,24 +389,39 @@ class KvalitetsvurderingV3(
     fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
-        //TODO specific validation for klage or other type?
+        result += getCommonInvalidProperties(ytelse)
+
+        if (type == Type.KLAGE) {
+            result += getSpecificInvalidPropertiesForKlage()
+        }
+
+        return result
+    }
+
+    private fun getCommonInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
+        val result = mutableListOf<InvalidProperty>()
 
         // Validate Særregelverk
         if (saerregelverk == null) {
             result.add(createRadioValgValidationError(::saerregelverk.name))
         } else if (saerregelverk == Radiovalg.MANGELFULLT) {
-            if (!saerregelverkLovenErTolketEllerAnvendtFeil) {
+            // Level 1: Must choose at least one main option
+            if (!saerregelverkLovenErTolketEllerAnvendtFeil &&
+                !saerregelverkDetErLagtTilGrunnFeilFaktum
+            ) {
                 result.add(createMissingChecksValidationError(::saerregelverk.name + "Group"))
             }
 
-            if (saerregelverkLovenErTolketEllerAnvendtFeil &&
-                !saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning &&
-                !saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn &&
-                !saerregelverkDetErLagtTilGrunnFeilFaktum
-            ) {
-                result.add(createMissingChecksValidationError(::saerregelverkLovenErTolketEllerAnvendtFeil.name + "Group"))
+            // Level 2: If "loven er tolket eller anvendt feil" is chosen, must choose at least one sub-option
+            if (saerregelverkLovenErTolketEllerAnvendtFeil) {
+                if (!saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning &&
+                    !saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn
+                ) {
+                    result.add(createMissingChecksValidationError(::saerregelverkLovenErTolketEllerAnvendtFeil.name + "Group"))
+                }
             }
 
+            // Validate hjemler lists
             if (saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning &&
                 saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList.isNullOrEmpty()
             ) {
@@ -430,6 +445,7 @@ class KvalitetsvurderingV3(
         if (saksbehandlingsregler == null) {
             result.add(createRadioValgValidationError(::saksbehandlingsregler.name))
         } else if (saksbehandlingsregler == Radiovalg.MANGELFULLT) {
+            // Level 1: Must choose at least one main category
             if (!saksbehandlingsreglerBruddPaaVeiledningsplikten &&
                 !saksbehandlingsreglerBruddPaaUtredningsplikten &&
                 !saksbehandlingsreglerBruddPaaForeleggelsesplikten &&
@@ -442,6 +458,7 @@ class KvalitetsvurderingV3(
                 result.add(createMissingChecksValidationError(::saksbehandlingsregler.name + "Group"))
             }
 
+            // Level 2: Validate subgroups - must choose at least one sub-option if parent is checked
             if (saksbehandlingsreglerBruddPaaVeiledningsplikten) {
                 if (!saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser &&
                     !saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning
@@ -478,6 +495,7 @@ class KvalitetsvurderingV3(
                     result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaBegrunnelsesplikten.name + "Group"))
                 }
 
+                // Validate hjemler lists for begrunnelsesplikten
                 if (saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket &&
                     saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList.isNullOrEmpty()
                 ) {
@@ -494,15 +512,6 @@ class KvalitetsvurderingV3(
                     saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList.isNullOrEmpty()
                 ) {
                     result.add(createMissingChecksValidationError(::saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList.name))
-                }
-            }
-
-            if (saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse) {
-                if (!saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert &&
-                    !saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold &&
-                    !saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser
-                ) {
-                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse.name + "Group"))
                 }
             }
 
@@ -542,6 +551,23 @@ class KvalitetsvurderingV3(
                     !raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert
                 ) {
                     result.add(createMissingChecksValidationError(::brukAvRaadgivendeLege.name + "Group"))
+                }
+            }
+        }
+
+        return result
+    }
+
+    //is this correct?
+    private fun getSpecificInvalidPropertiesForKlage(): List<InvalidProperty> {
+        val result = mutableListOf<InvalidProperty>()
+        if (saksbehandlingsregler == Radiovalg.MANGELFULLT) {
+            if (saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse) {
+                if (!saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert &&
+                    !saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold &&
+                    !saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser
+                ) {
+                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse.name + "Group"))
                 }
             }
         }
