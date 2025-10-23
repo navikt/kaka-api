@@ -3,15 +3,21 @@ package no.nav.klage.kaka.api
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import no.nav.klage.kaka.domain.kvalitetsvurdering.v3.KvalitetsvurderingV3
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV1Repository
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV2Repository
+import no.nav.klage.kaka.repositories.KvalitetsvurderingV3Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
-import no.nav.klage.kodeverk.*
+import no.nav.klage.kodeverk.Source
+import no.nav.klage.kodeverk.Type
+import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.hjemmel.ytelseToRegistreringshjemlerV1
 import no.nav.klage.kodeverk.hjemmel.ytelseToRegistreringshjemlerV2
+import no.nav.klage.kodeverk.typeToUtfall
 import no.nav.klage.kodeverk.ytelse.Ytelse
 import no.nav.klage.kodeverk.ytelse.ytelseToKlageenheter
 import no.nav.klage.kodeverk.ytelse.ytelseToVedtaksenheter
@@ -23,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
-import java.util.*
 import kotlin.random.Random
 
 @Profile("dev-gcp")
@@ -33,8 +38,11 @@ class AddRandomDataController(
     private val saksdataRepository: SaksdataRepository,
     private val kvalitetsvurderingV1Repository: KvalitetsvurderingV1Repository,
     private val kvalitetsvurderingV2Repository: KvalitetsvurderingV2Repository,
+    private val kvalitetsvurderingV3Repository: KvalitetsvurderingV3Repository,
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
     private val kakaVersion2Date: LocalDate,
+    @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_3_DATE}')}")
+    private val kakaVersion3Date: LocalDate,
 ) {
 
     @Unprotected
@@ -46,10 +54,10 @@ class AddRandomDataController(
     }
 
     private fun getKakaVersion(): Int {
-        val kvalitetsvurderingVersion = if (LocalDate.now() >= kakaVersion2Date) {
-            2
-        } else {
-            1
+        val kvalitetsvurderingVersion = when {
+            LocalDate.now() >= kakaVersion3Date -> 3
+            LocalDate.now() >= kakaVersion2Date -> 2
+            else -> 1
         }
         return kvalitetsvurderingVersion
     }
@@ -70,6 +78,10 @@ class AddRandomDataController(
 
             2 -> {
                 kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2(cohesiveTestData.hjemler!!)).id
+            }
+
+            3 -> {
+                kvalitetsvurderingV3Repository.save(getRandomKvalitetsvurderingV3(cohesiveTestData.hjemler!!)).id
             }
 
             else -> error("Wrong version")
@@ -189,6 +201,66 @@ class AddRandomDataController(
         )
     }
 
+    private fun getRandomKvalitetsvurderingV3(hjemler: Set<Registreringshjemmel>): KvalitetsvurderingV3 {
+        return KvalitetsvurderingV3(
+            // Særregelverket
+            saerregelverkAutomatiskVedtak = Random.nextBoolean(),
+            saerregelverk = KvalitetsvurderingV3.Radiovalg.values().random(),
+            saerregelverkLovenErTolketEllerAnvendtFeil = Random.nextBoolean(),
+            saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning = Random.nextBoolean(),
+            saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList = setOf(hjemler.random()),
+            saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn = Random.nextBoolean(),
+            saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = setOf(hjemler.random()),
+            saerregelverkDetErLagtTilGrunnFeilFaktum = Random.nextBoolean(),
+            saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = setOf(hjemler.random()),
+
+            // Saksbehandlingsregler
+            saksbehandlingsregler = KvalitetsvurderingV3.Radiovalg.values().random(),
+            saksbehandlingsreglerBruddPaaVeiledningsplikten = Random.nextBoolean(),
+            saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser = Random.nextBoolean(),
+            saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaUtredningsplikten = Random.nextBoolean(),
+            saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok = Random.nextBoolean(),
+            saksbehandlingsreglerUtredningspliktenUtredningenAvInntektsArbeidsforholdHarIkkeVaertGodNok = Random.nextBoolean(),
+            saksbehandlingsreglerUtredningspliktenUtredningenAvEoesUtenlandsforholdHarIkkeVaertGodNok = Random.nextBoolean(),
+            saksbehandlingsreglerUtredningspliktenUtredningenAvSivilstandsBoforholdHarIkkeVaertGodNok = Random.nextBoolean(),
+            saksbehandlingsreglerUtredningspliktenUtredningenAvSamvaersforholdHarIkkeVaertGodNok = Random.nextBoolean(),
+            saksbehandlingsreglerUtredningspliktenUtredningenAvAndreForholdISakenHarIkkeVaertGodNok = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaForeleggelsesplikten = Random.nextBoolean(),
+            saksbehandlingsreglerForeleggelsespliktenUttalelseFraRaadgivendeLegeHarIkkeVaertForelagtParten = Random.nextBoolean(),
+            saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaBegrunnelsesplikten = Random.nextBoolean(),
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket = Random.nextBoolean(),
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList = setOf(hjemler.random()),
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum = Random.nextBoolean(),
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList = setOf(hjemler.random()),
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn = Random.nextBoolean(),
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList = setOf(hjemler.random()),
+            saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke = Random.nextBoolean(),
+            saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = Random.nextBoolean(),
+            saksbehandlingsreglerOmgjoeringDetErFattetVedtakTilTrossForAtBeslutningVarRiktigAvgjoerelsesform = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaJournalfoeringsplikten = Random.nextBoolean(),
+            saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerErIkkeJournalfoert = Random.nextBoolean(),
+            saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerHarIkkeGodNokTittelEllerDokumentkvalitet = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok = Random.nextBoolean(),
+
+            // Trygdemedisin
+            brukAvRaadgivendeLege = KvalitetsvurderingV3.RadiovalgRaadgivendeLege.values().random(),
+            raadgivendeLegeIkkebrukt = Random.nextBoolean(),
+            raadgivendeLegeMangelfullBrukAvRaadgivendeLege = Random.nextBoolean(),
+            raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = Random.nextBoolean(),
+            raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = Random.nextBoolean(),
+
+            annetFritekst = null,
+        )
+    }
+
     private fun getCohesiveTestData(kakaVersion: Int): CohesiveTestData {
         val ytelse = Ytelse.values().random()
         val type = Type.values().filter { it != Type.ANKE_I_TRYGDERETTEN }.random()
@@ -209,6 +281,13 @@ class AddRandomDataController(
             }
 
             2 -> {
+                data.hjemler = setOf(
+                    ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
+                    ytelseToRegistreringshjemlerV2[ytelse]!!.random()
+                )
+            }
+
+            3 -> {
                 data.hjemler = setOf(
                     ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
                     ytelseToRegistreringshjemlerV2[ytelse]!!.random()
