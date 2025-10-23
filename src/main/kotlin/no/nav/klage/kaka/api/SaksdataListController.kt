@@ -123,6 +123,41 @@ class SaksdataListController(
         )
     }
 
+    @GetMapping("/saksdatalisteledervedtaksinstans/v3")
+    fun searchVedtaksinstanslederV3(
+        @RequestParam navIdent: String,
+        @RequestParam fromDate: LocalDate,
+        @RequestParam toDate: LocalDate,
+        @RequestParam(required = false) mangelfullt: List<String>?,
+    ): SaksdataListView {
+        logger.debug(
+            "{} is requested by ident {}. fromDate = {}, toDate = {}, mangelfullt = {}",
+            ::searchVedtaksinstanslederV3.name,
+            tokenUtil.getIdent(),
+            fromDate,
+            toDate,
+            mangelfullt,
+        )
+        validateIsSameUser(navIdent)
+
+        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
+        if (!isAllowedToReadKvalitetstilbakemeldinger(roller)) {
+            throw MissingTilgangException("user $navIdent is not allowed to read kvalitetstilbakemeldinger")
+        }
+
+        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+
+        return SaksdataListView(
+            searchHits = saksdataService.searchAsVedtaksinstanslederV3(
+                saksbehandlerIdent = navIdent,
+                enhet = enhet,
+                fromDate = fromDate,
+                toDate = toDate,
+                mangelfullt = mangelfullt ?: emptyList(),
+            ).map { it.toSaksdataView() }
+        )
+    }
+
     private fun validateIsSameUser(saksbehandlerIdent: String) {
         if (saksbehandlerIdent != tokenUtil.getIdent()) {
             throw MissingTilgangException("User is not the same")
