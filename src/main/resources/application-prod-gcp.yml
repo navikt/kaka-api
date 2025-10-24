@@ -10,3 +10,6 @@ NORG2_BASE_URL: https://norg2.prod-fss-pub.nais.io/norg2/api/v1
 KAKA_VERSION_2_DATE: 2023-01-01
 
 KAKA_VERSION_3_DATE: 2026-01-01
+
+# TODO: Delete after run
+MIGRATE_CRON: 0 0 12 1 JAN *
