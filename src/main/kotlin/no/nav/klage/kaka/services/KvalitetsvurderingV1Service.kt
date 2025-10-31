@@ -45,7 +45,7 @@ class KvalitetsvurderingV1Service(
     fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): KvalitetsvurderingV1 {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(kvalitetsvurderingId)
 
-        input.fields().forEach { (key, value) ->
+        input.properties().forEach { (key, value) ->
             setFieldOnObject(obj = kvalitetsvurdering as Any, fieldToChange = key to getValue(value))
         }
         kvalitetsvurdering.modified = LocalDateTime.now()
