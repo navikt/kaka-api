@@ -9,6 +9,8 @@ NORG2_BASE_URL: https://norg2.intern.dev.nav.no/norg2/api/v1
 
 KAKA_VERSION_2_DATE: 2022-12-20
 
+KAKA_VERSION_3_DATE: 2025-11-11
+
 spring:
   datasource:
     hikari:
