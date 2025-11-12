@@ -64,9 +64,7 @@ class SaksdataController(
     }
 
     @PostMapping
-    fun createSaksdata(
-        @RequestBody input: SaksdataInput? = null
-    ): SaksdataView {
+    fun createSaksdata(): SaksdataView {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logSaksdataMethodDetails(
             ::createSaksdata.name,
