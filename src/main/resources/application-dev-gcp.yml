@@ -11,6 +11,9 @@ KAKA_VERSION_2_DATE: 2022-12-20
 
 KAKA_VERSION_3_DATE: 2025-11-11
 
+# TODO: Delete after run
+MIGRATE_CRON: 0 0 15 12 NOV *
+
 spring:
   datasource:
     hikari:
