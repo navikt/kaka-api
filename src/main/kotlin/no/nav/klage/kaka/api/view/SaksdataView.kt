@@ -61,5 +61,3 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         tilbakekreving = tilbakekreving,
     )
 }
-
-data class SaksdataInput(val tilknyttetEnhet: String? = null)
