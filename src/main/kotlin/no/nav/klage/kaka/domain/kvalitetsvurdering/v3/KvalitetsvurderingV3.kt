@@ -247,8 +247,6 @@ class KvalitetsvurderingV3(
     }
 
     fun resetFieldsUnusedInAnke() {
-        // Reset klage-specific fields in saksbehandlingsregler
-        //TODO more fields? These fields?
         saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse = false
         saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = false
         saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = false
@@ -457,7 +455,6 @@ class KvalitetsvurderingV3(
                 !saksbehandlingsreglerBruddPaaUtredningsplikten &&
                 !saksbehandlingsreglerBruddPaaForeleggelsesplikten &&
                 !saksbehandlingsreglerBruddPaaBegrunnelsesplikten &&
-                !saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse &&
                 !saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke &&
                 !saksbehandlingsreglerBruddPaaJournalfoeringsplikten &&
                 !saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak
@@ -537,14 +534,6 @@ class KvalitetsvurderingV3(
                     result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaJournalfoeringsplikten.name + "Group"))
                 }
             }
-
-            if (saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak) {
-                if (!saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok &&
-                    !saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok
-                ) {
-                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak.name + "Group"))
-                }
-            }
         }
 
         // Validate Trygdemedisin
@@ -565,7 +554,6 @@ class KvalitetsvurderingV3(
         return result
     }
 
-    //is this correct?
     private fun getSpecificInvalidPropertiesForKlage(): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
         if (saksbehandlingsregler == Radiovalg.MANGELFULLT) {
@@ -576,6 +564,14 @@ class KvalitetsvurderingV3(
                 ) {
                     result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse.name + "Group"))
                 }
+            }
+        }
+
+        if (saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak) {
+            if (!saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok &&
+                !saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok
+            ) {
+                result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak.name + "Group"))
             }
         }
 
