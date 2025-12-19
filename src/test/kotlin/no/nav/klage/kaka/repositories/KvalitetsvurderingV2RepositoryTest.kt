@@ -1,32 +1,18 @@
 package no.nav.klage.kaka.repositories
 
-import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.*
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
+import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
-import org.testcontainers.junit.jupiter.Container
-import org.testcontainers.junit.jupiter.Testcontainers
-import java.util.*
 import kotlin.random.Random
 
 @ActiveProfiles("local")
 @DataJpaTest
-@Testcontainers
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class KvalitetsvurderingV2RepositoryTest {
-
-    companion object {
-        @Container
-        @JvmField
-        val postgreSQLContainer: TestPostgresqlContainer = TestPostgresqlContainer.instance
-    }
-
+class KvalitetsvurderingV2RepositoryTest: PostgresIntegrationTestBase() {
     @Autowired
     lateinit var testEntityManager: TestEntityManager
 

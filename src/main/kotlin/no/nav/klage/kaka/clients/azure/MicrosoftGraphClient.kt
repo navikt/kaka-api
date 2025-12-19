@@ -4,7 +4,7 @@ import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logErrorResponse
 import org.springframework.http.HttpStatusCode
-import org.springframework.retry.annotation.Retryable
+import org.springframework.resilience.annotation.Retryable
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono

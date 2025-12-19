@@ -2,7 +2,8 @@ package no.nav.klage.kaka.config
 
 
 import no.nav.klage.kaka.util.getLogger
-import org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer
+import org.springframework.boot.cache.autoconfigure.JCacheManagerCustomizer
+
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment

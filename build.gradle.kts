@@ -1,22 +1,22 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val logstashVersion = "8.1"
-val tokenValidationVersion = "5.0.37"
+val logstashVersion = "9.0"
+val tokenValidationVersion = "6.0.0"
 val archunitVersion = "1.4.1"
-val testContainersVersion = "1.21.3"
-val mockkVersion = "1.14.6"
-val apachePoiVersion = "5.4.1"
-val springDocVersion = "2.8.13"
-
-val shedlockVersion = "6.10.0"
-val klageKodeverkVersion = "1.12.13"
+val testContainersVersion = "2.0.3"
+val mockkVersion = "1.14.7"
+val apachePoiVersion = "5.5.1"
+val springDocVersion = "3.0.0"
+val springRetryVersion = "2.0.12"
+val shedlockVersion = "7.2.2"
+val klageKodeverkVersion = "1.12.16"
 val ehcacheVersion = "3.11.1"
-val otelVersion = "1.55.0"
+val otelVersion = "1.57.0"
 
 plugins {
-    val kotlinVersion = "2.2.20"
-    id("org.springframework.boot") version "3.5.8"
+    val kotlinVersion = "2.3.0"
+    id("org.springframework.boot") version "4.0.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -42,11 +42,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+    implementation("org.springframework.retry:spring-retry:${springRetryVersion}")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
     implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
-    implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
     implementation("org.postgresql:postgresql")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -71,11 +72,14 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:$apachePoiVersion")
 
     implementation("no.nav.klage:klage-kodeverk:$klageKodeverkVersion")
-
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test") {
+        exclude(group = "org.junit.vintage")
+        exclude(group = "org.mockito")
+    }
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
-    testImplementation("org.testcontainers:junit-jupiter:$testContainersVersion")
-    testImplementation("org.testcontainers:postgresql:$testContainersVersion")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter:$testContainersVersion")
+    testImplementation("org.testcontainers:testcontainers-postgresql:$testContainersVersion")
     testImplementation("com.tngtech.archunit:archunit-junit5:$archunitVersion")
     testImplementation("io.mockk:mockk:$mockkVersion")
 }
