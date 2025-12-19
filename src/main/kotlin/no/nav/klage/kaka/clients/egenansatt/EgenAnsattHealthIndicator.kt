@@ -1,8 +1,8 @@
 package no.nav.klage.kaka.clients.egenansatt
 
 import no.nav.klage.kaka.util.getLogger
-import org.springframework.boot.actuate.health.Health
-import org.springframework.boot.actuate.health.HealthIndicator
+import org.springframework.boot.health.contributor.Health
+import org.springframework.boot.health.contributor.HealthIndicator
 import org.springframework.context.event.EventListener
 import org.springframework.kafka.event.ListenerContainerIdleEvent
 import org.springframework.stereotype.Component
