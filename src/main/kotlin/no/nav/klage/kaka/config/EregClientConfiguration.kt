@@ -4,9 +4,7 @@ import no.nav.klage.kaka.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.netty.http.client.HttpClient
 
 @Configuration
 class EregClientConfiguration(
@@ -29,7 +27,6 @@ class EregClientConfiguration(
         return webClientBuilder
             .defaultHeader("x-nav-apiKey", apiKey)
             .baseUrl(eregServiceURL)
-            .clientConnector(ReactorClientHttpConnector(HttpClient.newConnection()))
             .build()
     }
 }

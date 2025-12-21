@@ -4,9 +4,7 @@ import no.nav.klage.kaka.util.getLogger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.client.reactive.ReactorClientHttpConnector
 import org.springframework.web.reactive.function.client.WebClient
-import reactor.netty.http.client.HttpClient
 
 @Configuration
 class MicrosoftGraphClientConfig(
@@ -25,7 +23,6 @@ class MicrosoftGraphClientConfig(
     fun microsoftGraphWebClient(): WebClient {
         return webClientBuilder
             .baseUrl(microsoftGraphServiceURL)
-            .clientConnector(ReactorClientHttpConnector(HttpClient.newConnection()))
             .build()
     }
 }
