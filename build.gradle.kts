@@ -8,7 +8,6 @@ val testContainersVersion = "2.0.3"
 val mockkVersion = "1.14.7"
 val apachePoiVersion = "5.5.1"
 val springDocVersion = "3.0.0"
-val springRetryVersion = "2.0.12"
 val shedlockVersion = "7.2.2"
 val klageKodeverkVersion = "1.12.16"
 val ehcacheVersion = "3.11.1"
@@ -43,7 +42,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-flyway")
-    implementation("org.springframework.retry:spring-retry:${springRetryVersion}")
     implementation("org.springframework.kafka:spring-kafka")
     implementation("no.nav.security:token-validation-spring:$tokenValidationVersion")
     implementation("no.nav.security:token-client-spring:$tokenValidationVersion")
