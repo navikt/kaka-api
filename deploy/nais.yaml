@@ -34,8 +34,8 @@ spec:
   kafka:
     pool: {{kafka_pool}}
   startup:
-    failureThreshold: 6
-    initialDelay: 15
+    failureThreshold: 8
+    initialDelay: 30
     path: /internal/health
     periodSeconds: 10
     timeout: 2
