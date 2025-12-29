@@ -1,7 +1,5 @@
 package no.nav.klage.kaka.services
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.*
 import jakarta.transaction.Transactional
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v3.KvalitetsvurderingV3
 import no.nav.klage.kaka.exceptions.KvalitetsvurderingNotFoundException
@@ -14,6 +12,8 @@ import no.nav.klage.kaka.util.setFieldOnObject
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
+import tools.jackson.databind.JsonNode
+import tools.jackson.databind.node.*
 import java.time.LocalDateTime
 import java.util.*
 
@@ -93,7 +93,7 @@ class KvalitetsvurderingV3Service(
         return when (node) {
             is IntNode -> node.intValue()
             is BooleanNode -> node.booleanValue()
-            is TextNode -> node.textValue()
+            is StringNode -> node.stringValue()
             is NullNode -> null
             is ArrayNode -> node.elements().asSequence().map { Registreringshjemmel.of(getValue(it).toString()) }
                 .toSet()

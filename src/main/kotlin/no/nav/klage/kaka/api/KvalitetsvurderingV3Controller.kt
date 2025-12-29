@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.api
 
-import com.fasterxml.jackson.databind.JsonNode
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.KvalitetsvurderingV3Input
@@ -13,6 +12,7 @@ import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.*
+import tools.jackson.databind.JsonNode
 import java.util.*
 
 @RestController
