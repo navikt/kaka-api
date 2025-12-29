@@ -34,21 +34,21 @@ spec:
   kafka:
     pool: {{kafka_pool}}
   startup:
-    failureThreshold: 20
-    initialDelay: 30
+    failureThreshold: 6
+    initialDelay: 15
     path: /internal/health
     periodSeconds: 10
     timeout: 2
   liveness:
     path: /internal/health
-    initialDelay: 20
-    timeout: 1
+    timeout: 3
     periodSeconds: 5
-    failureThreshold: 10
+    failureThreshold: 5
   readiness:
     path: /internal/health
-    initialDelay: 20
-    timeout: 1
+    timeout: 3
+    periodSeconds: 5
+    failureThreshold: 5
   prometheus:
     enabled: true
     path: /internal/metrics
@@ -107,9 +107,9 @@ spec:
       cpu: {{ requests_cpu }}
       memory: {{ requests_memory }}
   replicas:
-    min: 2
-    max: 4
-    cpuThresholdPercentage: 80
+    min: {{replicasMin}}
+    max: {{replicasMax}}
+    cpuThresholdPercentage: 90
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: {{springProfile}}
