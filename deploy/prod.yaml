@@ -10,15 +10,15 @@ db_tier: db-custom-1-3840
 db_size: 10
 db_ha: true
 db_type: POSTGRES_15
-limits_memory: 4096Mi
-requests_cpu: 20m
-requests_memory: 2300Mi
+limits_memory: 8000Mi
+requests_cpu: 40m
+requests_memory: 3000Mi
 replicasMin: 2
 replicasMax: 4
 
 envs:
   - name: JAVA_OPTS
-    value: "-Xms1024m -Xmx4096m"
+    value: "-Xms1024m -Xmx8000m"
 
 groups:
   - name: KAKA_KVALITETSVURDERING_ROLE_ID
