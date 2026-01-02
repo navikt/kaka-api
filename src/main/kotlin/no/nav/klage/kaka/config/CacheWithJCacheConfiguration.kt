@@ -49,7 +49,7 @@ class CacheWithJCacheConfiguration(private val environment: Environment) : JCach
             .setStatisticsEnabled(true)
 
     private fun standardDuration() =
-        if (environment.activeProfiles.contains("prod-gcp")) {
+        if (environment.activeProfiles.contains("prod")) {
             Duration(TimeUnit.HOURS, 6L)
         } else {
             Duration(TimeUnit.MINUTES, 10L)

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 import kotlin.random.Random
 
-@Profile("dev-gcp")
+@Profile("dev")
 @RestController
 @RequestMapping("mockdata")
 class AddRandomDataController(
