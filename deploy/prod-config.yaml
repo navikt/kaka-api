@@ -3,7 +3,7 @@ externalHosts:
   - host: pdl-api.prod-fss-pub.nais.io
   - host: api-gw.oera.no
   - host: norg2.prod-fss-pub.nais.io
-springProfile: prod-gcp
+springProfile: prod
 tenant: nav.no
 kafka_pool: nav-prod
 db_tier: db-custom-1-3840
