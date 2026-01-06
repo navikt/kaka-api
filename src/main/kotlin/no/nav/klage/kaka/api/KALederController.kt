@@ -1,16 +1,14 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.ExcelQueryParams
-import no.nav.klage.kaka.api.view.ManagerResponseV1
-import no.nav.klage.kaka.api.view.ManagerResponseV2
-import no.nav.klage.kaka.api.view.Saksbehandler
+import no.nav.klage.kaka.api.view.*
 import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.*
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportServiceV1
 import no.nav.klage.kaka.services.ExportServiceV2
+import no.nav.klage.kaka.services.ExportServiceV3
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
@@ -33,6 +31,7 @@ import java.time.YearMonth
 class KALederController(
     private val exportServiceV1: ExportServiceV1,
     private val exportServiceV2: ExportServiceV2,
+    private val exportServiceV3: ExportServiceV3,
     private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
     private val tokenUtil: TokenUtil
@@ -183,6 +182,43 @@ class KALederController(
             saksbehandlerIdentList = saksbehandlere,
         )
         return ManagerResponseV2(
+            anonymizedFinishedVurderingList = if (saksbehandlere?.isNotEmpty() == true) {
+                data.saksbehandlere.values.flatten()
+            } else {
+                data.mine + data.saksbehandlere.values.flatten()
+            },
+            saksbehandlere = data.saksbehandlere,
+            mine = data.mine,
+            rest = data.rest,
+        )
+    }
+
+    @GetMapping("/statistics/v3/enheter/{enhetsnummer}/manager")
+    fun getTotalForLederV3(
+        @PathVariable enhetsnummer: String,
+        @RequestParam(required = false) fromMonth: String?,
+        @RequestParam(required = false) toMonth: String?,
+        @RequestParam(required = false) saksbehandlere: List<String>?,
+    ): ManagerResponseV3 {
+        logger.debug(
+            "getTotalForLederV3() called. enhetsnummer param = $enhetsnummer, " +
+                    "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
+        )
+
+        validateIsKakaLeder()
+
+        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        if (enhet.navn != enhetsnummer) {
+            throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
+        }
+
+        val data = exportServiceV3.getFinishedForLederAsRawData(
+            enhet = enhet,
+            fromMonth = YearMonth.parse(fromMonth),
+            toMonth = YearMonth.parse(toMonth),
+            saksbehandlerIdentList = saksbehandlere,
+        )
+        return ManagerResponseV3(
             anonymizedFinishedVurderingList = if (saksbehandlere?.isNotEmpty() == true) {
                 data.saksbehandlere.values.flatten()
             } else {
