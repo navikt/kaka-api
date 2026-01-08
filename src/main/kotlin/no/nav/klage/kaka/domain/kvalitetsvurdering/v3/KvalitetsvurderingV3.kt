@@ -323,7 +323,8 @@ class KvalitetsvurderingV3(
 
             saksbehandlingsreglerBruddPaaJournalfoeringsplikten = false
             saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerErIkkeJournalfoert = false
-            saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerHarIkkeGodNokTittelEllerDokumentkvalitet = false
+            saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerHarIkkeGodNokTittelEllerDokumentkvalitet =
+                false
 
             saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak = false
             saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = false
@@ -366,7 +367,8 @@ class KvalitetsvurderingV3(
             if (!saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse) {
                 saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = false
                 saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = false
-                saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = false
+                saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser =
+                    false
             }
             if (!saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke) {
                 saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = false
@@ -374,7 +376,8 @@ class KvalitetsvurderingV3(
             }
             if (!saksbehandlingsreglerBruddPaaJournalfoeringsplikten) {
                 saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerErIkkeJournalfoert = false
-                saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerHarIkkeGodNokTittelEllerDokumentkvalitet = false
+                saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerHarIkkeGodNokTittelEllerDokumentkvalitet =
+                    false
             }
             if (!saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak) {
                 saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = false
@@ -394,7 +397,7 @@ class KvalitetsvurderingV3(
     fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
-        result += getCommonInvalidProperties(ytelse)
+        result += getCommonInvalidProperties(ytelse, type)
 
         if (type == Type.KLAGE) {
             result += getSpecificInvalidPropertiesForKlage()
@@ -403,7 +406,7 @@ class KvalitetsvurderingV3(
         return result
     }
 
-    private fun getCommonInvalidProperties(ytelse: Ytelse?): List<InvalidProperty> {
+    private fun getCommonInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
         // Validate Særregelverk
@@ -451,14 +454,19 @@ class KvalitetsvurderingV3(
             result.add(createRadioValgValidationError(::saksbehandlingsregler.name))
         } else if (saksbehandlingsregler == Radiovalg.MANGELFULLT) {
             // Level 1: Must choose at least one main category
-            if (!saksbehandlingsreglerBruddPaaVeiledningsplikten &&
-                !saksbehandlingsreglerBruddPaaUtredningsplikten &&
-                !saksbehandlingsreglerBruddPaaForeleggelsesplikten &&
-                !saksbehandlingsreglerBruddPaaBegrunnelsesplikten &&
-                !saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke &&
-                !saksbehandlingsreglerBruddPaaJournalfoeringsplikten &&
-                !saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak
-            ) {
+            val commonCheck = !saksbehandlingsreglerBruddPaaVeiledningsplikten &&
+                    !saksbehandlingsreglerBruddPaaUtredningsplikten &&
+                    !saksbehandlingsreglerBruddPaaForeleggelsesplikten &&
+                    !saksbehandlingsreglerBruddPaaBegrunnelsesplikten &&
+                    !saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke &&
+                    !saksbehandlingsreglerBruddPaaJournalfoeringsplikten &&
+                    !saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak
+            val validationError = when (type) {
+                Type.KLAGE -> (commonCheck && !saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse)
+                Type.ANKE -> commonCheck
+                else -> error("Ukjent type ved validering av kvalitetsvurdering: $type")
+            }
+            if (validationError) {
                 result.add(createMissingChecksValidationError(::saksbehandlingsregler.name + "Group"))
             }
 
