@@ -13,3 +13,9 @@ KAKA_VERSION_3_DATE: 2026-01-01
 
 # TODO: Delete after run
 MIGRATE_CRON: 0 0 0 1 JAN *
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
