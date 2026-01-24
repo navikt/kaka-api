@@ -9,7 +9,7 @@ kafka_pool: nav-prod
 db_tier: db-custom-1-3840
 db_size: 10
 db_ha: true
-db_type: POSTGRES_17
+db_type: POSTGRES_18
 limits_memory: 8000Mi
 requests_cpu: 40m
 requests_memory: 3000Mi
