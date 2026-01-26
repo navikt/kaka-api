@@ -37,7 +37,8 @@ class MetadataController(
             ident = tokenUtil.getIdent(),
             navn = azureGateway.getNavnInnloggetSaksehandler().toNavnView(),
             ansattEnhet = metadataService.getInnloggetSaksbehandlerEnhetKodeDto(),
-            roller = roller.map { it.name }
+            roller = roller.map { it.name },
+            expiresIn = tokenUtil.getTokenExpiryInMillis()
         )
     }
 
@@ -46,4 +47,5 @@ class MetadataController(
             fornavn = fornavn, etternavn = etternavn, sammensattNavn = sammensattNavn
         )
     }
+
 }
