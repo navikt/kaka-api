@@ -11,10 +11,10 @@ val springDocVersion = "3.0.1"
 val shedlockVersion = "7.6.0"
 val klageKodeverkVersion = "3.0.2"
 val ehcacheVersion = "3.11.1"
-val otelVersion = "1.58.0"
+val otelVersion = "1.59.0"
 
 plugins {
-    val kotlinVersion = "2.3.0"
+    val kotlinVersion = "2.3.10"
     id("org.springframework.boot") version "4.0.2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
