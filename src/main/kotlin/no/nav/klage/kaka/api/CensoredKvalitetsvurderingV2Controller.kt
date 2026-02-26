@@ -46,7 +46,7 @@ class CensoredKvalitetsvurderingV2Controller(
             kvalitetsvurderingId,
             logger
         )
-        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId)
             .toCensoredKvalitetsvurderingV2View()
     }
 

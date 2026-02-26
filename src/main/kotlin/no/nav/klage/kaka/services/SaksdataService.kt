@@ -2,11 +2,9 @@ package no.nav.klage.kaka.services
 
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
 import no.nav.klage.kaka.clients.azure.AzureGateway
-import no.nav.klage.kaka.clients.egenansatt.EgenAnsattService
-import no.nav.klage.kaka.clients.pdl.PdlFacade
+import no.nav.klage.kaka.clients.klagelookup.KlageLookupClient
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
-import no.nav.klage.kaka.domain.kodeverk.Role.*
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v3.KvalitetsvurderingV3
@@ -52,12 +50,11 @@ class SaksdataService(
     private val azureGateway: AzureGateway,
     private val tokenUtil: TokenUtil,
     private val rolleMapper: RolleMapper,
-    private val pdlFacade: PdlFacade,
-    private val egenAnsattService: EgenAnsattService,
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
     private val kakaVersion2Date: LocalDate,
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_3_DATE}')}")
     private val kakaVersion3Date: LocalDate,
+    private val klageLookupClient: KlageLookupClient,
 ) {
 
     companion object {
@@ -496,12 +493,6 @@ class SaksdataService(
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): List<Saksdata> {
-        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
-
-        val kanBehandleStrengtFortrolig = STRENGT_FORTROLIG in roller
-        val kanBehandleFortrolig = FORTROLIG in roller
-        val kanBehandleEgenAnsatt = EGEN_ANSATT in roller
-
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
@@ -509,13 +500,10 @@ class SaksdataService(
             mangelfullt = mangelfullt,
             kommentarer = kommentarer,
         ).filter {
-            verifiserTilgangTilPersonForSaksbehandler(
-                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
-                ident = saksbehandlerIdent,
-                kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
-                kanBehandleFortrolig = kanBehandleFortrolig,
-                kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
-            )
+            klageLookupClient.getAccess(
+                brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                navIdent = saksbehandlerIdent
+            ).access
         }.map { it.saksdata }
     }
 
@@ -526,25 +514,16 @@ class SaksdataService(
         toDate: LocalDate,
         mangelfullt: List<String>,
     ): List<Saksdata> {
-        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
-
-        val kanBehandleStrengtFortrolig = STRENGT_FORTROLIG in roller
-        val kanBehandleFortrolig = FORTROLIG in roller
-        val kanBehandleEgenAnsatt = EGEN_ANSATT in roller
-
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV2(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),
             mangelfullt = mangelfullt,
         ).filter {
-            verifiserTilgangTilPersonForSaksbehandler(
-                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
-                ident = saksbehandlerIdent,
-                kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
-                kanBehandleFortrolig = kanBehandleFortrolig,
-                kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
-            )
+            klageLookupClient.getAccess(
+                brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                navIdent = saksbehandlerIdent
+            ).access
         }.map { it.saksdata }
     }
 
@@ -555,25 +534,16 @@ class SaksdataService(
         toDate: LocalDate,
         mangelfullt: List<String>,
     ): List<Saksdata> {
-        val roller = rolleMapper.toRoles(tokenUtil.getGroups())
-
-        val kanBehandleStrengtFortrolig = STRENGT_FORTROLIG in roller
-        val kanBehandleFortrolig = FORTROLIG in roller
-        val kanBehandleEgenAnsatt = EGEN_ANSATT in roller
-
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV3(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
             toDateTime = toDate.atTime(LocalTime.MAX),
             mangelfullt = mangelfullt,
         ).filter {
-            verifiserTilgangTilPersonForSaksbehandler(
-                fnr = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
-                ident = saksbehandlerIdent,
-                kanBehandleStrengtFortrolig = kanBehandleStrengtFortrolig,
-                kanBehandleFortrolig = kanBehandleFortrolig,
-                kanBehandleEgenAnsatt = kanBehandleEgenAnsatt,
-            )
+            klageLookupClient.getAccess(
+                brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
+                navIdent = saksbehandlerIdent
+            ).access
         }.map { it.saksdata }
     }
 
@@ -626,60 +596,5 @@ class SaksdataService(
             )
 
         logger.debug("Number of candidates after migration: ${candidatesAfterMigration.size}")
-    }
-
-    private fun verifiserTilgangTilPersonForSaksbehandler(
-        fnr: String,
-        ident: String,
-        kanBehandleStrengtFortrolig: Boolean,
-        kanBehandleFortrolig: Boolean,
-        kanBehandleEgenAnsatt: Boolean
-    ): Boolean {
-        try {
-            //if foretak, no need to check access
-            if (fnr.length == 9) {
-                return true
-            }
-            val personInfo = pdlFacade.getPersonInfo(fnr)
-            val harBeskyttelsesbehovFortrolig = personInfo.harBeskyttelsesbehovFortrolig()
-            val harBeskyttelsesbehovStrengtFortrolig = personInfo.harBeskyttelsesbehovStrengtFortrolig()
-            val erEgenAnsatt = egenAnsattService.erEgenAnsatt(fnr)
-
-            if (harBeskyttelsesbehovStrengtFortrolig) {
-                logger.debug("erStrengtFortrolig. See more details in team-logs.")
-                //Merk at vi ikke sjekker egenAnsatt her, strengt fortrolig trumfer det
-                if (kanBehandleStrengtFortrolig) {
-                    teamLogger.debug("Access granted to strengt fortrolig for $ident")
-                } else {
-                    teamLogger.debug("Access denied to strengt fortrolig for $ident")
-                    return false
-                }
-            }
-            if (harBeskyttelsesbehovFortrolig) {
-                logger.debug("erFortrolig. See more details in team-logs.")
-                //Merk at vi ikke sjekker egenAnsatt her, fortrolig trumfer det
-                if (kanBehandleFortrolig) {
-                    teamLogger.debug("Access granted to fortrolig for $ident")
-                } else {
-                    teamLogger.debug("Access denied to fortrolig for $ident")
-                    return false
-                }
-            }
-            if (erEgenAnsatt && !(harBeskyttelsesbehovFortrolig || harBeskyttelsesbehovStrengtFortrolig)) {
-                logger.debug("erEgenAnsatt. See more details in team-logs.")
-                //Er kun egenAnsatt, har ikke et beskyttelsesbehov i tillegg
-                if (kanBehandleEgenAnsatt) {
-                    teamLogger.debug("Access granted to egen ansatt for $ident")
-                } else {
-                    teamLogger.debug("Access denied to egen ansatt for $ident")
-                    return false
-                }
-            }
-            return true
-        } catch (e: Exception) {
-            logger.warn("Could not verify access to person. See team-logs for more details.")
-            teamLogger.warn("Could not verify access to person", e)
-            return false
-        }
     }
 }

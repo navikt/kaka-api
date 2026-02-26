@@ -1,18 +1,10 @@
 TENANT_ID: 966ac572-f5b7-4bbe-aa88-c76419c0f851
 
-PDL_BASE_URL: https://pdl-api.dev-fss-pub.nais.io/graphql
-PDL_SCOPE: dev-fss.pdl.pdl-api
-
-EREG_URL: https://ereg-services-q2.dev-fss-pub.nais.io/api/v2
-
 NORG2_BASE_URL: https://norg2.intern.dev.nav.no/norg2/api/v1
 
 KAKA_VERSION_2_DATE: 2022-12-20
 
 KAKA_VERSION_3_DATE: 2025-11-11
-
-# TODO: Delete after run
-MIGRATE_CRON: 0 0 15 12 NOV *
 
 spring:
   datasource:

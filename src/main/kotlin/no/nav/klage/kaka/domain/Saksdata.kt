@@ -105,7 +105,7 @@ class Saksdata(
         throw MissingTilgangException("Innlogget bruker har ikke tilgang til saksdataen")
     }
 
-    fun verifyWriteAccess(innloggetIdent: String, roller: List<String> = emptyList(), ansattEnhet: String = "") {
+    fun verifyWriteAccess(innloggetIdent: String) {
         if (innloggetIdent != utfoerendeSaksbehandler) {
             throw MissingTilgangException("Innlogget bruker har ikke tilgang til å redigere saksdataen")
         }
@@ -208,7 +208,6 @@ class Saksdata(
         return validationErrors
     }
 
-    //TODO: Gjør en refaktorering, disse sjekkene må også gjøres mot pdl og ereg.
     private fun getSakenGjelderError(sakenGjelder: String?): InvalidProperty? {
         if (sakenGjelder == null) {
             return createMustBeFilledValidationError(SaksdataView::sakenGjelder.name)

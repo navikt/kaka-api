@@ -51,7 +51,7 @@ class KvalitetsvurderingV2Controller(
             kvalitetsvurderingId,
             logger
         )
-        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId)
             .toKvalitetsvurderingV2View()
     }
 }

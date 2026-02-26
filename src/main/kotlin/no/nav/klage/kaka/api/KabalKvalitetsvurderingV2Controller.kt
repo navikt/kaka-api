@@ -72,7 +72,7 @@ class KabalKvalitetsvurderingV2Controller(
         val innloggetSaksbehandler = tokenUtil.getIdent()
 
         val kvalitetsvurdering =
-            kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+            kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId)
         val ytelseToUse = ytelseId?.let { Ytelse.of(it) } ?: Ytelse.OMS_OMP
         val typeToUse = typeId?.let { Type.of(it) } ?: Type.KLAGE
 

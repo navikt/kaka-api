@@ -46,7 +46,7 @@ class CensoredKvalitetsvurderingV3Controller(
             kvalitetsvurderingId,
             logger
         )
-        return kvalitetsvurderingV3Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        return kvalitetsvurderingV3Service.getKvalitetsvurdering(kvalitetsvurderingId)
             .toCensoredKvalitetsvurderingV3View()
     }
 

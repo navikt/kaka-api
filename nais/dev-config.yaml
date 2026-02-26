@@ -2,8 +2,6 @@ ingresses:
   - https://kaka-api.intern.dev.nav.no
 externalHosts:
   - host: login.microsoftonline.com
-  - host: pdl-api.dev-fss-pub.nais.io
-  - host: ereg-services-q2.dev-fss-pub.nais.io
   - host: norg2.intern.dev.nav.no
 springProfile: dev
 tenant: trygdeetaten.no
