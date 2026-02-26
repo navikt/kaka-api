@@ -500,10 +500,16 @@ class SaksdataService(
             mangelfullt = mangelfullt,
             kommentarer = kommentarer,
         ).filter {
-            klageLookupClient.getAccess(
-                brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
-                navIdent = saksbehandlerIdent
-            ).access
+            val brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr")
+            if (brukerId.length == 9) {
+                //No need for check for organization id
+                true
+            } else {
+                klageLookupClient.getAccess(
+                    brukerId = brukerId,
+                    navIdent = saksbehandlerIdent
+                ).access
+            }
         }.map { it.saksdata }
     }
 
@@ -520,10 +526,16 @@ class SaksdataService(
             toDateTime = toDate.atTime(LocalTime.MAX),
             mangelfullt = mangelfullt,
         ).filter {
-            klageLookupClient.getAccess(
-                brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
-                navIdent = saksbehandlerIdent
-            ).access
+            val brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr")
+            if (brukerId.length == 9) {
+                //No need for check for organization id
+                true
+            } else {
+                klageLookupClient.getAccess(
+                    brukerId = brukerId,
+                    navIdent = saksbehandlerIdent
+                ).access
+            }
         }.map { it.saksdata }
     }
 
@@ -540,10 +552,16 @@ class SaksdataService(
             toDateTime = toDate.atTime(LocalTime.MAX),
             mangelfullt = mangelfullt,
         ).filter {
-            klageLookupClient.getAccess(
-                brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr"),
-                navIdent = saksbehandlerIdent
-            ).access
+            val brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr")
+            if (brukerId.length == 9) {
+                //No need for check for organization id
+                true
+            } else {
+                klageLookupClient.getAccess(
+                    brukerId = brukerId,
+                    navIdent = saksbehandlerIdent
+                ).access
+            }
         }.map { it.saksdata }
     }
 
