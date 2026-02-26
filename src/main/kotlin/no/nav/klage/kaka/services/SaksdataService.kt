@@ -493,6 +493,8 @@ class SaksdataService(
         mangelfullt: List<String>,
         kommentarer: List<String>,
     ): List<Saksdata> {
+        val accessCache = mutableMapOf<String, Boolean>()
+
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV1(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
@@ -501,14 +503,17 @@ class SaksdataService(
             kommentarer = kommentarer,
         ).filter {
             val brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr")
-            if (brukerId.length == 9) {
-                //No need for check for organization id
-                true
-            } else {
-                klageLookupClient.getAccess(
-                    brukerId = brukerId,
-                    navIdent = saksbehandlerIdent
-                ).access
+
+            accessCache.getOrPut(brukerId) {
+                if (brukerId.length == 9) {
+                    // No access check needed for organization id
+                    true
+                } else {
+                    klageLookupClient.getAccess(
+                        brukerId = brukerId,
+                        navIdent = saksbehandlerIdent
+                    ).access
+                }
             }
         }.map { it.saksdata }
     }
@@ -520,6 +525,8 @@ class SaksdataService(
         toDate: LocalDate,
         mangelfullt: List<String>,
     ): List<Saksdata> {
+        val accessCache = mutableMapOf<String, Boolean>()
+
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV2(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
@@ -527,14 +534,17 @@ class SaksdataService(
             mangelfullt = mangelfullt,
         ).filter {
             val brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr")
-            if (brukerId.length == 9) {
-                //No need for check for organization id
-                true
-            } else {
-                klageLookupClient.getAccess(
-                    brukerId = brukerId,
-                    navIdent = saksbehandlerIdent
-                ).access
+
+            accessCache.getOrPut(brukerId) {
+                if (brukerId.length == 9) {
+                    // No access check needed for organization id
+                    true
+                } else {
+                    klageLookupClient.getAccess(
+                        brukerId = brukerId,
+                        navIdent = saksbehandlerIdent
+                    ).access
+                }
             }
         }.map { it.saksdata }
     }
@@ -546,6 +556,8 @@ class SaksdataService(
         toDate: LocalDate,
         mangelfullt: List<String>,
     ): List<Saksdata> {
+        val accessCache = mutableMapOf<String, Boolean>()
+
         return saksdataRepository.findForVedtaksinstanslederWithEnhetV3(
             vedtaksinstansEnhet = enhet.navn,
             fromDateTime = fromDate.atStartOfDay(),
@@ -553,14 +565,17 @@ class SaksdataService(
             mangelfullt = mangelfullt,
         ).filter {
             val brukerId = it.saksdata.sakenGjelder ?: throw RuntimeException("missing fnr")
-            if (brukerId.length == 9) {
-                //No need for check for organization id
-                true
-            } else {
-                klageLookupClient.getAccess(
-                    brukerId = brukerId,
-                    navIdent = saksbehandlerIdent
-                ).access
+
+            accessCache.getOrPut(brukerId) {
+                if (brukerId.length == 9) {
+                    // No access check needed for organization id
+                    true
+                } else {
+                    klageLookupClient.getAccess(
+                        brukerId = brukerId,
+                        navIdent = saksbehandlerIdent
+                    ).access
+                }
             }
         }.map { it.saksdata }
     }
