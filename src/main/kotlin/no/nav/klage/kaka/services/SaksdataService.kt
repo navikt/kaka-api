@@ -570,31 +570,4 @@ class SaksdataService(
 
         saksdataRepository.deleteById(saksdataId)
     }
-
-    //TODO: Delete after run
-    @Scheduled(cron = "\${MIGRATE_CRON}", zone = "Europe/Oslo")
-    @SchedulerLock(name = "migrateKvalitetsvurderingerFromV2ToV3")
-    fun migrateKvalitetsvurderingerFromV2ToV3() {
-        val candidates = saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
-            kvalitetsvurderingVersion = 2
-        )
-
-        logger.debug("Migrating kvalitetsvurdering from v2 to v3.")
-        logger.debug("Number of candidates: ${candidates.size}")
-
-        candidates.forEach {
-            logger.debug("Migrating saksdata {}, kvalitetsvurdering {}", it.id, it.kvalitetsvurderingReference.id)
-            kvalitetsvurderingV3Repository.save(KvalitetsvurderingV3(id = it.kvalitetsvurderingReference.id))
-            it.kvalitetsvurderingReference.version = 3
-            kvalitetsvurderingV2Repository.deleteById(it.kvalitetsvurderingReference.id)
-            it.modified = now()
-        }
-
-        val candidatesAfterMigration =
-            saksdataRepository.findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(
-                kvalitetsvurderingVersion = 2
-            )
-
-        logger.debug("Number of candidates after migration: ${candidatesAfterMigration.size}")
-    }
 }
