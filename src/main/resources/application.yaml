@@ -101,5 +101,3 @@ KLAGE_LOOKUP_APP_NAME: klage-lookup
 KLAGE_LOOKUP_BASE_URL: http://klage-lookup
 
 MICROSOFT_GRAPH_URL: https://graph.microsoft.com/v1.0
-
-SERVICE_USER_USERNAME: srvklage-saksbeh
