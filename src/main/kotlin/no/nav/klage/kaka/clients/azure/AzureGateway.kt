@@ -28,10 +28,6 @@ class AzureGateway(
         } ?: emptyList()
     }
 
-    fun getKlageenheterForSaksbehandler(ident: String): List<Enhet> =
-        listOf(getPersonligDataOmSaksbehandlerMedIdent(ident).enhet).filter { it in klageenheter || it == Enhet.E4200 }
-            .ifEmpty { throw EnhetNotFoundForSaksbehandlerException("$ident er ikke ansatt i en klageenhet") }
-
     fun getPersonligDataOmSaksbehandlerMedIdent(navIdent: String): SaksbehandlerPersonligInfo {
         val data = try {
             microsoftGraphClient.getSaksbehandler(navIdent)
@@ -91,15 +87,6 @@ class AzureGateway(
             mapToEnhet(data.streetAddress),
         )
     }
-
-    fun getRollerForInnloggetSaksbehandler(): List<SaksbehandlerRolle> =
-        try {
-            microsoftGraphClient.getInnloggetSaksbehandlersGroups()
-                .map { SaksbehandlerRolle(it.id, it.displayName ?: it.mailNickname ?: it.id) }
-        } catch (e: Exception) {
-            logger.error("Error in ${::getRollerForInnloggetSaksbehandler.name}, failed to call getInnloggetSaksbehandlersGroups", e)
-            throw e
-        }
 
     private fun mapToEnhet(enhetNr: String): Enhet =
         Enhet.entries.find { it.navn == enhetNr }

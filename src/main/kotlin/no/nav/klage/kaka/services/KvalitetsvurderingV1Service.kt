@@ -24,16 +24,8 @@ class KvalitetsvurderingV1Service(
     private val saksdataRepository: SaksdataRepository,
     private val tokenUtil: TokenUtil,
 ) {
-
-    fun createKvalitetsvurdering(): KvalitetsvurderingV1 {
-        return kvalitetsvurderingV1Repository.save(
-            KvalitetsvurderingV1()
-        )
-    }
-
     fun getKvalitetsvurdering(
         kvalitetsvurderingId: UUID,
-        innloggetSaksbehandler: String
     ): KvalitetsvurderingV1 {
         val kvalitetsvurdering = kvalitetsvurderingV1Repository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
@@ -95,14 +87,6 @@ class KvalitetsvurderingV1Service(
             is NullNode -> null
             is ArrayNode -> node.elements().asSequence().map { Registreringshjemmel.of(getValue(it).toString()) }.toSet()
             else -> error("not supported")
-        }
-    }
-
-    fun deleteKvalitetsvurdering(id: UUID) {
-        try {
-            kvalitetsvurderingV1Repository.deleteById(id)
-        } catch(e: EmptyResultDataAccessException) {
-            throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $id")
         }
     }
 }

@@ -19,7 +19,4 @@ interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepository
     fun findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId: UUID): Saksdata?
 
     fun findByTilbakekrevingIsFalse(): List<Saksdata>
-
-    //TODO: Delete after run
-    fun findByAvsluttetAvSaksbehandlerIsNullAndKvalitetsvurderingReferenceVersion(kvalitetsvurderingVersion: Int): List<Saksdata>
 }

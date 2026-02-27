@@ -81,6 +81,7 @@ spec:
       rules:
         - application: kabal-document
         - application: kaka-api
+        - application: klage-lookup
         - application: logging
           namespace: nais-system
       external:
@@ -97,9 +98,6 @@ spec:
       {{/each}}
   envFrom:
     - secret: sts-apikey
-    - secret: pdl-apikey
-    - secret: ereg
-    - secret: ereg-services
   resources:
     limits:
       memory: {{ limits_memory }}

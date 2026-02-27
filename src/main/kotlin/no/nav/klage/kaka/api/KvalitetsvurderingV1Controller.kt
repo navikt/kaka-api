@@ -49,6 +49,6 @@ class KvalitetsvurderingV1Controller(
             kvalitetsvurderingId,
             logger
         )
-        return kvalitetsvurderingV1Service.getKvalitetsvurdering(kvalitetsvurderingId, innloggetSaksbehandler)
+        return kvalitetsvurderingV1Service.getKvalitetsvurdering(kvalitetsvurderingId)
     }
 }

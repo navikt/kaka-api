@@ -33,7 +33,6 @@ class KvalitetsvurderingV2Service(
 
     fun getKvalitetsvurdering(
         kvalitetsvurderingId: UUID,
-        innloggetSaksbehandler: String
     ): KvalitetsvurderingV2 {
         val kvalitetsvurdering = kvalitetsvurderingV2Repository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {

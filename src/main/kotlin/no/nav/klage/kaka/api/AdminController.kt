@@ -25,12 +25,6 @@ class AdminController(
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
-    @GetMapping("/loginvalidsakengjelder")
-    fun logCorruptData() {
-        krevAdminTilgang()
-        adminService.logInvalidSakenGjelder()
-    }
-
     @GetMapping("/logv1hjemlerinv2")
     fun logV1HjemlerInV2() {
         krevAdminTilgang()
