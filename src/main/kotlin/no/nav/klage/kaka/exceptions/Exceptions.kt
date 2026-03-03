@@ -16,6 +16,10 @@ class InvalidSakenGjelderException(msg: String) : RuntimeException(msg)
 
 class EnhetNotFoundForSaksbehandlerException(msg: String) : RuntimeException(msg)
 
+class EnhetNotFoundException(msg: String) : RuntimeException(msg)
+
+class UserNotFoundException(msg: String) : RuntimeException(msg)
+
 data class InvalidProperty(val field: String, val reason: String)
 
 class SectionedValidationErrorWithDetailsException(val title: String, val sections: List<ValidationSection>) :

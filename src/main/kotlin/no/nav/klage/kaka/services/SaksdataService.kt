@@ -1,7 +1,5 @@
 package no.nav.klage.kaka.services
 
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock
-import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.clients.klagelookup.KlageLookupClient
 import no.nav.klage.kaka.domain.KvalitetsvurderingReference
 import no.nav.klage.kaka.domain.Saksdata
@@ -28,7 +26,6 @@ import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -47,7 +44,6 @@ class SaksdataService(
     private val kvalitetsvurderingV1Service: KvalitetsvurderingV1Service,
     private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
     private val kvalitetsvurderingV3Service: KvalitetsvurderingV3Service,
-    private val azureGateway: AzureGateway,
     private val tokenUtil: TokenUtil,
     private val rolleMapper: RolleMapper,
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_2_DATE}')}")
@@ -55,6 +51,7 @@ class SaksdataService(
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_3_DATE}')}")
     private val kakaVersion3Date: LocalDate,
     private val klageLookupClient: KlageLookupClient,
+    private val saksbehandlerService: SaksbehandlerService,
 ) {
 
     companion object {
@@ -68,7 +65,7 @@ class SaksdataService(
     }
 
     fun createSaksdata(innloggetSaksbehandler: String): Saksdata {
-        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        val enhet = saksbehandlerService.getUserEnhet(navIdent = innloggetSaksbehandler)
 
         return saksdataRepository.save(
             when (getKakaVersion()) {
@@ -451,7 +448,7 @@ class SaksdataService(
             s.verifyReadAccess(
                 innloggetIdent = innloggetSaksbehandler,
                 roller = rolleMapper.toRoles(tokenUtil.getGroups()),
-                ansattEnhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet.navn
+                ansattEnhet = saksbehandlerService.getUserEnhet(navIdent = innloggetSaksbehandler).navn
             )
         }
     }

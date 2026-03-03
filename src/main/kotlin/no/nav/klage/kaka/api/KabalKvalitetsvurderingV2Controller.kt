@@ -69,8 +69,6 @@ class KabalKvalitetsvurderingV2Controller(
         @RequestParam ytelseId: String?,
         @RequestParam typeId: String?
     ): ValidationErrors {
-        val innloggetSaksbehandler = tokenUtil.getIdent()
-
         val kvalitetsvurdering =
             kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId)
         val ytelseToUse = ytelseId?.let { Ytelse.of(it) } ?: Ytelse.OMS_OMP

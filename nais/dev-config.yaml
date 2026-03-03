@@ -2,7 +2,6 @@ ingresses:
   - https://kaka-api.intern.dev.nav.no
 externalHosts:
   - host: login.microsoftonline.com
-  - host: norg2.intern.dev.nav.no
 springProfile: dev
 tenant: trygdeetaten.no
 kafka_pool: nav-dev

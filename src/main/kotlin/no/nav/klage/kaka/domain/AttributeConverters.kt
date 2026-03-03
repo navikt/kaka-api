@@ -2,22 +2,11 @@ package no.nav.klage.kaka.domain
 
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
-import no.nav.klage.kodeverk.PartIdType
 import no.nav.klage.kodeverk.Source
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.ytelse.Ytelse
-
-@Converter
-class PartIdTypeConverter : AttributeConverter<PartIdType, String?> {
-
-    override fun convertToDatabaseColumn(entity: PartIdType?): String? =
-        entity?.id
-
-    override fun convertToEntityAttribute(id: String?): PartIdType? =
-        id?.let { PartIdType.of(it) }
-}
 
 @Converter
 class TypeConverter : AttributeConverter<Type, String?> {

@@ -42,12 +42,6 @@ class TokenUtil(
         tokenValidationContextHolder.getTokenValidationContext().getJwtToken(SecurityConfig.ISSUER_AAD)
             ?.jwtTokenClaims?.getAsList("groups") ?: emptyList()
 
-    fun getSaksbehandlerAccessTokenWithGraphScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["azure-onbehalfof"]!!
-        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.access_token!!
-    }
-
     fun getOnBehalfOfTokenWithKlageLookupScope(): String {
         val clientProperties = clientConfigurationProperties.registration["klage-lookup-onbehalfof"]!!
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)

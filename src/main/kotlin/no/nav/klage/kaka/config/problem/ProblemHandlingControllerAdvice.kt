@@ -66,6 +66,18 @@ class ProblemHandlingControllerAdvice : ResponseEntityExceptionHandler() {
     ): ProblemDetail =
         create(HttpStatus.INTERNAL_SERVER_ERROR, ex)
 
+    @ExceptionHandler
+    fun handleEnhetNotFoundException(
+        ex: EnhetNotFoundException,
+    ): ProblemDetail =
+        create(HttpStatus.NOT_FOUND, ex)
+
+    @ExceptionHandler
+    fun handleUserNotFoundException(
+        ex: UserNotFoundException,
+    ): ProblemDetail =
+        create(HttpStatus.NOT_FOUND, ex)
+
     private fun createSectionedValidationProblem(ex: SectionedValidationErrorWithDetailsException): ProblemDetail {
         logError(
             httpStatus = HttpStatus.BAD_REQUEST,
