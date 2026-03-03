@@ -82,8 +82,7 @@ class KlageLookupClient(
                             response = response,
                             functionName = ::getUserInfo.name,
                             classLogger = logger,
-                        )
-                        response.createError()
+                        ).then(response.createError())
                     } else {
                         response.bodyToMono<ExtendedUserResponse>()
                     }
