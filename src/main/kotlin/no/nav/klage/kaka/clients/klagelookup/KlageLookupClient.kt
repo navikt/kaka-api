@@ -101,7 +101,7 @@ class KlageLookupClient(
         return runWithTimingAndLogging {
             val token = "Bearer ${tokenUtil.getOnBehalfOfTokenWithKlageLookupScope()}"
             klageLookupWebClient.get()
-                .uri("/enheter/{${enhetsnummer}}/users")
+                .uri("/enheter/$enhetsnummer/users")
                 .header(
                     HttpHeaders.AUTHORIZATION,
                     token,
