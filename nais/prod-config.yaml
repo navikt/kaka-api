@@ -29,9 +29,9 @@ groups:
   - name: EGEN_ANSATT_ROLE_ID
     value: e750ceb5-b70b-4d94-b4fa-9d22467b786b
   - name: FORTROLIG_ROLE_ID
-    value: 9ec6487d-f37a-4aad-a027-cd221c1ac32b
+    value: e98efc34-12d1-401f-b059-f17e62834065
   - name: STRENGT_FORTROLIG_ROLE_ID
-    value: ad7b87a6-9180-467c-affc-20a566b0fec0
+    value: 2931da41-8b8e-42cd-99c0-04a169ddae40
   - name: KAKA_TOTALSTATISTIKK_ROLE_ID
     value: 596cbd6f-bc5c-4a4c-bf9e-9f734d556051
   - name: KAKA_LEDERSTATISTIKK_ROLE_ID
