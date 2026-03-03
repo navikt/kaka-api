@@ -25,14 +25,14 @@ internal class SaksdataServiceTest {
             kvalitetsvurderingV2Repository = mockk(),
             kvalitetsvurderingV1Service = mockk(),
             kvalitetsvurderingV2Service = mockk(),
-            azureGateway = mockk(),
             tokenUtil = mockk(),
             rolleMapper = mockk(),
             kakaVersion2Date = mockk(),
             kvalitetsvurderingV3Repository = mockk(),
             kvalitetsvurderingV3Service = mockk(),
             kakaVersion3Date = mockk(),
-            klageLookupClient = mockk()
+            klageLookupClient = mockk(),
+            saksbehandlerService = mockk(),
         )
 
     @BeforeEach

@@ -5,10 +5,10 @@ import no.nav.klage.kaka.api.view.MyResponseV3
 import no.nav.klage.kaka.api.view.OpenResponseWithoutEnheterV3
 import no.nav.klage.kaka.api.view.TotalResponseV3
 import no.nav.klage.kaka.api.view.VedtaksinstanslederResponseV3
-import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportServiceV3
+import no.nav.klage.kaka.services.SaksbehandlerService
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
@@ -27,8 +27,8 @@ import java.time.LocalDate
 class ExportControllerV3(
     private val exportServiceV3: ExportServiceV3,
     private val tokenUtil: TokenUtil,
-    private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
+    private val saksbehandlerService: SaksbehandlerService,
 ) {
 
     companion object {
@@ -45,7 +45,7 @@ class ExportControllerV3(
 
         val innloggetSaksbehandler = tokenUtil.getIdent()
 
-        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        val enhet = saksbehandlerService.getUserEnhet(navIdent = innloggetSaksbehandler)
 
         val data = exportServiceV3.getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
             fromDate = fromDate,
@@ -112,7 +112,7 @@ class ExportControllerV3(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not allowed to read kvalitetstilbakemeldinger")
         }
 
-        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
         val data = exportServiceV3.getFinishedAsRawDataByDatesForVedtaksinstansleder(
             fromDate = fromDate,

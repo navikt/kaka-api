@@ -10,7 +10,6 @@ import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.setFieldOnObject
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
-import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import tools.jackson.databind.JsonNode
 import tools.jackson.databind.node.*

@@ -3,9 +3,9 @@ package no.nav.klage.kaka.api
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.SaksdataListView
 import no.nav.klage.kaka.api.view.toSaksdataView
-import no.nav.klage.kaka.clients.azure.AzureGateway
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
+import no.nav.klage.kaka.services.SaksbehandlerService
 import no.nav.klage.kaka.services.SaksdataService
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
@@ -23,9 +23,8 @@ import java.time.LocalDate
 class SaksdataListController(
     private val tokenUtil: TokenUtil,
     private val saksdataService: SaksdataService,
-    private val azureGateway: AzureGateway,
     private val rolleMapper: RolleMapper,
-
+    private val saksbehandlerService: SaksbehandlerService,
     ) {
 
     companion object {
@@ -73,7 +72,7 @@ class SaksdataListController(
             throw MissingTilgangException("user $navIdent is not allowed to read kvalitetstilbakemeldinger")
         }
 
-        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
         return SaksdataListView(
             searchHits = saksdataService.searchAsVedtaksinstanslederV1(
@@ -110,7 +109,7 @@ class SaksdataListController(
             throw MissingTilgangException("user $navIdent is not allowed to read kvalitetstilbakemeldinger")
         }
 
-        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
         return SaksdataListView(
             searchHits = saksdataService.searchAsVedtaksinstanslederV2(
@@ -145,7 +144,7 @@ class SaksdataListController(
             throw MissingTilgangException("user $navIdent is not allowed to read kvalitetstilbakemeldinger")
         }
 
-        val enhet = azureGateway.getDataOmInnloggetSaksbehandler().enhet
+        val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
         return SaksdataListView(
             searchHits = saksdataService.searchAsVedtaksinstanslederV3(
