@@ -28,6 +28,7 @@ class MetadataController(
     @GetMapping("/userdata", produces = ["application/json"])
     fun getUserData(): UserData {
         val navIdent = tokenUtil.getIdent()
+        logger.debug("Getting userdata for navIdent {}", navIdent)
         return saksbehandlerService.getUserData(navIdent = navIdent)
     }
 }
