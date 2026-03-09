@@ -286,4 +286,4 @@ class Saksdata(
 }
 
 val noRegistringshjemmelNeeded = listOf(Utfall.TRUKKET, Utfall.RETUR, Utfall.HENLAGT)
-val noKvalitetsvurderingNeeded = listOf(Utfall.TRUKKET, Utfall.RETUR, Utfall.UGUNST, Utfall.HENLAGT)
+val noKvalitetsvurderingNeeded = listOf(Utfall.TRUKKET, Utfall.RETUR, Utfall.HENLAGT)
