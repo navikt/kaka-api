@@ -59,6 +59,9 @@ class KvalitetsvurderingV3RepositoryTest: PostgresIntegrationTestBase() {
             saksbehandlingsreglerBruddPaaVeiledningsplikten = Random.nextBoolean(),
             saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser = Random.nextBoolean(),
             saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling = Random.nextBoolean(),
+            saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak = Random.nextBoolean(),
+            saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaUtredningsplikten = Random.nextBoolean(),
             saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok = Random.nextBoolean(),
             saksbehandlingsreglerUtredningspliktenUtredningenAvInntektsArbeidsforholdHarIkkeVaertGodNok = Random.nextBoolean(),
@@ -89,6 +92,7 @@ class KvalitetsvurderingV3RepositoryTest: PostgresIntegrationTestBase() {
             saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke = Random.nextBoolean(),
             saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = Random.nextBoolean(),
             saksbehandlingsreglerOmgjoeringDetErFattetVedtakTilTrossForAtBeslutningVarRiktigAvgjoerelsesform = Random.nextBoolean(),
@@ -147,6 +151,15 @@ class KvalitetsvurderingV3RepositoryTest: PostgresIntegrationTestBase() {
         )
         assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning).isEqualTo(
             kvalitetsvurderingV3.saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning
+        )
+        assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling).isEqualTo(
+            kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling
+        )
+        assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak).isEqualTo(
+            kvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak
+        )
+        assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt).isEqualTo(
+            kvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt
         )
         assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaUtredningsplikten).isEqualTo(
             kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaUtredningsplikten
@@ -210,6 +223,9 @@ class KvalitetsvurderingV3RepositoryTest: PostgresIntegrationTestBase() {
         )
         assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser).isEqualTo(
             kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser
+        )
+        assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak).isEqualTo(
+            kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak
         )
         assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke).isEqualTo(
             kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke

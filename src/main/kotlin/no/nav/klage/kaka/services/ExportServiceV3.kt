@@ -768,6 +768,29 @@ class ExportServiceV3(
                     )
                 )
 
+                // Brudd på reglene om forhåndsvarsling
+                add(
+                    Field(
+                        fieldName = "Brudd på reglene om forhåndsvarsling",
+                        value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Parten har ikke blitt varslet før det ble fattet vedtak i saken",
+                        value = kvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak,
+                        type = BOOLEAN
+                    )
+                )
+                add(
+                    Field(
+                        fieldName = "Parten har blitt varslet, men varselets innhold er mangelfullt",
+                        value = kvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt,
+                        type = BOOLEAN
+                    )
+                )
+
                 // Brudd på utredningsplikten
                 add(
                     Field(
@@ -922,6 +945,14 @@ class ExportServiceV3(
                         type = BOOLEAN
                     )
                 )
+                add(
+                    Field(
+                        fieldName = "Reglene for enkeltvedtak er ikke fulgt til tross for at underinstansen i realiteten har fattet et nytt enkeltvedtak i klagesaken",
+                        value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak,
+                        type = BOOLEAN
+                    )
+                )
+
 
                 // Brudd på reglene om omgjøring
                 add(
