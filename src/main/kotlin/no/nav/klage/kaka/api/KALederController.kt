@@ -53,10 +53,22 @@ class KALederController(
 
         validateHasExcelMedFritekst()
 
-        val file = if (version == 2) {
-            exportServiceV2.getAsExcel(includeFritekst = true, queryParams = queryParams)
-        } else {
-            exportServiceV1.getAsExcel(includeFritekst = true, queryParams = queryParams)
+        val file = when (version) {
+            1 -> {
+                exportServiceV1.getAsExcel(includeFritekst = true, queryParams = queryParams)
+            }
+
+            2 -> {
+                exportServiceV2.getAsExcel(includeFritekst = true, queryParams = queryParams)
+            }
+
+            3 -> {
+                exportServiceV3.getAsExcel(includeFritekst = true, queryParams = queryParams)
+            }
+
+            else -> {
+                error("Wrong supplied version $version")
+            }
         }
 
         val responseHeaders = HttpHeaders()
@@ -86,10 +98,22 @@ class KALederController(
 
         validateHasExcelUtenFritekst()
 
-        val file = if (version == 2) {
-            exportServiceV2.getAsExcel(includeFritekst = false, queryParams = queryParams)
-        } else {
-            exportServiceV1.getAsExcel(includeFritekst = false, queryParams = queryParams)
+        val file = when (version) {
+            1 -> {
+                exportServiceV1.getAsExcel(includeFritekst = false, queryParams = queryParams)
+            }
+
+            2 -> {
+                exportServiceV2.getAsExcel(includeFritekst = false, queryParams = queryParams)
+            }
+
+            3 -> {
+                exportServiceV3.getAsExcel(includeFritekst = false, queryParams = queryParams)
+            }
+
+            else -> {
+                error("Wrong supplied version $version")
+            }
         }
 
         val responseHeaders = HttpHeaders()
