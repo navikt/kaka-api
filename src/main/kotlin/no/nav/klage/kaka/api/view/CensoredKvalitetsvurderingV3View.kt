@@ -22,6 +22,11 @@ data class CensoredKvalitetsvurderingV3View(
     val saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser: Boolean,
     val saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning: Boolean,
 
+    // Forhåndsvarsling
+    val saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling: Boolean,
+    val saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak: Boolean,
+    val saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt: Boolean,
+
     // Utredningsplikten
     val saksbehandlingsreglerBruddPaaUtredningsplikten: Boolean,
     val saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok: Boolean,
@@ -50,6 +55,7 @@ data class CensoredKvalitetsvurderingV3View(
     val saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert: Boolean,
     val saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold: Boolean,
     val saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser: Boolean,
+    val saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak: Boolean,
 
     // Omgjøring
     val saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke: Boolean,
@@ -98,6 +104,11 @@ fun KvalitetsvurderingV3.toCensoredKvalitetsvurderingV3View(): CensoredKvalitets
         saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser = saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser,
         saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning = saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning,
 
+        // Forhåndsvarsling
+        saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling = saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling,
+        saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak = saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak,
+        saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt = saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt,
+
         // Utredningsplikten
         saksbehandlingsreglerBruddPaaUtredningsplikten = saksbehandlingsreglerBruddPaaUtredningsplikten,
         saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok = saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok,
@@ -129,6 +140,7 @@ fun KvalitetsvurderingV3.toCensoredKvalitetsvurderingV3View(): CensoredKvalitets
         saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert,
         saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold,
         saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser,
+        saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak,
 
         // Omgjøring
         saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke = saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke,

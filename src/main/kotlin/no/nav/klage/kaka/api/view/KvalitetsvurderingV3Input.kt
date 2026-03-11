@@ -26,6 +26,11 @@ data class KvalitetsvurderingV3Input(
     val saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser: Boolean?,
     val saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning: Boolean?,
 
+    // Brudd på reglene om forhåndsvarsling
+    val saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling: Boolean?,
+    val saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak: Boolean?,
+    val saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt: Boolean?,
+
     // Brudd på utredningsplikten
     val saksbehandlingsreglerBruddPaaUtredningsplikten: Boolean?,
     val saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok: Boolean?,
@@ -54,6 +59,7 @@ data class KvalitetsvurderingV3Input(
     val saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert: Boolean?,
     val saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold: Boolean?,
     val saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser: Boolean?,
+    val saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak: Boolean?,
 
     // Brudd på reglene om omgjøring utenfor ordinær klage- og ankesaksbehandling
     val saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke: Boolean?,

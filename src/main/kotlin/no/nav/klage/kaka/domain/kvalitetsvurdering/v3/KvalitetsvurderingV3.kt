@@ -87,6 +87,16 @@ class KvalitetsvurderingV3(
     @Column(name = "sbr_veiledningsplikten_nav_ikke_gitt_god_nok")
     var saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning: Boolean = false,
 
+    // Brudd på reglene om forhåndsvarsling, forvaltningsloven § 16
+    @Column(name = "sbr_brudd_paa_reglene_om_forhaandsvarsling")
+    var saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling: Boolean = false,
+
+    @Column(name = "sbr_forhaandsvarsling_parten_ikke_varslet_foer_vedtak")
+    var saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak: Boolean = false,
+
+    @Column(name = "sbr_forhaandsvarsling_parten_varslet_mangelfullt")
+    var saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt: Boolean = false,
+
     // Brudd på utredningsplikten, forvaltningsloven § 17
     @Column(name = "sbr_brudd_paa_utredningsplikten")
     var saksbehandlingsreglerBruddPaaUtredningsplikten: Boolean = false,
@@ -175,6 +185,9 @@ class KvalitetsvurderingV3(
     @Column(name = "sbr_brudd_paa_klage_under_klageforberedelsen")
     var saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser: Boolean = false,
 
+    @Column(name = "sbr_brudd_paa_klage_ikke_fulgt_regler_fattet_nytt_enkeltvedtak")
+    var saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak: Boolean = false,
+
     // Brudd på reglene om omgjøring utenfor ordinær klage- og ankesaksbehandling, forvaltningsloven § 35
     @Column(name = "sbr_brudd_paa_omgjoering")
     var saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke: Boolean = false,
@@ -251,6 +264,7 @@ class KvalitetsvurderingV3(
         saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = false
         saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = false
         saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = false
+        saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = false
     }
 
     fun cleanup() {
@@ -292,6 +306,10 @@ class KvalitetsvurderingV3(
             saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser = false
             saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning = false
 
+            saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling = false
+            saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak = false
+            saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt = false
+
             saksbehandlingsreglerBruddPaaUtredningsplikten = false
             saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok = false
             saksbehandlingsreglerUtredningspliktenUtredningenAvInntektsArbeidsforholdHarIkkeVaertGodNok = false
@@ -316,6 +334,7 @@ class KvalitetsvurderingV3(
             saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = false
             saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = false
             saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = false
+            saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = false
 
             saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke = false
             saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = false
@@ -333,6 +352,10 @@ class KvalitetsvurderingV3(
             if (!saksbehandlingsreglerBruddPaaVeiledningsplikten) {
                 saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser = false
                 saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning = false
+            }
+            if (!saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling) {
+                saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak = false
+                saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt = false
             }
             if (!saksbehandlingsreglerBruddPaaUtredningsplikten) {
                 saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok = false
@@ -369,6 +392,7 @@ class KvalitetsvurderingV3(
                 saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = false
                 saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser =
                     false
+                saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = false
             }
             if (!saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke) {
                 saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = false
@@ -455,6 +479,7 @@ class KvalitetsvurderingV3(
         } else if (saksbehandlingsregler == Radiovalg.MANGELFULLT) {
             // Level 1: Must choose at least one main category
             val commonCheck = !saksbehandlingsreglerBruddPaaVeiledningsplikten &&
+                    !saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling &&
                     !saksbehandlingsreglerBruddPaaUtredningsplikten &&
                     !saksbehandlingsreglerBruddPaaForeleggelsesplikten &&
                     !saksbehandlingsreglerBruddPaaBegrunnelsesplikten &&
@@ -476,6 +501,14 @@ class KvalitetsvurderingV3(
                     !saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning
                 ) {
                     result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaVeiledningsplikten.name + "Group"))
+                }
+            }
+
+            if (saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling) {
+                if (!saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak &&
+                    !saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt
+                ) {
+                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling.name + "Group"))
                 }
             }
 
@@ -568,7 +601,8 @@ class KvalitetsvurderingV3(
             if (saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse) {
                 if (!saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert &&
                     !saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold &&
-                    !saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser
+                    !saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser &&
+                    !saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak
                 ) {
                     result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse.name + "Group"))
                 }
