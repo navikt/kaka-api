@@ -227,6 +227,9 @@ class KvalitetsvurderingV3RepositoryTest: PostgresIntegrationTestBase() {
         assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak).isEqualTo(
             kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak
         )
+        assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen).isEqualTo(
+            kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen
+        )
         assertThat(foundKvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke).isEqualTo(
             kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke
         )

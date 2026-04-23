@@ -244,6 +244,7 @@ class AddRandomDataController(
             saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = Random.nextBoolean(),
+            saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke = Random.nextBoolean(),
             saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = Random.nextBoolean(),
             saksbehandlingsreglerOmgjoeringDetErFattetVedtakTilTrossForAtBeslutningVarRiktigAvgjoerelsesform = Random.nextBoolean(),

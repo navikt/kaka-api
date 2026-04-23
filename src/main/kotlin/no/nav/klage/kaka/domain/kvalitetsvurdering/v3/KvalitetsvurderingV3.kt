@@ -188,6 +188,9 @@ class KvalitetsvurderingV3(
     @Column(name = "sbr_brudd_paa_klage_ikke_fulgt_regler_fattet_nytt_enkeltvedtak")
     var saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak: Boolean = false,
 
+    @Column(name = "sbr_brudd_paa_klage_alle_rel_dok_ikke_oversendt_klageinstansen")
+    var saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen: Boolean = false,
+
     // Brudd på reglene om omgjøring utenfor ordinær klage- og ankesaksbehandling, forvaltningsloven § 35
     @Column(name = "sbr_brudd_paa_omgjoering")
     var saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke: Boolean = false,
@@ -265,6 +268,7 @@ class KvalitetsvurderingV3(
         saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = false
         saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = false
         saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = false
+        saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen = false
     }
 
     fun cleanup() {
@@ -335,6 +339,7 @@ class KvalitetsvurderingV3(
             saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = false
             saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser = false
             saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = false
+            saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen = false
 
             saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke = false
             saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = false
@@ -393,6 +398,7 @@ class KvalitetsvurderingV3(
                 saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser =
                     false
                 saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak = false
+                saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen = false
             }
             if (!saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke) {
                 saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert = false
@@ -602,7 +608,8 @@ class KvalitetsvurderingV3(
                 if (!saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert &&
                     !saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold &&
                     !saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser &&
-                    !saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak
+                    !saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak &&
+                    !saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen
                 ) {
                     result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse.name + "Group"))
                 }
