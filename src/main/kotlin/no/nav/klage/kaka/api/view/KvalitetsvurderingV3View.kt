@@ -1,8 +1,13 @@
 package no.nav.klage.kaka.api.view
 
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v3.KvalitetsvurderingV3
+import java.time.LocalDateTime
+import java.util.UUID
 
 data class KvalitetsvurderingV3View(
+    val id: UUID,
+    val created: LocalDateTime,
+    val modified: LocalDateTime,
     // Kvalitetsavvik i forvaltningen av særregelverket
     val saerregelverkAutomatiskVedtak: Boolean,
     val saerregelverk: KvalitetsvurderingV3.Radiovalg?,
@@ -68,6 +73,9 @@ data class KvalitetsvurderingV3View(
 
 fun KvalitetsvurderingV3.toKvalitetsvurderingV3View(): KvalitetsvurderingV3View {
     return KvalitetsvurderingV3View(
+        id = id,
+        created = created,
+        modified = modified,
         // Kvalitetsavvik i forvaltningen av særregelverket
         saerregelverkAutomatiskVedtak = saerregelverkAutomatiskVedtak,
         saerregelverk = saerregelverk,
