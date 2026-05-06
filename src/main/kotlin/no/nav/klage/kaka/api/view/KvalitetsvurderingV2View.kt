@@ -1,8 +1,13 @@
 package no.nav.klage.kaka.api.view
 
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v2.KvalitetsvurderingV2
+import java.time.LocalDateTime
+import java.util.UUID
 
 data class KvalitetsvurderingV2View(
+    val id: UUID,
+    val created: LocalDateTime,
+    val modified: LocalDateTime,
     val klageforberedelsen: KvalitetsvurderingV2.Radiovalg?,
     val klageforberedelsenOversittetKlagefristIkkeKommentert: Boolean,
     val klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt: Boolean,
@@ -55,6 +60,9 @@ data class KvalitetsvurderingV2View(
 
 fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View {
     return KvalitetsvurderingV2View(
+        id = id,
+        created = created,
+        modified = modified,
         klageforberedelsen = klageforberedelsen,
         klageforberedelsenOversittetKlagefristIkkeKommentert = klageforberedelsenOversittetKlagefristIkkeKommentert,
         klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt = klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt,
