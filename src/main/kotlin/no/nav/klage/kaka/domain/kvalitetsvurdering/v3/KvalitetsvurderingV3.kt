@@ -246,7 +246,7 @@ class KvalitetsvurderingV3(
     val created: LocalDateTime = LocalDateTime.now(),
 
     @Column(name = "modified")
-    var modified: LocalDateTime = LocalDateTime.now()
+    var modified: LocalDateTime = created
 ) {
 
     override fun equals(other: Any?): Boolean {

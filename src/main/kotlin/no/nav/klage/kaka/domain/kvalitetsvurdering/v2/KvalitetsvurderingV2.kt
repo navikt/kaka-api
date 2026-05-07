@@ -145,7 +145,7 @@ class KvalitetsvurderingV2(
 
     var annetFritekst: String? = null,
     val created: LocalDateTime = LocalDateTime.now(),
-    var modified: LocalDateTime = LocalDateTime.now()
+    var modified: LocalDateTime = created
 ) {
 
     override fun equals(other: Any?): Boolean {
