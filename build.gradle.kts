@@ -11,7 +11,7 @@ val springDocVersion = "3.0.3"
 val shedlockVersion = "7.7.0"
 val klageKodeverkVersion = "3.2.11"
 val ehcacheVersion = "3.12.0"
-val otelVersion = "1.61.0"
+val otelVersion = "1.62.0"
 
 plugins {
     val kotlinVersion = "2.3.21"
