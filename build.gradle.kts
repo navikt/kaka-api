@@ -5,11 +5,11 @@ val logstashVersion = "9.0"
 val tokenValidationVersion = "6.0.8"
 val archunitVersion = "1.4.2"
 val testContainersVersion = "2.0.5"
-val mockkVersion = "1.14.9"
+val mockkVersion = "1.14.11"
 val apachePoiVersion = "5.5.1"
 val springDocVersion = "3.0.3"
 val shedlockVersion = "7.7.0"
-val klageKodeverkVersion = "3.2.14"
+val klageKodeverkVersion = "3.2.17"
 val ehcacheVersion = "3.12.0"
 val otelVersion = "1.62.0"
 
@@ -60,13 +60,13 @@ dependencies {
 
     //Fix vulnerabilities, while waiting for fix in Spring Boot.
     implementation("org.apache.tomcat.embed:tomcat-embed-core:11.0.22")
-    implementation("io.netty:netty-codec-http:4.2.14.Final")
-    implementation("io.netty:netty-codec-http2:4.2.14.Final")
-    implementation("io.netty:netty-codec-http3:4.2.14.Final")
-    implementation("io.netty:netty-codec-dns:4.2.14.Final")
-    implementation("io.netty:netty-codec-compression:4.2.14.Final")
-    implementation("io.netty:netty-transport-native-epoll:4.2.14.Final")
-    implementation("io.netty:netty-resolver-dns:4.2.14.Final")
+    implementation("io.netty:netty-codec-http:4.2.15.Final")
+    implementation("io.netty:netty-codec-http2:4.2.15.Final")
+    implementation("io.netty:netty-codec-http3:4.2.15.Final")
+    implementation("io.netty:netty-codec-dns:4.2.15.Final")
+    implementation("io.netty:netty-codec-compression:4.2.15.Final")
+    implementation("io.netty:netty-transport-native-epoll:4.2.15.Final")
+    implementation("io.netty:netty-resolver-dns:4.2.15.Final")
 
     implementation("io.opentelemetry:opentelemetry-api:$otelVersion")
 
