@@ -9,7 +9,7 @@ val mockkVersion = "1.14.9"
 val apachePoiVersion = "5.5.1"
 val springDocVersion = "3.0.3"
 val shedlockVersion = "7.7.0"
-val klageKodeverkVersion = "3.3.0"
+val klageKodeverkVersion = "3.3.1"
 val ehcacheVersion = "3.12.0"
 val otelVersion = "1.62.0"
 
@@ -57,7 +57,7 @@ dependencies {
     implementation("com.papertrailapp:logback-syslog4j:1.0.0")
     implementation("net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion")
     implementation("net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion")
-    
+
     implementation("io.opentelemetry:opentelemetry-api:$otelVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-cache")
