@@ -151,10 +151,7 @@ class ExportServiceV1(
             toDateTime = toDateTime,
         )
 
-        return if (!saksbehandlerIdentList.isNullOrEmpty()) {
-            val (mine, rest) = resultList.filter { it.saksdata.utfoerendeSaksbehandler !in saksbehandlerIdentList }
-                .partition { it.saksdata.tilknyttetEnhet == enhet.navn }
-
+        val saksbehandlerMap = if (!saksbehandlerIdentList.isNullOrEmpty()) {
             val saksbehandlerMap = saksbehandlerIdentList.associateWith { _ ->
                 emptyList<AnonymizedFinishedVurderingV1>()
             }.toMutableMap()
@@ -165,20 +162,17 @@ class ExportServiceV1(
                     saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
                 }
             }
-
-            AnonymizedManagerResponseV1(
-                saksbehandlere = saksbehandlerMap,
-                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
-                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
-            )
+            saksbehandlerMap
         } else {
-            val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
-            AnonymizedManagerResponseV1(
-                saksbehandlere = emptyMap(),
-                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
-                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
-            )
+            emptyMap()
         }
+
+        val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+        return AnonymizedManagerResponseV1(
+            saksbehandlere = saksbehandlerMap,
+            mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+            rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
+        )
     }
 
     private fun validateNotCurrentMonth(toMonth: YearMonth) {
