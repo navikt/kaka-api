@@ -161,10 +161,7 @@ class ExportServiceV2(
             toDateTime = toDateTime,
         )
 
-        return if (!saksbehandlerIdentList.isNullOrEmpty()) {
-            val (mine, rest) = resultList.filter { it.saksdata.utfoerendeSaksbehandler !in saksbehandlerIdentList }
-                .partition { it.saksdata.tilknyttetEnhet == enhet.navn }
-
+        val saksbehandlerMap = if (!saksbehandlerIdentList.isNullOrEmpty()) {
             val saksbehandlerMap = saksbehandlerIdentList.associateWith { _ ->
                 emptyList<AnonymizedFinishedVurderingV2>()
             }.toMutableMap()
@@ -175,20 +172,17 @@ class ExportServiceV2(
                     saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
                 }
             }
-
-            AnonymizedManagerResponseV2(
-                saksbehandlere = saksbehandlerMap,
-                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
-                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
-            )
+            saksbehandlerMap
         } else {
-            val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
-            AnonymizedManagerResponseV2(
-                saksbehandlere = emptyMap(),
-                mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
-                rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
-            )
+            emptyMap()
         }
+
+        val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
+        return AnonymizedManagerResponseV2(
+            saksbehandlere = saksbehandlerMap,
+            mine = privateGetFinishedAsRawData(resultList = mine.toSet()),
+            rest = privateGetFinishedAsRawData(resultList = rest.toSet()),
+        )
     }
 
     private fun validateNotCurrentMonth(toMonth: YearMonth) {
@@ -573,7 +567,13 @@ class ExportServiceV2(
     }
 
     private fun getMottattForrigeInstans(saksdata: Saksdata): Date {
-        val mottattForrigeInstans = if (saksdata.sakstype in listOf(Type.ANKE, Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET, Type.OMGJOERINGSKRAV, Type.BEGJAERING_OM_GJENOPPTAK)) {
+        val mottattForrigeInstans = if (saksdata.sakstype in listOf(
+                Type.ANKE,
+                Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
+                Type.OMGJOERINGSKRAV,
+                Type.BEGJAERING_OM_GJENOPPTAK
+            )
+        ) {
             saksdata.mottattKlageinstans!!.toDate()
         } else {
             saksdata.mottattVedtaksinstans!!.toDate()

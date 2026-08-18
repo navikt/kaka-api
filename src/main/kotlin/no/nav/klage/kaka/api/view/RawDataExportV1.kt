@@ -120,10 +120,13 @@ data class Date(
 )
 
 data class ManagerResponseV1(
-    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV1>,
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV1>>?,
+    /* delete when myEnhet is in use */
     val mine: List<AnonymizedFinishedVurderingV1>,
+    val myEnhet: List<AnonymizedFinishedVurderingV1>,
+    /* delete when otherEnheter is in use */
     val rest: List<AnonymizedFinishedVurderingV1>,
+    val otherEnheter: List<AnonymizedFinishedVurderingV1>,
 )
 
 data class TotalResponseV1(

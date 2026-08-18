@@ -142,10 +142,13 @@ data class AnonymizedFinishedVurderingWithoutEnheterV2(
 )
 
 data class ManagerResponseV2(
-    val anonymizedFinishedVurderingList: List<AnonymizedFinishedVurderingV2>,
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV2>>?,
+    /* delete when myEnhet is in use */
     val mine: List<AnonymizedFinishedVurderingV2>,
+    val myEnhet: List<AnonymizedFinishedVurderingV2>,
+    /* delete when otherEnheter is in use */
     val rest: List<AnonymizedFinishedVurderingV2>,
+    val otherEnheter: List<AnonymizedFinishedVurderingV2>,
 )
 
 data class TotalResponseV2(
