@@ -8,18 +8,20 @@ import no.nav.klage.kaka.domain.kvalitetsvurdering.v3.KvalitetsvurderingV3
 import no.nav.klage.kaka.repositories.KvalitetsvurderingV3Repository
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.util.TokenUtil
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import tools.jackson.databind.json.JsonMapper
 import tools.jackson.databind.node.BooleanNode
 import tools.jackson.databind.node.ObjectNode
 import tools.jackson.databind.node.StringNode
-import java.util.*
+import java.util.UUID
 
 class KvalitetsvurderingV3ServiceTest {
-
-    private val SAKSBEHANDLER_IDENT = "SAKSBEHANDLER_IDENT"
+    private val saksbehandlerIdent = "SAKSBEHANDLER_IDENT"
 
     private val kvalitetsvurderingV3Repository = mockk<KvalitetsvurderingV3Repository>()
     private val saksdataRepository = mockk<SaksdataRepository>()
@@ -33,25 +35,28 @@ class KvalitetsvurderingV3ServiceTest {
 
     @BeforeEach
     fun setUp() {
-        kvalitetsvurderingV3Service = KvalitetsvurderingV3Service(
-            kvalitetsvurderingV3Repository = kvalitetsvurderingV3Repository,
-            saksdataRepository = saksdataRepository,
-            tokenUtil = tokenUtil,
-        )
+        kvalitetsvurderingV3Service =
+            KvalitetsvurderingV3Service(
+                kvalitetsvurderingV3Repository = kvalitetsvurderingV3Repository,
+                saksdataRepository = saksdataRepository,
+                tokenUtil = tokenUtil,
+            )
 
         kvalitetsvurderingId = UUID.randomUUID()
         kvalitetsvurdering = KvalitetsvurderingV3(id = kvalitetsvurderingId)
 
-        every { tokenUtil.getIdent() } returns SAKSBEHANDLER_IDENT
+        every { tokenUtil.getIdent() } returns saksbehandlerIdent
         every { kvalitetsvurderingV3Repository.getReferenceById(kvalitetsvurderingId) } returns kvalitetsvurdering
-        every { saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId) } returns Saksdata(
-            utfoerendeSaksbehandler = SAKSBEHANDLER_IDENT,
-            tilknyttetEnhet = "4295",
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingId,
-                version = 3,
-            ),
-        )
+        every { saksdataRepository.findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId) } returns
+            Saksdata(
+                utfoerendeSaksbehandler = saksbehandlerIdent,
+                tilknyttetEnhet = "4295",
+                kvalitetsvurderingReference =
+                    KvalitetsvurderingReference(
+                        id = kvalitetsvurderingId,
+                        version = 3,
+                    ),
+            )
     }
 
     @Test
@@ -59,7 +64,7 @@ class KvalitetsvurderingV3ServiceTest {
         val inputJson: ObjectNode = jsonMapper.createObjectNode()
         inputJson.set("saerregelverkAutomatiskVedtak", BooleanNode.TRUE)
 
-        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId, inputJson)
+        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId = kvalitetsvurderingId, input = inputJson)
 
         assertTrue(result.saerregelverkAutomatiskVedtak)
     }
@@ -69,7 +74,7 @@ class KvalitetsvurderingV3ServiceTest {
         val inputJson: ObjectNode = jsonMapper.createObjectNode()
         inputJson.set("saerregelverk", StringNode("BRA"))
 
-        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId, inputJson)
+        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId = kvalitetsvurderingId, input = inputJson)
 
         assertEquals(KvalitetsvurderingV3.Radiovalg.BRA, result.saerregelverk)
     }
@@ -81,7 +86,7 @@ class KvalitetsvurderingV3ServiceTest {
         inputJson.set("saerregelverkLovenErTolketEllerAnvendtFeil", BooleanNode.TRUE)
         inputJson.set("saerregelverk", StringNode("MANGELFULLT"))
 
-        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId, inputJson)
+        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId = kvalitetsvurderingId, input = inputJson)
 
         assertTrue(result.saerregelverkAutomatiskVedtak)
         assertTrue(result.saerregelverkLovenErTolketEllerAnvendtFeil)
@@ -94,7 +99,7 @@ class KvalitetsvurderingV3ServiceTest {
         inputJson.set("saksbehandlingsreglerBruddPaaVeiledningsplikten", BooleanNode.TRUE)
         inputJson.set("saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser", BooleanNode.TRUE)
 
-        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId, inputJson)
+        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId = kvalitetsvurderingId, input = inputJson)
 
         assertTrue(result.saksbehandlingsreglerBruddPaaVeiledningsplikten)
         assertTrue(result.saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser)
@@ -107,7 +112,7 @@ class KvalitetsvurderingV3ServiceTest {
         val inputJson: ObjectNode = jsonMapper.createObjectNode()
         inputJson.set("saerregelverkAutomatiskVedtak", BooleanNode.TRUE)
 
-        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId, inputJson)
+        val result = kvalitetsvurderingV3Service.patchKvalitetsvurdering(kvalitetsvurderingId = kvalitetsvurderingId, input = inputJson)
 
         assertNotNull(result.modified)
         assertNotEquals(originalModified, result.modified)

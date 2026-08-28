@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class KakaApplication
 
 fun main(args: Array<String>) {
-	runApplication<KakaApplication>(*args)
+    runApplication<KakaApplication>(*args)
 }

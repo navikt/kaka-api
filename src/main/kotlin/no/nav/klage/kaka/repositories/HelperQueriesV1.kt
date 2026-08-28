@@ -23,11 +23,12 @@ fun getMangelfulltQueryV1(mangelfullt: List<String>): String {
     }
 
     for ((index, q) in queryParts.filterNotNull().withIndex()) {
-        query += if (index == 0) {
-            q
-        } else {
-            " OR $q"
-        }
+        query +=
+            if (index == 0) {
+                q
+            } else {
+                " OR $q"
+            }
     }
 
     query += " ) "
@@ -38,34 +39,40 @@ fun getMangelfulltQueryV1(mangelfullt: List<String>): String {
 private fun getForberedelsenQuery(mangelfullt: List<String>) =
     if ("forberedelsen" in mangelfullt) {
         """
-                k.klageforberedelsenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.klageforberedelsenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
 
 private fun getUtredningenQuery(mangelfullt: List<String>) =
     if ("utredningen" in mangelfullt) {
         """
-                k.utredningenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.utredningenRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
 
 private fun getVedtaketQuery(mangelfullt: List<String>) =
     if ("vedtaket" in mangelfullt) {
         """
-                k.vedtaketRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.vedtaketRadioValg = '${KvalitetsvurderingV1.RadioValg.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
 
 private fun getROLQuery(mangelfullt: List<String>) =
     if ("rol" in mangelfullt) {
         """
-                k.brukAvRaadgivendeLegeRadioValg = '${KvalitetsvurderingV1.RadioValgRaadgivendeLege.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.brukAvRaadgivendeLegeRadioValg = '${KvalitetsvurderingV1.RadioValgRaadgivendeLege.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
 
-fun getKommentarerQueryV1(
-    kommentarer: List<String>,
-): String {
+fun getKommentarerQueryV1(kommentarer: List<String>): String {
     if (kommentarer.isEmpty()) {
         return ""
     }
@@ -73,14 +80,15 @@ fun getKommentarerQueryV1(
     var query = "AND ("
 
     if ("utredningen" in kommentarer) {
-        query += """
-                    k.utredningenAvMedisinskeForholdText IS NOT NULL OR
-                    k.utredningenAvInntektsforholdText IS NOT NULL OR
-                    k.utredningenAvArbeidText IS NOT NULL OR
-                    k.arbeidsrettetBrukeroppfoelgingText IS NOT NULL OR
-                    k.utredningenAvAndreAktuelleForholdISakenText IS NOT NULL OR
-                    k.utredningenAvEoesProblematikkText IS NOT NULL OR
-                    k.veiledningFraNavText IS NOT NULL
+        query +=
+            """
+            k.utredningenAvMedisinskeForholdText IS NOT NULL OR
+            k.utredningenAvInntektsforholdText IS NOT NULL OR
+            k.utredningenAvArbeidText IS NOT NULL OR
+            k.arbeidsrettetBrukeroppfoelgingText IS NOT NULL OR
+            k.utredningenAvAndreAktuelleForholdISakenText IS NOT NULL OR
+            k.utredningenAvEoesProblematikkText IS NOT NULL OR
+            k.veiledningFraNavText IS NOT NULL
             """.trimIndent()
     }
 
@@ -88,8 +96,9 @@ fun getKommentarerQueryV1(
         if (query.length > 10) {
             query += " OR "
         }
-        query += """
-                    k.betydeligAvvikText IS NOT NULL
+        query +=
+            """
+            k.betydeligAvvikText IS NOT NULL
             """.trimIndent()
     }
 
@@ -97,8 +106,9 @@ fun getKommentarerQueryV1(
         if (query.length > 10) {
             query += " OR "
         }
-        query += """
-                    k.brukIOpplaeringText IS NOT NULL
+        query +=
+            """
+            k.brukIOpplaeringText IS NOT NULL
             """.trimIndent()
     }
 

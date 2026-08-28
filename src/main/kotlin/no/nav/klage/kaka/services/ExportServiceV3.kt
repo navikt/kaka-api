@@ -11,7 +11,10 @@ import no.nav.klage.kaka.domain.vedtaksinstansgruppeMap
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.repositories.SaksdataRepository
 import no.nav.klage.kaka.repositories.SaksdataRepositoryCustomImpl
-import no.nav.klage.kaka.services.ExportServiceV3.Field.Type.*
+import no.nav.klage.kaka.services.ExportServiceV3.Field.Type.BOOLEAN
+import no.nav.klage.kaka.services.ExportServiceV3.Field.Type.DATE
+import no.nav.klage.kaka.services.ExportServiceV3.Field.Type.NUMBER
+import no.nav.klage.kaka.services.ExportServiceV3.Field.Type.STRING
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kodeverk.Enhet
 import no.nav.klage.kodeverk.Type
@@ -25,13 +28,12 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.YearMonth
 import java.time.temporal.ChronoField
-import java.util.*
+import java.util.UUID
 
 @Service
 class ExportServiceV3(
     private val saksdataRepository: SaksdataRepository,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -41,29 +43,32 @@ class ExportServiceV3(
      * Returns excel-report, for all 'finished' saksdata (anonymized (no fnr or navIdent)). For now, only used by
      * KA-ledere.
      */
-    fun getAsExcel(includeFritekst: Boolean, queryParams: ExcelQueryParams): File {
-        val resultList = saksdataRepository.findByQueryParamsV3(
-            fromDate = queryParams.fromDate,
-            toDate = queryParams.toDate,
-            tilbakekreving = queryParams.tilbakekreving,
-            klageenheter = queryParams.klageenheter,
-            vedtaksinstansgrupper = queryParams.vedtaksinstansgrupper,
-            enheter = queryParams.enheter,
-            types = queryParams.types,
-            ytelser = queryParams.ytelser,
-            utfall = queryParams.utfall,
-            hjemler = queryParams.hjemler,
-        )
+    fun getAsExcel(
+        includeFritekst: Boolean,
+        queryParams: ExcelQueryParams,
+    ): File {
+        val resultList =
+            saksdataRepository.findByQueryParamsV3(
+                fromDate = queryParams.fromDate,
+                toDate = queryParams.toDate,
+                tilbakekreving = queryParams.tilbakekreving,
+                klageenheter = queryParams.klageenheter,
+                vedtaksinstansgrupper = queryParams.vedtaksinstansgrupper,
+                enheter = queryParams.enheter,
+                types = queryParams.types,
+                ytelser = queryParams.ytelser,
+                utfall = queryParams.utfall,
+                hjemler = queryParams.hjemler,
+            )
 
-        val saksdataFields = mapToFields(resultList, includeFritekst)
+        val saksdataFields = mapToFields(saksdataList = resultList, includeFritekst = includeFritekst)
 
         val workbook = SXSSFWorkbook(500)
 
         val sheet = workbook.createSheet("${queryParams.fromDate} til ${queryParams.toDate}")
 
         if (saksdataFields.isNotEmpty()) {
-
-            //TODO: Can be calculated based on column header.
+            // TODO: Can be calculated based on column header.
             repeat(saksdataFields.first().size) {
                 sheet.setColumnWidth(it, 6000)
             }
@@ -85,7 +90,7 @@ class ExportServiceV3(
                 headerCell.cellStyle = headerStyle
             }
 
-            //Cells
+            // Cells
             val createHelper = workbook.creationHelper
             var rowCounter = 1
 
@@ -147,33 +152,37 @@ class ExportServiceV3(
         enhet: Enhet,
         fromMonth: YearMonth,
         toMonth: YearMonth,
-        saksbehandlerIdentList: List<String>?
+        saksbehandlerIdentList: List<String>?,
     ): AnonymizedManagerResponseV3 {
         validateNotCurrentMonth(toMonth)
 
         val fromDateTime = fromMonth.atDay(1).atStartOfDay()
         val toDateTime = toMonth.atEndOfMonth().atTime(LocalTime.MAX)
 
-        val resultList = saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV3(
-            fromDateTime = fromDateTime,
-            toDateTime = toDateTime,
-        )
+        val resultList =
+            saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV3(
+                fromDateTime = fromDateTime,
+                toDateTime = toDateTime,
+            )
 
-        val saksbehandlerMap =  if (!saksbehandlerIdentList.isNullOrEmpty()) {
-            val saksbehandlerMap = saksbehandlerIdentList.associateWith { _ ->
-                emptyList<AnonymizedFinishedVurderingV3>()
-            }.toMutableMap()
+        val saksbehandlerMap =
+            if (!saksbehandlerIdentList.isNullOrEmpty()) {
+                val saksbehandlerMap =
+                    saksbehandlerIdentList
+                        .associateWith { _ ->
+                            emptyList<AnonymizedFinishedVurderingV3>()
+                        }.toMutableMap()
 
-            //Replace those who have data
-            resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.forEach {
-                if (saksbehandlerMap.containsKey(it.key)) {
-                    saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
+                // Replace those who have data
+                resultList.groupBy { it.saksdata.utfoerendeSaksbehandler }.forEach {
+                    if (saksbehandlerMap.containsKey(it.key)) {
+                        saksbehandlerMap[it.key] = privateGetFinishedAsRawData(resultList = it.value.toSet())
+                    }
                 }
+                saksbehandlerMap
+            } else {
+                emptyMap()
             }
-            saksbehandlerMap
-        } else {
-            emptyMap()
-        }
 
         val (mine, rest) = resultList.partition { it.saksdata.tilknyttetEnhet == enhet.navn }
         return AnonymizedManagerResponseV3(
@@ -192,11 +201,14 @@ class ExportServiceV3(
     /**
      * Return all 'finished' saksdata (anonymized (no fnr or navIdent)) based on given dates
      */
-    fun getFinishedAsRawDataByDates(fromDate: LocalDate, toDate: LocalDate): List<AnonymizedFinishedVurderingV3> {
+    fun getFinishedAsRawDataByDates(
+        fromDate: LocalDate,
+        toDate: LocalDate,
+    ): List<AnonymizedFinishedVurderingV3> {
         val resultList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV3(
                 fromDateTime = fromDate.atStartOfDay(),
-                toDateTime = toDate.atTime(LocalTime.MAX)
+                toDateTime = toDate.atTime(LocalTime.MAX),
             )
         return privateGetFinishedAsRawData(resultList = resultList)
     }
@@ -206,12 +218,12 @@ class ExportServiceV3(
      */
     fun getFinishedAsRawDataByDatesWithoutEnheter(
         fromDate: LocalDate,
-        toDate: LocalDate
+        toDate: LocalDate,
     ): List<AnonymizedFinishedVurderingWithoutEnheterV3> {
         val resultList =
             saksdataRepository.findByAvsluttetAvSaksbehandlerBetweenV3(
                 fromDateTime = fromDate.atStartOfDay(),
-                toDateTime = toDate.atTime(LocalTime.MAX)
+                toDateTime = toDate.atTime(LocalTime.MAX),
             )
         return privateGetFinishedAsRawDataWithoutEnheter(resultList = resultList)
     }
@@ -267,9 +279,8 @@ class ExportServiceV3(
 
     private fun privateGetFinishedAsRawData(
         resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV3>,
-    ): List<AnonymizedFinishedVurderingV3> {
-
-        return resultList.map { result ->
+    ): List<AnonymizedFinishedVurderingV3> =
+        resultList.map { result ->
             val (saksdata, kvalitetsvurderingV3) = result
 
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
@@ -296,18 +307,28 @@ class ExportServiceV3(
                 vedtaksinstansgruppe = getVedtaksinstansgruppe(saksdata.vedtaksinstansEnhet!!).id,
                 mottattKlageinstans = mottattKlageinstansDate,
                 tilbakekreving = saksdata.tilbakekreving,
-
                 // Særregelverket
                 saerregelverkAutomatiskVedtak = kvalitetsvurderingV3.saerregelverkAutomatiskVedtak,
                 saerregelverk = kvalitetsvurderingV3.saerregelverk?.name,
                 saerregelverkLovenErTolketEllerAnvendtFeil = kvalitetsvurderingV3.saerregelverkLovenErTolketEllerAnvendtFeil,
                 saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning,
-                saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList?.map { it.id },
+                saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn,
-                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList?.map { it.id },
+                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saerregelverkDetErLagtTilGrunnFeilFaktum = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktum,
-                saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList?.map { it.id },
-
+                saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 // Saksbehandlingsregler
                 saksbehandlingsregler = kvalitetsvurderingV3.saksbehandlingsregler?.name,
                 saksbehandlingsreglerBruddPaaVeiledningsplikten = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaVeiledningsplikten,
@@ -328,11 +349,23 @@ class ExportServiceV3(
                 saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten = kvalitetsvurderingV3.saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten,
                 saksbehandlingsreglerBruddPaaBegrunnelsesplikten = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaBegrunnelsesplikten,
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse,
                 saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert,
                 saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold,
@@ -348,14 +381,12 @@ class ExportServiceV3(
                 saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak,
                 saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok,
                 saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok,
-
                 // Trygdemedisin
                 brukAvRaadgivendeLege = kvalitetsvurderingV3.brukAvRaadgivendeLege?.name,
                 raadgivendeLegeIkkebrukt = kvalitetsvurderingV3.raadgivendeLegeIkkebrukt,
                 raadgivendeLegeMangelfullBrukAvRaadgivendeLege = kvalitetsvurderingV3.raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
                 raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = kvalitetsvurderingV3.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
                 raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = kvalitetsvurderingV3.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
-
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
@@ -363,16 +394,14 @@ class ExportServiceV3(
                 modifiedDate = getModifiedDate(saksdata, kvalitetsvurderingV3),
             )
         }
-    }
 
     /**
      * Return all 'finished' saksdata (anonymized (no fnr, navIdent or enheter)) based on given dates.
      */
     private fun privateGetFinishedAsRawDataWithoutEnheter(
         resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV3>,
-    ): List<AnonymizedFinishedVurderingWithoutEnheterV3> {
-
-        return resultList.map { result ->
+    ): List<AnonymizedFinishedVurderingWithoutEnheterV3> =
+        resultList.map { result ->
             val (saksdata, kvalitetsvurderingV3) = result
 
             val mottattKlageinstansDate = saksdata.mottattKlageinstans!!.toDate()
@@ -395,18 +424,28 @@ class ExportServiceV3(
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 mottattKlageinstans = mottattKlageinstansDate,
                 tilbakekreving = saksdata.tilbakekreving,
-
                 // Særregelverket
                 saerregelverkAutomatiskVedtak = kvalitetsvurderingV3.saerregelverkAutomatiskVedtak,
                 saerregelverk = kvalitetsvurderingV3.saerregelverk?.name,
                 saerregelverkLovenErTolketEllerAnvendtFeil = kvalitetsvurderingV3.saerregelverkLovenErTolketEllerAnvendtFeil,
                 saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning,
-                saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList?.map { it.id },
+                saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn,
-                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList?.map { it.id },
+                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saerregelverkDetErLagtTilGrunnFeilFaktum = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktum,
-                saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList?.map { it.id },
-
+                saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 // Saksbehandlingsregler
                 saksbehandlingsregler = kvalitetsvurderingV3.saksbehandlingsregler?.name,
                 saksbehandlingsreglerBruddPaaVeiledningsplikten = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaVeiledningsplikten,
@@ -427,11 +466,23 @@ class ExportServiceV3(
                 saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten = kvalitetsvurderingV3.saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten,
                 saksbehandlingsreglerBruddPaaBegrunnelsesplikten = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaBegrunnelsesplikten,
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse,
                 saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert,
                 saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold,
@@ -447,14 +498,12 @@ class ExportServiceV3(
                 saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak,
                 saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok,
                 saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok,
-
                 // Trygdemedisin
                 brukAvRaadgivendeLege = kvalitetsvurderingV3.brukAvRaadgivendeLege?.name,
                 raadgivendeLegeIkkebrukt = kvalitetsvurderingV3.raadgivendeLegeIkkebrukt,
                 raadgivendeLegeMangelfullBrukAvRaadgivendeLege = kvalitetsvurderingV3.raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
                 raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = kvalitetsvurderingV3.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
                 raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = kvalitetsvurderingV3.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
-
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
@@ -462,7 +511,6 @@ class ExportServiceV3(
                 modifiedDate = getModifiedDate(saksdata, kvalitetsvurderingV3),
             )
         }
-    }
 
     /**
      * Return all 'finished' saksdata (anonymized (no fnr, navIdent or enheter)) based on given dates.
@@ -470,9 +518,8 @@ class ExportServiceV3(
      */
     private fun privateGetFinishedAsRawDataWithoutEnheterWithVersion3(
         resultList: Set<SaksdataRepositoryCustomImpl.QueryResultV3>,
-    ): List<AnonymizedFinishedVurderingWithoutEnheterV3> {
-
-        return resultList.map { result ->
+    ): List<AnonymizedFinishedVurderingWithoutEnheterV3> =
+        resultList.map { result ->
             val (saksdata, kvalitetsvurderingV3) = result
 
             if (saksdata.kvalitetsvurderingReference.version != 3) {
@@ -499,18 +546,28 @@ class ExportServiceV3(
                 mottattVedtaksinstans = saksdata.mottattVedtaksinstans?.toDate(),
                 mottattKlageinstans = mottattKlageinstansDate,
                 tilbakekreving = saksdata.tilbakekreving,
-
                 // Særregelverket
                 saerregelverkAutomatiskVedtak = kvalitetsvurderingV3.saerregelverkAutomatiskVedtak,
                 saerregelverk = kvalitetsvurderingV3.saerregelverk?.name,
                 saerregelverkLovenErTolketEllerAnvendtFeil = kvalitetsvurderingV3.saerregelverkLovenErTolketEllerAnvendtFeil,
                 saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning,
-                saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList?.map { it.id },
+                saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn,
-                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList?.map { it.id },
+                saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saerregelverkDetErLagtTilGrunnFeilFaktum = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktum,
-                saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList?.map { it.id },
-
+                saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList =
+                    kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 // Saksbehandlingsregler
                 saksbehandlingsregler = kvalitetsvurderingV3.saksbehandlingsregler?.name,
                 saksbehandlingsreglerBruddPaaVeiledningsplikten = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaVeiledningsplikten,
@@ -531,11 +588,23 @@ class ExportServiceV3(
                 saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten = kvalitetsvurderingV3.saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten,
                 saksbehandlingsreglerBruddPaaBegrunnelsesplikten = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaBegrunnelsesplikten,
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn,
-                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList?.map { it.id },
+                saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList =
+                    kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList
+                        ?.map {
+                            it.id
+                        },
                 saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse,
                 saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert,
                 saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold,
@@ -551,14 +620,12 @@ class ExportServiceV3(
                 saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak,
                 saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok,
                 saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok,
-
                 // Trygdemedisin
                 brukAvRaadgivendeLege = kvalitetsvurderingV3.brukAvRaadgivendeLege?.name,
                 raadgivendeLegeIkkebrukt = kvalitetsvurderingV3.raadgivendeLegeIkkebrukt,
                 raadgivendeLegeMangelfullBrukAvRaadgivendeLege = kvalitetsvurderingV3.raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
                 raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = kvalitetsvurderingV3.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
                 raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = kvalitetsvurderingV3.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
-
                 kaBehandlingstidDays = kaBehandlingstidDays,
                 vedtaksinstansBehandlingstidDays = vedtaksinstansBehandlingstidDays,
                 totalBehandlingstidDays = totalBehandlingstidDays,
@@ -566,7 +633,6 @@ class ExportServiceV3(
                 modifiedDate = getModifiedDate(saksdata, kvalitetsvurderingV3),
             )
         }
-    }
 
     private fun getVedtaksinstansgruppe(vedtaksinstansEnhet: String): Vedtaksinstansgruppe {
         val vedtaksinstansgruppe = vedtaksinstansgruppeMap[vedtaksinstansEnhet.take(2)]
@@ -576,45 +642,46 @@ class ExportServiceV3(
             if (vedtaksinstansEnhet == "9999") {
                 logger.debug(
                     "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
-                    vedtaksinstansEnhet
+                    vedtaksinstansEnhet,
                 )
             } else {
                 logger.warn(
                     "Ukjent enhet. Kan ikke mappe til vedtaksinstansgruppe. vedtaksinstansEnhet: {}",
-                    vedtaksinstansEnhet
+                    vedtaksinstansEnhet,
                 )
             }
             Vedtaksinstansgruppe.UNKNOWN
         }
     }
 
-    private fun getVedtaksinstansBehandlingstidDays(saksdata: Saksdata): Int {
-        return if (saksdata.sakstype == Type.KLAGE) {
+    private fun getVedtaksinstansBehandlingstidDays(saksdata: Saksdata): Int =
+        if (saksdata.sakstype == Type.KLAGE) {
             saksdata.mottattKlageinstans!!.toDate().epochDay - saksdata.mottattVedtaksinstans!!.toEpochDay().toInt()
         } else {
-            //FE wants 0 for anker as of now.
+            // FE wants 0 for anker as of now.
             0
         }
-    }
 
     private fun getMottattForrigeInstans(saksdata: Saksdata): Date {
-        val mottattForrigeInstans = if (saksdata.sakstype in listOf(
-                Type.ANKE,
-                Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
-                Type.OMGJOERINGSKRAV,
-                Type.BEGJAERING_OM_GJENOPPTAK
-            )
-        ) {
-            saksdata.mottattKlageinstans!!.toDate()
-        } else {
-            saksdata.mottattVedtaksinstans!!.toDate()
-        }
+        val mottattForrigeInstans =
+            if (saksdata.sakstype in
+                listOf(
+                    Type.ANKE,
+                    Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
+                    Type.OMGJOERINGSKRAV,
+                    Type.BEGJAERING_OM_GJENOPPTAK,
+                )
+            ) {
+                saksdata.mottattKlageinstans!!.toDate()
+            } else {
+                saksdata.mottattVedtaksinstans!!.toDate()
+            }
         return mottattForrigeInstans
     }
 
     private fun getCreatedDate(
         saksdata: Saksdata,
-        kvalitetsvurderingV3: KvalitetsvurderingV3? = null
+        kvalitetsvurderingV3: KvalitetsvurderingV3? = null,
     ): Date {
         if (kvalitetsvurderingV3 == null) {
             return saksdata.created.toDate()
@@ -629,7 +696,7 @@ class ExportServiceV3(
 
     private fun getModifiedDate(
         saksdata: Saksdata,
-        kvalitetsvurderingV3: KvalitetsvurderingV3? = null
+        kvalitetsvurderingV3: KvalitetsvurderingV3? = null,
     ): Date {
         if (kvalitetsvurderingV3 == null) {
             return saksdata.created.toDate()
@@ -644,9 +711,9 @@ class ExportServiceV3(
 
     private fun mapToFields(
         saksdataList: Set<SaksdataRepositoryCustomImpl.QueryResultV3>,
-        includeFritekst: Boolean
+        includeFritekst: Boolean,
     ): List<List<Field>> {
-        //@formatter:off
+        // @formatter:off
         return saksdataList.map { result ->
             val (saksdata, kvalitetsvurderingV3) = result
             if (saksdata.kvalitetsvurderingReference.version != 3) {
@@ -654,7 +721,7 @@ class ExportServiceV3(
             }
 
             buildList {
-                //Saksdata
+                // Saksdata
                 add(Field(fieldName = "Tilknyttet enhet", value = saksdata.tilknyttetEnhet, type = STRING))
                 add(Field(fieldName = "Sakstype", value = saksdata.sakstype.navn, type = STRING))
                 add(Field(fieldName = "Ytelse", value = saksdata.ytelse!!.navn, type = STRING))
@@ -664,8 +731,8 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Ferdigstilt",
                         value = saksdata.avsluttetAvSaksbehandler?.toLocalDate(),
-                        type = DATE
-                    )
+                        type = DATE,
+                    ),
                 )
                 add(Field(fieldName = "Fra vedtaksenhet", value = saksdata.vedtaksinstansEnhet, type = STRING))
                 add(Field(fieldName = "Utfall/Resultat", value = saksdata.utfall!!.navn, type = STRING))
@@ -673,85 +740,87 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Hjemmel",
                         value = saksdata.registreringshjemler.toHjemlerString(),
-                        type = STRING
-                    )
+                        type = STRING,
+                    ),
                 )
                 add(Field(fieldName = "Tilbakekreving", value = saksdata.tilbakekreving, type = BOOLEAN))
 
-                //Særregelverket - Automatisk vedtak
+                // Særregelverket - Automatisk vedtak
                 add(
                     Field(
                         fieldName = "Avhuking for automatiske vedtak",
                         value = kvalitetsvurderingV3.saerregelverkAutomatiskVedtak,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
-                //Særregelverket
+                // Særregelverket
                 add(
                     Field(
                         fieldName = "Særregelverket",
                         value = kvalitetsvurderingV3.saerregelverk,
-                        type = STRING
-                    )
+                        type = STRING,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Loven er tolket eller anvendt feil",
                         value = kvalitetsvurderingV3.saerregelverkLovenErTolketEllerAnvendtFeil,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Vedtaket bygger på feil hjemmel eller lovtolkning",
                         value = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Vedtaket bygger på feil hjemmel eller lovtolkning - hjemler",
                         value = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList.toHjemlerString(),
-                        type = STRING
-                    )
+                        type = STRING,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Vedtaket bygger på feil konkret rettsanvendelse eller skjønn",
                         value = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Vedtaket bygger på feil konkret rettsanvendelse eller skjønn - hjemler",
-                        value = kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList.toHjemlerString(),
-                        type = STRING
-                    )
+                        value =
+                            kvalitetsvurderingV3.saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList
+                                .toHjemlerString(),
+                        type = STRING,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Det er lagt til grunn feil faktum",
                         value = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktum,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Det er lagt til grunn feil faktum - hjemler",
                         value = kvalitetsvurderingV3.saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList.toHjemlerString(),
-                        type = STRING
-                    )
+                        type = STRING,
+                    ),
                 )
 
-                //Saksbehandlingsregler
+                // Saksbehandlingsregler
                 add(
                     Field(
                         fieldName = "Saksbehandlingsregler",
                         value = kvalitetsvurderingV3.saksbehandlingsregler,
-                        type = STRING
-                    )
+                        type = STRING,
+                    ),
                 )
 
                 // Brudd på veiledningsplikten
@@ -759,22 +828,22 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på veiledningsplikten",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaVeiledningsplikten,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Parten har ikke fått svar på henvendelser",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "NAV har ikke gitt god nok veiledning",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
                 // Brudd på reglene om forhåndsvarsling
@@ -782,22 +851,22 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på reglene om forhåndsvarsling",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Parten har ikke blitt varslet før det ble fattet vedtak i saken",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Parten har blitt varslet, men varselets innhold er mangelfullt",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
                 // Brudd på utredningsplikten
@@ -805,50 +874,50 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på utredningsplikten",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaUtredningsplikten,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Utredningen av medisinske forhold har ikke vært god nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Utredningen av inntekts-/arbeidsforhold har ikke vært god nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerUtredningspliktenUtredningenAvInntektsArbeidsforholdHarIkkeVaertGodNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Utredningen av EØS-/utenlandsforhold har ikke vært god nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerUtredningspliktenUtredningenAvEoesUtenlandsforholdHarIkkeVaertGodNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Utredningen av sivilstands-/boforhold har ikke vært god nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerUtredningspliktenUtredningenAvSivilstandsBoforholdHarIkkeVaertGodNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Utredningen av samværsforhold har ikke vært god nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerUtredningspliktenUtredningenAvSamvaersforholdHarIkkeVaertGodNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Utredningen av andre forhold i saken har ikke vært god nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerUtredningspliktenUtredningenAvAndreForholdISakenHarIkkeVaertGodNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
                 // Brudd på foreleggelsesplikten
@@ -856,22 +925,22 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på foreleggelsesplikten",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaForeleggelsesplikten,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Uttalelse fra rådgivende lege har ikke vært forelagt parten",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerForeleggelsespliktenUttalelseFraRaadgivendeLegeHarIkkeVaertForelagtParten,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Andre opplysninger i saken har ikke vært forelagt parten",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
                 // Brudd på begrunnelsesplikten
@@ -879,50 +948,56 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på begrunnelsesplikten",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaBegrunnelsesplikten,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelsen viser ikke til regelverket",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelsen viser ikke til regelverket - hjemler",
-                        value = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList.toHjemlerString(),
-                        type = STRING
-                    )
+                        value =
+                            kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList
+                                .toHjemlerString(),
+                        type = STRING,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelsen nevner ikke faktum",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelsen nevner ikke faktum - hjemler",
-                        value = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList.toHjemlerString(),
-                        type = STRING
-                    )
+                        value =
+                            kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList
+                                .toHjemlerString(),
+                        type = STRING,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelsen nevner ikke avgjørende hensyn",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Begrunnelsen nevner ikke avgjørende hensyn - hjemler",
-                        value = kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList.toHjemlerString(),
-                        type = STRING
-                    )
+                        value =
+                            kvalitetsvurderingV3.saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList
+                                .toHjemlerString(),
+                        type = STRING,
+                    ),
                 )
 
                 // Brudd på reglene om klage og klageforberedelse
@@ -930,67 +1005,66 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på reglene om klage og klageforberedelse",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Klagefristen eller oppreisning er ikke vurdert eller feil vurdert",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Det er ikke sørget for retting av feil i klagens form eller innhold",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Under klageforberedelsen er det ikke utredet eller gjort undersøkelser",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Reglene for enkeltvedtak er ikke fulgt til tross for at underinstansen i realiteten har fattet et nytt enkeltvedtak i klagesaken",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Alle relevante dokumenter i saken er ikke oversendt klageinstansen (journalført i godkjent arkiv)",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
-
 
                 // Brudd på reglene om omgjøring
                 add(
                     Field(
                         fieldName = "Brudd på reglene om omgjøring utenfor klage og anke",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Ugyldighet og omgjøring er ikke vurdert eller feil vurdert",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Det er fattet vedtak til tross for at beslutning var riktig avgjørelsesform",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerOmgjoeringDetErFattetVedtakTilTrossForAtBeslutningVarRiktigAvgjoerelsesform,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
                 // Brudd på journalføringsplikten
@@ -998,22 +1072,22 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på journalføringsplikten",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaJournalfoeringsplikten,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Relevante opplysninger er ikke journalført",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerErIkkeJournalfoert,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Relevante opplysninger har ikke god nok tittel eller dokumentkvalitet",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerHarIkkeGodNokTittelEllerDokumentkvalitet,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
                 // Brudd på klart språk
@@ -1021,107 +1095,111 @@ class ExportServiceV3(
                     Field(
                         fieldName = "Brudd på plikten til å kommunisere på et klart språk",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Språket i vedtaket er ikke klart nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Språket i oversendelsesbrevet er ikke klart nok",
                         value = kvalitetsvurderingV3.saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
-                //Bruk av rådgivende lege (Trygdemedisin)
+                // Bruk av rådgivende lege (Trygdemedisin)
                 add(
                     Field(
                         fieldName = "Bruk av rådgivende lege",
                         value = kvalitetsvurderingV3.brukAvRaadgivendeLege,
-                        type = STRING
-                    )
+                        type = STRING,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Rådgivende lege er ikke brukt",
                         value = kvalitetsvurderingV3.raadgivendeLegeIkkebrukt,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Saksbehandlers bruk av rådgivende lege er mangelfull",
                         value = kvalitetsvurderingV3.raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Rådgivende lege har uttalt seg om tema utover trygdemedisin",
                         value = kvalitetsvurderingV3.raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
                 add(
                     Field(
                         fieldName = "Rådgivende lege er brukt, men begrunnelsen fra rådgivende lege er mangelfull eller ikke dokumentert",
                         value = kvalitetsvurderingV3.raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
-                        type = BOOLEAN
-                    )
+                        type = BOOLEAN,
+                    ),
                 )
 
-                //Annet
+                // Annet
                 if (includeFritekst) {
                     add(
                         Field(
                             fieldName = "Annet",
                             value = kvalitetsvurderingV3.annetFritekst,
-                            type = STRING
-                        )
+                            type = STRING,
+                        ),
                     )
                 }
-                //@formatter:on
+                // @formatter:on
             }
         }
     }
 
-    private fun Set<Registreringshjemmel>?.toHjemlerString() =
-        this?.joinToString { "${it.lovKilde.beskrivelse} - ${it.spesifikasjon}" } ?: ""
+    private fun Set<Registreringshjemmel>?.toHjemlerString() = this?.joinToString { "${it.lovKilde.beskrivelse} - ${it.spesifikasjon}" } ?: ""
 
-    data class Field(val fieldName: String, val value: Any?, val type: Type) {
+    data class Field(
+        val fieldName: String,
+        val value: Any?,
+        val type: Type,
+    ) {
         enum class Type {
-            STRING, NUMBER, BOOLEAN, DATE
+            STRING,
+            NUMBER,
+            BOOLEAN,
+            DATE,
         }
     }
 }
 
-private fun LocalDateTime.toDate(): Date {
-    return Date(
+private fun LocalDateTime.toDate(): Date =
+    Date(
         weekNumber = this.get(ChronoField.ALIGNED_WEEK_OF_YEAR),
         year = this.year,
         month = this.monthValue,
         day = this.dayOfMonth,
         iso = this.toLocalDate().toString(),
-        epochDay = this.toLocalDate().toEpochDay().toInt()
+        epochDay = this.toLocalDate().toEpochDay().toInt(),
     )
-}
 
-private fun LocalDate.toDate(): Date {
-    return Date(
+private fun LocalDate.toDate(): Date =
+    Date(
         weekNumber = this.get(ChronoField.ALIGNED_WEEK_OF_YEAR),
         year = this.year,
         month = this.monthValue,
         day = this.dayOfMonth,
         iso = this.toString(),
-        epochDay = this.toEpochDay().toInt()
+        epochDay = this.toEpochDay().toInt(),
     )
-}
 
 data class AnonymizedManagerResponseV3(
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV3>>,

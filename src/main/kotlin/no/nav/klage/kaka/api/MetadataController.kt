@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.api
 
-
 import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.UserData
 import no.nav.klage.kaka.services.SaksbehandlerService
@@ -19,7 +18,6 @@ class MetadataController(
     private val tokenUtil: TokenUtil,
     private val saksbehandlerService: SaksbehandlerService,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)

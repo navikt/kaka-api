@@ -50,8 +50,8 @@ data class CensoredKvalitetsvurderingV2View(
     val raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert: Boolean,
 )
 
-fun KvalitetsvurderingV2.toCensoredKvalitetsvurderingV2View(): CensoredKvalitetsvurderingV2View {
-    return CensoredKvalitetsvurderingV2View(
+fun KvalitetsvurderingV2.toCensoredKvalitetsvurderingV2View(): CensoredKvalitetsvurderingV2View =
+    CensoredKvalitetsvurderingV2View(
         klageforberedelsen = klageforberedelsen,
         klageforberedelsenOversittetKlagefristIkkeKommentert = klageforberedelsenOversittetKlagefristIkkeKommentert,
         klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt = klageforberedelsenKlagersRelevanteAnfoerslerIkkeTilstrekkeligKommentertImoetegaatt,
@@ -77,7 +77,11 @@ fun KvalitetsvurderingV2.toCensoredKvalitetsvurderingV2View(): CensoredKvalitets
         vedtaketDetErLagtTilGrunnFeilFaktum = vedtaketDetErLagtTilGrunnFeilFaktum,
         vedtaketSpraakOgFormidlingErIkkeTydelig = vedtaketSpraakOgFormidlingErIkkeTydelig,
         vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
-        vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id }?.toSet(),
+        vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList =
+            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+                ?.map {
+                    it.id
+                }?.toSet(),
         vedtaketBruktFeilHjemmel = vedtaketBruktFeilHjemmel,
         vedtaketBruktFeilHjemmelHjemlerList = vedtaketBruktFeilHjemmelHjemlerList?.map { it.id }?.toSet(),
         vedtaketAlleRelevanteHjemlerErIkkeVurdert = vedtaketAlleRelevanteHjemlerErIkkeVurdert,
@@ -85,7 +89,11 @@ fun KvalitetsvurderingV2.toCensoredKvalitetsvurderingV2View(): CensoredKvalitets
         vedtaketLovbestemmelsenTolketFeil = vedtaketLovbestemmelsenTolketFeil,
         vedtaketLovbestemmelsenTolketFeilHjemlerList = vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id }?.toSet(),
         vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
-        vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList = vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList?.map { it.id }?.toSet(),
+        vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList =
+            vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
+                ?.map {
+                    it.id
+                }?.toSet(),
         vedtaketFeilKonkretRettsanvendelse = vedtaketFeilKonkretRettsanvendelse,
         vedtaketFeilKonkretRettsanvendelseHjemlerList = vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id }?.toSet(),
         vedtaketIkkeKonkretIndividuellBegrunnelse = vedtaketIkkeKonkretIndividuellBegrunnelse,
@@ -97,5 +105,4 @@ fun KvalitetsvurderingV2.toCensoredKvalitetsvurderingV2View(): CensoredKvalitets
         raadgivendeLegeMangelfullBrukAvRaadgivendeLege = raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
         raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
         raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
-        )
-}
+    )

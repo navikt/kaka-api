@@ -3,7 +3,7 @@ package no.nav.klage.kaka.api.view
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValg
 import no.nav.klage.kaka.domain.kvalitetsvurdering.v1.KvalitetsvurderingV1.RadioValgRaadgivendeLege
 
-data class KvalitetsvurderingV1Input (
+data class KvalitetsvurderingV1Input(
     val klageforberedelsenRadioValg: RadioValg?,
     val sakensDokumenter: Boolean?,
     val oversittetKlagefristIkkeKommentert: Boolean?,

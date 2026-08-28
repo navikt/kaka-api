@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api.view
 
-import java.util.*
+import java.util.UUID
 
 data class AnonymizedFinishedVurderingV2(
     /** unique and static id */
@@ -16,7 +16,6 @@ data class AnonymizedFinishedVurderingV2(
     val vedtaksinstansgruppe: Int,
     val mottattKlageinstans: Date,
     val tilbakekreving: Boolean,
-
     var klageforberedelsenSakensDokumenter: Boolean,
     var klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert: Boolean,
     var klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn: Boolean,
@@ -62,11 +61,9 @@ data class AnonymizedFinishedVurderingV2(
     var raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean,
     var raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert: Boolean,
     var brukAvRaadgivendeLege: String? = null,
-
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
-
     /** Første av de to created datoene. */
     val createdDate: Date,
     /** Siste av de to modified datoene. */
@@ -84,7 +81,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV2(
     val mottattVedtaksinstans: Date?,
     val mottattKlageinstans: Date,
     val tilbakekreving: Boolean,
-
     var klageforberedelsenSakensDokumenter: Boolean,
     var klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert: Boolean,
     var klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn: Boolean,
@@ -130,11 +126,9 @@ data class AnonymizedFinishedVurderingWithoutEnheterV2(
     var raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean,
     var raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert: Boolean,
     var brukAvRaadgivendeLege: String? = null,
-
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
-
     /** Første av de to created datoene. */
     val createdDate: Date,
     /** Siste av de to modified datoene. */
@@ -143,10 +137,10 @@ data class AnonymizedFinishedVurderingWithoutEnheterV2(
 
 data class ManagerResponseV2(
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV2>>?,
-    /* delete when myEnhet is in use */
+    // delete when myEnhet is in use
     val mine: List<AnonymizedFinishedVurderingV2>,
     val myEnhet: List<AnonymizedFinishedVurderingV2>,
-    /* delete when otherEnheter is in use */
+    // delete when otherEnheter is in use
     val rest: List<AnonymizedFinishedVurderingV2>,
     val otherEnheter: List<AnonymizedFinishedVurderingV2>,
 )

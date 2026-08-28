@@ -23,7 +23,6 @@ import java.time.LocalTime
  */
 @Repository
 class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
-
     @PersistenceContext
     lateinit var entityManager: EntityManager
 
@@ -42,42 +41,37 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         val kvalitetsvurdering: KvalitetsvurderingV3,
     )
 
-    private inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> {
-        return mapTo(HashSet(), transform)
-    }
+    private inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> = mapTo(destination = HashSet(), transform = transform)
 
     override fun findByAvsluttetAvSaksbehandlerBetweenV1(
         fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime
-    ): Set<QueryResultV1> {
-        return privateFindByAvsluttetAvSaksbehandlerBetween(
+        toDateTime: LocalDateTime,
+    ): Set<QueryResultV1> =
+        privateFindByAvsluttetAvSaksbehandlerBetween(
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 1,
-        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
-    }
+        ).mapToSet { QueryResultV1(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV1) }
 
     override fun findByAvsluttetAvSaksbehandlerBetweenV2(
         fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime
-    ): Set<QueryResultV2> {
-        return privateFindByAvsluttetAvSaksbehandlerBetween(
+        toDateTime: LocalDateTime,
+    ): Set<QueryResultV2> =
+        privateFindByAvsluttetAvSaksbehandlerBetween(
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 2,
-        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
-    }
+        ).mapToSet { QueryResultV2(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV2) }
 
     override fun findByAvsluttetAvSaksbehandlerBetweenV3(
         fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime
-    ): Set<QueryResultV3> {
-        return privateFindByAvsluttetAvSaksbehandlerBetween(
+        toDateTime: LocalDateTime,
+    ): Set<QueryResultV3> =
+        privateFindByAvsluttetAvSaksbehandlerBetween(
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 3,
-        ).mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
-    }
+        ).mapToSet { QueryResultV3(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV3) }
 
     override fun findByQueryParamsV1(
         fromDate: LocalDate,
@@ -89,9 +83,9 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         types: List<String>?,
         ytelser: List<String>?,
         utfall: List<String>?,
-        hjemler: List<String>?
-    ): Set<QueryResultV1> {
-        return privateFindByQueryParams(
+        hjemler: List<String>?,
+    ): Set<QueryResultV1> =
+        privateFindByQueryParams(
             version = 1,
             fromDate = fromDate,
             toDate = toDate,
@@ -102,9 +96,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             types = types,
             ytelser = ytelser,
             utfall = utfall,
-            hjemler = hjemler
-        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
-    }
+            hjemler = hjemler,
+        ).mapToSet { QueryResultV1(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV1) }
 
     override fun findByQueryParamsV2(
         fromDate: LocalDate,
@@ -116,9 +109,9 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         types: List<String>?,
         ytelser: List<String>?,
         utfall: List<String>?,
-        hjemler: List<String>?
-    ): Set<QueryResultV2> {
-        return privateFindByQueryParams(
+        hjemler: List<String>?,
+    ): Set<QueryResultV2> =
+        privateFindByQueryParams(
             version = 2,
             fromDate = fromDate,
             toDate = toDate,
@@ -129,9 +122,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             types = types,
             ytelser = ytelser,
             utfall = utfall,
-            hjemler = hjemler
-        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
-    }
+            hjemler = hjemler,
+        ).mapToSet { QueryResultV2(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV2) }
 
     override fun findByQueryParamsV3(
         fromDate: LocalDate,
@@ -143,9 +135,9 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         types: List<String>?,
         ytelser: List<String>?,
         utfall: List<String>?,
-        hjemler: List<String>?
-    ): Set<QueryResultV3> {
-        return privateFindByQueryParams(
+        hjemler: List<String>?,
+    ): Set<QueryResultV3> =
+        privateFindByQueryParams(
             version = 3,
             fromDate = fromDate,
             toDate = toDate,
@@ -156,9 +148,8 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             types = types,
             ytelser = ytelser,
             utfall = utfall,
-            hjemler = hjemler
-        ).mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
-    }
+            hjemler = hjemler,
+        ).mapToSet { QueryResultV3(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV3) }
 
     private fun privateFindByQueryParams(
         version: Int,
@@ -171,7 +162,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         types: List<String>?,
         ytelser: List<String>?,
         utfall: List<String>?,
-        hjemler: List<String>?
+        hjemler: List<String>?,
     ): List<Array<*>> {
         val (hjemlerQuery, registreringshjemmelSet) = getHjemlerQuery(hjemler)
         val (typesQuery, typeSet) = getTypesQuery(types)
@@ -196,12 +187,13 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             ${getTilbakekrevingQuery(tilbakekreving)}
         """
 
-        val typedQuery = entityManager.createQuery(
-            jpaQuery,
-            Array::class.java
-        )
-            .setParameter("fromDateTime", fromDate.atStartOfDay())
-            .setParameter("toDateTime", toDate.atTime(LocalTime.MAX))
+        val typedQuery =
+            entityManager
+                .createQuery(
+                    jpaQuery,
+                    Array::class.java,
+                ).setParameter("fromDateTime", fromDate.atStartOfDay())
+                .setParameter("toDateTime", toDate.atTime(LocalTime.MAX))
 
         if (!klageenheter.isNullOrEmpty()) {
             typedQuery.setParameter("klageenheter", klageenheter)
@@ -227,14 +219,13 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         return typedQuery.resultList
     }
 
-    private fun getTilbakekrevingQuery(tilbakekreving: String): String {
-        return when (tilbakekreving) {
+    private fun getTilbakekrevingQuery(tilbakekreving: String): String =
+        when (tilbakekreving) {
             "include" -> ""
             "exclude" -> "AND s.tilbakekreving = false"
             "only" -> "AND s.tilbakekreving = true"
             else -> ""
         }
-    }
 
     private fun getHjemlerQuery(hjemler: List<String>?): Pair<String, Set<Registreringshjemmel>> {
         val hjemlerToWorkWith = hjemler?.mapToSet { Registreringshjemmel.of(it) } ?: emptySet()
@@ -243,7 +234,7 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             hjemlerToWorkWith.joinToString(
                 prefix = "AND (",
                 postfix = ")",
-                separator = " OR "
+                separator = " OR ",
             ) { ":h_${it.id} member s.registreringshjemler" } to hjemlerToWorkWith
         } else {
             "" to emptySet()
@@ -290,15 +281,17 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             return ""
         }
 
-        val firstTwoLettersOfVedtaksinstansList = vedtaksinstansgrupper.flatMap { vedtaksinstansgruppeId ->
-            vedtaksinstansgruppeMap.entries.filter { it.value.id == vedtaksinstansgruppeId }
-        }.map { it.key }
+        val firstTwoLettersOfVedtaksinstansList =
+            vedtaksinstansgrupper
+                .flatMap { vedtaksinstansgruppeId ->
+                    vedtaksinstansgruppeMap.entries.filter { it.value.id == vedtaksinstansgruppeId }
+                }.map { it.key }
 
         return if (firstTwoLettersOfVedtaksinstansList.isNotEmpty()) {
             firstTwoLettersOfVedtaksinstansList.joinToString(
                 prefix = "AND (",
                 postfix = ")",
-                separator = " OR "
+                separator = " OR ",
             ) { "s.vedtaksinstansEnhet like concat('$it', '%')" }
         } else {
             ""
@@ -320,11 +313,11 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
         """
 
-        return entityManager.createQuery(
-            query,
-            Array::class.java
-        )
-            .setParameter("fromDateTime", fromDateTime)
+        return entityManager
+            .createQuery(
+                query,
+                Array::class.java,
+            ).setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
     }
@@ -333,49 +326,47 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
-    ): Set<QueryResultV1> {
-        return privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+    ): Set<QueryResultV1> =
+        privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
             enhet = enhet,
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 1,
-        ).mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
-    }
+        ).mapToSet { QueryResultV1(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV1) }
 
     override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV2(
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
-    ): Set<QueryResultV2> {
-        return privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+    ): Set<QueryResultV2> =
+        privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
             enhet = enhet,
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 2,
-        ).mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
-    }
+        ).mapToSet { QueryResultV2(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV2) }
 
     override fun findByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreatedV3(
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
-    ): Set<QueryResultV3> {
-        return privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
+    ): Set<QueryResultV3> =
+        privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
             enhet = enhet,
             fromDateTime = fromDateTime,
             toDateTime = toDateTime,
             version = 3,
-        ).mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
-    }
+        ).mapToSet { QueryResultV3(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV3) }
 
     private fun privateFindByTilknyttetEnhetAndAvsluttetAvSaksbehandlerBetweenOrderByCreated(
         enhet: String,
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
         version: Int,
-    ): List<Array<*>> {
-        return entityManager.createQuery(
-            """
+    ): List<Array<*>> =
+        entityManager
+            .createQuery(
+                """
             SELECT s, k
             FROM Saksdata s
              LEFT JOIN FETCH KvalitetsvurderingV$version k on s.kvalitetsvurderingReference.id = k.id
@@ -386,13 +377,11 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             AND s.avsluttetAvSaksbehandler BETWEEN :fromDateTime AND :toDateTime
             ORDER BY s.created
         """,
-            Array::class.java
-        )
-            .setParameter("enhet", enhet)
+                Array::class.java,
+            ).setParameter("enhet", enhet)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .resultList
-    }
 
     override fun findForVedtaksinstanslederWithEnhetV1(
         fromDateTime: LocalDateTime,
@@ -415,13 +404,14 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             ORDER BY s.created
         """
 
-        return entityManager.createQuery(query, Array::class.java)
+        return entityManager
+            .createQuery(query, Array::class.java)
             .setParameter("vedtaksinstansEnhet", vedtaksinstansEnhet)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
             .resultList
-            .mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .mapToSet { QueryResultV1(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV1) }
     }
 
     override fun findForVedtaksinstanslederWithEnhetV2(
@@ -430,7 +420,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         mangelfullt: List<String>,
         vedtaksinstansEnhet: String,
     ): Set<QueryResultV2> {
-
         val query = """
             SELECT s, k 
             FROM Saksdata s 
@@ -445,13 +434,14 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             ORDER BY s.created
         """
 
-        return entityManager.createQuery(query, Array::class.java)
+        return entityManager
+            .createQuery(query, Array::class.java)
             .setParameter("vedtaksinstansEnhet", vedtaksinstansEnhet)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
             .resultList
-            .mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+            .mapToSet { QueryResultV2(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV2) }
     }
 
     override fun findForVedtaksinstanslederV1(
@@ -473,12 +463,13 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             ORDER BY s.created
         """
 
-        return entityManager.createQuery(query, Array::class.java)
+        return entityManager
+            .createQuery(query, Array::class.java)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
             .resultList
-            .mapToSet { QueryResultV1(it[0] as Saksdata, it[1] as KvalitetsvurderingV1) }
+            .mapToSet { QueryResultV1(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV1) }
     }
 
     override fun findForVedtaksinstanslederV2(
@@ -486,7 +477,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
     ): Set<QueryResultV2> {
-
         val query = """
             SELECT s, k 
             FROM Saksdata s 
@@ -500,12 +490,13 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             ORDER BY s.created
         """
 
-        return entityManager.createQuery(query, Array::class.java)
+        return entityManager
+            .createQuery(query, Array::class.java)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
             .resultList
-            .mapToSet { QueryResultV2(it[0] as Saksdata, it[1] as KvalitetsvurderingV2) }
+            .mapToSet { QueryResultV2(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV2) }
     }
 
     override fun findForVedtaksinstanslederV3(
@@ -513,7 +504,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         toDateTime: LocalDateTime,
         mangelfullt: List<String>,
     ): Set<QueryResultV3> {
-
         val query = """
             SELECT s, k 
             FROM Saksdata s 
@@ -527,12 +517,13 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             ORDER BY s.created
         """
 
-        return entityManager.createQuery(query, Array::class.java)
+        return entityManager
+            .createQuery(query, Array::class.java)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
             .resultList
-            .mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
+            .mapToSet { QueryResultV3(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV3) }
     }
 
     override fun findForVedtaksinstanslederWithEnhetV3(
@@ -541,7 +532,6 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         mangelfullt: List<String>,
         vedtaksinstansEnhet: String,
     ): Set<QueryResultV3> {
-
         val query = """
             SELECT s, k 
             FROM Saksdata s 
@@ -556,17 +546,18 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
             ORDER BY s.created
         """
 
-        return entityManager.createQuery(query, Array::class.java)
+        return entityManager
+            .createQuery(query, Array::class.java)
             .setParameter("vedtaksinstansEnhet", vedtaksinstansEnhet)
             .setParameter("fromDateTime", fromDateTime)
             .setParameter("toDateTime", toDateTime)
             .setParameter("sakstype", Type.KLAGE)
             .resultList
-            .mapToSet { QueryResultV3(it[0] as Saksdata, it[1] as KvalitetsvurderingV3) }
+            .mapToSet { QueryResultV3(saksdata = it[0] as Saksdata, kvalitetsvurdering = it[1] as KvalitetsvurderingV3) }
     }
 
-    private fun getPossibleHjemlerJoins(version: Int): String {
-        return if (version == 2) {
+    private fun getPossibleHjemlerJoins(version: Int): String =
+        if (version == 2) {
             """
                 LEFT JOIN FETCH k.vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
                 LEFT JOIN FETCH k.vedtaketLovbestemmelsenTolketFeilHjemlerList
@@ -587,5 +578,4 @@ class SaksdataRepositoryCustomImpl : SaksdataRepositoryCustom {
         } else {
             ""
         }
-    }
 }

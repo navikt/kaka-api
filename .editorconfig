@@ -23,6 +23,15 @@ ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
 # Clears IntelliJ's built-in on-demand list (java.util.*, kotlinx.android.synthetic.**).
 ij_kotlin_packages_to_use_import_on_demand = unset
 
+# The kvalitetsvurdering property names are part of the REST contract towards the Kabal
+# frontend and of the Excel export column mapping. Many of them are longer than 140
+# characters on their own, so no amount of wrapping brings these files below the limit.
+# Shortening the names would be a breaking change, hence the limit is lifted here only.
+# Turning max_line_length off (rather than suppressing standard:max-line-length) also
+# relaxes the wrapping rules that derive their threshold from the same value.
+[{**/services/ExportServiceV1.kt,**/services/ExportServiceV2.kt,**/services/ExportServiceV3.kt,**/api/view/KvalitetsvurderingV2View.kt,**/api/view/KvalitetsvurderingV3View.kt,**/api/view/CensoredKvalitetsvurderingV2View.kt,**/api/view/CensoredKvalitetsvurderingV3View.kt,**/kvalitetsvurdering/v2/KvalitetsvurderingV2.kt,**/repositories/KvalitetsvurderingV3RepositoryTest.kt}]
+max_line_length = off
+
 [*.{yaml,yml,json}]
 indent_size = 2
 

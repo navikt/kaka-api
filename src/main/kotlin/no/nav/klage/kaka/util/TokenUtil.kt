@@ -1,6 +1,5 @@
 package no.nav.klage.kaka.util
 
-
 import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
 import no.nav.security.token.support.client.spring.ClientConfigurationProperties
@@ -11,41 +10,53 @@ import org.springframework.stereotype.Service
 class TokenUtil(
     private val clientConfigurationProperties: ClientConfigurationProperties,
     private val oAuth2AccessTokenService: OAuth2AccessTokenService,
-    private val tokenValidationContextHolder: TokenValidationContextHolder
+    private val tokenValidationContextHolder: TokenValidationContextHolder,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
     }
 
     fun getIdent(): String =
-        tokenValidationContextHolder.getTokenValidationContext().getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims?.get("NAVident")?.toString()
+        tokenValidationContextHolder
+            .getTokenValidationContext()
+            .getJwtToken(SecurityConfig.ISSUER_AAD)
+            ?.jwtTokenClaims
+            ?.get("NAVident")
+            ?.toString()
             ?: throw RuntimeException("Ident not found in token")
 
     fun getName(): String =
-        tokenValidationContextHolder.getTokenValidationContext().getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims?.get("name")?.toString()
+        tokenValidationContextHolder
+            .getTokenValidationContext()
+            .getJwtToken(SecurityConfig.ISSUER_AAD)
+            ?.jwtTokenClaims
+            ?.get("name")
+            ?.toString()
             ?: throw RuntimeException("name not found in token")
 
     fun getCallingApplication(): String {
-        //azp_name er på formen <dev-gcp:some-team:some-consumer>
+        // azp_name er på formen <dev-gcp:some-team:some-consumer>
         return getClaim("azp_name").orEmpty()
     }
 
     private fun getClaim(name: String): String? =
-        tokenValidationContextHolder.getTokenValidationContext().getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims?.getStringClaim(name)
+        tokenValidationContextHolder
+            .getTokenValidationContext()
+            .getJwtToken(SecurityConfig.ISSUER_AAD)
+            ?.jwtTokenClaims
+            ?.getStringClaim(name)
 
     fun getGroups(): List<String> =
-        tokenValidationContextHolder.getTokenValidationContext().getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims?.getAsList("groups") ?: emptyList()
+        tokenValidationContextHolder
+            .getTokenValidationContext()
+            .getJwtToken(SecurityConfig.ISSUER_AAD)
+            ?.jwtTokenClaims
+            ?.getAsList("groups") ?: emptyList()
 
     fun getOnBehalfOfTokenWithKlageLookupScope(): String {
         val clientProperties = clientConfigurationProperties.registration["klage-lookup-onbehalfof"]!!
         val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
         return response.access_token!!
     }
-
 }

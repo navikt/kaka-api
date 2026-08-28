@@ -6,13 +6,11 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class OpenApiConfig {
-
     @Bean
-    fun api(): GroupedOpenApi {
-        return GroupedOpenApi.builder()
+    fun api(): GroupedOpenApi =
+        GroupedOpenApi
+            .builder()
             .group("standard")
             .pathsToMatch("/**")
             .build()
-    }
-
 }

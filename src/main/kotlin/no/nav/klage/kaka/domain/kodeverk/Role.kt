@@ -11,6 +11,6 @@ enum class Role {
 
     KAKA_ADMIN,
 
-    //Old roles
+    // Old roles
     ROLE_KLAGE_LEDER,
 }

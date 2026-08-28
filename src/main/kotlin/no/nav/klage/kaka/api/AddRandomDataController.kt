@@ -44,21 +44,23 @@ class AddRandomDataController(
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_3_DATE}')}")
     private val kakaVersion3Date: LocalDate,
 ) {
-
     @Unprotected
     @PostMapping("/addrandomsaksdata")
-    fun addTestData(@RequestParam amount: Int) {
+    fun addTestData(
+        @RequestParam amount: Int,
+    ) {
         repeat(amount) {
             saksdataRepository.save(getRandomSaksdata())
         }
     }
 
     private fun getKakaVersion(): Int {
-        val kvalitetsvurderingVersion = when {
-            LocalDate.now() >= kakaVersion3Date -> 3
-            LocalDate.now() >= kakaVersion2Date -> 2
-            else -> 1
-        }
+        val kvalitetsvurderingVersion =
+            when {
+                LocalDate.now() >= kakaVersion3Date -> 3
+                LocalDate.now() >= kakaVersion2Date -> 2
+                else -> 1
+            }
         return kvalitetsvurderingVersion
     }
 
@@ -71,22 +73,24 @@ class AddRandomDataController(
         val potentialEndDate = mottattKA.plusDays((1..108).random().toLong())
         val avsluttetAvSaksbehandler = if (potentialEndDate > LocalDate.now()) LocalDate.now() else potentialEndDate
 
-        val kvalitetsvurderingId = when (kakaVersion) {
-            1 -> {
-                kvalitetsvurderingV1Repository.save(getRandomKvalitetsvurderingV1()).id
+        val kvalitetsvurderingId =
+            when (kakaVersion) {
+                1 -> {
+                    kvalitetsvurderingV1Repository.save(getRandomKvalitetsvurderingV1()).id
+                }
+
+                2 -> {
+                    kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2(cohesiveTestData.hjemler!!)).id
+                }
+
+                3 -> {
+                    kvalitetsvurderingV3Repository.save(getRandomKvalitetsvurderingV3(cohesiveTestData.hjemler!!)).id
+                }
+
+                else -> {
+                    error("Wrong version")
+                }
             }
-
-            2 -> {
-                kvalitetsvurderingV2Repository.save(getRandomKvalitetsvurderingV2(cohesiveTestData.hjemler!!)).id
-            }
-
-            3 -> {
-                kvalitetsvurderingV3Repository.save(getRandomKvalitetsvurderingV3(cohesiveTestData.hjemler!!)).id
-            }
-
-            else -> error("Wrong version")
-
-        }
 
         return Saksdata(
             sakstype = cohesiveTestData.type,
@@ -101,20 +105,19 @@ class AddRandomDataController(
             mottattKlageinstans = mottattKA,
             avsluttetAvSaksbehandler = avsluttetAvSaksbehandler.atStartOfDay(),
             source = Source.entries.toTypedArray().random(),
-
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = kvalitetsvurderingId,
-                version = kakaVersion,
-            ),
-
+            kvalitetsvurderingReference =
+                KvalitetsvurderingReference(
+                    id = kvalitetsvurderingId,
+                    version = kakaVersion,
+                ),
             created = mottattKA.atStartOfDay(),
             modified = avsluttetAvSaksbehandler.atStartOfDay(),
             tilbakekreving = Random.nextBoolean(),
         )
     }
 
-    private fun getRandomKvalitetsvurderingV1(): KvalitetsvurderingV1 {
-        return KvalitetsvurderingV1(
+    private fun getRandomKvalitetsvurderingV1(): KvalitetsvurderingV1 =
+        KvalitetsvurderingV1(
             klageforberedelsenRadioValg = RadioValg.values().random(),
             sakensDokumenter = Random.nextBoolean(),
             oversittetKlagefristIkkeKommentert = Random.nextBoolean(),
@@ -156,10 +159,9 @@ class AddRandomDataController(
             betydeligAvvik = Random.nextBoolean(),
             betydeligAvvikText = null,
         )
-    }
 
-    private fun getRandomKvalitetsvurderingV2(hjemler: Set<Registreringshjemmel>): KvalitetsvurderingV2 {
-        return KvalitetsvurderingV2(
+    private fun getRandomKvalitetsvurderingV2(hjemler: Set<Registreringshjemmel>): KvalitetsvurderingV2 =
+        KvalitetsvurderingV2(
             klageforberedelsenSakensDokumenter = Random.nextBoolean(),
             klageforberedelsenSakensDokumenterRelevanteOpplysningerFraAndreFagsystemerErIkkeJournalfoert = Random.nextBoolean(),
             klageforberedelsenSakensDokumenterJournalfoerteDokumenterFeilNavn = Random.nextBoolean(),
@@ -199,10 +201,9 @@ class AddRandomDataController(
             brukAvRaadgivendeLege = KvalitetsvurderingV2.RadiovalgRaadgivendeLege.values().random(),
             annetFritekst = null,
         )
-    }
 
-    private fun getRandomKvalitetsvurderingV3(hjemler: Set<Registreringshjemmel>): KvalitetsvurderingV3 {
-        return KvalitetsvurderingV3(
+    private fun getRandomKvalitetsvurderingV3(hjemler: Set<Registreringshjemmel>): KvalitetsvurderingV3 =
+        KvalitetsvurderingV3(
             // Særregelverket
             saerregelverkAutomatiskVedtak = Random.nextBoolean(),
             saerregelverk = KvalitetsvurderingV3.Radiovalg.values().random(),
@@ -213,7 +214,6 @@ class AddRandomDataController(
             saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = setOf(hjemler.random()),
             saerregelverkDetErLagtTilGrunnFeilFaktum = Random.nextBoolean(),
             saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = setOf(hjemler.random()),
-
             // Saksbehandlingsregler
             saksbehandlingsregler = KvalitetsvurderingV3.Radiovalg.values().random(),
             saksbehandlingsreglerBruddPaaVeiledningsplikten = Random.nextBoolean(),
@@ -254,51 +254,51 @@ class AddRandomDataController(
             saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = Random.nextBoolean(),
             saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok = Random.nextBoolean(),
-
             // Trygdemedisin
             brukAvRaadgivendeLege = KvalitetsvurderingV3.RadiovalgRaadgivendeLege.values().random(),
             raadgivendeLegeIkkebrukt = Random.nextBoolean(),
             raadgivendeLegeMangelfullBrukAvRaadgivendeLege = Random.nextBoolean(),
             raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = Random.nextBoolean(),
             raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = Random.nextBoolean(),
-
             annetFritekst = null,
         )
-    }
 
     private fun getCohesiveTestData(kakaVersion: Int): CohesiveTestData {
         val ytelse = Ytelse.values().random()
         val type = Type.values().filter { it != Type.ANKE_I_TRYGDERETTEN }.random()
-        val data = CohesiveTestData(
-            type = type,
-            utfall = typeToUtfall[type]!!.random(),
-            ident = listOf("Z994862", "Z994863", "Z994864").random(),
-            enhet = ytelseToKlageenheter[ytelse]!!.random().navn,
-            ytelse = ytelse,
-            vedtaksEnhet = ytelseToVedtaksenheter[ytelse]!!.random().navn,
-        )
+        val data =
+            CohesiveTestData(
+                type = type,
+                utfall = typeToUtfall[type]!!.random(),
+                ident = listOf("Z994862", "Z994863", "Z994864").random(),
+                enhet = ytelseToKlageenheter[ytelse]!!.random().navn,
+                ytelse = ytelse,
+                vedtaksEnhet = ytelseToVedtaksenheter[ytelse]!!.random().navn,
+            )
         when (kakaVersion) {
             1 -> {
-                data.hjemler = setOf(
-                    ytelseToRegistreringshjemlerV1[ytelse]!!.random(),
-                    ytelseToRegistreringshjemlerV1[ytelse]!!.random()
-                )
+                data.hjemler =
+                    setOf(
+                        ytelseToRegistreringshjemlerV1[ytelse]!!.random(),
+                        ytelseToRegistreringshjemlerV1[ytelse]!!.random(),
+                    )
             }
 
             2 -> {
-                data.hjemler = setOf(
-                    ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
-                    ytelseToRegistreringshjemlerV2[ytelse]!!.random()
-                )
+                data.hjemler =
+                    setOf(
+                        ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
+                        ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
+                    )
             }
 
             3 -> {
-                data.hjemler = setOf(
-                    ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
-                    ytelseToRegistreringshjemlerV2[ytelse]!!.random()
-                )
+                data.hjemler =
+                    setOf(
+                        ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
+                        ytelseToRegistreringshjemlerV2[ytelse]!!.random(),
+                    )
             }
-
         }
         return data
     }
@@ -310,6 +310,6 @@ class AddRandomDataController(
         var hjemler: Set<Registreringshjemmel>? = null,
         val enhet: String,
         val ytelse: Ytelse,
-        val vedtaksEnhet: String
+        val vedtaksEnhet: String,
     )
 }

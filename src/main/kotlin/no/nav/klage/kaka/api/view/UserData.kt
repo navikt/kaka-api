@@ -13,4 +13,7 @@ data class UserData(
     )
 }
 
-data class EnhetKodeDto(val id: String, val navn: String)
+data class EnhetKodeDto(
+    val id: String,
+    val navn: String,
+)

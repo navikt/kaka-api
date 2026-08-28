@@ -13,9 +13,13 @@ import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.stereotype.Service
 import tools.jackson.databind.JsonNode
-import tools.jackson.databind.node.*
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.BooleanNode
+import tools.jackson.databind.node.IntNode
+import tools.jackson.databind.node.NullNode
+import tools.jackson.databind.node.StringNode
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Service
 @Transactional
@@ -24,16 +28,12 @@ class KvalitetsvurderingV3Service(
     private val saksdataRepository: SaksdataRepository,
     private val tokenUtil: TokenUtil,
 ) {
-
-    fun createKvalitetsvurdering(): KvalitetsvurderingV3 {
-        return kvalitetsvurderingV3Repository.save(
-            KvalitetsvurderingV3()
+    fun createKvalitetsvurdering(): KvalitetsvurderingV3 =
+        kvalitetsvurderingV3Repository.save(
+            KvalitetsvurderingV3(),
         )
-    }
 
-    fun getKvalitetsvurdering(
-        kvalitetsvurderingId: UUID,
-    ): KvalitetsvurderingV3 {
+    fun getKvalitetsvurdering(kvalitetsvurderingId: UUID): KvalitetsvurderingV3 {
         val kvalitetsvurdering = kvalitetsvurderingV3Repository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
             throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
@@ -41,7 +41,10 @@ class KvalitetsvurderingV3Service(
         return kvalitetsvurdering.get()
     }
 
-    fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): KvalitetsvurderingV3 {
+    fun patchKvalitetsvurdering(
+        kvalitetsvurderingId: UUID,
+        input: JsonNode,
+    ): KvalitetsvurderingV3 {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(kvalitetsvurderingId)
 
         input.properties().forEach { (key, value) ->
@@ -51,17 +54,13 @@ class KvalitetsvurderingV3Service(
         return kvalitetsvurdering
     }
 
-    fun removeFieldsUnusedInAnke(
-        kvalitetsvurderingId: UUID
-    ) {
+    fun removeFieldsUnusedInAnke(kvalitetsvurderingId: UUID) {
         val kvalitetsvurdering = kvalitetsvurderingV3Repository.getReferenceById(kvalitetsvurderingId)
         kvalitetsvurdering.resetFieldsUnusedInAnke()
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
 
-    fun cleanUpKvalitetsvurdering(
-        kvalitetsvurderingId: UUID
-    ) {
+    fun cleanUpKvalitetsvurdering(kvalitetsvurderingId: UUID) {
         val kvalitetsvurdering = kvalitetsvurderingV3Repository.getReferenceById(kvalitetsvurderingId)
         kvalitetsvurdering.cleanup()
         kvalitetsvurdering.modified = LocalDateTime.now()
@@ -75,29 +74,47 @@ class KvalitetsvurderingV3Service(
         }
     }
 
-    private fun getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(
-        kvalitetsvurderingId: UUID
-    ): KvalitetsvurderingV3 = kvalitetsvurderingV3Repository.getReferenceById(kvalitetsvurderingId)
-        .also {
-            val saksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(it.id)
-            if (saksdata?.avsluttetAvSaksbehandler != null) {
-                throw SaksdataFinalizedException("Saksdata er allerede fullført")
+    private fun getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(kvalitetsvurderingId: UUID): KvalitetsvurderingV3 =
+        kvalitetsvurderingV3Repository
+            .getReferenceById(kvalitetsvurderingId)
+            .also {
+                val saksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(it.id)
+                if (saksdata?.avsluttetAvSaksbehandler != null) {
+                    throw SaksdataFinalizedException("Saksdata er allerede fullført")
+                }
+                if (saksdata != null && saksdata.utfoerendeSaksbehandler != tokenUtil.getIdent()) {
+                    throw MissingTilgangException("Kvalitetsvurdering tilhører ikke innlogget saksbehandler")
+                }
             }
-            if (saksdata != null && saksdata.utfoerendeSaksbehandler != tokenUtil.getIdent()) {
-                throw MissingTilgangException("Kvalitetsvurdering tilhører ikke innlogget saksbehandler")
+
+    private fun getValue(node: JsonNode): Any? =
+        when (node) {
+            is IntNode -> {
+                node.intValue()
+            }
+
+            is BooleanNode -> {
+                node.booleanValue()
+            }
+
+            is StringNode -> {
+                node.stringValue()
+            }
+
+            is NullNode -> {
+                null
+            }
+
+            is ArrayNode -> {
+                node
+                    .elements()
+                    .asSequence()
+                    .map { Registreringshjemmel.of(getValue(it).toString()) }
+                    .toSet()
+            }
+
+            else -> {
+                error("not supported")
             }
         }
-
-    private fun getValue(node: JsonNode): Any? {
-        return when (node) {
-            is IntNode -> node.intValue()
-            is BooleanNode -> node.booleanValue()
-            is StringNode -> node.stringValue()
-            is NullNode -> null
-            is ArrayNode -> node.elements().asSequence().map { Registreringshjemmel.of(getValue(it).toString()) }
-                .toSet()
-
-            else -> error("not supported")
-        }
-    }
 }

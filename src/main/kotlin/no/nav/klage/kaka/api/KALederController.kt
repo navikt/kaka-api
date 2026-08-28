@@ -1,10 +1,16 @@
 package no.nav.klage.kaka.api
 
 import io.swagger.v3.oas.annotations.tags.Tag
-import no.nav.klage.kaka.api.view.*
+import no.nav.klage.kaka.api.view.ExcelQueryParams
+import no.nav.klage.kaka.api.view.ManagerResponseV1
+import no.nav.klage.kaka.api.view.ManagerResponseV2
+import no.nav.klage.kaka.api.view.ManagerResponseV3
+import no.nav.klage.kaka.api.view.Saksbehandler
 import no.nav.klage.kaka.clients.klagelookup.KlageLookupClient
 import no.nav.klage.kaka.config.SecurityConfig
-import no.nav.klage.kaka.domain.kodeverk.Role.*
+import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_EXCEL_UTTREKK_MED_FRITEKST
+import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_EXCEL_UTTREKK_UTEN_FRITEKST
+import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_LEDERSTATISTIKK
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportServiceV1
 import no.nav.klage.kaka.services.ExportServiceV2
@@ -38,7 +44,6 @@ class KALederController(
     private val klageLookupClient: KlageLookupClient,
     private val saksbehandlerService: SaksbehandlerService,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -53,29 +58,31 @@ class KALederController(
 
         validateHasExcelMedFritekst()
 
-        val file = when (version) {
-            1 -> {
-                exportServiceV1.getAsExcel(includeFritekst = true, queryParams = queryParams)
-            }
+        val file =
+            when (version) {
+                1 -> {
+                    exportServiceV1.getAsExcel(includeFritekst = true, queryParams = queryParams)
+                }
 
-            2 -> {
-                exportServiceV2.getAsExcel(includeFritekst = true, queryParams = queryParams)
-            }
+                2 -> {
+                    exportServiceV2.getAsExcel(includeFritekst = true, queryParams = queryParams)
+                }
 
-            3 -> {
-                exportServiceV3.getAsExcel(includeFritekst = true, queryParams = queryParams)
-            }
+                3 -> {
+                    exportServiceV3.getAsExcel(includeFritekst = true, queryParams = queryParams)
+                }
 
-            else -> {
-                error("Wrong supplied version $version")
+                else -> {
+                    error("Wrong supplied version $version")
+                }
             }
-        }
 
         val responseHeaders = HttpHeaders()
         responseHeaders.add("Content-Disposition", "inline; filename=export.xlsx")
 
         return try {
-            ResponseEntity.ok()
+            ResponseEntity
+                .ok()
                 .headers(responseHeaders)
                 .contentLength(file.length())
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
@@ -98,29 +105,31 @@ class KALederController(
 
         validateHasExcelUtenFritekst()
 
-        val file = when (version) {
-            1 -> {
-                exportServiceV1.getAsExcel(includeFritekst = false, queryParams = queryParams)
-            }
+        val file =
+            when (version) {
+                1 -> {
+                    exportServiceV1.getAsExcel(includeFritekst = false, queryParams = queryParams)
+                }
 
-            2 -> {
-                exportServiceV2.getAsExcel(includeFritekst = false, queryParams = queryParams)
-            }
+                2 -> {
+                    exportServiceV2.getAsExcel(includeFritekst = false, queryParams = queryParams)
+                }
 
-            3 -> {
-                exportServiceV3.getAsExcel(includeFritekst = false, queryParams = queryParams)
-            }
+                3 -> {
+                    exportServiceV3.getAsExcel(includeFritekst = false, queryParams = queryParams)
+                }
 
-            else -> {
-                error("Wrong supplied version $version")
+                else -> {
+                    error("Wrong supplied version $version")
+                }
             }
-        }
 
         val responseHeaders = HttpHeaders()
         responseHeaders.add("Content-Disposition", "inline; filename=export.xlsx")
 
         return try {
-            ResponseEntity.ok()
+            ResponseEntity
+                .ok()
                 .headers(responseHeaders)
                 .contentLength(file.length())
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
@@ -143,7 +152,7 @@ class KALederController(
     ): ManagerResponseV1 {
         logger.debug(
             "getTotalForLeder() called. enhetsnummer param = $enhetsnummer, " +
-                    "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
+                "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere",
         )
 
         validateIsKakaLeder()
@@ -154,12 +163,13 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
-        val data = exportServiceV1.getFinishedForLederAsRawData(
-            enhet = enhet,
-            fromMonth = YearMonth.parse(fromMonth),
-            toMonth = YearMonth.parse(toMonth),
-            saksbehandlerIdentList = saksbehandlere,
-        )
+        val data =
+            exportServiceV1.getFinishedForLederAsRawData(
+                enhet = enhet,
+                fromMonth = YearMonth.parse(fromMonth),
+                toMonth = YearMonth.parse(toMonth),
+                saksbehandlerIdentList = saksbehandlere,
+            )
 
         return ManagerResponseV1(
             saksbehandlere = data.saksbehandlere,
@@ -176,9 +186,7 @@ class KALederController(
         @RequestParam(required = false) fromMonth: String?,
         @RequestParam(required = false) toMonth: String?,
         @RequestParam(required = false) saksbehandlere: List<String>?,
-    ): ManagerResponseV1 {
-        return getTotalForLeder(enhetsnummer, fromMonth, toMonth, saksbehandlere)
-    }
+    ): ManagerResponseV1 = getTotalForLeder(enhetsnummer, fromMonth, toMonth, saksbehandlere)
 
     @GetMapping("/statistics/v2/enheter/{enhetsnummer}/manager")
     fun getTotalForLederV2(
@@ -189,7 +197,7 @@ class KALederController(
     ): ManagerResponseV2 {
         logger.debug(
             "getTotalForLederV2() called. enhetsnummer param = $enhetsnummer, " +
-                    "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
+                "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere",
         )
 
         validateIsKakaLeder()
@@ -200,12 +208,13 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
-        val data = exportServiceV2.getFinishedForLederAsRawData(
-            enhet = enhet,
-            fromMonth = YearMonth.parse(fromMonth),
-            toMonth = YearMonth.parse(toMonth),
-            saksbehandlerIdentList = saksbehandlere,
-        )
+        val data =
+            exportServiceV2.getFinishedForLederAsRawData(
+                enhet = enhet,
+                fromMonth = YearMonth.parse(fromMonth),
+                toMonth = YearMonth.parse(toMonth),
+                saksbehandlerIdentList = saksbehandlere,
+            )
         return ManagerResponseV2(
             saksbehandlere = data.saksbehandlere,
             mine = data.mine,
@@ -224,7 +233,7 @@ class KALederController(
     ): ManagerResponseV3 {
         logger.debug(
             "getTotalForLederV3() called. enhetsnummer param = $enhetsnummer, " +
-                    "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere"
+                "fromMonth = $fromMonth, toMonth = $toMonth, saksbehandlere = $saksbehandlere",
         )
 
         validateIsKakaLeder()
@@ -235,12 +244,13 @@ class KALederController(
             throw MissingTilgangException("user ${tokenUtil.getIdent()} is not leader of enhet $enhetsnummer")
         }
 
-        val data = exportServiceV3.getFinishedForLederAsRawData(
-            enhet = enhet,
-            fromMonth = YearMonth.parse(fromMonth),
-            toMonth = YearMonth.parse(toMonth),
-            saksbehandlerIdentList = saksbehandlere,
-        )
+        val data =
+            exportServiceV3.getFinishedForLederAsRawData(
+                enhet = enhet,
+                fromMonth = YearMonth.parse(fromMonth),
+                toMonth = YearMonth.parse(toMonth),
+                saksbehandlerIdentList = saksbehandlere,
+            )
         return ManagerResponseV3(
             saksbehandlere = data.saksbehandlere,
             mine = data.mine,
@@ -263,7 +273,7 @@ class KALederController(
         return saksbehandlerIdentList.users.map {
             Saksbehandler(
                 navIdent = it.navIdent,
-                navn = it.sammensattNavn
+                navn = it.sammensattNavn,
             )
         }
     }

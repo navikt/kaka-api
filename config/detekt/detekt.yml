@@ -74,3 +74,8 @@ complexity:
         value: 'kotlin.math.max'
       - reason: 'Operands are symmetric and self-explanatory'
         value: 'kotlin.math.min'
+      # Start and end index are positional by definition, and the calls that trigger
+      # this rule sit inside the fnr/orgnr checksum validation in IdentUtil. Naming
+      # the indices there would obscure the algorithm rather than document it.
+      - reason: 'Start and end index are positional by definition'
+        value: 'kotlin.text.substring'

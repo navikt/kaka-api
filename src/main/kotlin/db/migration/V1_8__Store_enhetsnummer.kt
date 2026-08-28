@@ -3,19 +3,22 @@ package db.migration
 import no.nav.klage.kodeverk.Enhet
 import org.flywaydb.core.api.migration.BaseJavaMigration
 import org.flywaydb.core.api.migration.Context
-import java.util.*
+import java.util.UUID
 
-
-class V1_8__Store_enhetsnummer: BaseJavaMigration() {
+// Flyway resolves Java/Kotlin migrations by class name, so the V<version>__<description>
+// pattern is mandatory here and cannot be renamed to camel case.
+@Suppress("ktlint:standard:class-naming")
+class V1_8__Store_enhetsnummer : BaseJavaMigration() {
     override fun migrate(context: Context) {
-        val preparedStatement = context.connection.prepareStatement(
-            """
+        val preparedStatement =
+            context.connection.prepareStatement(
+                """
                 UPDATE kaka.saksdata 
                     SET tilknyttet_enhet = ?,
                         vedtaksinstans_enhet = ?
                 WHERE id = ?
-            """.trimIndent()
-        )
+                """.trimIndent(),
+            )
 
         context.connection.createStatement().use { select ->
             select.executeQuery("SELECT id, tilknyttet_enhet, vedtaksinstans_enhet FROM kaka.saksdata").use { rows ->

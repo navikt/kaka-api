@@ -18,8 +18,15 @@ import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.ytelse.Ytelse
 import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.web.bind.annotation.*
-import java.util.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @Tag(name = "kaka-api:kabal-kvalitet-v3")
@@ -32,7 +39,6 @@ class KabalKvalitetsvurderingV3Controller(
     @Value("\${kabalApiName}")
     private val kabalApiName: String,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -67,7 +73,7 @@ class KabalKvalitetsvurderingV3Controller(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @RequestParam temaId: String?,
         @RequestParam ytelseId: String?,
-        @RequestParam typeId: String?
+        @RequestParam typeId: String?,
     ): ValidationErrors {
         val kvalitetsvurdering =
             kvalitetsvurderingV3Service.getKvalitetsvurdering(kvalitetsvurderingId)
@@ -75,41 +81,44 @@ class KabalKvalitetsvurderingV3Controller(
         val typeToUse = typeId?.let { Type.of(it) } ?: Type.KLAGE
 
         return ValidationErrors(
-            kvalitetsvurdering.getInvalidProperties(
-                ytelse = ytelseToUse,
-                type = typeToUse,
-            ).map {
-                ValidationErrors.InvalidProperty(
-                    field = it.field,
-                    reason = it.reason
-                )
-            })
+            kvalitetsvurdering
+                .getInvalidProperties(
+                    ytelse = ytelseToUse,
+                    type = typeToUse,
+                ).map {
+                    ValidationErrors.InvalidProperty(
+                        field = it.field,
+                        reason = it.reason,
+                    )
+                },
+        )
     }
 
     @PostMapping("/saksdata/v3")
     fun createAndFinalizeSaksdata(
-        @RequestBody input: KabalSaksdataInput
+        @RequestBody input: KabalSaksdataInput,
     ): KabalViewIdOnly {
         val callingApplication = verifyAndGetCallingApplication()
         logger.debug("Fullfør kvalitetsvurdering v3 is requested by $callingApplication")
         return KabalViewIdOnly(
-            saksdataService.handleIncomingCompleteSaksdata(
-                sakenGjelder = input.sakenGjelder,
-                sakstype = Type.of(input.sakstype),
-                ytelse = Ytelse.of(input.ytelseId),
-                mottattKlageinstans = input.mottattKlageinstans,
-                vedtaksinstansEnhet = input.vedtaksinstansEnhet,
-                mottattVedtaksinstans = input.mottattVedtaksinstans,
-                utfall = Utfall.of(input.utfall),
-                hjemler = input.registreringshjemler?.map { Registreringshjemmel.of(it) } ?: emptyList(),
-                kvalitetsvurderingId = input.kvalitetsvurderingId,
-                avsluttetAvSaksbehandler = input.avsluttetAvSaksbehandler,
-                utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
-                tilknyttetEnhet = input.tilknyttetEnhet,
-                source = Source.KABAL,
-                tilbakekreving = input.tilbakekreving ?: false,
-                version = 3,
-            ).id
+            saksdataService
+                .handleIncomingCompleteSaksdata(
+                    sakenGjelder = input.sakenGjelder,
+                    sakstype = Type.of(input.sakstype),
+                    ytelse = Ytelse.of(input.ytelseId),
+                    mottattKlageinstans = input.mottattKlageinstans,
+                    vedtaksinstansEnhet = input.vedtaksinstansEnhet,
+                    mottattVedtaksinstans = input.mottattVedtaksinstans,
+                    utfall = Utfall.of(input.utfall),
+                    hjemler = input.registreringshjemler?.map { Registreringshjemmel.of(it) } ?: emptyList(),
+                    kvalitetsvurderingId = input.kvalitetsvurderingId,
+                    avsluttetAvSaksbehandler = input.avsluttetAvSaksbehandler,
+                    utfoerendeSaksbehandler = input.utfoerendeSaksbehandler,
+                    tilknyttetEnhet = input.tilknyttetEnhet,
+                    source = Source.KABAL,
+                    tilbakekreving = input.tilbakekreving ?: false,
+                    version = 3,
+                ).id,
         )
     }
 
