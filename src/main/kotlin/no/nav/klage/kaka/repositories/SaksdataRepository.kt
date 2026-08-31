@@ -4,16 +4,17 @@ import no.nav.klage.kaka.domain.Saksdata
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Repository
-interface SaksdataRepository : JpaRepository<Saksdata, UUID>, SaksdataRepositoryCustom {
-
+interface SaksdataRepository :
+    JpaRepository<Saksdata, UUID>,
+    SaksdataRepositoryCustom {
     fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerIsNullOrderByCreated(saksbehandlerIdent: String): List<Saksdata>
 
     fun findByUtfoerendeSaksbehandlerAndAvsluttetAvSaksbehandlerGreaterThanEqualOrderByModified(
         saksbehandlerIdent: String,
-        fromDate: LocalDateTime
+        fromDate: LocalDateTime,
     ): List<Saksdata>
 
     fun findOneByKvalitetsvurderingReferenceId(kvalitetsvurderingId: UUID): Saksdata?

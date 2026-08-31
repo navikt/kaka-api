@@ -1,14 +1,18 @@
 package no.nav.klage.kaka.domain.kvalitetsvurdering.v1
 
-
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import no.nav.klage.kaka.domain.raadgivendeLegeYtelser
 import no.nav.klage.kaka.exceptions.InvalidProperty
 import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Entity
 @Table(name = "kvalitetsvurdering_v1", schema = "kaka")
@@ -103,7 +107,7 @@ class KvalitetsvurderingV1(
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
     @Column(name = "modified")
-    var modified: LocalDateTime = created
+    var modified: LocalDateTime = created,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -116,9 +120,7 @@ class KvalitetsvurderingV1(
         return true
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
     fun cleanup() {
         if (!brukIOpplaering) {
@@ -208,7 +210,10 @@ class KvalitetsvurderingV1(
         brukIOpplaeringText = null
     }
 
-    fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
+    fun getInvalidProperties(
+        ytelse: Ytelse?,
+        type: Type,
+    ): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
         result += getCommonInvalidProperties(ytelse)
@@ -225,7 +230,7 @@ class KvalitetsvurderingV1(
 
         if (utredningenRadioValg == null) {
             result.add(
-                createRadioValgValidationError(::utredningenRadioValg.name)
+                createRadioValgValidationError(::utredningenRadioValg.name),
             )
         } else if (utredningenRadioValg == RadioValg.MANGELFULLT) {
             if (
@@ -238,7 +243,7 @@ class KvalitetsvurderingV1(
                 !veiledningFraNav
             ) {
                 result.add(
-                    createMissingChecksValidationError(::utredningenRadioValg.name)
+                    createMissingChecksValidationError(::utredningenRadioValg.name),
                 )
             }
         }
@@ -246,7 +251,7 @@ class KvalitetsvurderingV1(
         if (ytelse in raadgivendeLegeYtelser) {
             if (brukAvRaadgivendeLegeRadioValg == null) {
                 result.add(
-                    createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                    createRadioValgValidationError(::brukAvRaadgivendeLegeRadioValg.name),
                 )
             } else if (brukAvRaadgivendeLegeRadioValg == RadioValgRaadgivendeLege.MANGELFULLT) {
                 if (
@@ -256,7 +261,7 @@ class KvalitetsvurderingV1(
                     !raadgivendeLegeErBruktMangelfullDokumentasjon
                 ) {
                     result.add(
-                        createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name)
+                        createMissingChecksValidationError(::brukAvRaadgivendeLegeRadioValg.name),
                     )
                 }
             }
@@ -264,7 +269,7 @@ class KvalitetsvurderingV1(
 
         if (vedtaketRadioValg == null) {
             result.add(
-                createRadioValgValidationError(::vedtaketRadioValg.name)
+                createRadioValgValidationError(::vedtaketRadioValg.name),
             )
         } else if (vedtaketRadioValg == RadioValg.MANGELFULLT) {
             if (
@@ -278,7 +283,7 @@ class KvalitetsvurderingV1(
                 !nyeOpplysningerMottatt
             ) {
                 result.add(
-                    createMissingChecksValidationError(::vedtaketRadioValg.name)
+                    createMissingChecksValidationError(::vedtaketRadioValg.name),
                 )
             }
         }
@@ -289,7 +294,7 @@ class KvalitetsvurderingV1(
         val result = mutableListOf<InvalidProperty>()
         if (klageforberedelsenRadioValg == null) {
             result.add(
-                createRadioValgValidationError(::klageforberedelsenRadioValg.name)
+                createRadioValgValidationError(::klageforberedelsenRadioValg.name),
             )
         } else if (klageforberedelsenRadioValg == RadioValg.MANGELFULLT) {
             if (
@@ -301,35 +306,33 @@ class KvalitetsvurderingV1(
                 !oversendelsesbrevetsInnholdIkkeISamsvarMedTema
             ) {
                 result.add(
-                    createMissingChecksValidationError(::klageforberedelsenRadioValg.name)
+                    createMissingChecksValidationError(::klageforberedelsenRadioValg.name),
                 )
             }
         }
         return result
     }
 
-    private fun createRadioValgValidationError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createRadioValgValidationError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Velg et alternativ."
+            reason = "Velg et alternativ.",
         )
-    }
 
-    private fun createMissingChecksValidationError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createMissingChecksValidationError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Velg minst én."
+            reason = "Velg minst én.",
         )
-    }
 
     enum class RadioValg {
         BRA,
-        MANGELFULLT
+        MANGELFULLT,
     }
 
     enum class RadioValgRaadgivendeLege {
         IKKE_AKTUELT,
         BRA,
-        MANGELFULLT
+        MANGELFULLT,
     }
 }

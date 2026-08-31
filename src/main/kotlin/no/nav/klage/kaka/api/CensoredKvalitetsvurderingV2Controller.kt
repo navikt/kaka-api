@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
+import java.util.UUID
 
 @RestController
 @Tag(name = "kaka-api:kvalitetsvurdering-v2")
@@ -27,7 +27,6 @@ class CensoredKvalitetsvurderingV2Controller(
     private val tokenUtil: TokenUtil,
     private val roleMapper: RolleMapper,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -35,18 +34,19 @@ class CensoredKvalitetsvurderingV2Controller(
 
     @GetMapping
     fun getCensoredKvalitetsvurdering(
-        @PathVariable("id") kvalitetsvurderingId: UUID
+        @PathVariable("id") kvalitetsvurderingId: UUID,
     ): CensoredKvalitetsvurderingV2View {
         validateCanSeeKvalitetstilbakemeldinger()
 
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
-            ::getCensoredKvalitetsvurdering.name,
-            innloggetSaksbehandler,
-            kvalitetsvurderingId,
-            logger
+            methodName = ::getCensoredKvalitetsvurdering.name,
+            innloggetIdent = innloggetSaksbehandler,
+            kvalitetsvurderingId = kvalitetsvurderingId,
+            logger = logger,
         )
-        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId)
+        return kvalitetsvurderingV2Service
+            .getKvalitetsvurdering(kvalitetsvurderingId)
             .toCensoredKvalitetsvurderingV2View()
     }
 

@@ -1,6 +1,16 @@
 package no.nav.klage.kaka.domain.kvalitetsvurdering.v3
 
-import jakarta.persistence.*
+import jakarta.persistence.CollectionTable
+import jakarta.persistence.Column
+import jakarta.persistence.Convert
+import jakarta.persistence.ElementCollection
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.Table
 import no.nav.klage.kaka.domain.RegistreringshjemmelConverter
 import no.nav.klage.kaka.domain.raadgivendeLegeYtelser
 import no.nav.klage.kaka.exceptions.InvalidProperty
@@ -9,7 +19,7 @@ import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Entity
 @Table(name = "kvalitetsvurdering_v3", schema = "kaka")
@@ -17,238 +27,180 @@ import java.util.*
 class KvalitetsvurderingV3(
     @Id
     val id: UUID = UUID.randomUUID(),
-
     // Kvalitetsavvik i forvaltningen av særregelverket
     @Column(name = "saerregelverk_automatisk_vedtak")
     var saerregelverkAutomatiskVedtak: Boolean = false,
-
     @Enumerated(EnumType.STRING)
     @Column(name = "saerregelverk")
     var saerregelverk: Radiovalg? = null,
-
     // Loven er tolket eller anvendt feil i vedtaket
     @Column(name = "saerregelverk_loven_er_tolket_eller_anvendt_feil")
     var saerregelverkLovenErTolketEllerAnvendtFeil: Boolean = false,
-
     @Column(name = "saerregelverk_vedtaket_bygger_paa_feil_hjemmel_el_lovtolk")
     var saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning: Boolean = false,
-
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "r_k_v3_saerregelverk_vbpfh_el_lt_hjemler_list",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)],
     )
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
     var saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList: Set<Registreringshjemmel>? = null,
-
     // Vedtaket bygger på feil konkret rettsanvendelse eller skjønnsutøvelse
     @Column(name = "saerregelverk_vedtaket_bygger_paa_feil_konkret_rettsanv")
     var saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn: Boolean = false,
-
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "r_k_v3_saerregelverk_vbpfkr_hjemler_list",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)],
     )
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
     var saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList: Set<Registreringshjemmel>? = null,
-
     // Det er lagt til grunn feil faktum i vedtaket
     @Column(name = "saerregelverk_det_er_lagt_til_grunn_feil_faktum")
     var saerregelverkDetErLagtTilGrunnFeilFaktum: Boolean = false,
-
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "r_k_v3_saerregelverk_deltgff_hjemler_list",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)],
     )
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
     var saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList: Set<Registreringshjemmel>? = null,
-
     // Kvalitetsavvik i forvaltningen av saksbehandlingsreglene
-
     @Enumerated(EnumType.STRING)
     @Column(name = "sbr")
     var saksbehandlingsregler: Radiovalg? = null,
-
     // Brudd på veiledningsplikten, forvaltningsloven § 11
     @Column(name = "sbr_brudd_paa_veiledningsplikten")
     var saksbehandlingsreglerBruddPaaVeiledningsplikten: Boolean = false,
-
     @Column(name = "sbr_veiledningsplikten_parten_ikke_fatt_svar")
     var saksbehandlingsreglerVeiledningspliktenPartenHarIkkeFaattSvarPaaHenvendelser: Boolean = false,
-
     @Column(name = "sbr_veiledningsplikten_nav_ikke_gitt_god_nok")
     var saksbehandlingsreglerVeiledningspliktenNavHarIkkeGittGodNokVeiledning: Boolean = false,
-
     // Brudd på reglene om forhåndsvarsling, forvaltningsloven § 16
     @Column(name = "sbr_brudd_paa_reglene_om_forhaandsvarsling")
     var saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling: Boolean = false,
-
     @Column(name = "sbr_forhaandsvarsling_parten_ikke_varslet_foer_vedtak")
     var saksbehandlingsreglerForhaandsvarslingPartenIkkeVarsletFoerVedtak: Boolean = false,
-
     @Column(name = "sbr_forhaandsvarsling_parten_varslet_mangelfullt")
     var saksbehandlingsreglerForhaandsvarslingPartenVarsletMangelfullt: Boolean = false,
-
     // Brudd på utredningsplikten, forvaltningsloven § 17
     @Column(name = "sbr_brudd_paa_utredningsplikten")
     var saksbehandlingsreglerBruddPaaUtredningsplikten: Boolean = false,
-
     @Column(name = "sbr_utredningsplikten_utredningen_av_medisinske")
     var saksbehandlingsreglerUtredningspliktenUtredningenAvMedisinskeForholdHarIkkeVaertGodNok: Boolean = false,
-
     @Column(name = "sbr_utredningsplikten_utredningen_av_inntekts")
     var saksbehandlingsreglerUtredningspliktenUtredningenAvInntektsArbeidsforholdHarIkkeVaertGodNok: Boolean = false,
-
     @Column(name = "sbr_utredningsplikten_utredningen_av_eoes")
     var saksbehandlingsreglerUtredningspliktenUtredningenAvEoesUtenlandsforholdHarIkkeVaertGodNok: Boolean = false,
-
     @Column(name = "sbr_utredningsplikten_utredningen_av_sivilstand")
     var saksbehandlingsreglerUtredningspliktenUtredningenAvSivilstandsBoforholdHarIkkeVaertGodNok: Boolean = false,
-
     @Column(name = "sbr_utredningsplikten_utredningen_av_samvaer")
     var saksbehandlingsreglerUtredningspliktenUtredningenAvSamvaersforholdHarIkkeVaertGodNok: Boolean = false,
-
     @Column(name = "sbr_utredningsplikten_utredningen_av_andre_forhold")
     var saksbehandlingsreglerUtredningspliktenUtredningenAvAndreForholdISakenHarIkkeVaertGodNok: Boolean = false,
-
     // Brudd på foreleggelsesplikten, forvaltningsloven §§ 17 og 18 til 19
     @Column(name = "sbr_brudd_paa_foreleggelsesplikten")
     var saksbehandlingsreglerBruddPaaForeleggelsesplikten: Boolean = false,
-
     @Column(name = "sbr_foreleggelsesplikten_uttalelse_fra_rl")
     var saksbehandlingsreglerForeleggelsespliktenUttalelseFraRaadgivendeLegeHarIkkeVaertForelagtParten: Boolean = false,
-
     @Column(name = "sbr_foreleggelsesplikten_andre_opplysninger")
     var saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten: Boolean = false,
-
     // Brudd på begrunnelsesplikten, forvaltningsloven §§ 24 og 25
     @Column(name = "sbr_brudd_paa_begrunnelsesplikten")
     var saksbehandlingsreglerBruddPaaBegrunnelsesplikten: Boolean = false,
-
     @Column(name = "sbr_begrunnelsesplikten_begrunnelsen_viser_ikke")
     var saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket: Boolean = false,
-
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "r_k_v3_sbr_begrunnelsesplikten_bvitr_hjemler_list",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)],
     )
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
     var saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList: Set<Registreringshjemmel>? = null,
-
     @Column(name = "sbr_begrunnelsesplikten_begrunnelsen_nevner_ikke_faktum")
     var saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum: Boolean = false,
-
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "r_k_v3_sbr_begrunnelsesplikten_bnif_hjemler_list",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)],
     )
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
     var saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList: Set<Registreringshjemmel>? = null,
-
     @Column(name = "sbr_begrunnelsesplikten_begrunnelsen_nevner_ikke_hensyn")
     var saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn: Boolean = false,
-
     @ElementCollection(targetClass = Registreringshjemmel::class, fetch = FetchType.EAGER)
     @CollectionTable(
         name = "r_k_v3_sbr_begrunnelsesplikten_bnih_hjemler_list",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "kvalitetsvurdering_v3_id", referencedColumnName = "id", nullable = false)],
     )
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
     var saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList: Set<Registreringshjemmel>? = null,
-
     // Brudd på reglene om klage og klageforberedelse, forvaltningsloven §§ 28 til 33
     @Column(name = "sbr_brudd_paa_klage_og_klageforberedelse")
     var saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse: Boolean = false,
-
     @Column(name = "sbr_brudd_paa_klage_klagefristen_eller_oppreisning")
     var saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert: Boolean = false,
-
     @Column(name = "sbr_brudd_paa_klage_ikke_soerget_for_retting")
     var saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold: Boolean = false,
-
     @Column(name = "sbr_brudd_paa_klage_under_klageforberedelsen")
     var saksbehandlingsreglerBruddPaaKlageUnderKlageforberedelsenErDetIkkeUtredetEllerGjortUndersoekelser: Boolean = false,
-
     @Column(name = "sbr_brudd_paa_klage_ikke_fulgt_regler_fattet_nytt_enkeltvedtak")
     var saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak: Boolean = false,
-
     @Column(name = "sbr_brudd_paa_klage_alle_rel_dok_ikke_oversendt_klageinstansen")
     var saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen: Boolean = false,
-
     // Brudd på reglene om omgjøring utenfor ordinær klage- og ankesaksbehandling, forvaltningsloven § 35
     @Column(name = "sbr_brudd_paa_omgjoering")
     var saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke: Boolean = false,
-
     @Column(name = "sbr_omgjoering_ugyldighet_og_omgjoering")
     var saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert: Boolean = false,
-
     @Column(name = "sbr_omgjoering_fattet_vedtak_istedenfor_beslutning")
     var saksbehandlingsreglerOmgjoeringDetErFattetVedtakTilTrossForAtBeslutningVarRiktigAvgjoerelsesform: Boolean = false,
-
     // Brudd på journalføringsplikten, arkivloven §§ 6 og 12 og forskrift §§ 9 følgende
     @Column(name = "sbr_brudd_paa_journalforingsplikten")
     var saksbehandlingsreglerBruddPaaJournalfoeringsplikten: Boolean = false,
-
     @Column(name = "sbr_journalforingsplikten_relevante_opplysninger_ikke")
     var saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerErIkkeJournalfoert: Boolean = false,
-
     @Column(name = "sbr_journalforingsplikten_relevante_opplysninger_ikke_god_nok")
     var saksbehandlingsreglerJournalfoeringspliktenRelevanteOpplysningerHarIkkeGodNokTittelEllerDokumentkvalitet: Boolean = false,
-
     // Brudd på plikten til å kommunisere på et klart språk, språklova § 9
     @Column(name = "sbr_brudd_paa_klart_spraak")
     var saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak: Boolean = false,
-
     @Column(name = "sbr_brudd_paa_klart_spraak_spraket_i_vedtaket_ikke_klart_nok")
     var saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok: Boolean = false,
-
     @Column(name = "sbr_brudd_paa_klart_spraak_spraket_i_osbrev_ikke_klart_nok")
     var saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok: Boolean = false,
-
     // Kvalitetsavvik i saker med trygdemedisin
     @Enumerated(EnumType.STRING)
     @Column(name = "bruk_av_raadgivende_lege")
     var brukAvRaadgivendeLege: RadiovalgRaadgivendeLege? = null,
-
     @Column(name = "raadgivende_lege_ikkebrukt")
     var raadgivendeLegeIkkebrukt: Boolean = false,
-
     @Column(name = "raadgivende_lege_mangelfull_bruk_av_raadgivende_lege")
     var raadgivendeLegeMangelfullBrukAvRaadgivendeLege: Boolean = false,
-
     @Column(name = "raadgivende_lege_uttalt_seg_om_tema_utover_trygdemedisin")
     var raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean = false,
-
     @Column(name = "raadgivende_lege_begrunnelse_mangelfull_eller_ikke_dokumentert")
     var raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert: Boolean = false,
-
     // Annet
     @Column(name = "annet_fritekst")
     var annetFritekst: String? = null,
-
     @Column(name = "created")
     val created: LocalDateTime = LocalDateTime.now(),
-
     @Column(name = "modified")
-    var modified: LocalDateTime = created
+    var modified: LocalDateTime = created,
 ) {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -258,9 +210,7 @@ class KvalitetsvurderingV3(
         return id == other.id
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
     fun resetFieldsUnusedInAnke() {
         saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse = false
@@ -424,7 +374,10 @@ class KvalitetsvurderingV3(
         }
     }
 
-    fun getInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
+    fun getInvalidProperties(
+        ytelse: Ytelse?,
+        type: Type,
+    ): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
         result += getCommonInvalidProperties(ytelse, type)
@@ -436,7 +389,10 @@ class KvalitetsvurderingV3(
         return result
     }
 
-    private fun getCommonInvalidProperties(ytelse: Ytelse?, type: Type): List<InvalidProperty> {
+    private fun getCommonInvalidProperties(
+        ytelse: Ytelse?,
+        type: Type,
+    ): List<InvalidProperty> {
         val result = mutableListOf<InvalidProperty>()
 
         // Validate Særregelverk
@@ -469,7 +425,11 @@ class KvalitetsvurderingV3(
             if (saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn &&
                 saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList.isNullOrEmpty()
             ) {
-                result.add(createMissingChecksValidationError(::saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList.name))
+                result.add(
+                    createMissingChecksValidationError(
+                        ::saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList.name,
+                    ),
+                )
             }
 
             if (saerregelverkDetErLagtTilGrunnFeilFaktum &&
@@ -484,7 +444,8 @@ class KvalitetsvurderingV3(
             result.add(createRadioValgValidationError(::saksbehandlingsregler.name))
         } else if (saksbehandlingsregler == Radiovalg.MANGELFULLT) {
             // Level 1: Must choose at least one main category
-            val commonCheck = !saksbehandlingsreglerBruddPaaVeiledningsplikten &&
+            val commonCheck =
+                !saksbehandlingsreglerBruddPaaVeiledningsplikten &&
                     !saksbehandlingsreglerBruddPaaRegleneOmForhaandsvarsling &&
                     !saksbehandlingsreglerBruddPaaUtredningsplikten &&
                     !saksbehandlingsreglerBruddPaaForeleggelsesplikten &&
@@ -492,11 +453,12 @@ class KvalitetsvurderingV3(
                     !saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke &&
                     !saksbehandlingsreglerBruddPaaJournalfoeringsplikten &&
                     !saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak
-            val validationError = when (type) {
-                Type.KLAGE -> (commonCheck && !saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse)
-                Type.ANKE -> commonCheck
-                else -> error("Ukjent type ved validering av kvalitetsvurdering: $type")
-            }
+            val validationError =
+                when (type) {
+                    Type.KLAGE -> (commonCheck && !saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse)
+                    Type.ANKE -> commonCheck
+                    else -> error("Ukjent type ved validering av kvalitetsvurdering: $type")
+                }
             if (validationError) {
                 result.add(createMissingChecksValidationError(::saksbehandlingsregler.name + "Group"))
             }
@@ -550,19 +512,31 @@ class KvalitetsvurderingV3(
                 if (saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket &&
                     saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList.isNullOrEmpty()
                 ) {
-                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList.name))
+                    result.add(
+                        createMissingChecksValidationError(
+                            ::saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList.name,
+                        ),
+                    )
                 }
 
                 if (saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum &&
                     saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList.isNullOrEmpty()
                 ) {
-                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList.name))
+                    result.add(
+                        createMissingChecksValidationError(
+                            ::saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList.name,
+                        ),
+                    )
                 }
 
                 if (saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn &&
                     saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList.isNullOrEmpty()
                 ) {
-                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList.name))
+                    result.add(
+                        createMissingChecksValidationError(
+                            ::saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList.name,
+                        ),
+                    )
                 }
             }
 
@@ -570,7 +544,11 @@ class KvalitetsvurderingV3(
                 if (!saksbehandlingsreglerOmgjoeringUgyldighetOgOmgjoeringErIkkeVurdertEllerFeilVurdert &&
                     !saksbehandlingsreglerOmgjoeringDetErFattetVedtakTilTrossForAtBeslutningVarRiktigAvgjoerelsesform
                 ) {
-                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke.name + "Group"))
+                    result.add(
+                        createMissingChecksValidationError(
+                            ::saksbehandlingsreglerBruddPaaRegleneOmOmgjoeringUtenforKlageOgAnke.name + "Group",
+                        ),
+                    )
                 }
             }
 
@@ -611,7 +589,9 @@ class KvalitetsvurderingV3(
                     !saksbehandlingsreglerBruddPaaKlageRegleneIkkeFulgtTilTrossForNyttEnkeltvedtak &&
                     !saksbehandlingsreglerBruddPaaKlageAlleRelevanteDokumenterIkkeOversendtKlageinstansen
                 ) {
-                    result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse.name + "Group"))
+                    result.add(
+                        createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse.name + "Group"),
+                    )
                 }
             }
         }
@@ -620,35 +600,35 @@ class KvalitetsvurderingV3(
             if (!saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok &&
                 !saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok
             ) {
-                result.add(createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak.name + "Group"))
+                result.add(
+                    createMissingChecksValidationError(::saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak.name + "Group"),
+                )
             }
         }
 
         return result
     }
 
-    private fun createMissingChecksValidationError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createMissingChecksValidationError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Velg minst én."
+            reason = "Velg minst én.",
         )
-    }
 
-    private fun createRadioValgValidationError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createRadioValgValidationError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Velg et alternativ."
+            reason = "Velg et alternativ.",
         )
-    }
 
     enum class Radiovalg {
         BRA,
-        MANGELFULLT
+        MANGELFULLT,
     }
 
     enum class RadiovalgRaadgivendeLege {
         IKKE_AKTUELT,
         BRA,
-        MANGELFULLT
+        MANGELFULLT,
     }
 }

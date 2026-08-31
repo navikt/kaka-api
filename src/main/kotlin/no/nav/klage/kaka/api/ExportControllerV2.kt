@@ -30,7 +30,6 @@ class ExportControllerV2(
     private val rolleMapper: RolleMapper,
     private val saksbehandlerService: SaksbehandlerService,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -47,12 +46,13 @@ class ExportControllerV2(
 
         val enhet = saksbehandlerService.getUserEnhet(navIdent = innloggetSaksbehandler)
 
-        val data = exportServiceV2.getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
-            fromDate = fromDate,
-            toDate = toDate,
-            enhet = enhet,
-            saksbehandler = innloggetSaksbehandler,
-        )
+        val data =
+            exportServiceV2.getFinishedAsRawDataByDatesAndKlageenhetPartitionedBySaksbehandler(
+                fromDate = fromDate,
+                toDate = toDate,
+                enhet = enhet,
+                saksbehandler = innloggetSaksbehandler,
+            )
         return MyResponseV2(
             anonymizedFinishedVurderingList = data.mine,
             mine = data.mine,
@@ -67,10 +67,11 @@ class ExportControllerV2(
     ): OpenResponseWithoutEnheterV2 {
         logger.debug("getOpen() called. fromDate = $fromDate, toDate = $toDate")
 
-        val anonymizedFinishedVurderingList = exportServiceV2.getFinishedAsRawDataByDatesWithoutEnheter(
-            fromDate = fromDate,
-            toDate = toDate
-        )
+        val anonymizedFinishedVurderingList =
+            exportServiceV2.getFinishedAsRawDataByDatesWithoutEnheter(
+                fromDate = fromDate,
+                toDate = toDate,
+            )
         return OpenResponseWithoutEnheterV2(
             anonymizedFinishedVurderingList = anonymizedFinishedVurderingList,
             rest = anonymizedFinishedVurderingList,
@@ -84,10 +85,11 @@ class ExportControllerV2(
     ): TotalResponseV2 {
         logger.debug("getTotal() called. FromDate = $fromDate, toDate = $toDate")
 
-        val anonymizedFinishedVurderingList = exportServiceV2.getFinishedAsRawDataByDates(
-            fromDate = fromDate,
-            toDate = toDate
-        )
+        val anonymizedFinishedVurderingList =
+            exportServiceV2.getFinishedAsRawDataByDates(
+                fromDate = fromDate,
+                toDate = toDate,
+            )
         return TotalResponseV2(
             anonymizedFinishedVurderingList = anonymizedFinishedVurderingList,
             rest = anonymizedFinishedVurderingList,
@@ -114,12 +116,13 @@ class ExportControllerV2(
 
         val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
-        val data = exportServiceV2.getFinishedAsRawDataByDatesForVedtaksinstansleder(
-            fromDate = fromDate,
-            toDate = toDate,
-            vedtaksinstansEnhet = enhet,
-            mangelfullt = mangelfullt ?: emptyList(),
-        )
+        val data =
+            exportServiceV2.getFinishedAsRawDataByDatesForVedtaksinstansleder(
+                fromDate = fromDate,
+                toDate = toDate,
+                vedtaksinstansEnhet = enhet,
+                mangelfullt = mangelfullt ?: emptyList(),
+            )
         return VedtaksinstanslederResponseV2(
             anonymizedFinishedVurderingList = data.mine,
             mine = data.mine,

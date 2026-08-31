@@ -1,9 +1,7 @@
 package no.nav.klage.kaka.config
 
-
 import no.nav.klage.kaka.util.getLogger
 import org.springframework.boot.cache.autoconfigure.JCacheManagerCustomizer
-
 import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
@@ -15,10 +13,10 @@ import javax.cache.expiry.Duration
 
 @EnableCaching
 @Configuration
-class CacheWithJCacheConfiguration(private val environment: Environment) : JCacheManagerCustomizer {
-
+class CacheWithJCacheConfiguration(
+    private val environment: Environment,
+) : JCacheManagerCustomizer {
     companion object {
-
         const val FINISHED_FOR_LEDER_CACHE = "finished_for_leder"
         const val TOTAL_CACHE = "total"
         const val OPEN_CACHE = "open"
@@ -54,5 +52,4 @@ class CacheWithJCacheConfiguration(private val environment: Environment) : JCach
         } else {
             Duration(TimeUnit.MINUTES, 10L)
         }
-
 }

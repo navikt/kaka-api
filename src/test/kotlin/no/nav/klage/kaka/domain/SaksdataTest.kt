@@ -7,11 +7,10 @@ import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 internal class SaksdataTest {
-
-    private val SAKEN_GJELDER = "15436621822"
+    private val sakenGjelderFnr = "15436621822"
 
 //    @Test
 //    fun `validation on empty saksdata gives correct number of errors`() {
@@ -31,20 +30,22 @@ internal class SaksdataTest {
 
     @Test
     fun `no validation of kvalitetsvurdering for TRUKKET`() {
-        val saksdata = Saksdata(
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = UUID.randomUUID(),
-                version = 1,
-            ),
-            utfoerendeSaksbehandler = "SAKSBEHANDLER",
-            tilknyttetEnhet = "4295",
-            mottattVedtaksinstans = LocalDate.now(),
-            sakenGjelder = SAKEN_GJELDER,
-            vedtaksinstansEnhet = "1",
-            ytelse = Ytelse.OMS_OMP,
-            mottattKlageinstans = LocalDate.now(),
-            utfall = Utfall.TRUKKET,
-        )
+        val saksdata =
+            Saksdata(
+                kvalitetsvurderingReference =
+                    KvalitetsvurderingReference(
+                        id = UUID.randomUUID(),
+                        version = 1,
+                    ),
+                utfoerendeSaksbehandler = "SAKSBEHANDLER",
+                tilknyttetEnhet = "4295",
+                mottattVedtaksinstans = LocalDate.now(),
+                sakenGjelder = sakenGjelderFnr,
+                vedtaksinstansEnhet = "1",
+                ytelse = Ytelse.OMS_OMP,
+                mottattKlageinstans = LocalDate.now(),
+                utfall = Utfall.TRUKKET,
+            )
 
         saksdata.validateAndGetErrors()
     }
@@ -52,15 +53,17 @@ internal class SaksdataTest {
     @Test
     fun `same saksbehandler has read access`() {
         val utfoerendeSaksbehandler = "SAKSBEHANDLER"
-        val saksdata = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            tilknyttetEnhet = "4295",
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = UUID.randomUUID(),
-                version = 1,
-            ),
-            sakenGjelder = SAKEN_GJELDER,
-        )
+        val saksdata =
+            Saksdata(
+                utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                tilknyttetEnhet = "4295",
+                kvalitetsvurderingReference =
+                    KvalitetsvurderingReference(
+                        id = UUID.randomUUID(),
+                        version = 1,
+                    ),
+                sakenGjelder = sakenGjelderFnr,
+            )
 
         saksdata.verifyReadAccess(utfoerendeSaksbehandler)
     }
@@ -68,15 +71,17 @@ internal class SaksdataTest {
     @Test
     fun `other saksbehandler does not have read access`() {
         val utfoerendeSaksbehandler = "SAKSBEHANDLER"
-        val saksdata = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            tilknyttetEnhet = "4295",
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = UUID.randomUUID(),
-                version = 1,
-            ),
-            sakenGjelder = SAKEN_GJELDER,
-        )
+        val saksdata =
+            Saksdata(
+                utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                tilknyttetEnhet = "4295",
+                kvalitetsvurderingReference =
+                    KvalitetsvurderingReference(
+                        id = UUID.randomUUID(),
+                        version = 1,
+                    ),
+                sakenGjelder = sakenGjelderFnr,
+            )
 
         assertThrows<MissingTilgangException> {
             saksdata.verifyReadAccess("other")
@@ -87,43 +92,47 @@ internal class SaksdataTest {
     fun `leder in vedtaksinstans has read access to his own enhet`() {
         val utfoerendeSaksbehandler = "SAKSBEHANDLER"
         val vedtaksinstansEnhet = "4000"
-        val saksdata = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            tilknyttetEnhet = "4295",
-            vedtaksinstansEnhet = vedtaksinstansEnhet,
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = UUID.randomUUID(),
-                version = 1,
-            ),
-            sakenGjelder = SAKEN_GJELDER,
-        )
+        val saksdata =
+            Saksdata(
+                utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                tilknyttetEnhet = "4295",
+                vedtaksinstansEnhet = vedtaksinstansEnhet,
+                kvalitetsvurderingReference =
+                    KvalitetsvurderingReference(
+                        id = UUID.randomUUID(),
+                        version = 1,
+                    ),
+                sakenGjelder = sakenGjelderFnr,
+            )
 
         saksdata.verifyReadAccess(
             innloggetIdent = "other",
             roller = setOf(KAKA_KVALITETSTILBAKEMELDINGER),
-            ansattEnhet = vedtaksinstansEnhet
+            ansattEnhet = vedtaksinstansEnhet,
         )
     }
 
     @Test
     fun `leder in vedtaksinstans does not have read access to other enhet`() {
         val utfoerendeSaksbehandler = "SAKSBEHANDLER"
-        val saksdata = Saksdata(
-            utfoerendeSaksbehandler = utfoerendeSaksbehandler,
-            tilknyttetEnhet = "4295",
-            vedtaksinstansEnhet = "4000",
-            kvalitetsvurderingReference = KvalitetsvurderingReference(
-                id = UUID.randomUUID(),
-                version = 1,
-            ),
-            sakenGjelder = SAKEN_GJELDER,
-        )
+        val saksdata =
+            Saksdata(
+                utfoerendeSaksbehandler = utfoerendeSaksbehandler,
+                tilknyttetEnhet = "4295",
+                vedtaksinstansEnhet = "4000",
+                kvalitetsvurderingReference =
+                    KvalitetsvurderingReference(
+                        id = UUID.randomUUID(),
+                        version = 1,
+                    ),
+                sakenGjelder = sakenGjelderFnr,
+            )
 
         assertThrows<MissingTilgangException> {
             saksdata.verifyReadAccess(
                 innloggetIdent = "other",
                 roller = setOf(KAKA_KVALITETSTILBAKEMELDINGER),
-                ansattEnhet = "5000"
+                ansattEnhet = "5000",
             )
         }
     }

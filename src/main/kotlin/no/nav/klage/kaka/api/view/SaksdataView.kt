@@ -3,10 +3,10 @@ package no.nav.klage.kaka.api.view
 import no.nav.klage.kaka.domain.Saksdata
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class SaksdataListView(
-    val searchHits: List<SaksdataView>
+    val searchHits: List<SaksdataView>,
 )
 
 data class SaksdataView(
@@ -21,7 +21,7 @@ data class SaksdataView(
     val hjemmelIdList: List<String>,
     val utfoerendeSaksbehandler: String,
     val tilknyttetEnhet: String,
-    //Fjern når ikke lenger i bruk i klient
+    // Fjern når ikke lenger i bruk i klient
     val kvalitetsvurderingId: UUID,
     val kvalitetsvurderingReference: KvalitetsvurderingReference,
     val avsluttetAvSaksbehandler: LocalDateTime?,
@@ -36,8 +36,8 @@ data class SaksdataView(
     )
 }
 
-fun Saksdata.toSaksdataView(): SaksdataView {
-    return SaksdataView(
+fun Saksdata.toSaksdataView(): SaksdataView =
+    SaksdataView(
         id = id,
         sakenGjelder = sakenGjelder,
         sakstypeId = sakstype.id,
@@ -50,14 +50,14 @@ fun Saksdata.toSaksdataView(): SaksdataView {
         utfoerendeSaksbehandler = utfoerendeSaksbehandler,
         tilknyttetEnhet = tilknyttetEnhet,
         kvalitetsvurderingId = kvalitetsvurderingReference.id,
-        kvalitetsvurderingReference = SaksdataView.KvalitetsvurderingReference(
-            id = kvalitetsvurderingReference.id,
-            version = kvalitetsvurderingReference.version
-        ),
+        kvalitetsvurderingReference =
+            SaksdataView.KvalitetsvurderingReference(
+                id = kvalitetsvurderingReference.id,
+                version = kvalitetsvurderingReference.version,
+            ),
         avsluttetAvSaksbehandler = avsluttetAvSaksbehandler,
         sourceId = source.id,
         created = created,
         modified = modified,
         tilbakekreving = tilbakekreving,
     )
-}

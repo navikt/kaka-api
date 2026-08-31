@@ -2,12 +2,11 @@ package no.nav.klage.kaka.clients.klagelookup
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 
-
 data class UsersResponse(
     val users: List<UserResponse>,
 )
 
-data class UserResponse (
+data class UserResponse(
     val navIdent: String,
     val sammensattNavn: String,
     val fornavn: String,
@@ -20,7 +19,7 @@ data class Access(
 )
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class ExtendedUserResponse (
+data class ExtendedUserResponse(
     val navIdent: String,
     val sammensattNavn: String,
     val fornavn: String,
@@ -28,7 +27,7 @@ data class ExtendedUserResponse (
     val enhet: Enhet,
 )
 
-data class Enhet (
+data class Enhet(
     val enhetNr: String,
     val enhetNavn: String,
 )

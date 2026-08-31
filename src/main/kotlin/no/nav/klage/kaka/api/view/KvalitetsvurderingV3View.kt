@@ -18,7 +18,6 @@ data class KvalitetsvurderingV3View(
     val saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList: Set<String>?,
     val saerregelverkDetErLagtTilGrunnFeilFaktum: Boolean,
     val saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList: Set<String>?,
-
     // Kvalitetsavvik i forvaltningen av saksbehandlingsreglene
     val saksbehandlingsregler: KvalitetsvurderingV3.Radiovalg?,
     val saksbehandlingsreglerBruddPaaVeiledningsplikten: Boolean,
@@ -59,20 +58,18 @@ data class KvalitetsvurderingV3View(
     val saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak: Boolean,
     val saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok: Boolean,
     val saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok: Boolean,
-
     // Kvalitetsavvik i saker med trygdemedisin
     val brukAvRaadgivendeLege: KvalitetsvurderingV3.RadiovalgRaadgivendeLege?,
     val raadgivendeLegeIkkebrukt: Boolean,
     val raadgivendeLegeMangelfullBrukAvRaadgivendeLege: Boolean,
     val raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean,
     val raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert: Boolean,
-
     // Annet
     val annetFritekst: String?,
 )
 
-fun KvalitetsvurderingV3.toKvalitetsvurderingV3View(): KvalitetsvurderingV3View {
-    return KvalitetsvurderingV3View(
+fun KvalitetsvurderingV3.toKvalitetsvurderingV3View(): KvalitetsvurderingV3View =
+    KvalitetsvurderingV3View(
         id = id,
         created = created,
         modified = modified,
@@ -81,15 +78,20 @@ fun KvalitetsvurderingV3.toKvalitetsvurderingV3View(): KvalitetsvurderingV3View 
         saerregelverk = saerregelverk,
         saerregelverkLovenErTolketEllerAnvendtFeil = saerregelverkLovenErTolketEllerAnvendtFeil,
         saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning = saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkning,
-        saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList = saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList?.map { it.id }
-            ?.toSet(),
+        saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList =
+            saerregelverkVedtaketByggerPaaFeilHjemmelEllerLovtolkningHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn = saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoenn,
-        saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList = saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList?.map { it.id }
-            ?.toSet(),
+        saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList =
+            saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         saerregelverkDetErLagtTilGrunnFeilFaktum = saerregelverkDetErLagtTilGrunnFeilFaktum,
-        saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList = saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList?.map { it.id }
-            ?.toSet(),
-
+        saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList =
+            saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         // Kvalitetsavvik i forvaltningen av saksbehandlingsreglene
         saksbehandlingsregler = saksbehandlingsregler,
         saksbehandlingsreglerBruddPaaVeiledningsplikten = saksbehandlingsreglerBruddPaaVeiledningsplikten,
@@ -110,14 +112,20 @@ fun KvalitetsvurderingV3.toKvalitetsvurderingV3View(): KvalitetsvurderingV3View 
         saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten = saksbehandlingsreglerForeleggelsespliktenAndreOpplysningerISakenHarIkkeVaertForelagtParten,
         saksbehandlingsreglerBruddPaaBegrunnelsesplikten = saksbehandlingsreglerBruddPaaBegrunnelsesplikten,
         saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket = saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverket,
-        saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList = saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList?.map { it.id }
-            ?.toSet(),
+        saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList =
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenViserIkkeTilRegelverketHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum = saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktum,
-        saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList = saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList?.map { it.id }
-            ?.toSet(),
+        saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList =
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeFaktumHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn = saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensyn,
-        saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList = saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList?.map { it.id }
-            ?.toSet(),
+        saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList =
+            saksbehandlingsreglerBegrunnelsespliktenBegrunnelsenNevnerIkkeAvgjoerendeHensynHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse = saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse,
         saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert = saksbehandlingsreglerBruddPaaKlageKlagefristenEllerOppreisningErIkkeVurdertEllerFeilVurdert,
         saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold = saksbehandlingsreglerBruddPaaKlageDetErIkkeSoergetForRettingAvFeilIKlagensFormEllerInnhold,
@@ -133,15 +141,12 @@ fun KvalitetsvurderingV3.toKvalitetsvurderingV3View(): KvalitetsvurderingV3View 
         saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak = saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak,
         saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok = saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok,
         saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok = saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok,
-
         // Kvalitetsavvik i saker med trygdemedisin
         brukAvRaadgivendeLege = brukAvRaadgivendeLege,
         raadgivendeLegeIkkebrukt = raadgivendeLegeIkkebrukt,
         raadgivendeLegeMangelfullBrukAvRaadgivendeLege = raadgivendeLegeMangelfullBrukAvRaadgivendeLege,
         raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin = raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin,
         raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
-
         // Annet
         annetFritekst = annetFritekst,
     )
-}

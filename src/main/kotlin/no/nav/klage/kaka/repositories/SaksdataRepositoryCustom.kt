@@ -4,7 +4,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 interface SaksdataRepositoryCustom {
-
     fun findForVedtaksinstanslederV1(
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
@@ -35,12 +34,12 @@ interface SaksdataRepositoryCustom {
 
     fun findByAvsluttetAvSaksbehandlerBetweenV1(
         fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime
+        toDateTime: LocalDateTime,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV1>
 
     fun findByAvsluttetAvSaksbehandlerBetweenV2(
         fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime
+        toDateTime: LocalDateTime,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV2>
 
     fun findByQueryParamsV1(
@@ -96,7 +95,7 @@ interface SaksdataRepositoryCustom {
 
     fun findByAvsluttetAvSaksbehandlerBetweenV3(
         fromDateTime: LocalDateTime,
-        toDateTime: LocalDateTime
+        toDateTime: LocalDateTime,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV3>
 
     fun findByQueryParamsV3(
@@ -117,5 +116,4 @@ interface SaksdataRepositoryCustom {
         fromDateTime: LocalDateTime,
         toDateTime: LocalDateTime,
     ): Set<SaksdataRepositoryCustomImpl.QueryResultV3>
-
 }

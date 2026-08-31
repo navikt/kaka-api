@@ -38,7 +38,7 @@ data class KvalitetsvurderingV2Input(
     val vedtaketAlleRelevanteHjemlerErIkkeVurdert: Boolean?,
     val vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList: Set<Registreringshjemmel>?,
     val vedtaketLovbestemmelsenTolketFeil: Boolean?,
-    val vedtaketLovbestemmelsenTolketFeilHjemlerList: Set<Registreringshjemmel>? ,
+    val vedtaketLovbestemmelsenTolketFeilHjemlerList: Set<Registreringshjemmel>?,
     val vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet: Boolean?,
     val vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList: Set<Registreringshjemmel>?,
     val vedtaketFeilKonkretRettsanvendelse: Boolean?,

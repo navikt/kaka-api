@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api.view
 
-import java.util.*
+import java.util.UUID
 
 data class AnonymizedFinishedVurderingV3(
     /** unique and static id */
@@ -16,7 +16,6 @@ data class AnonymizedFinishedVurderingV3(
     val vedtaksinstansgruppe: Int,
     val mottattKlageinstans: Date,
     val tilbakekreving: Boolean,
-
     // Kvalitetsavvik i forvaltningen av særregelverket
     var saerregelverkAutomatiskVedtak: Boolean,
     var saerregelverk: String? = null,
@@ -27,7 +26,6 @@ data class AnonymizedFinishedVurderingV3(
     var saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList: List<String>? = null,
     var saerregelverkDetErLagtTilGrunnFeilFaktum: Boolean,
     var saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList: List<String>? = null,
-
     // Kvalitetsavvik i forvaltningen av saksbehandlingsreglene
     var saksbehandlingsregler: String? = null,
     var saksbehandlingsreglerBruddPaaVeiledningsplikten: Boolean,
@@ -68,18 +66,15 @@ data class AnonymizedFinishedVurderingV3(
     var saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak: Boolean,
     var saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok: Boolean,
     var saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok: Boolean,
-
     // Kvalitetsavvik i saker med trygdemedisin
     var brukAvRaadgivendeLege: String? = null,
     var raadgivendeLegeIkkebrukt: Boolean,
     var raadgivendeLegeMangelfullBrukAvRaadgivendeLege: Boolean,
     var raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean,
     var raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert: Boolean,
-
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
-
     /** Første av de to created datoene. */
     val createdDate: Date,
     /** Siste av de to modified datoene. */
@@ -97,7 +92,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV3(
     val mottattVedtaksinstans: Date?,
     val mottattKlageinstans: Date,
     val tilbakekreving: Boolean,
-
     // Kvalitetsavvik i forvaltningen av særregelverket
     var saerregelverkAutomatiskVedtak: Boolean,
     var saerregelverk: String? = null,
@@ -108,7 +102,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV3(
     var saerregelverkVedtaketByggerPaaFeilKonkretRettsanvendelseEllerSkjoennHjemlerList: List<String>? = null,
     var saerregelverkDetErLagtTilGrunnFeilFaktum: Boolean,
     var saerregelverkDetErLagtTilGrunnFeilFaktumHjemlerList: List<String>? = null,
-
     // Kvalitetsavvik i forvaltningen av saksbehandlingsreglene
     var saksbehandlingsregler: String? = null,
     var saksbehandlingsreglerBruddPaaVeiledningsplikten: Boolean,
@@ -149,18 +142,15 @@ data class AnonymizedFinishedVurderingWithoutEnheterV3(
     var saksbehandlingsreglerBruddPaaPliktTilAaKommuniserePaaEtKlartSpraak: Boolean,
     var saksbehandlingsreglerBruddPaaKlartSprakSpraketIVedtaketErIkkeKlartNok: Boolean,
     var saksbehandlingsreglerBruddPaaKlartSprakSpraketIOversendelsesbrevetsErIkkeKlartNok: Boolean,
-
     // Kvalitetsavvik i saker med trygdemedisin
     var brukAvRaadgivendeLege: String? = null,
     var raadgivendeLegeIkkebrukt: Boolean,
     var raadgivendeLegeMangelfullBrukAvRaadgivendeLege: Boolean,
     var raadgivendeLegeUttaltSegOmTemaUtoverTrygdemedisin: Boolean,
     var raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert: Boolean,
-
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
-
     /** Første av de to created datoene. */
     val createdDate: Date,
     /** Siste av de to modified datoene. */
@@ -169,10 +159,10 @@ data class AnonymizedFinishedVurderingWithoutEnheterV3(
 
 data class ManagerResponseV3(
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV3>>?,
-    /* delete when myEnhet is in use */
+    // delete when myEnhet is in use
     val mine: List<AnonymizedFinishedVurderingV3>,
     val myEnhet: List<AnonymizedFinishedVurderingV3>,
-    /* delete when otherEnheter is in use */
+    // delete when otherEnheter is in use
     val rest: List<AnonymizedFinishedVurderingV3>,
     val otherEnheter: List<AnonymizedFinishedVurderingV3>,
 )

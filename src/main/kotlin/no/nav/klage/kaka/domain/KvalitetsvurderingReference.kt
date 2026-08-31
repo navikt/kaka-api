@@ -2,7 +2,7 @@ package no.nav.klage.kaka.domain
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable
-import java.util.*
+import java.util.UUID
 
 @Embeddable
 data class KvalitetsvurderingReference(

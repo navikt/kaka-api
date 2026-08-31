@@ -1,6 +1,6 @@
 package no.nav.klage.kaka.api.view
 
-import java.util.*
+import java.util.UUID
 
 data class AnonymizedFinishedVurderingV1(
     /** unique and static id */
@@ -14,7 +14,6 @@ data class AnonymizedFinishedVurderingV1(
     val mottattVedtaksinstans: Date?,
     val vedtaksinstansEnhet: String,
     val mottattKlageinstans: Date,
-
     val arbeidsrettetBrukeroppfoelging: Boolean,
     val begrunnelseForHvorforAvslagOpprettholdes: Boolean,
     val begrunnelsenErIkkeKonkretOgIndividuell: Boolean,
@@ -46,11 +45,9 @@ data class AnonymizedFinishedVurderingV1(
     val utredningenRadioValg: String?,
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
-
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
-
     /** Første av de to created datoene. */
     val createdDate: Date,
     /** Siste av de to modified datoene. */
@@ -67,7 +64,6 @@ data class AnonymizedFinishedVurderingWithoutEnheterV1(
     val sakstypeId: String,
     val mottattVedtaksinstans: Date?,
     val mottattKlageinstans: Date,
-
     val arbeidsrettetBrukeroppfoelging: Boolean,
     val begrunnelseForHvorforAvslagOpprettholdes: Boolean,
     val begrunnelsenErIkkeKonkretOgIndividuell: Boolean,
@@ -99,11 +95,9 @@ data class AnonymizedFinishedVurderingWithoutEnheterV1(
     val utredningenRadioValg: String?,
     val vedtaketRadioValg: String?,
     val brukAvRaadgivendeLegeRadioValg: String?,
-
     val kaBehandlingstidDays: Int,
     val vedtaksinstansBehandlingstidDays: Int,
     val totalBehandlingstidDays: Int,
-
     /** Første av de to created datoene. */
     val createdDate: Date,
     /** Siste av de to modified datoene. */
@@ -116,15 +110,15 @@ data class Date(
     val month: Int,
     val day: Int,
     val iso: String,
-    val epochDay: Int
+    val epochDay: Int,
 )
 
 data class ManagerResponseV1(
     val saksbehandlere: Map<String, List<AnonymizedFinishedVurderingV1>>?,
-    /* delete when myEnhet is in use */
+    // delete when myEnhet is in use
     val mine: List<AnonymizedFinishedVurderingV1>,
     val myEnhet: List<AnonymizedFinishedVurderingV1>,
-    /* delete when otherEnheter is in use */
+    // delete when otherEnheter is in use
     val rest: List<AnonymizedFinishedVurderingV1>,
     val otherEnheter: List<AnonymizedFinishedVurderingV1>,
 )

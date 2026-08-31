@@ -1,6 +1,15 @@
 package no.nav.klage.kaka.domain
 
-import jakarta.persistence.*
+import jakarta.persistence.CollectionTable
+import jakarta.persistence.Column
+import jakarta.persistence.Convert
+import jakarta.persistence.ElementCollection
+import jakarta.persistence.Embedded
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.Table
 import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.domain.kodeverk.Role
 import no.nav.klage.kaka.exceptions.InvalidProperty
@@ -18,7 +27,7 @@ import no.nav.klage.kodeverk.ytelse.Ytelse
 import org.hibernate.annotations.DynamicUpdate
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Entity
 @Table(name = "saksdata", schema = "kaka")
@@ -28,9 +37,9 @@ class Saksdata(
     val id: UUID = UUID.randomUUID(),
     @Column(name = "saken_gjelder")
     var sakenGjelder: String? = null,
+    // Default to KLAGE
     @Column(name = "sakstype_id")
     @Convert(converter = TypeConverter::class)
-    //Default to KLAGE
     var sakstype: Type = Type.KLAGE,
     @Column(name = "ytelse_id")
     @Convert(converter = YtelseConverter::class)
@@ -48,7 +57,7 @@ class Saksdata(
     @CollectionTable(
         name = "registreringshjemmel",
         schema = "kaka",
-        joinColumns = [JoinColumn(name = "saksdata_id", referencedColumnName = "id", nullable = false)]
+        joinColumns = [JoinColumn(name = "saksdata_id", referencedColumnName = "id", nullable = false)],
     )
     @Convert(converter = RegistreringshjemmelConverter::class)
     @Column(name = "id")
@@ -71,12 +80,10 @@ class Saksdata(
     @Column(name = "tilbakekreving")
     var tilbakekreving: Boolean = false,
 ) {
-
-    override fun toString(): String {
-        return "Saksdata(id=$id, " +
-                "modified=$modified, " +
-                "created=$created)"
-    }
+    override fun toString(): String =
+        "Saksdata(id=$id, " +
+            "modified=$modified, " +
+            "created=$created)"
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -89,11 +96,13 @@ class Saksdata(
         return true
     }
 
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
+    override fun hashCode(): Int = id.hashCode()
 
-    fun verifyReadAccess(innloggetIdent: String, roller: Set<Role> = emptySet(), ansattEnhet: String = "") {
+    fun verifyReadAccess(
+        innloggetIdent: String,
+        roller: Set<Role> = emptySet(),
+        ansattEnhet: String = "",
+    ) {
         if (innloggetIdent != utfoerendeSaksbehandler) {
             if (isAllowedToReadKvalitetstilbakemeldinger(roller) && ansattEnhet == vedtaksinstansEnhet) {
                 return
@@ -126,8 +135,8 @@ class Saksdata(
             sectionList.add(
                 ValidationSection(
                     section = "saksdata",
-                    properties = validationErrors
-                )
+                    properties = validationErrors,
+                ),
             )
         }
 
@@ -145,42 +154,42 @@ class Saksdata(
 
         if (vedtaksinstansEnhet == null) {
             validationErrors.add(
-                createMustBeSelectedValidationError(SaksdataView::vedtaksinstansEnhet.name)
+                createMustBeSelectedValidationError(SaksdataView::vedtaksinstansEnhet.name),
             )
         }
 
         if (ytelse == null) {
             validationErrors.add(
-                createMustBeSelectedValidationError(SaksdataView::ytelseId.name)
+                createMustBeSelectedValidationError(SaksdataView::ytelseId.name),
             )
         }
 
         if (mottattKlageinstans == null) {
             validationErrors.add(
-                createMustBeFilledValidationError(SaksdataView::mottattKlageinstans.name)
+                createMustBeFilledValidationError(SaksdataView::mottattKlageinstans.name),
             )
         } else if (LocalDate.now().isBefore(mottattKlageinstans)) {
             validationErrors.add(
-                createFutureDateError(SaksdataView::mottattKlageinstans.name)
+                createFutureDateError(SaksdataView::mottattKlageinstans.name),
             )
         }
 
         if (utfall == null) {
             validationErrors.add(
-                createMustBeSelectedValidationError(SaksdataView::utfallId.name)
+                createMustBeSelectedValidationError(SaksdataView::utfallId.name),
             )
         } else {
-            //TODO: Create test for invalid utfall when such are added
+            // TODO: Create test for invalid utfall when such are added
             if (!typeToUtfall[sakstype]!!.contains(utfall)) {
                 validationErrors.add(
-                    createInvalidUtfallValidationError(SaksdataView::utfallId.name)
+                    createInvalidUtfallValidationError(SaksdataView::utfallId.name),
                 )
             }
 
             if (utfall !in noRegistringshjemmelNeeded) {
                 if (registreringshjemler.isNullOrEmpty()) {
                     validationErrors.add(
-                        createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name)
+                        createMustBeSelectedValidationError(SaksdataView::hjemmelIdList.name),
                     )
                 }
             }
@@ -193,15 +202,15 @@ class Saksdata(
 
         if (mottattVedtaksinstans == null) {
             validationErrors.add(
-                createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name)
+                createMustBeFilledValidationError(SaksdataView::mottattVedtaksinstans.name),
             )
         } else if (mottattKlageinstans!!.isBefore(mottattVedtaksinstans)) {
             validationErrors.add(
-                createConflictingDatesError(SaksdataView::mottattVedtaksinstans.name)
+                createConflictingDatesError(SaksdataView::mottattVedtaksinstans.name),
             )
         } else if (LocalDate.now().isBefore(mottattVedtaksinstans)) {
             validationErrors.add(
-                createFutureDateError(SaksdataView::mottattVedtaksinstans.name)
+                createFutureDateError(SaksdataView::mottattVedtaksinstans.name),
             )
         }
 
@@ -225,64 +234,55 @@ class Saksdata(
         return null
     }
 
-    private fun createMustBeFilledValidationError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createMustBeFilledValidationError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Må fylles ut."
+            reason = "Må fylles ut.",
         )
-    }
 
-    private fun createMustBeSelectedValidationError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createMustBeSelectedValidationError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Må være valgt."
+            reason = "Må være valgt.",
         )
-    }
 
-    private fun createInvalidUtfallValidationError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createInvalidUtfallValidationError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Dette utfallet er ikke gyldig for denne behandlingstypen."
+            reason = "Dette utfallet er ikke gyldig for denne behandlingstypen.",
         )
-    }
 
-    private fun createInvalidFnrDnrError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createInvalidFnrDnrError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Dette er ikke et gyldig fnr/dnr."
+            reason = "Dette er ikke et gyldig fnr/dnr.",
         )
-    }
 
-    private fun createInvalidOrgNrError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createInvalidOrgNrError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Dette er ikke et gyldig organisasjonsnummer."
+            reason = "Dette er ikke et gyldig organisasjonsnummer.",
         )
-    }
 
-    private fun createInvalidSakenGjelderError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createInvalidSakenGjelderError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Dette er ikke et gyldig id-nummer."
+            reason = "Dette er ikke et gyldig id-nummer.",
         )
-    }
 
-    private fun createFutureDateError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createFutureDateError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Datoen kan ikke være i fremtiden."
+            reason = "Datoen kan ikke være i fremtiden.",
         )
-    }
 
-    private fun createConflictingDatesError(variableName: String): InvalidProperty {
-        return InvalidProperty(
+    private fun createConflictingDatesError(variableName: String): InvalidProperty =
+        InvalidProperty(
             field = variableName,
-            reason = "Denne datoen kan ikke være lenger frem i tid enn datoen for mottatt klageinstans."
+            reason = "Denne datoen kan ikke være lenger frem i tid enn datoen for mottatt klageinstans.",
         )
-    }
 
-    fun hasKvalitetsvurdering(): Boolean =
-        utfall !in noKvalitetsvurderingNeeded
+    fun hasKvalitetsvurdering(): Boolean = utfall !in noKvalitetsvurderingNeeded
 }
 
 val noRegistringshjemmelNeeded = listOf(Utfall.TRUKKET, Utfall.RETUR, Utfall.HENLAGT)

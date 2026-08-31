@@ -13,13 +13,11 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
-
 @Component
 class KlageLookupClient(
     private val klageLookupWebClient: WebClient,
     private val tokenUtil: TokenUtil,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -30,50 +28,47 @@ class KlageLookupClient(
         /** fnr, dnr or aktorId */
         brukerId: String,
         navIdent: String,
-    ): Access {
-        return runWithTimingAndLogging {
+    ): Access =
+        runWithTimingAndLogging {
             val token = "Bearer ${tokenUtil.getOnBehalfOfTokenWithKlageLookupScope()}"
 
-            val accessRequest = AccessRequest(
-                brukerId = brukerId,
-                navIdent = navIdent,
-            )
+            val accessRequest =
+                AccessRequest(
+                    brukerId = brukerId,
+                    navIdent = navIdent,
+                )
 
-            klageLookupWebClient.post()
+            klageLookupWebClient
+                .post()
                 .uri("/access-to-person")
                 .bodyValue(accessRequest)
                 .header(
                     HttpHeaders.AUTHORIZATION,
                     token,
-                )
-                .retrieve()
+                ).retrieve()
                 .onStatus(HttpStatusCode::isError) { response ->
                     logErrorResponse(
                         response = response,
                         functionName = ::getAccess.name,
                         classLogger = logger,
                     )
-                }
-                .bodyToMono<Access>()
+                }.bodyToMono<Access>()
                 .block() ?: throw RuntimeException("Could not get access")
         }
-    }
 
     @Retryable(
-        excludes = [UserNotFoundException::class]
+        excludes = [UserNotFoundException::class],
     )
-    fun getUserInfo(
-        navIdent: String,
-    ): ExtendedUserResponse {
-        return runWithTimingAndLogging {
+    fun getUserInfo(navIdent: String): ExtendedUserResponse =
+        runWithTimingAndLogging {
             val token = "Bearer ${tokenUtil.getOnBehalfOfTokenWithKlageLookupScope()}"
-            klageLookupWebClient.get()
+            klageLookupWebClient
+                .get()
                 .uri("/users/$navIdent")
                 .header(
                     HttpHeaders.AUTHORIZATION,
                     token,
-                )
-                .exchangeToMono { response ->
+                ).exchangeToMono { response ->
                     if (response.statusCode().value() == 404) {
                         logger.debug("User $navIdent not found")
                         Mono.error(UserNotFoundException("User $navIdent not found"))
@@ -86,30 +81,25 @@ class KlageLookupClient(
                     } else {
                         response.bodyToMono<ExtendedUserResponse>()
                     }
-                }
-                .block() ?: throw RuntimeException("Could not get user info for $navIdent")
+                }.block() ?: throw RuntimeException("Could not get user info for $navIdent")
         }
-    }
 
     @Retryable(
-        excludes = [EnhetNotFoundException::class]
+        excludes = [EnhetNotFoundException::class],
     )
-    fun getUsersInEnhet(
-        enhetsnummer: String,
-    ): UsersResponse {
-        return runWithTimingAndLogging {
+    fun getUsersInEnhet(enhetsnummer: String): UsersResponse =
+        runWithTimingAndLogging {
             val token = "Bearer ${tokenUtil.getOnBehalfOfTokenWithKlageLookupScope()}"
-            klageLookupWebClient.get()
+            klageLookupWebClient
+                .get()
                 .uri("/enheter/$enhetsnummer/users")
                 .header(
                     HttpHeaders.AUTHORIZATION,
                     token,
-                )
-                .exchangeToMono { response ->
+                ).exchangeToMono { response ->
                     if (response.statusCode().value() == 404) {
                         logger.debug("Enhet $enhetsnummer not found")
                         Mono.error(EnhetNotFoundException("Enhet $enhetsnummer not found"))
-
                     } else if (response.statusCode().isError) {
                         logErrorResponse(
                             response = response,
@@ -120,10 +110,8 @@ class KlageLookupClient(
                     } else {
                         response.bodyToMono<UsersResponse>()
                     }
-                }
-                .block() ?: throw RuntimeException("Could not get users information for enhet $enhetsnummer")
+                }.block() ?: throw RuntimeException("Could not get users information for enhet $enhetsnummer")
         }
-    }
 
     fun <T> runWithTimingAndLogging(block: () -> T): T {
         val start = System.currentTimeMillis()

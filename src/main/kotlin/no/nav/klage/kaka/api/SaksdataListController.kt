@@ -25,8 +25,7 @@ class SaksdataListController(
     private val saksdataService: SaksdataService,
     private val rolleMapper: RolleMapper,
     private val saksbehandlerService: SaksbehandlerService,
-    ) {
-
+) {
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -43,8 +42,10 @@ class SaksdataListController(
         validateIsSameUser(saksbehandlerIdent)
 
         return SaksdataListView(
-            searchHits = saksdataService.search(saksbehandlerIdent, fullfoert, sidenDager)
-                .map { it.toSaksdataView() }
+            searchHits =
+                saksdataService
+                    .search(saksbehandlerIdent = saksbehandlerIdent, fullfoert = fullfoert, daysSince = sidenDager)
+                    .map { it.toSaksdataView() },
         )
     }
 
@@ -75,14 +76,16 @@ class SaksdataListController(
         val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
         return SaksdataListView(
-            searchHits = saksdataService.searchAsVedtaksinstanslederV1(
-                saksbehandlerIdent = navIdent,
-                enhet = enhet,
-                fromDate = fromDate,
-                toDate = toDate,
-                mangelfullt = mangelfullt ?: emptyList(),
-                kommentarer = kommentarer ?: emptyList(),
-            ).map { it.toSaksdataView() }
+            searchHits =
+                saksdataService
+                    .searchAsVedtaksinstanslederV1(
+                        saksbehandlerIdent = navIdent,
+                        enhet = enhet,
+                        fromDate = fromDate,
+                        toDate = toDate,
+                        mangelfullt = mangelfullt ?: emptyList(),
+                        kommentarer = kommentarer ?: emptyList(),
+                    ).map { it.toSaksdataView() },
         )
     }
 
@@ -112,13 +115,15 @@ class SaksdataListController(
         val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
         return SaksdataListView(
-            searchHits = saksdataService.searchAsVedtaksinstanslederV2(
-                saksbehandlerIdent = navIdent,
-                enhet = enhet,
-                fromDate = fromDate,
-                toDate = toDate,
-                mangelfullt = mangelfullt ?: emptyList(),
-            ).map { it.toSaksdataView() }
+            searchHits =
+                saksdataService
+                    .searchAsVedtaksinstanslederV2(
+                        saksbehandlerIdent = navIdent,
+                        enhet = enhet,
+                        fromDate = fromDate,
+                        toDate = toDate,
+                        mangelfullt = mangelfullt ?: emptyList(),
+                    ).map { it.toSaksdataView() },
         )
     }
 
@@ -147,13 +152,15 @@ class SaksdataListController(
         val enhet = saksbehandlerService.getUserEnhet(navIdent = tokenUtil.getIdent())
 
         return SaksdataListView(
-            searchHits = saksdataService.searchAsVedtaksinstanslederV3(
-                saksbehandlerIdent = navIdent,
-                enhet = enhet,
-                fromDate = fromDate,
-                toDate = toDate,
-                mangelfullt = mangelfullt ?: emptyList(),
-            ).map { it.toSaksdataView() }
+            searchHits =
+                saksdataService
+                    .searchAsVedtaksinstanslederV3(
+                        saksbehandlerIdent = navIdent,
+                        enhet = enhet,
+                        fromDate = fromDate,
+                        toDate = toDate,
+                        mangelfullt = mangelfullt ?: emptyList(),
+                    ).map { it.toSaksdataView() },
         )
     }
 
@@ -162,5 +169,4 @@ class SaksdataListController(
             throw MissingTilgangException("User is not the same")
         }
     }
-
 }

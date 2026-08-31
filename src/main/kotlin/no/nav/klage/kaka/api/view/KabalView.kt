@@ -2,7 +2,7 @@ package no.nav.klage.kaka.api.view
 
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 data class KabalView(
     val id: UUID,
@@ -27,12 +27,15 @@ data class KabalSaksdataInput(
     val kvalitetsvurderingId: UUID,
     val avsluttetAvSaksbehandler: LocalDateTime,
     val tilknyttetEnhet: String,
-    //TODO: Remove nullable after kabal-api update
+    // TODO: Remove nullable after kabal-api update
     val tilbakekreving: Boolean?,
 )
 
 data class ValidationErrors(
-    val validationErrors: List<InvalidProperty>
+    val validationErrors: List<InvalidProperty>,
 ) {
-    data class InvalidProperty(val field: String, val reason: String)
+    data class InvalidProperty(
+        val field: String,
+        val reason: String,
+    )
 }

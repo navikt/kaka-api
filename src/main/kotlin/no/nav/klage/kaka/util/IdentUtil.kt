@@ -25,8 +25,8 @@ fun isValidFnrOrDnr(fnr: String): Boolean {
 
 private val ORGNR_VEKTER = intArrayOf(3, 2, 7, 6, 5, 4, 3, 2)
 
-fun isValidOrgnr(orgnr: String): Boolean {
-    return if (orgnr.isEmpty()) {
+fun isValidOrgnr(orgnr: String): Boolean =
+    if (orgnr.isEmpty()) {
         true
     } else {
         var sum = 0
@@ -38,4 +38,3 @@ fun isValidOrgnr(orgnr: String): Boolean {
         val kontrollSiffer = if (rest == 0) 0 else 11 - rest
         kontrollSiffer == orgnr.substring(8, 9).toInt()
     }
-}

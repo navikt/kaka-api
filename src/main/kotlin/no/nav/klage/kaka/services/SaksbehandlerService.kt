@@ -16,7 +16,6 @@ class SaksbehandlerService(
     private val rolleMapper: RolleMapper,
     private val tokenUtil: TokenUtil,
 ) {
-
     fun getUserInfo(navIdent: String): ExtendedUserResponse {
         val userInfo = klageLookupClient.getUserInfo(navIdent = navIdent)
         return userInfo
@@ -29,29 +28,26 @@ class SaksbehandlerService(
             ident = navIdent,
             navn = userInfo.toNavnView(),
             ansattEnhet = userInfo.toEnhetKodeDto(),
-            roller = roller.map { it.name }
+            roller = roller.map { it.name },
         )
     }
 
-    fun getUserEnhet(navIdent: String): Enhet {
-        return getUserInfo(navIdent = navIdent).toEnhet()
-    }
+    fun getUserEnhet(navIdent: String): Enhet = getUserInfo(navIdent = navIdent).toEnhet()
 
-    private fun ExtendedUserResponse.toEnhetKodeDto(): EnhetKodeDto {
-        return EnhetKodeDto(
+    private fun ExtendedUserResponse.toEnhetKodeDto(): EnhetKodeDto =
+        EnhetKodeDto(
             id = enhet.enhetNr,
             navn = enhet.enhetNavn,
         )
-    }
 
-    private fun ExtendedUserResponse.toEnhet(): Enhet {
-        return Enhet.entries.find { it.navn == enhet.enhetNr }
+    private fun ExtendedUserResponse.toEnhet(): Enhet =
+        Enhet.entries.find { it.navn == enhet.enhetNr }
             ?: throw EnhetNotFoundForSaksbehandlerException("Enhet ikke funnet med enhetNr ${enhet.enhetNr}")
-    }
 
-    private fun ExtendedUserResponse.toNavnView(): UserData.Navn {
-        return UserData.Navn(
-            fornavn = fornavn, etternavn = etternavn, sammensattNavn = sammensattNavn
+    private fun ExtendedUserResponse.toNavnView(): UserData.Navn =
+        UserData.Navn(
+            fornavn = fornavn,
+            etternavn = etternavn,
+            sammensattNavn = sammensattNavn,
         )
-    }
 }

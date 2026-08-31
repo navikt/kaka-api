@@ -9,12 +9,12 @@ import no.nav.klage.kaka.repositories.SaksdataRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.util.*
+import java.util.Optional
+import java.util.UUID
 
 internal class SaksdataServiceTest {
-
-    private val SAKSBEHANDLER_IDENT = "SAKSBEHANDLER_IDENT"
-    private val OTHER_IDENT = "OTHER_IDENT"
+    private val saksbehandlerIdent = "SAKSBEHANDLER_IDENT"
+    private val otherIdent = "OTHER_IDENT"
 
     val saksdataRepository = mockk<SaksdataRepository>()
 
@@ -37,22 +37,24 @@ internal class SaksdataServiceTest {
 
     @BeforeEach
     fun beforeEach() {
-        every { saksdataRepository.findById(any()) } returns Optional.of(
-            Saksdata(
-                utfoerendeSaksbehandler = SAKSBEHANDLER_IDENT,
-                tilknyttetEnhet = "4295",
-                kvalitetsvurderingReference = KvalitetsvurderingReference(
-                    id = UUID.randomUUID(),
-                    version = 1,
+        every { saksdataRepository.findById(any()) } returns
+            Optional.of(
+                Saksdata(
+                    utfoerendeSaksbehandler = saksbehandlerIdent,
+                    tilknyttetEnhet = "4295",
+                    kvalitetsvurderingReference =
+                        KvalitetsvurderingReference(
+                            id = UUID.randomUUID(),
+                            version = 1,
+                        ),
                 ),
             )
-        )
     }
 
     @Test
     fun `throws exception if not allowed to delete`() {
         assertThrows<MissingTilgangException> {
-            saksdataService.deleteSaksdata(saksdataId = UUID.randomUUID(), innloggetSaksbehandler = OTHER_IDENT)
+            saksdataService.deleteSaksdata(saksdataId = UUID.randomUUID(), innloggetSaksbehandler = otherIdent)
         }
     }
 }

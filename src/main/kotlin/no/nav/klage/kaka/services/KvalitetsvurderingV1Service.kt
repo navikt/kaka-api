@@ -12,9 +12,13 @@ import no.nav.klage.kaka.util.setFieldOnObject
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import org.springframework.stereotype.Service
 import tools.jackson.databind.JsonNode
-import tools.jackson.databind.node.*
+import tools.jackson.databind.node.ArrayNode
+import tools.jackson.databind.node.BooleanNode
+import tools.jackson.databind.node.IntNode
+import tools.jackson.databind.node.NullNode
+import tools.jackson.databind.node.StringNode
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
 @Service
 @Transactional
@@ -23,9 +27,7 @@ class KvalitetsvurderingV1Service(
     private val saksdataRepository: SaksdataRepository,
     private val tokenUtil: TokenUtil,
 ) {
-    fun getKvalitetsvurdering(
-        kvalitetsvurderingId: UUID,
-    ): KvalitetsvurderingV1 {
+    fun getKvalitetsvurdering(kvalitetsvurderingId: UUID): KvalitetsvurderingV1 {
         val kvalitetsvurdering = kvalitetsvurderingV1Repository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
             throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
@@ -33,7 +35,10 @@ class KvalitetsvurderingV1Service(
         return kvalitetsvurdering.get()
     }
 
-    fun patchKvalitetsvurdering(kvalitetsvurderingId: UUID, input: JsonNode): KvalitetsvurderingV1 {
+    fun patchKvalitetsvurdering(
+        kvalitetsvurderingId: UUID,
+        input: JsonNode,
+    ): KvalitetsvurderingV1 {
         val kvalitetsvurdering = getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(kvalitetsvurderingId)
 
         input.properties().forEach { (key, value) ->
@@ -43,49 +48,66 @@ class KvalitetsvurderingV1Service(
         return kvalitetsvurdering
     }
 
-    fun cleanUpKvalitetsvurdering(
-        kvalitetsvurderingId: UUID
-    ) {
+    fun cleanUpKvalitetsvurdering(kvalitetsvurderingId: UUID) {
         val kvalitetsvurdering = kvalitetsvurderingV1Repository.getReferenceById(kvalitetsvurderingId)
         kvalitetsvurdering.cleanup()
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
 
-    fun removeFieldsUnusedInAnke(
-        kvalitetsvurderingId: UUID
-    ) {
+    fun removeFieldsUnusedInAnke(kvalitetsvurderingId: UUID) {
         val kvalitetsvurdering = kvalitetsvurderingV1Repository.getReferenceById(kvalitetsvurderingId)
         kvalitetsvurdering.resetFieldsUnusedInAnke()
         kvalitetsvurdering.modified = LocalDateTime.now()
     }
 
-    private fun getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(
-        kvalitetsvurderingId: UUID
-    ): KvalitetsvurderingV1 {
+    private fun getKvalitetsvurderingAndVerifyOwnershipAndNotFinalized(kvalitetsvurderingId: UUID): KvalitetsvurderingV1 {
         val kvalitetsvurdering = kvalitetsvurderingV1Repository.findById(kvalitetsvurderingId)
         if (kvalitetsvurdering.isEmpty) {
             throw KvalitetsvurderingNotFoundException("Could not find kvalitetsvurdering with id $kvalitetsvurderingId")
         }
-        return kvalitetsvurdering.get()
+        return kvalitetsvurdering
+            .get()
             .also {
                 val saksdata = saksdataRepository.findOneByKvalitetsvurderingReferenceId(it.id)
-                if (saksdata?.avsluttetAvSaksbehandler != null) throw SaksdataFinalizedException(
-                    "Saksdata er allerede fullført"
-                )
+                if (saksdata?.avsluttetAvSaksbehandler != null) {
+                    throw SaksdataFinalizedException(
+                        "Saksdata er allerede fullført",
+                    )
+                }
                 if (saksdata != null && saksdata.utfoerendeSaksbehandler != tokenUtil.getIdent()) {
                     throw MissingTilgangException("Kvalitetsvurdering tilhører ikke innlogget saksbehandler")
                 }
             }
     }
 
-    private fun getValue(node: JsonNode): Any? {
-        return when (node) {
-            is IntNode -> node.intValue()
-            is BooleanNode -> node.booleanValue()
-            is StringNode -> node.stringValue()
-            is NullNode -> null
-            is ArrayNode -> node.elements().asSequence().map { Registreringshjemmel.of(getValue(it).toString()) }.toSet()
-            else -> error("not supported")
+    private fun getValue(node: JsonNode): Any? =
+        when (node) {
+            is IntNode -> {
+                node.intValue()
+            }
+
+            is BooleanNode -> {
+                node.booleanValue()
+            }
+
+            is StringNode -> {
+                node.stringValue()
+            }
+
+            is NullNode -> {
+                null
+            }
+
+            is ArrayNode -> {
+                node
+                    .elements()
+                    .asSequence()
+                    .map { Registreringshjemmel.of(getValue(it).toString()) }
+                    .toSet()
+            }
+
+            else -> {
+                error("not supported")
+            }
         }
-    }
 }

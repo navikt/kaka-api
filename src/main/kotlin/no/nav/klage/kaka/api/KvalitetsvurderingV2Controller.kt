@@ -11,9 +11,14 @@ import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
 import no.nav.security.token.support.core.api.ProtectedWithClaims
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import tools.jackson.databind.JsonNode
-import java.util.*
+import java.util.UUID
 
 @RestController
 @Tag(name = "kaka-api:kvalitetsvurdering-v2")
@@ -23,7 +28,6 @@ class KvalitetsvurderingV2Controller(
     private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
     private val tokenUtil: TokenUtil,
 ) {
-
     companion object {
         @Suppress("JAVA_CLASS_ON_COMPANION")
         private val logger = getLogger(javaClass.enclosingClass)
@@ -34,24 +38,25 @@ class KvalitetsvurderingV2Controller(
         @PathVariable("id") kvalitetsvurderingId: UUID,
         @Schema(implementation = KvalitetsvurderingV2Input::class)
         @RequestBody
-        data: JsonNode
-    ): KvalitetsvurderingV2View {
-        return kvalitetsvurderingV2Service.patchKvalitetsvurdering(kvalitetsvurderingId, data)
+        data: JsonNode,
+    ): KvalitetsvurderingV2View =
+        kvalitetsvurderingV2Service
+            .patchKvalitetsvurdering(kvalitetsvurderingId = kvalitetsvurderingId, input = data)
             .toKvalitetsvurderingV2View()
-    }
 
     @GetMapping
     fun getKvalitetsvurdering(
-        @PathVariable("id") kvalitetsvurderingId: UUID
+        @PathVariable("id") kvalitetsvurderingId: UUID,
     ): KvalitetsvurderingV2View {
         val innloggetSaksbehandler = tokenUtil.getIdent()
         logKvalitetsvurderingMethodDetails(
-            ::getKvalitetsvurdering.name,
-            innloggetSaksbehandler,
-            kvalitetsvurderingId,
-            logger
+            methodName = ::getKvalitetsvurdering.name,
+            innloggetIdent = innloggetSaksbehandler,
+            kvalitetsvurderingId = kvalitetsvurderingId,
+            logger = logger,
         )
-        return kvalitetsvurderingV2Service.getKvalitetsvurdering(kvalitetsvurderingId)
+        return kvalitetsvurderingV2Service
+            .getKvalitetsvurdering(kvalitetsvurderingId)
             .toKvalitetsvurderingV2View()
     }
 }

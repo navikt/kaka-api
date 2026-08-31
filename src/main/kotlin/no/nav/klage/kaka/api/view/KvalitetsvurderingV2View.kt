@@ -58,8 +58,8 @@ data class KvalitetsvurderingV2View(
     val annetFritekst: String?,
 )
 
-fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View {
-    return KvalitetsvurderingV2View(
+fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View =
+    KvalitetsvurderingV2View(
         id = id,
         created = created,
         modified = modified,
@@ -90,23 +90,35 @@ fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View 
         vedtaketDetErLagtTilGrunnFeilFaktum = vedtaketDetErLagtTilGrunnFeilFaktum,
         vedtaketSpraakOgFormidlingErIkkeTydelig = vedtaketSpraakOgFormidlingErIkkeTydelig,
         vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdert,
-        vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id }
-            ?.toSet(),
+        vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList =
+            vedtaketBruktFeilHjemmelEllerAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         vedtaketBruktFeilHjemmel = vedtaketBruktFeilHjemmel,
-        vedtaketBruktFeilHjemmelHjemlerList = vedtaketBruktFeilHjemmelHjemlerList?.map { it.id }
-            ?.toSet(),
+        vedtaketBruktFeilHjemmelHjemlerList =
+            vedtaketBruktFeilHjemmelHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         vedtaketAlleRelevanteHjemlerErIkkeVurdert = vedtaketAlleRelevanteHjemlerErIkkeVurdert,
-        vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList = vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList?.map { it.id }
-            ?.toSet(),
+        vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList =
+            vedtaketAlleRelevanteHjemlerErIkkeVurdertHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         vedtaketLovbestemmelsenTolketFeil = vedtaketLovbestemmelsenTolketFeil,
-        vedtaketLovbestemmelsenTolketFeilHjemlerList = vedtaketLovbestemmelsenTolketFeilHjemlerList?.map { it.id }
-            ?.toSet(),
+        vedtaketLovbestemmelsenTolketFeilHjemlerList =
+            vedtaketLovbestemmelsenTolketFeilHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet = vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevet,
-        vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList = vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList?.map { it.id }
-            ?.toSet(),
+        vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList =
+            vedtaketInnholdetIRettsregleneErIkkeTilstrekkeligBeskrevetHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         vedtaketFeilKonkretRettsanvendelse = vedtaketFeilKonkretRettsanvendelse,
-        vedtaketFeilKonkretRettsanvendelseHjemlerList = vedtaketFeilKonkretRettsanvendelseHjemlerList?.map { it.id }
-            ?.toSet(),
+        vedtaketFeilKonkretRettsanvendelseHjemlerList =
+            vedtaketFeilKonkretRettsanvendelseHjemlerList
+                ?.map { it.id }
+                ?.toSet(),
         vedtaketIkkeKonkretIndividuellBegrunnelse = vedtaketIkkeKonkretIndividuellBegrunnelse,
         vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum = vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremFaktum,
         vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum = vedtaketIkkeKonkretIndividuellBegrunnelseIkkeGodtNokFremHvordanRettsregelenErAnvendtPaaFaktum,
@@ -118,4 +130,3 @@ fun KvalitetsvurderingV2.toKvalitetsvurderingV2View(): KvalitetsvurderingV2View 
         raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert = raadgivendeLegeBegrunnelseMangelfullEllerIkkeDokumentert,
         annetFritekst = annetFritekst,
     )
-}

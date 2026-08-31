@@ -23,11 +23,12 @@ fun getMangelfulltQueryV2(mangelfullt: List<String>): String {
     }
 
     for ((index, q) in queryParts.filterNotNull().withIndex()) {
-        query += if (index == 0) {
-            q
-        } else {
-            " OR $q"
-        }
+        query +=
+            if (index == 0) {
+                q
+            } else {
+                " OR $q"
+            }
     }
 
     query += " ) "
@@ -38,27 +39,35 @@ fun getMangelfulltQueryV2(mangelfullt: List<String>): String {
 private fun getForberedelsenQuery(mangelfullt: List<String>) =
     if ("forberedelsen" in mangelfullt) {
         """
-                k.klageforberedelsen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.klageforberedelsen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
 
 private fun getUtredningenQuery(mangelfullt: List<String>) =
     if ("utredningen" in mangelfullt) {
         """
-                k.utredningen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.utredningen = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
 
 private fun getVedtaketQuery(mangelfullt: List<String>) =
     if ("vedtaket" in mangelfullt) {
         """
-                k.vedtaket = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.vedtaket = '${KvalitetsvurderingV2.Radiovalg.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
 
 private fun getROLQuery(mangelfullt: List<String>) =
     if ("rol" in mangelfullt) {
         """
-                k.brukAvRaadgivendeLege = '${KvalitetsvurderingV2.RadiovalgRaadgivendeLege.MANGELFULLT.name}'
-            """.trimIndent()
-    } else null
+        k.brukAvRaadgivendeLege = '${KvalitetsvurderingV2.RadiovalgRaadgivendeLege.MANGELFULLT.name}'
+        """.trimIndent()
+    } else {
+        null
+    }
