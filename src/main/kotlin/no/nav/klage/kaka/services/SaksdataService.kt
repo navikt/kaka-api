@@ -323,7 +323,7 @@ class SaksdataService(
 
         when (val version = saksdata.kvalitetsvurderingReference.version) {
             1 -> {
-                if (saksdata.sakstype == Type.ANKE) {
+                if (saksdata.sakstype == Type.ANKE_FOER_2027) {
                     saksdata.mottattVedtaksinstans = null
                     kvalitetsvurderingV1Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
                 }
@@ -339,7 +339,7 @@ class SaksdataService(
             }
 
             2 -> {
-                if (saksdata.sakstype == Type.ANKE) {
+                if (saksdata.sakstype == Type.ANKE_FOER_2027) {
                     saksdata.mottattVedtaksinstans = null
                     kvalitetsvurderingV2Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
                 }
@@ -355,7 +355,7 @@ class SaksdataService(
             }
 
             3 -> {
-                if (saksdata.sakstype == Type.ANKE) {
+                if (saksdata.sakstype == Type.ANKE_FOER_2027) {
                     saksdata.mottattVedtaksinstans = null
                     kvalitetsvurderingV3Service.removeFieldsUnusedInAnke(saksdata.kvalitetsvurderingReference.id)
                 }

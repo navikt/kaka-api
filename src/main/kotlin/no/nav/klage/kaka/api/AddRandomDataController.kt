@@ -265,7 +265,7 @@ class AddRandomDataController(
 
     private fun getCohesiveTestData(kakaVersion: Int): CohesiveTestData {
         val ytelse = Ytelse.values().random()
-        val type = Type.values().filter { it != Type.ANKE_I_TRYGDERETTEN }.random()
+        val type = Type.values().filter { it !in listOf(Type.ANKE_I_TRYGDERETTEN_FOER_2027, Type.ANKE_I_TRYGDERETTEN_ETTER_2027) }.random()
         val data =
             CohesiveTestData(
                 type = type,

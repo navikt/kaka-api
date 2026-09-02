@@ -1048,7 +1048,7 @@ class SaksdataRepositoryTest : PostgresIntegrationTestBase() {
             )
         val saksdataFullfoertOther2 =
             Saksdata(
-                sakstype = Type.ANKE,
+                sakstype = Type.ANKE_FOER_2027,
                 utfoerendeSaksbehandler = utfoerendeSaksbehandler,
                 tilknyttetEnhet = "4295",
                 vedtaksinstansEnhet = "1000", // Agder vedtaksgruppe
