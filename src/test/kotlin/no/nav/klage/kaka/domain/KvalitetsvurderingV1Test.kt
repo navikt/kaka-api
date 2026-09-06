@@ -53,7 +53,7 @@ internal class KvalitetsvurderingV1Test {
     @Test
     fun `validation on empty kvalitetsvurdering for anke gives correct number of errors`() {
         val kvalitetsvurderingV1 = KvalitetsvurderingV1()
-        val results = kvalitetsvurderingV1.getInvalidProperties(ytelse = null, type = Type.ANKE)
+        val results = kvalitetsvurderingV1.getInvalidProperties(ytelse = null, type = Type.ANKE_FOER_2027)
         assertThat(results).hasSize(2)
     }
 

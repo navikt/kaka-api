@@ -626,7 +626,7 @@ class ExportServiceV2(
         val mottattForrigeInstans =
             if (saksdata.sakstype in
                 listOf(
-                    Type.ANKE,
+                    Type.ANKE_FOER_2027,
                     Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
                     Type.OMGJOERINGSKRAV,
                     Type.BEGJAERING_OM_GJENOPPTAK,

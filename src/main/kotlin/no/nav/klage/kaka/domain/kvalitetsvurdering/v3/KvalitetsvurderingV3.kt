@@ -456,7 +456,7 @@ class KvalitetsvurderingV3(
             val validationError =
                 when (type) {
                     Type.KLAGE -> (commonCheck && !saksbehandlingsreglerBruddPaaRegleneOmKlageOgKlageforberedelse)
-                    Type.ANKE -> commonCheck
+                    Type.ANKE_FOER_2027 -> commonCheck
                     else -> error("Ukjent type ved validering av kvalitetsvurdering: $type")
                 }
             if (validationError) {
