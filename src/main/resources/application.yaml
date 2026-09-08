@@ -7,7 +7,7 @@ spring:
     resources:
       add-mappings: false
   datasource:
-    url: ${NAIS_DATABASE_KAKA_API_KAKA_API_PRIV_JDBC_URL}
+    url: ${NAIS_DATABASE_KAKA_API_KAKA_API_JDBC_URL}
     driver-class-name: org.postgresql.Driver
   flyway:
     enabled: true
