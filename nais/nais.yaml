@@ -17,7 +17,7 @@ spec:
   port: 7070
   gcp:
     sqlInstances:
-      - name: kaka-api
+      - name: kaka-api-priv
         type: {{ db_type }}
         maintenance:
           day: 1
