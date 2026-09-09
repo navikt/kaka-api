@@ -30,7 +30,7 @@ spec:
         autoBackupHour: 2
         cascadingDelete: false
         databases:
-          - name: kaka-api-priv
+          - name: kaka-api
   kafka:
     pool: {{kafka_pool}}
   startup:
