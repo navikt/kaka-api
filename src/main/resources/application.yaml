@@ -7,8 +7,9 @@ spring:
     resources:
       add-mappings: false
   datasource:
-    url: ${NAIS_DATABASE_KAKA_API_KAKA_API_PRIV_JDBC_URL}
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${NAIS_DATABASE_KAKA_API_PRIV_KAKA_API_PRIV_HOST}:${NAIS_DATABASE_KAKA_API_PRIV_KAKA_API_PRIV_PORT}/${NAIS_DATABASE_KAKA_API_PRIV_KAKA_API_PRIV_DATABASE}
+    username: ${NAIS_DATABASE_KAKA_API_PRIV_KAKA_API_PRIV_USERNAME}
+    password: ${NAIS_DATABASE_KAKA_API_PRIV_KAKA_API_PRIV_PASSWORD}
   flyway:
     enabled: true
     clean-disabled: true
