@@ -7,9 +7,7 @@ spring:
     resources:
       add-mappings: false
   datasource:
-    url: jdbc:postgresql://${NAIS_DATABASE_KAKA_API_KAKA_API_HOST}:${NAIS_DATABASE_KAKA_API_KAKA_API_PORT}/${NAIS_DATABASE_KAKA_API_KAKA_API_DATABASE}
-    username: ${NAIS_DATABASE_KAKA_API_KAKA_API_USERNAME}
-    password: ${NAIS_DATABASE_KAKA_API_KAKA_API_PASSWORD}
+    url: ${NAIS_DATABASE_KAKA_API_PRIV_KAKA_API_JDBC_URL}
   flyway:
     enabled: true
     clean-disabled: true
