@@ -36,19 +36,19 @@ spec:
   startup:
     failureThreshold: 8
     initialDelay: 30
-    path: /internal/health
+    path: /internal/health/readiness
     periodSeconds: 10
     timeout: 2
   liveness:
-    path: /internal/health
+    path: /internal/health/liveness
     timeout: 3
-    periodSeconds: 5
+    periodSeconds: 10
     failureThreshold: 5
   readiness:
-    path: /internal/health
+    path: /internal/health/readiness
     timeout: 3
     periodSeconds: 5
-    failureThreshold: 5
+    failureThreshold: 3
   prometheus:
     enabled: true
     path: /internal/metrics
