@@ -51,7 +51,7 @@ spec:
     failureThreshold: 3
   prometheus:
     enabled: true
-    path: /internal/metrics
+    path: /internal/prometheus
   azure:
     application:
       enabled: true

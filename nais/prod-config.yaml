@@ -14,8 +14,8 @@ replicasMin: 2
 replicasMax: 4
 
 envs:
-  - name: JAVA_OPTS
-    value: "-Xms1024m -Xmx8000m"
+  - name: JAVA_TOOL_OPTIONS
+    value: "-Xms1g -Xmx6g"
 
 groups:
   - name: KAKA_KVALITETSVURDERING_ROLE_ID
