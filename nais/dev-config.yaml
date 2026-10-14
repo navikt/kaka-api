@@ -17,9 +17,7 @@ replicasMax: 2
 
 envs:
   - name: JAVA_TOOL_OPTIONS
-    value: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-  - name: JAVA_OPTS
-    value: "-Xms512m -Xmx4096m"
+    value: "-Xms512m -Xmx3g -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
 
 groups:
   - name: KAKA_KVALITETSVURDERING_ROLE_ID
