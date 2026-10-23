@@ -629,7 +629,7 @@ class ExportServiceV2(
                     Type.ANKE_FOER_2027,
                     Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
                     Type.OMGJOERINGSKRAV,
-                    Type.BEGJAERING_OM_GJENOPPTAK,
+                    Type.BEGJAERING_OM_GJENOPPTAK_FOER_2027,
                 )
             ) {
                 saksdata.mottattKlageinstans!!.toDate()
