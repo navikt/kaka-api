@@ -148,7 +148,7 @@ class SaksdataService(
             listOf(
                 Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
                 Type.OMGJOERINGSKRAV,
-                Type.BEGJAERING_OM_GJENOPPTAK,
+                Type.BEGJAERING_OM_GJENOPPTAK_FOER_2027,
             ) || utfall in noKvalitetsvurderingNeeded
         ) {
             when (version) {
