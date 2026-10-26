@@ -12,7 +12,7 @@ val mockkVersion = "1.14.11"
 val apachePoiVersion = "5.5.1"
 val springDocVersion = "3.1.1"
 val shedlockVersion = "7.10.1"
-val klageKodeverkVersion = "3.4.3"
+val klageKodeverkVersion = "3.4.4"
 val ehcacheVersion = "3.12.0"
 val otelVersion = "1.66.0"
 
