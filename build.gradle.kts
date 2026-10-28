@@ -9,15 +9,15 @@ val tokenValidationVersion = "6.0.12"
 val archunitVersion = "1.5.1"
 val testContainersVersion = "2.0.5"
 val mockkVersion = "1.14.11"
-val apachePoiVersion = "5.5.1"
-val springDocVersion = "3.1.1"
+val apachePoiVersion = "6.0.0"
+val springDocVersion = "3.2.0"
 val shedlockVersion = "7.10.1"
 val klageKodeverkVersion = "3.4.5"
 val ehcacheVersion = "3.12.0"
-val otelVersion = "1.66.0"
+val otelVersion = "1.67.0"
 
 plugins {
-    val kotlinVersion = "2.4.20"
+    val kotlinVersion = "2.4.21"
     id("org.springframework.boot") version "4.1.2"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.spring") version kotlinVersion
