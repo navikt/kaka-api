@@ -5,7 +5,6 @@ import no.nav.klage.kaka.api.view.MyResponseV1
 import no.nav.klage.kaka.api.view.OpenResponseWithoutEnheterV1
 import no.nav.klage.kaka.api.view.TotalResponseV1
 import no.nav.klage.kaka.api.view.VedtaksinstanslederResponseV1
-import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.ExportServiceV1
 import no.nav.klage.kaka.services.SaksbehandlerService
@@ -13,7 +12,6 @@ import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.isAllowedToReadKvalitetstilbakemeldinger
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -22,7 +20,6 @@ import java.time.LocalDate
 
 @RestController
 @Tag(name = "kaka-api:kaka-export-v1")
-@ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 @RequestMapping("/statistics", "/statistics/v1")
 class ExportControllerV1(
     private val exportServiceV1: ExportServiceV1,

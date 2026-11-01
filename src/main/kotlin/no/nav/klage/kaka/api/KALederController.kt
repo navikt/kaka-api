@@ -7,7 +7,6 @@ import no.nav.klage.kaka.api.view.ManagerResponseV2
 import no.nav.klage.kaka.api.view.ManagerResponseV3
 import no.nav.klage.kaka.api.view.Saksbehandler
 import no.nav.klage.kaka.clients.klagelookup.KlageLookupClient
-import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_EXCEL_UTTREKK_MED_FRITEKST
 import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_EXCEL_UTTREKK_UTEN_FRITEKST
 import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_LEDERSTATISTIKK
@@ -19,7 +18,6 @@ import no.nav.klage.kaka.services.SaksbehandlerService
 import no.nav.klage.kaka.util.RolleMapper
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.core.io.InputStreamResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
@@ -34,7 +32,6 @@ import java.time.YearMonth
 
 @RestController
 @Tag(name = "kaka-api:kaka-leder")
-@ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 class KALederController(
     private val exportServiceV1: ExportServiceV1,
     private val exportServiceV2: ExportServiceV2,

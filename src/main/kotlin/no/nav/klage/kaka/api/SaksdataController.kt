@@ -7,7 +7,6 @@ import no.nav.klage.kaka.api.view.RegistreringshjemlerInput
 import no.nav.klage.kaka.api.view.SaksdataView
 import no.nav.klage.kaka.api.view.StringInput
 import no.nav.klage.kaka.api.view.toSaksdataView
-import no.nav.klage.kaka.config.SecurityConfig
 import no.nav.klage.kaka.domain.kodeverk.Role.KAKA_KVALITETSVURDERING
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.SaksdataService
@@ -20,7 +19,6 @@ import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.ytelse.Ytelse
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -33,7 +31,6 @@ import java.util.UUID
 
 @RestController
 @Tag(name = "kaka-api:saksdata")
-@ProtectedWithClaims(issuer = SecurityConfig.ISSUER_AAD)
 @RequestMapping("/saksdata")
 class SaksdataController(
     private val saksdataService: SaksdataService,

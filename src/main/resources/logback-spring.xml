@@ -64,9 +64,6 @@
 
         <logger name="org.springframework.data.convert.CustomConversions" level="error"/>
 
-        <logger name="no.nav.security.token.support.spring.validation.interceptor.JwtTokenHandlerInterceptor"
-                level="warning"/>
-
         <logger name="org.hibernate.SQL" level="debug"/>
         <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="debug"/>
         <logger name="org.hibernate.SQL_SLOW" level="debug"/>
