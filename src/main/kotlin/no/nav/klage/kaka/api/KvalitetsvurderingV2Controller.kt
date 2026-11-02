@@ -5,12 +5,10 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import no.nav.klage.kaka.api.view.KvalitetsvurderingV2Input
 import no.nav.klage.kaka.api.view.KvalitetsvurderingV2View
 import no.nav.klage.kaka.api.view.toKvalitetsvurderingV2View
-import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.services.KvalitetsvurderingV2Service
 import no.nav.klage.kaka.util.TokenUtil
 import no.nav.klage.kaka.util.getLogger
 import no.nav.klage.kaka.util.logKvalitetsvurderingMethodDetails
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,7 +20,6 @@ import java.util.UUID
 
 @RestController
 @Tag(name = "kaka-api:kvalitetsvurdering-v2")
-@ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping(value = ["/kvalitetsvurderinger/v2/{id}", "/kvalitetsvurderinger/v2/{id}/"])
 class KvalitetsvurderingV2Controller(
     private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,

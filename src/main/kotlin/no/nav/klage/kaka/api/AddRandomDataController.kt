@@ -21,7 +21,6 @@ import no.nav.klage.kodeverk.typeToUtfall
 import no.nav.klage.kodeverk.ytelse.Ytelse
 import no.nav.klage.kodeverk.ytelse.ytelseToKlageenheter
 import no.nav.klage.kodeverk.ytelse.ytelseToVedtaksenheter
-import no.nav.security.token.support.core.api.Unprotected
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Profile
 import org.springframework.web.bind.annotation.PostMapping
@@ -44,7 +43,6 @@ class AddRandomDataController(
     @Value("#{T(java.time.LocalDate).parse('\${KAKA_VERSION_3_DATE}')}")
     private val kakaVersion3Date: LocalDate,
 ) {
-    @Unprotected
     @PostMapping("/addrandomsaksdata")
     fun addTestData(
         @RequestParam amount: Int,

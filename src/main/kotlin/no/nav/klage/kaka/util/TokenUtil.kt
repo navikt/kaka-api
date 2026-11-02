@@ -1,62 +1,28 @@
 package no.nav.klage.kaka.util
 
-import no.nav.klage.kaka.config.SecurityConfig
-import no.nav.security.token.support.client.core.oauth2.OAuth2AccessTokenService
-import no.nav.security.token.support.client.spring.ClientConfigurationProperties
-import no.nav.security.token.support.core.context.TokenValidationContextHolder
+import no.nav.klage.auth.TexasClient
+import no.nav.klage.auth.callingApp
+import no.nav.klage.auth.currentAzureToken
+import no.nav.klage.auth.displayName
+import no.nav.klage.auth.groups
+import no.nav.klage.auth.navIdent
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class TokenUtil(
-    private val clientConfigurationProperties: ClientConfigurationProperties,
-    private val oAuth2AccessTokenService: OAuth2AccessTokenService,
-    private val tokenValidationContextHolder: TokenValidationContextHolder,
+    private val texasClient: TexasClient,
+    @Value($$"api://${NAIS_CLUSTER_NAME}.${NAIS_NAMESPACE}.${KLAGE_LOOKUP_APP_NAME}/.default")
+    private val klageLookupScope: String,
 ) {
-    companion object {
-        @Suppress("JAVA_CLASS_ON_COMPANION")
-        private val logger = getLogger(javaClass.enclosingClass)
-    }
+    fun getIdent(): String = currentAzureToken()?.navIdent ?: throw RuntimeException("Ident not found in token")
 
-    fun getIdent(): String =
-        tokenValidationContextHolder
-            .getTokenValidationContext()
-            .getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims
-            ?.get("NAVident")
-            ?.toString()
-            ?: throw RuntimeException("Ident not found in token")
+    fun getName(): String = currentAzureToken()?.displayName ?: throw RuntimeException("name not found in token")
 
-    fun getName(): String =
-        tokenValidationContextHolder
-            .getTokenValidationContext()
-            .getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims
-            ?.get("name")
-            ?.toString()
-            ?: throw RuntimeException("name not found in token")
+    /** azp_name has the form `dev-gcp:some-team:some-consumer`. */
+    fun getCallingApplication(): String = currentAzureToken()?.callingApp.orEmpty()
 
-    fun getCallingApplication(): String {
-        // azp_name er på formen <dev-gcp:some-team:some-consumer>
-        return getClaim("azp_name").orEmpty()
-    }
+    fun getGroups(): List<String> = currentAzureToken()?.groups.orEmpty()
 
-    private fun getClaim(name: String): String? =
-        tokenValidationContextHolder
-            .getTokenValidationContext()
-            .getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims
-            ?.getStringClaim(name)
-
-    fun getGroups(): List<String> =
-        tokenValidationContextHolder
-            .getTokenValidationContext()
-            .getJwtToken(SecurityConfig.ISSUER_AAD)
-            ?.jwtTokenClaims
-            ?.getAsList("groups") ?: emptyList()
-
-    fun getOnBehalfOfTokenWithKlageLookupScope(): String {
-        val clientProperties = clientConfigurationProperties.registration["klage-lookup-onbehalfof"]!!
-        val response = oAuth2AccessTokenService.getAccessToken(clientProperties)
-        return response.access_token!!
-    }
+    fun getOnBehalfOfTokenWithKlageLookupScope(): String = texasClient.onBehalfOfCurrentUser(klageLookupScope)
 }

@@ -5,7 +5,6 @@ import no.nav.klage.kaka.api.view.KabalSaksdataInput
 import no.nav.klage.kaka.api.view.KabalView
 import no.nav.klage.kaka.api.view.KabalViewIdOnly
 import no.nav.klage.kaka.api.view.ValidationErrors
-import no.nav.klage.kaka.config.SecurityConfig.Companion.ISSUER_AAD
 import no.nav.klage.kaka.exceptions.MissingTilgangException
 import no.nav.klage.kaka.services.KvalitetsvurderingV2Service
 import no.nav.klage.kaka.services.SaksdataService
@@ -16,7 +15,6 @@ import no.nav.klage.kodeverk.Type
 import no.nav.klage.kodeverk.Utfall
 import no.nav.klage.kodeverk.hjemmel.Registreringshjemmel
 import no.nav.klage.kodeverk.ytelse.Ytelse
-import no.nav.security.token.support.core.api.ProtectedWithClaims
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,7 +28,6 @@ import java.util.UUID
 
 @RestController
 @Tag(name = "kaka-api:kabal-kvalitet-v2")
-@ProtectedWithClaims(issuer = ISSUER_AAD)
 @RequestMapping("/kabal")
 class KabalKvalitetsvurderingV2Controller(
     private val kvalitetsvurderingV2Service: KvalitetsvurderingV2Service,
