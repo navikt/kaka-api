@@ -5,7 +5,7 @@ import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 val ktlintVersion = "1.8.0"
 val logstashVersion = "9.0"
-val klageAuthVersion = "0.3.0"
+val klageAuthVersion = "0.4.0"
 val archunitVersion = "1.5.1"
 val testContainersVersion = "2.0.5"
 val mockkVersion = "1.14.11"
