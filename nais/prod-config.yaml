@@ -15,7 +15,7 @@ replicasMax: 4
 
 envs:
   - name: JAVA_TOOL_OPTIONS
-    value: "-Xms1g -Xmx6g --enable-native-access=ALL-UNNAMED"
+    value: "-Xms1g -Xmx6g --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow"
 
 groups:
   - name: KAKA_KVALITETSVURDERING_ROLE_ID
