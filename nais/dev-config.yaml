@@ -28,7 +28,7 @@ groups:
   - name: KAKA_KVALITETSTILBAKEMELDING_ROLE_ID
     value: ef9eaacb-a19d-4d13-bfc5-930e4fb217cd
   - name: EGEN_ANSATT_ROLE_ID
-    value: dbe4ad45-320b-4e9a-aaa1-73cca4ee124d
+    value: 8df187e3-f6ab-4a5d-8830-61bf148e59fe
   - name: FORTROLIG_ROLE_ID
     value: 2e1dc582-f762-4510-a660-88bf68fb7128
   - name: STRENGT_FORTROLIG_ROLE_ID
