@@ -667,9 +667,11 @@ class ExportServiceV3(
             if (saksdata.sakstype in
                 listOf(
                     Type.ANKE_FOER_2027,
+                    Type.ANKE_ETTER_2027,
                     Type.BEHANDLING_ETTER_TRYGDERETTEN_OPPHEVET,
                     Type.OMGJOERINGSKRAV,
                     Type.BEGJAERING_OM_GJENOPPTAK_FOER_2027,
+                    Type.BEGJAERING_OM_GJENOPPTAK_ETTER_2027,
                 )
             ) {
                 saksdata.mottattKlageinstans!!.toDate()
