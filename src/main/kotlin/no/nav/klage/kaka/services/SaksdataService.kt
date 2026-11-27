@@ -433,6 +433,58 @@ class SaksdataService(
         }
     }
 
+    fun resetKvalitetsvurdering(
+        saksdataId: UUID,
+        innloggetSaksbehandler: String,
+    ): Saksdata =
+        resetKvalitetsvurdering(
+            getSaksdataAndVerifyAccessForEdit(saksdataId, innloggetSaksbehandler),
+        )
+
+    fun resetKvalitetsvurderingForSystem(saksdataId: UUID): Saksdata {
+        val saksdata =
+            saksdataRepository
+                .findById(saksdataId)
+                .orElseThrow { SaksdataNotFoundException("Could not find saksdata with id $saksdataId") }
+        return resetKvalitetsvurdering(saksdata)
+    }
+
+    private fun resetKvalitetsvurdering(saksdata: Saksdata): Saksdata {
+        if (saksdata.avsluttetAvSaksbehandler != null) {
+            throw SaksdataFinalizedException("Saksdataen er allerede fullført")
+        }
+
+        val reference = saksdata.kvalitetsvurderingReference
+        val currentVersion = getKakaVersion()
+        val kvalitetsvurderingId =
+            if (reference.version == currentVersion) {
+                reference.id
+            } else {
+                when (val version = reference.version) {
+                    1 -> kvalitetsvurderingV1Repository.deleteById(reference.id)
+                    2 -> kvalitetsvurderingV2Repository.deleteById(reference.id)
+                    3 -> kvalitetsvurderingV3Repository.deleteById(reference.id)
+                    else -> error("Unknown kvalitetsvurdering version: $version")
+                }
+                UUID.randomUUID()
+            }
+
+        when (currentVersion) {
+            1 -> kvalitetsvurderingV1Repository.save(KvalitetsvurderingV1(id = kvalitetsvurderingId))
+            2 -> kvalitetsvurderingV2Repository.save(KvalitetsvurderingV2(id = kvalitetsvurderingId))
+            3 -> kvalitetsvurderingV3Repository.save(KvalitetsvurderingV3(id = kvalitetsvurderingId))
+            else -> error("Unknown kvalitetsvurdering version: $currentVersion")
+        }
+
+        saksdata.kvalitetsvurderingReference =
+            KvalitetsvurderingReference(
+                id = kvalitetsvurderingId,
+                version = currentVersion,
+            )
+        saksdata.modified = now()
+        return saksdata
+    }
+
     fun reopenSaksdata(
         saksdataId: UUID,
         innloggetSaksbehandler: String,

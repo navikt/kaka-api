@@ -119,6 +119,19 @@ class KabalKvalitetsvurderingV3Controller(
         )
     }
 
+    @PostMapping("/saksdata/{id}/reset-kvalitetsvurdering")
+    fun resetKvalitetsvurdering(
+        @PathVariable("id") saksdataId: UUID,
+    ): KabalView {
+        verifyAndGetCallingApplication()
+        val saksdata = saksdataService.resetKvalitetsvurderingForSystem(saksdataId)
+        return KabalView(
+            id = saksdata.id,
+            kvalitetsvurderingId = saksdata.kvalitetsvurderingReference.id,
+            kvalitetsvurderingVersion = saksdata.kvalitetsvurderingReference.version,
+        )
+    }
+
     private fun verifyAndGetCallingApplication(): String {
         val callingApplication = tokenUtil.getCallingApplication()
         if (callingApplication !in listOf(kabalApiName)) {

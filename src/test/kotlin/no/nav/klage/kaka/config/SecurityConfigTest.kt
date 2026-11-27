@@ -38,7 +38,6 @@ class SecurityConfigTest : AzureSecurityContractTest() {
 
     @MockitoBean
     lateinit var texasClient: TexasClient
-
     private val kvalitetsvurderingId = UUID.randomUUID()
 
     override fun protectedRequest() = delete("/kabal/kvalitetsvurderinger/v3/$kvalitetsvurderingId")
