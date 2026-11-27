@@ -67,6 +67,7 @@ class SaksdataResetIntegrationTest : PostgresIntegrationTestBase() {
                             id = assessment.id,
                             version = 3,
                         ),
+                    created = oldModified,
                     modified = oldModified,
                 ),
             )
@@ -136,9 +137,14 @@ class SaksdataResetIntegrationTest : PostgresIntegrationTestBase() {
                             id = oldAssessmentId,
                             version = oldVersion,
                         ),
+                    created = oldModified.withNano(123456789),
                     modified = oldModified,
                 ),
             )
+
+        testEntityManager.flush()
+        testEntityManager.clear()
+        val originalCreated = saksdataRepository.findById(saksdata.id).orElseThrow().created
 
         saksdataService().resetKvalitetsvurderingForSystem(saksdata.id)
 
@@ -165,7 +171,7 @@ class SaksdataResetIntegrationTest : PostgresIntegrationTestBase() {
         assertThat(persisted.utfoerendeSaksbehandler).isEqualTo(saksdata.utfoerendeSaksbehandler)
         assertThat(persisted.tilknyttetEnhet).isEqualTo(saksdata.tilknyttetEnhet)
         assertThat(persisted.source).isEqualTo(saksdata.source)
-        assertThat(persisted.created).isEqualTo(saksdata.created)
+        assertThat(persisted.created).isEqualTo(originalCreated)
         assertThat(persisted.modified).isAfter(oldModified)
 
         when (oldVersion) {
