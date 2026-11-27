@@ -114,6 +114,16 @@ class SaksdataController(
         return saksdataService.reopenSaksdata(saksdataId = saksdataId, innloggetSaksbehandler = innloggetSaksbehandler).toSaksdataView()
     }
 
+    @PostMapping("/{id}/reset-kvalitetsvurdering")
+    fun resetKvalitetsvurdering(
+        @PathVariable("id") saksdataId: UUID,
+    ): SaksdataView =
+        saksdataService
+            .resetKvalitetsvurdering(
+                saksdataId = saksdataId,
+                innloggetSaksbehandler = tokenUtil.getIdent(),
+            ).toSaksdataView()
+
     @PutMapping("/{id}/sakengjelder")
     fun setSakenGjelder(
         @PathVariable("id") saksdataId: UUID,
